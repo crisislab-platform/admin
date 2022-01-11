@@ -3,10 +3,11 @@ import { dependencies } from "./package.json";
 import react from "@vitejs/plugin-react";
 
 // Code-split the library bundle (in addition to code-splitting the main app)
+const coreDeps = ["react", "react-dom", "react-router-dom"];
 function renderChunks(deps) {
 	let chunks = {};
 	Object.keys(deps).forEach((key) => {
-		if (["react", "react-router-dom", "react-dom"].includes(key)) return;
+		if (coreDeps.includes(key)) return;
 		chunks[key] = [key];
 	});
 	return chunks;
@@ -20,7 +21,7 @@ export default defineConfig({
 		rollupOptions: {
 			output: {
 				manualChunks: {
-					vendor: ["react", "react-router-dom", "react-dom"],
+					vendor: coreDeps,
 					...renderChunks(dependencies),
 				},
 			},
