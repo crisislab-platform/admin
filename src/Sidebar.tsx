@@ -12,14 +12,15 @@ import {
 	useTheme,
 	useMediaQuery,
 } from "@mui/material";
-import LiveDataGraphs from "./LiveDataGraphs";
+import React, { Suspense, forwardRef } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import ConnectedIcon from "@mui/icons-material/Sensors";
 import LocationIcon from "@mui/icons-material/MyLocation";
 import NotConnectedIcon from "@mui/icons-material/SensorsOff";
 import { Sensor } from "./types";
-import { forwardRef } from "react";
 import { TransitionProps } from "@mui/material/transitions";
+import LoadingSpinner from "./LoadingSpinner";
+const LiveDataGraphs = React.lazy(() => import("./LiveDataGraphs"));
 
 const SlideUpTransition = forwardRef(function Transition(
 	props: TransitionProps & {
@@ -80,7 +81,9 @@ export default function Sidebar({
 					Latitude: <strong>{activeSensor.latitude}</strong>
 				</Typography>
 				<Divider sx={{ my: (theme) => theme.spacing(1) }} />
-				<LiveDataGraphs />
+				<Suspense fallback={<LoadingSpinner />}>
+					<LiveDataGraphs />
+				</Suspense>
 			</Stack>
 		</>
 	);

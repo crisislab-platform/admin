@@ -7,7 +7,13 @@ import {
 	Box,
 	useTheme,
 } from "@mui/material";
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import React, {
+	MouseEvent,
+	useEffect,
+	useRef,
+	useState,
+	Suspense,
+} from "react";
 import mapboxgl, {
 	Map as MapboxMap,
 	Marker,
@@ -19,8 +25,10 @@ import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "./types";
-import Sidebar from "./Sidebar";
 import { useSnackbar } from "notistack";
+
+const Sidebar = React.lazy(() => import("./Sidebar"));
+import LoadingSpinner from "./LoadingSpinner";
 
 mapboxgl.accessToken =
 	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5YXRxeXU5MDF1cTJ3cXZoOW02cTJqNCJ9.bHkJaPz9D1xnGfuEU5mmFA";
@@ -167,12 +175,14 @@ function App() {
 			onRedirectCallback={(appState: Auth0AppState) => {
 				console.log(appState);
 			}}>
-			<Sidebar
-				activeSensor={activeSensor}
-				setActiveSensor={setActiveSensor}
-				width={drawerWidth}
-				flyToCoords={flyToCoords}
-			/>
+			<Suspense fallback={<LoadingSpinner />}>
+				<Sidebar
+					activeSensor={activeSensor}
+					setActiveSensor={setActiveSensor}
+					width={drawerWidth}
+					flyToCoords={flyToCoords}
+				/>
+			</Suspense>
 			<Menu
 				open={contextMenu !== null}
 				onClose={() => setContextMenu(null)}

@@ -12,7 +12,7 @@ import SomeDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet2
 import MostDataIcon from "@mui/icons-material/SignalCellular3Bar";
 import AllDataIcon from "@mui/icons-material/SignalCellular4Bar";
 import LatencyIcon from "@mui/icons-material/HourglassEmpty";
-
+import LoadingSpinner from "./LoadingSpinner";
 export default function LiveDataGraphs() {
 	const { user, isAuthenticated, isLoading } = useAuth0();
 
@@ -44,14 +44,7 @@ export default function LiveDataGraphs() {
 	const [eightRef, eightMeasurements] = useMeasure();
 
 	if (isLoading) {
-		return (
-			<Stack direction="row" alignItems="center">
-				<CircularProgress size={20} />
-				<Typography sx={{ ml: (theme) => theme.spacing(1) }}>
-					Logging in...
-				</Typography>
-			</Stack>
-		);
+		return <LoadingSpinner />;
 	}
 
 	if (!isAuthenticated) {
