@@ -1,11 +1,4 @@
-import {
-	Box,
-	Button,
-	Drawer,
-	IconButton,
-	Stack,
-	Typography,
-} from "@mui/material";
+import { Box, Drawer, IconButton, Stack, Typography } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 import ConnectedIcon from "@mui/icons-material/CellTower";
@@ -48,21 +41,6 @@ export default function Sidebar({
 						<CloseIcon />
 					</IconButton>
 				</Box>
-				{activeSensor && (
-					<Box sx={{ ml: "auto" }}>
-						<Button
-							onClick={() =>
-								flyToCoords(
-									activeSensor.longitude,
-									activeSensor.latitude,
-									true,
-								)
-							}
-							startIcon={<LocationIcon />}>
-							Go to sensor
-						</Button>
-					</Box>
-				)}
 			</Stack>
 			{activeSensor && (
 				<>
