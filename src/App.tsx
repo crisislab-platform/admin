@@ -53,7 +53,7 @@ function App() {
 							// Center the map on the marker
 							map.easeTo({
 								center: [sensor.lng, sensor.lat],
-								zoom: 16,
+								zoom: 14,
 								duration: 2000,
 							});
 							// Account for the drawer overlapping lots of the page
