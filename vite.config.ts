@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 
 // Code-split the library bundle (in addition to code-splitting the main app)
 const coreDeps = ["react", "react-dom", "react-router-dom"];
-function renderChunks(deps) {
+function renderChunks(deps: Record<string, string>) {
 	let chunks = {};
 	Object.keys(deps).forEach((key) => {
 		if (coreDeps.includes(key)) return;
