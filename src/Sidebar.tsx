@@ -56,7 +56,11 @@ export default function Sidebar({
 								<NotConnectedIcon color="error" />
 							)}
 							<Typography>
-								<strong>{activeSensor.status}</strong>
+								<strong>
+									{activeSensor.status === "online"
+										? "Online"
+										: "Offline"}
+								</strong>
 							</Typography>
 						</Stack>
 					</Stack>
