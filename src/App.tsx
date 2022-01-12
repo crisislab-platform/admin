@@ -1,10 +1,11 @@
-import { Fab, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
+import { Fab, Menu, MenuItem, Tooltip, Typography, Box } from "@mui/material";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import mapboxgl, {
 	Map as MapboxMap,
 	Marker,
 	NavigationControl,
 } from "mapbox-gl";
+import { Auth0Provider, AppState as Auth0AppState } from "@auth0/auth0-react";
 
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
@@ -56,10 +57,15 @@ function App() {
 			]);
 		}, 5000);
 	}
+
 	useEffect(() => {
 		const timeout = loadSensorLocations();
 		return () => clearTimeout(timeout);
 	}, []);
+
+	useEffect(() => {
+		setDrawerWidth(window.innerWidth / 3);
+	}, [window.innerWidth]);
 
 	useEffect(() => {
 		if (mapContainerRef.current) {
@@ -141,7 +147,15 @@ function App() {
 	}
 
 	return (
-		<>
+		<Auth0Provider
+			domain={import.meta.env.VITE_AUTH0_DOMAIN}
+			clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+			redirectUri={window.location.origin}
+			scope="read:current_user update:current_user_metadata"
+			audience={import.meta.env.VITE_AUTH0_AUDIENCE}
+			onRedirectCallback={(appState: Auth0AppState) => {
+				console.log(appState);
+			}}>
 			<Sidebar
 				activeSensor={activeSensor}
 				setActiveSensor={setActiveSensor}
@@ -185,23 +199,25 @@ function App() {
 				</MenuItem>
 			</Menu>
 			<Tooltip title="Reload sensor locations" placement="left">
-				<Fab
-					disabled={!sensors}
+				<Box
 					sx={{
 						position: "absolute",
 						right: (theme) => theme.spacing(2),
 						bottom: (theme) => theme.spacing(2),
 						zIndex: (theme) => theme.zIndex.drawer + 1,
-					}}
-					color="primary"
-					aria-label="reload sensor lcoations"
-					onClick={() => {
-						setSensors(null);
-						setActiveSensor(null);
-						loadSensorLocations();
 					}}>
-					<ReloadIcon />
-				</Fab>
+					<Fab
+						disabled={!sensors}
+						color="primary"
+						aria-label="reload sensor lcoations"
+						onClick={() => {
+							setSensors(null);
+							setActiveSensor(null);
+							loadSensorLocations();
+						}}>
+						<ReloadIcon />
+					</Fab>
+				</Box>
 			</Tooltip>
 			<div
 				style={{
@@ -214,7 +230,7 @@ function App() {
 				className="map-container"
 				ref={mapContainerRef}
 			/>
-		</>
+		</Auth0Provider>
 	);
 }
 

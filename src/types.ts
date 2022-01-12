@@ -4,3 +4,7 @@ export interface Sensor {
 	latitude: number;
 	id: number | string;
 }
+
+export interface MotionData {
+	time: number;
+}
