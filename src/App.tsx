@@ -31,7 +31,6 @@ function App() {
 	} | null>(null);
 
 	useEffect(() => {
-		console.log("mapeffect");
 		if (mapContainerRef.current) {
 			setMap(
 				new MapboxMap({
@@ -47,7 +46,6 @@ function App() {
 
 			// Clean up on unmount
 			return () => {
-				console.log("map removed");
 				map?.remove();
 			};
 		}
@@ -55,11 +53,8 @@ function App() {
 
 	useEffect(() => {
 		let markers: Marker[] = [];
-		console.log("effect");
 		if (map) {
-			console.log("map");
 			sensors.map((sensor) => {
-				console.log(sensor.id);
 				if (map) {
 					let markerColour =
 						sensor.status === "online" ? "green" : "red";
@@ -73,7 +68,6 @@ function App() {
 						.addTo(map);
 					const markerEl = marker.getElement();
 					markerEl.addEventListener("click", () => {
-						console.log(`Sensor ${sensor.id} clicked`);
 						setActiveSensor(sensor);
 						if (map) {
 							flyToCoords(sensor.longitude, sensor.latitude);
