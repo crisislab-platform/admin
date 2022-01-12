@@ -1,10 +1,13 @@
+import { Menu, MenuItem, Typography } from "@mui/material";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import mapboxgl, {
 	Map as MapboxMap,
 	Marker,
 	NavigationControl,
 } from "mapbox-gl";
-import { useEffect, useRef, useState } from "react";
 
+import CopyIcon from "@mui/icons-material/FileCopy";
+import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import { Sensor } from "./types";
 import Sidebar from "./Sidebar";
 
@@ -21,8 +24,12 @@ function App() {
 	]);
 	const [activeSensor, setActiveSensor] = useState<null | Sensor>(null);
 	const [map, setMap] = useState<null | MapboxMap>(null);
+	const [contextMenu, setContextMenu] = useState<{
+		mouseX: number;
+		mouseY: number;
+		sensor: Sensor;
+	} | null>(null);
 
-	// Initialize map when component mounts
 	useEffect(() => {
 		console.log("mapeffect");
 		if (mapContainerRef.current) {
@@ -64,13 +71,30 @@ function App() {
 					})
 						.setLngLat([sensor.longitude, sensor.latitude])
 						.addTo(map);
-					marker.getElement().addEventListener("click", () => {
+					const markerEl = marker.getElement();
+					markerEl.addEventListener("click", () => {
 						console.log(`Sensor ${sensor.id} clicked`);
 						setActiveSensor(sensor);
 						if (map) {
 							flyToCoords(sensor.longitude, sensor.latitude);
 						}
 					});
+					markerEl.addEventListener(
+						"contextmenu",
+						// @ts-ignore
+						(event: MouseEvent) => {
+							event.preventDefault();
+							setContextMenu(
+								contextMenu === null
+									? {
+											mouseX: event.clientX - 2,
+											mouseY: event.clientY - 4,
+											sensor,
+									  }
+									: null,
+							);
+						},
+					);
 					markers.push(marker);
 				}
 			});
@@ -99,6 +123,42 @@ function App() {
 				width={drawerWidth}
 				flyToCoords={flyToCoords}
 			/>
+			<Menu
+				open={contextMenu !== null}
+				onClose={() => setContextMenu(null)}
+				anchorReference="anchorPosition"
+				anchorPosition={
+					contextMenu !== null
+						? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+						: undefined
+				}>
+				<MenuItem
+					onClick={() => {
+						if (contextMenu) {
+							navigator.clipboard.writeText(
+								contextMenu.sensor.id,
+							);
+							setContextMenu(null);
+						}
+					}}>
+					<FingerprintIcon sx={{ mr: 2 }} />
+					<Typography>
+						Sensor ID: <strong>{contextMenu?.sensor.id}</strong>
+					</Typography>
+				</MenuItem>
+				<MenuItem
+					onClick={() => {
+						if (contextMenu) {
+							navigator.clipboard.writeText(
+								`${contextMenu.sensor.longitude}, ${contextMenu.sensor.latitude}`,
+							);
+							setContextMenu(null);
+						}
+					}}>
+					<CopyIcon sx={{ mr: 2 }} />
+					<Typography>Copy coordinates</Typography>
+				</MenuItem>
+			</Menu>
 			<div
 				style={{
 					position: "absolute",
