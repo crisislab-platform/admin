@@ -197,6 +197,7 @@ function App() {
 					aria-label="reload sensor lcoations"
 					onClick={() => {
 						setSensors(null);
+						setActiveSensor(null);
 						loadSensorLocations();
 					}}>
 					<ReloadIcon />
