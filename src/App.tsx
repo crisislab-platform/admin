@@ -68,11 +68,7 @@ function App() {
 						console.log(`Sensor ${sensor.id} clicked`);
 						setActiveSensor(sensor);
 						if (map) {
-							flyToCoords(
-								sensor.longitude,
-								sensor.latitude,
-								true,
-							);
+							flyToCoords(sensor.longitude, sensor.latitude);
 						}
 					});
 					markers.push(marker);
@@ -84,28 +80,14 @@ function App() {
 		};
 	}, [sensors, activeSensor, map]);
 
-	function flyToCoords(
-		longatude: number,
-		latitude: number,
-		sidebarOpen: boolean = false,
-	): void {
+	function flyToCoords(longatude: number, latitude: number): void {
 		const flyTime = 1500;
 		if (map) {
-			// Center the map on the marker
 			map.easeTo({
 				center: [longatude, latitude],
 				zoom: 13,
 				duration: flyTime,
 			});
-			if (sidebarOpen) {
-				// Account for the drawer overlapping lots of the page
-				setTimeout(() => {
-					if (map) {
-						// I have no idea why dividing this by 2 centers it but it does
-						map.panBy([drawerWidth / 2, 0]);
-					}
-				}, flyTime);
-			}
 		}
 	}
 
