@@ -63,6 +63,12 @@ export default function Sidebar({
 								</strong>
 							</Typography>
 						</Stack>
+						<Typography>
+							Longitude: <strong>{activeSensor.longitude}</strong>
+						</Typography>
+						<Typography>
+							Latitude: <strong>{activeSensor.latitude}</strong>
+						</Typography>
 					</Stack>
 				</>
 			)}
