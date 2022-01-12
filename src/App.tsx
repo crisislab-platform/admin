@@ -1,9 +1,11 @@
-import { Typography, IconButton, Drawer, Stack, Box } from "@mui/material";
+import { Box, Drawer, IconButton, Stack, Typography } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+
 import CloseIcon from "@mui/icons-material/Close";
-import { useState, useEffect, useRef } from "react";
-import mapboxgl from "mapbox-gl";
 import ConnectedIcon from "@mui/icons-material/CellTower";
 import NotConnectedIcon from "@mui/icons-material/PortableWifiOff";
+import mapboxgl from "mapbox-gl";
+
 mapboxgl.accessToken =
 	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5YXRxeXU5MDF1cTJ3cXZoOW02cTJqNCJ9.bHkJaPz9D1xnGfuEU5mmFA";
 
@@ -17,13 +19,10 @@ interface Sensor {
 function App() {
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
-	const [lng, setLng] = useState(5);
-	const [lat, setLat] = useState(34);
-	const [zoom, setZoom] = useState(1.5);
 	const [sensors, setSensors] = useState<Sensor[]>([
-		{ status: "offline", lat: 13.65147, lng: 54.608166, id: 2 },
-		{ status: "online", lat: 12.65147, lng: 55.608166, id: 1 },
-		{ status: "online", lat: 11.65147, lng: 56.608166, id: 0 },
+		{ status: "offline", lng: 174.8, lat: -41.325, id: 2 },
+		{ status: "online", lng: 174.81, lat: -41.326, id: 1 },
+		{ status: "online", lng: 174.82, lat: -41.327, id: 0 },
 	]);
 	const [activeSensor, setActiveSensor] = useState<null | Sensor>(null);
 	let map = useRef<null | mapboxgl.Map>(null).current;
@@ -34,8 +33,8 @@ function App() {
 			map = new mapboxgl.Map({
 				container: mapContainerRef.current,
 				style: "mapbox://styles/mapbox/streets-v11",
-				center: [lng, lat],
-				zoom: zoom,
+				center: [174.8, -41.325],
+				zoom: 10,
 			});
 
 			// Add navigation control (the +/- zoom buttons)
@@ -54,7 +53,7 @@ function App() {
 							// Center the map on the marker
 							map.easeTo({
 								center: [sensor.lng, sensor.lat],
-								zoom: 9,
+								zoom: 16,
 								duration: 2000,
 							});
 							// Account for the drawer overlapping lots of the page
