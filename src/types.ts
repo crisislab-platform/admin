@@ -7,4 +7,5 @@ export interface Sensor {
 
 export interface MotionData {
 	time: number;
+	value: number;
 }

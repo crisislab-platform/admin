@@ -14,9 +14,9 @@ import {
 } from "@mui/material";
 import LiveDataGraphs from "./LiveDataGraphs";
 import CloseIcon from "@mui/icons-material/Close";
-import ConnectedIcon from "@mui/icons-material/CellTower";
+import ConnectedIcon from "@mui/icons-material/Sensors";
 import LocationIcon from "@mui/icons-material/MyLocation";
-import NotConnectedIcon from "@mui/icons-material/PortableWifiOff";
+import NotConnectedIcon from "@mui/icons-material/SensorsOff";
 import { Sensor } from "./types";
 import { forwardRef } from "react";
 import { TransitionProps } from "@mui/material/transitions";

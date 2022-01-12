@@ -1,4 +1,12 @@
-import { Fab, Menu, MenuItem, Tooltip, Typography, Box } from "@mui/material";
+import {
+	Fab,
+	Menu,
+	MenuItem,
+	Tooltip,
+	Typography,
+	Box,
+	useTheme,
+} from "@mui/material";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import mapboxgl, {
 	Map as MapboxMap,
@@ -18,6 +26,7 @@ mapboxgl.accessToken =
 	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5YXRxeXU5MDF1cTJ3cXZoOW02cTJqNCJ9.bHkJaPz9D1xnGfuEU5mmFA";
 
 function App() {
+	const theme = useTheme();
 	const { enqueueSnackbar } = useSnackbar();
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
@@ -94,9 +103,11 @@ function App() {
 			sensors?.map((sensor) => {
 				if (map) {
 					let markerColour =
-						sensor.status === "online" ? "green" : "red";
+						sensor.status === "online"
+							? theme.palette.success.main
+							: theme.palette.error.main;
 					if (!!activeSensor && sensor.id === activeSensor.id) {
-						markerColour = "blue";
+						markerColour = theme.palette.primary.main;
 					}
 					const marker = new Marker({
 						color: markerColour,
