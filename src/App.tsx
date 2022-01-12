@@ -11,9 +11,9 @@ function App() {
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
 	const [sensors, setSensors] = useState<Sensor[]>([
-		{ status: "offline", lng: 174.8, lat: -41.325, id: 2 },
-		{ status: "online", lng: 174.81, lat: -41.326, id: 1 },
-		{ status: "online", lng: 174.82, lat: -41.327, id: 0 },
+		{ status: "offline", longitude: 174.8, latitude: -41.325, id: 2 },
+		{ status: "online", longitude: 174.81, latitude: -41.326, id: 1 },
+		{ status: "online", longitude: 174.82, latitude: -41.327, id: 0 },
 	]);
 	const [activeSensor, setActiveSensor] = useState<null | Sensor>(null);
 	let map = useRef<null | mapboxgl.Map>(null).current;
@@ -36,12 +36,16 @@ function App() {
 					const marker = new mapboxgl.Marker({
 						color: sensor.status === "online" ? "green" : "red",
 					})
-						.setLngLat([sensor.lng, sensor.lat])
+						.setLngLat([sensor.longitude, sensor.latitude])
 						.addTo(map);
 					marker.getElement().addEventListener("click", () => {
 						setActiveSensor(sensor);
 						if (map) {
-							flyToCoords(sensor.lng, sensor.lat, true);
+							flyToCoords(
+								sensor.longitude,
+								sensor.latitude,
+								true,
+							);
 						}
 					});
 				}

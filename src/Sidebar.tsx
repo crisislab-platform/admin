@@ -53,8 +53,8 @@ export default function Sidebar({
 						<Button
 							onClick={() =>
 								flyToCoords(
-									activeSensor.lng,
-									activeSensor.lat,
+									activeSensor.longitude,
+									activeSensor.latitude,
 									true,
 								)
 							}
