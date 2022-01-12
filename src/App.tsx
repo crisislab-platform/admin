@@ -1,4 +1,4 @@
-import { Menu, MenuItem, Typography } from "@mui/material";
+import { Fab, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import mapboxgl, {
 	Map as MapboxMap,
@@ -8,6 +8,7 @@ import mapboxgl, {
 
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
+import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "./types";
 import Sidebar from "./Sidebar";
 import { useSnackbar } from "notistack";
@@ -29,9 +30,9 @@ function App() {
 	} | null>(null);
 
 	// Simulate loading
-	useEffect(() => {
+	function loadSensorLocations() {
 		enqueueSnackbar("Loading sensor locations...", { variant: "info" });
-		const timeout = setTimeout(() => {
+		return setTimeout(() => {
 			enqueueSnackbar("Loaded sensor locations!", { variant: "success" });
 			setSensors([
 				{
@@ -54,6 +55,9 @@ function App() {
 				},
 			]);
 		}, 5000);
+	}
+	useEffect(() => {
+		const timeout = loadSensorLocations();
 		return () => clearTimeout(timeout);
 	}, []);
 
@@ -180,6 +184,24 @@ function App() {
 					<Typography>Copy coordinates</Typography>
 				</MenuItem>
 			</Menu>
+			<Tooltip title="Reload sensor locations" placement="left">
+				<Fab
+					disabled={!sensors}
+					sx={{
+						position: "absolute",
+						right: (theme) => theme.spacing(2),
+						bottom: (theme) => theme.spacing(2),
+						zIndex: (theme) => theme.zIndex.drawer + 1,
+					}}
+					color="primary"
+					aria-label="reload sensor lcoations"
+					onClick={() => {
+						setSensors(null);
+						loadSensorLocations();
+					}}>
+					<ReloadIcon />
+				</Fab>
+			</Tooltip>
 			<div
 				style={{
 					position: "absolute",

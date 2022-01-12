@@ -15,7 +15,7 @@ ReactDOM.render(
 	<React.StrictMode>
 		<CssBaseline enableColorScheme />
 		<SnackbarProvider
-			anchorOrigin={{ horizontal: "right", vertical: "bottom" }}>
+			anchorOrigin={{ horizontal: "left", vertical: "bottom" }}>
 			<App />
 		</SnackbarProvider>
 	</React.StrictMode>,
