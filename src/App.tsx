@@ -41,19 +41,7 @@ function App() {
 					marker.getElement().addEventListener("click", () => {
 						setActiveSensor(sensor);
 						if (map) {
-							// Center the map on the marker
-							map.easeTo({
-								center: [sensor.lng, sensor.lat],
-								zoom: 14,
-								duration: 2000,
-							});
-							// Account for the drawer overlapping lots of the page
-							setTimeout(() => {
-								if (map) {
-									// I have no idea why dividing this by 2 centers it but it does
-									map.panBy([drawerWidth / 2, 0]);
-								}
-							}, 2000);
+							flyToCoords(sensor.lng, sensor.lat, true);
 						}
 					});
 				}
@@ -64,12 +52,38 @@ function App() {
 		}
 	}, [sensors]); // eslint-disable-line react-hooks/exhaustive-deps
 
+	function flyToCoords(
+		longatude: number,
+		latitude: number,
+		sidebarOpen: boolean = false,
+	): void {
+		const flyTime = 1500;
+		if (map) {
+			// Center the map on the marker
+			map.easeTo({
+				center: [longatude, latitude],
+				zoom: 13,
+				duration: flyTime,
+			});
+			if (sidebarOpen) {
+				// Account for the drawer overlapping lots of the page
+				setTimeout(() => {
+					if (map) {
+						// I have no idea why dividing this by 2 centers it but it does
+						map.panBy([drawerWidth / 2, 0]);
+					}
+				}, flyTime);
+			}
+		}
+	}
+
 	return (
 		<>
 			<Sidebar
 				activeSensor={activeSensor}
 				setActiveSensor={setActiveSensor}
 				width={drawerWidth}
+				flyToCoords={flyToCoords}
 			/>
 			<div
 				style={{

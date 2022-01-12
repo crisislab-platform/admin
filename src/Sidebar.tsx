@@ -1,7 +1,15 @@
-import { Box, Drawer, IconButton, Stack, Typography } from "@mui/material";
+import {
+	Box,
+	Button,
+	Drawer,
+	IconButton,
+	Stack,
+	Typography,
+} from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 import ConnectedIcon from "@mui/icons-material/CellTower";
+import LocationIcon from "@mui/icons-material/MyLocation";
 import NotConnectedIcon from "@mui/icons-material/PortableWifiOff";
 import { Sensor } from "./types";
 
@@ -9,10 +17,16 @@ export default function Sidebar({
 	activeSensor,
 	setActiveSensor,
 	width,
+	flyToCoords,
 }: {
 	activeSensor: Sensor | null;
 	setActiveSensor: (toSet: Sensor | null) => void;
 	width: number;
+	flyToCoords: (
+		longatude: number,
+		latitude: number,
+		sidebarOpen: boolean,
+	) => void;
 }) {
 	return (
 		<Drawer
@@ -28,11 +42,28 @@ export default function Sidebar({
 			open={!!activeSensor}
 			variant="persistent"
 			anchor="right">
-			<Box>
-				<IconButton onClick={() => setActiveSensor(null)}>
-					<CloseIcon />
-				</IconButton>
-			</Box>
+			<Stack direction="row">
+				<Box>
+					<IconButton onClick={() => setActiveSensor(null)}>
+						<CloseIcon />
+					</IconButton>
+				</Box>
+				{activeSensor && (
+					<Box sx={{ ml: "auto" }}>
+						<Button
+							onClick={() =>
+								flyToCoords(
+									activeSensor.lng,
+									activeSensor.lat,
+									true,
+								)
+							}
+							startIcon={<LocationIcon />}>
+							Go to sensor
+						</Button>
+					</Box>
+				)}
+			</Stack>
 			{activeSensor && (
 				<>
 					<Stack sx={{ p: 1 }}>

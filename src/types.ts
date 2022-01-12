@@ -1,6 +1,6 @@
 export interface Sensor {
 	status: "online" | "offline";
-	lat: number;
 	lng: number;
+	lat: number;
 	id: number;
 }
