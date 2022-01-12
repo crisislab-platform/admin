@@ -136,7 +136,7 @@ function App() {
 					onClick={() => {
 						if (contextMenu) {
 							navigator.clipboard.writeText(
-								contextMenu.sensor.id,
+								contextMenu.sensor.id + "",
 							);
 							setContextMenu(null);
 						}
