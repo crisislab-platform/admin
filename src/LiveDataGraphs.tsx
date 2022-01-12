@@ -14,7 +14,10 @@ import AllDataIcon from "@mui/icons-material/SignalCellular4Bar";
 import LatencyIcon from "@mui/icons-material/HourglassEmpty";
 import LoadingSpinner from "./LoadingSpinner";
 export default function LiveDataGraphs() {
-	const { user, isAuthenticated, isLoading } = useAuth0();
+	const { user, isAuthenticated, isLoading, getAccessTokenSilently } =
+		useAuth0();
+
+	const [JWT, setJWT] = useState<null | string>(null);
 
 	const [hundredthData, setHundredthData] = useState<{
 		EHZ: MotionData[];
@@ -43,8 +46,25 @@ export default function LiveDataGraphs() {
 	const [sixRef, sixMeasurements] = useMeasure();
 	const [eightRef, eightMeasurements] = useMeasure();
 
+	useEffect(() => {
+		const getUserMetadata = async () => {
+			try {
+				const accessToken = await getAccessTokenSilently({
+					audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+					scope: import.meta.env.VITE_AUTH0_SCOPE,
+				});
+				console.log(`JWT: ${accessToken}`);
+				setJWT(accessToken);
+			} catch (e) {
+				console.log(e as any);
+			}
+		};
+
+		getUserMetadata();
+	}, [getAccessTokenSilently, user?.sub]);
+
 	if (isLoading) {
-		return <LoadingSpinner />;
+		return <LoadingSpinner message="Logging in..." />;
 	}
 
 	if (!isAuthenticated) {
@@ -152,6 +172,11 @@ export default function LiveDataGraphs() {
 					gridYValues={[0, 500, 1000, 1500, 2000, 2500]}
 				/>
 			</Box>
+			{JWT && (
+				<Typography sx={{ overflow: "auto" }}>
+					JWT: <strong>{JWT}</strong>
+				</Typography>
+			)}
 			<LogoutButton />
 		</Stack>
 	);

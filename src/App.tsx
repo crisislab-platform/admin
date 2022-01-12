@@ -170,7 +170,7 @@ function App() {
 			domain={import.meta.env.VITE_AUTH0_DOMAIN}
 			clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
 			redirectUri={window.location.origin}
-			scope="read:current_user update:current_user_metadata"
+			scope={import.meta.env.VITE_AUTH0_SCOPE}
 			audience={import.meta.env.VITE_AUTH0_AUDIENCE}
 			onRedirectCallback={(appState: Auth0AppState) => {
 				console.log(appState);
