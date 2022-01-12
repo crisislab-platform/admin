@@ -10,18 +10,16 @@ import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import { Sensor } from "./types";
 import Sidebar from "./Sidebar";
+import { useSnackbar } from "notistack";
 
 mapboxgl.accessToken =
 	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5YXRxeXU5MDF1cTJ3cXZoOW02cTJqNCJ9.bHkJaPz9D1xnGfuEU5mmFA";
 
 function App() {
+	const { enqueueSnackbar } = useSnackbar();
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
-	const [sensors, setSensors] = useState<Sensor[]>([
-		{ status: "offline", longitude: 174.8, latitude: -41.325, id: 2 },
-		{ status: "online", longitude: 174.81, latitude: -41.326, id: 1 },
-		{ status: "online", longitude: 174.82, latitude: -41.327, id: 0 },
-	]);
+	const [sensors, setSensors] = useState<Sensor[] | null>(null);
 	const [activeSensor, setActiveSensor] = useState<null | Sensor>(null);
 	const [map, setMap] = useState<null | MapboxMap>(null);
 	const [contextMenu, setContextMenu] = useState<{
@@ -29,6 +27,35 @@ function App() {
 		mouseY: number;
 		sensor: Sensor;
 	} | null>(null);
+
+	// Simulate loading
+	useEffect(() => {
+		enqueueSnackbar("Loading sensor locations...", { variant: "info" });
+		const timeout = setTimeout(() => {
+			enqueueSnackbar("Loaded sensor locations!", { variant: "success" });
+			setSensors([
+				{
+					status: "offline",
+					longitude: 174.8,
+					latitude: -41.325,
+					id: 2,
+				},
+				{
+					status: "online",
+					longitude: 174.81,
+					latitude: -41.326,
+					id: 1,
+				},
+				{
+					status: "online",
+					longitude: 174.82,
+					latitude: -41.327,
+					id: 0,
+				},
+			]);
+		}, 5000);
+		return () => clearTimeout(timeout);
+	}, []);
 
 	useEffect(() => {
 		if (mapContainerRef.current) {
@@ -54,7 +81,7 @@ function App() {
 	useEffect(() => {
 		let markers: Marker[] = [];
 		if (map) {
-			sensors.map((sensor) => {
+			sensors?.map((sensor) => {
 				if (map) {
 					let markerColour =
 						sensor.status === "online" ? "green" : "red";
