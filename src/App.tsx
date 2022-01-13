@@ -252,45 +252,31 @@ function App() {
 					<Typography>Copy coordinates</Typography>
 				</MenuItem>
 			</Menu>
-			<Popover
-				open={!!popover}
-				onClose={() => setPopover(null)}
-				sx={
-					popover
-						? {
-								position: "absolute",
-								left: window.innerWidth / 2 - 130,
-								top: window.innerHeight / 2 - 200,
-								"& > .MuiPaper-root": {
-									p: (theme) => theme.spacing(1),
-								},
-						  }
-						: undefined
-				}
-				// sx={{
-				// 	"& > .MuiPaper-root": {
-				// 		p: (theme) => theme.spacing(1),
-				// 	},
-				// }}
-				// anchorEl={popover ? popover.marker.getElement() : undefined}
-				// transformOrigin={{ vertical: "bottom", horizontal: "center" }}
-				// anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-			>
-				<Stack>
-					{popover && <BasicSensorInfo sensor={popover.sensor} />}
-
-					<Button
-						variant="outlined"
-						onClick={() => {
-							if (popover) {
+			{popover && (
+				<Popover
+					open={!!popover}
+					onClose={() => setPopover(null)}
+					sx={{
+						position: "absolute",
+						left: window.innerWidth / 2 - 130,
+						top: window.innerHeight / 2 - 200,
+						"& > .MuiPaper-root": {
+							p: (theme) => theme.spacing(1),
+						},
+					}}>
+					<Stack>
+						<BasicSensorInfo sensor={popover.sensor} />
+						<Button
+							variant="outlined"
+							onClick={() => {
 								setActiveSensor(popover.sensor);
 								setPopover(null);
-							}
-						}}>
-						More details
-					</Button>
-				</Stack>
-			</Popover>
+							}}>
+							More details
+						</Button>
+					</Stack>
+				</Popover>
+			)}
 			<SpeedDial
 				sx={{
 					position: "absolute",
