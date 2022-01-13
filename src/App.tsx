@@ -26,7 +26,7 @@ import { Auth0Provider, AppState as Auth0AppState } from "@auth0/auth0-react";
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import ReloadIcon from "@mui/icons-material/Replay";
-import AlternativeReloadIcon from "@mui/icons-material/Cached";
+import MarkerIcon from "@mui/icons-material/LocationOn";
 import MapIcon from "@mui/icons-material/Map";
 import { Sensor } from "./types";
 import { useSnackbar } from "notistack";
@@ -302,7 +302,7 @@ function App() {
 				ariaLabel="Reload buttons"
 				icon={<ReloadIcon />}>
 				<SpeedDialAction
-					icon={<AlternativeReloadIcon />}
+					icon={<MarkerIcon />}
 					tooltipTitle="Reload sensor locations"
 					onClick={() => {
 						setSensors(null);
