@@ -1,5 +1,6 @@
 import {
-	Fab,
+	SpeedDial,
+	SpeedDialAction,
 	Menu,
 	MenuItem,
 	Tooltip,
@@ -24,6 +25,8 @@ import { Auth0Provider, AppState as Auth0AppState } from "@auth0/auth0-react";
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import ReloadIcon from "@mui/icons-material/Replay";
+import AlternativeReloadIcon from "@mui/icons-material/Cached";
+import MapIcon from "@mui/icons-material/Map";
 import { Sensor } from "./types";
 import { useSnackbar } from "notistack";
 
@@ -35,7 +38,7 @@ mapboxgl.accessToken =
 
 function App() {
 	const theme = useTheme();
-	const { enqueueSnackbar } = useSnackbar();
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
 	const [sensors, setSensors] = useState<Sensor[] | null>(null);
@@ -49,8 +52,11 @@ function App() {
 
 	// Simulate loading
 	function loadSensorLocations() {
-		enqueueSnackbar("Loading sensor locations...", { variant: "info" });
+		const snack = enqueueSnackbar("Loading sensor locations...", {
+			variant: "info",
+		});
 		return setTimeout(() => {
+			closeSnackbar(snack);
 			enqueueSnackbar("Loaded sensor locations!", { variant: "success" });
 			setSensors([
 				{
@@ -84,25 +90,37 @@ function App() {
 		setDrawerWidth(window.innerWidth / 3);
 	}, [window.innerWidth]);
 
-	useEffect(() => {
+	function loadMap() {
 		if (mapContainerRef.current) {
-			setMap(
-				new MapboxMap({
-					container: mapContainerRef.current,
-					style: "mapbox://styles/mapbox/streets-v11",
-					center: [174.8, -41.325],
-					zoom: 10,
-				}),
-			);
+			const snack = enqueueSnackbar("Loading map...", {
+				variant: "info",
+			});
+			const newMap = new MapboxMap({
+				container: mapContainerRef.current,
+				style: "mapbox://styles/mapbox/streets-v11",
+				center: [174.8, -41.325],
+				zoom: 10,
+			});
 
 			// Add navigation control (the +/- zoom buttons)
-			map?.addControl(new NavigationControl(), "top-right");
+			newMap.addControl(new NavigationControl(), "top-right");
 
-			// Clean up on unmount
-			return () => {
-				map?.remove();
-			};
+			setMap(newMap);
+
+			closeSnackbar(snack);
+			enqueueSnackbar("Loaded map!", {
+				variant: "success",
+			});
 		}
+	}
+
+	useEffect(() => {
+		loadMap();
+
+		// Clean up on unmount
+		return () => {
+			map?.remove();
+		};
 	}, []);
 
 	useEffect(() => {
@@ -219,27 +237,36 @@ function App() {
 					<Typography>Copy coordinates</Typography>
 				</MenuItem>
 			</Menu>
-			<Tooltip title="Reload sensor locations" placement="left">
-				<Box
-					sx={{
-						position: "absolute",
-						right: (theme) => theme.spacing(2),
-						bottom: (theme) => theme.spacing(2),
-						zIndex: (theme) => theme.zIndex.drawer + 1,
-					}}>
-					<Fab
-						disabled={!sensors}
-						color="primary"
-						aria-label="reload sensor lcoations"
-						onClick={() => {
-							setSensors(null);
-							setActiveSensor(null);
-							loadSensorLocations();
-						}}>
-						<ReloadIcon />
-					</Fab>
-				</Box>
-			</Tooltip>
+
+			<SpeedDial
+				sx={{
+					position: "absolute",
+					right: (theme) => theme.spacing(2),
+					bottom: (theme) => theme.spacing(2),
+					zIndex: (theme) => theme.zIndex.drawer + 1,
+				}}
+				color="primary"
+				ariaLabel="Reload buttons"
+				icon={<ReloadIcon />}>
+				<SpeedDialAction
+					icon={<AlternativeReloadIcon />}
+					tooltipTitle="Reload sensor locations"
+					onClick={() => {
+						setSensors(null);
+						setActiveSensor(null);
+						loadSensorLocations();
+					}}
+				/>
+				<SpeedDialAction
+					icon={<MapIcon />}
+					tooltipTitle="Re-initalize map"
+					onClick={() => {
+						setMap(null);
+						loadMap();
+					}}
+				/>
+			</SpeedDial>
+
 			<div
 				style={{
 					position: "absolute",
