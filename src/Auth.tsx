@@ -15,7 +15,7 @@ import {
 } from "react";
 
 import LoadingSpinner from "./LoadingSpinner";
-import LoginIcon from "@mui/icons-material/Login";
+import LoginIcon from "@mui/icons-material/VpnKey";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth0 } from "@auth0/auth0-react";
 
