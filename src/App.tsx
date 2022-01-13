@@ -99,7 +99,7 @@ function App() {
 				container: mapContainerRef.current,
 				style: "mapbox://styles/mapbox/streets-v11",
 				center: [174.8, -41.325],
-				zoom: 10,
+				zoom: 5.2,
 			});
 
 			// Add navigation control (the +/- zoom buttons)
