@@ -1,18 +1,19 @@
-import { ResponsiveLineCanvas } from "@nivo/line";
-import { Box, Stack, Typography, CircularProgress } from "@mui/material";
-import { useState, useEffect, useContext } from "react";
-import { useMeasure } from "react-use";
-import { useAuth0 } from "@auth0/auth0-react";
-import { JWTContext, LoginButton, LogoutButton } from "./Auth";
-import { MotionData } from "./types";
+import { Box, CircularProgress, Stack, Typography } from "@mui/material";
+import { JWTContext, LoginButton } from "./Auth";
+import { useContext, useEffect, useState } from "react";
 
-import NoDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet0Bar";
 import ALittleDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet1Bar";
-import SomeDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet2Bar";
-import MostDataIcon from "@mui/icons-material/SignalCellular3Bar";
 import AllDataIcon from "@mui/icons-material/SignalCellular4Bar";
 import LatencyIcon from "@mui/icons-material/HourglassEmpty";
 import LoadingSpinner from "./LoadingSpinner";
+import MostDataIcon from "@mui/icons-material/SignalCellular3Bar";
+import { MotionData } from "./types";
+import NoDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet0Bar";
+import { ResponsiveLineCanvas } from "@nivo/line";
+import SomeDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet2Bar";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useMeasure } from "react-use";
+
 export default function LiveDataGraphs() {
 	const { user, isAuthenticated, isLoading, getAccessTokenSilently } =
 		useAuth0();
@@ -62,10 +63,6 @@ export default function LiveDataGraphs() {
 
 		asyncFunction();
 	}, [getAccessTokenSilently, user?.sub]);
-
-	if (isLoading) {
-		return <LoadingSpinner message="Logging in..." />;
-	}
 
 	if (!isAuthenticated) {
 		return <LoginButton message="Log in to view live data" />;
@@ -177,7 +174,7 @@ export default function LiveDataGraphs() {
 					JWT: <strong>{JWT}</strong>
 				</Typography>
 			)}
-			<LogoutButton />
+			<LoginButton />
 		</Stack>
 	);
 }

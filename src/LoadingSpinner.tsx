@@ -1,9 +1,15 @@
-import { Stack, CircularProgress, Typography } from "@mui/material";
+import { CircularProgress, Stack, Typography } from "@mui/material";
 
-export default function LoadingSpinner({ message }: { message?: string }) {
+export default function LoadingSpinner({
+	message,
+	color,
+}: {
+	message?: string;
+	color?: "primary" | "secondary";
+}) {
 	return (
 		<Stack direction="row" alignItems="center">
-			<CircularProgress size={20} />
+			<CircularProgress size={20} color={color} />
 			<Typography sx={{ ml: (theme) => theme.spacing(1) }}>
 				{message || "Loading..."}...
 			</Typography>

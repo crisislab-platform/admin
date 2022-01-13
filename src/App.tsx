@@ -1,46 +1,52 @@
 import {
-	SpeedDial,
-	SpeedDialAction,
+	AppState as Auth0AppState,
+	Auth0Provider,
+	useAuth0,
+} from "@auth0/auth0-react";
+import {
+	Box,
+	Button,
 	Menu,
 	MenuItem,
 	Popover,
-	Typography,
-	Button,
-	useTheme,
+	SpeedDial,
+	SpeedDialAction,
 	Stack,
-	Box,
+	Typography,
+	useTheme,
 } from "@mui/material";
+import { JWTContext, LoginFab } from "./Auth";
 import React, {
 	MouseEvent,
+	Suspense,
 	useEffect,
 	useRef,
 	useState,
-	Suspense,
 } from "react";
 import mapboxgl, {
 	Map as MapboxMap,
 	Marker,
 	NavigationControl,
 } from "mapbox-gl";
-import { Auth0Provider, AppState as Auth0AppState } from "@auth0/auth0-react";
+
+import BasicSensorInfo from "./BasicSensorInfo";
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
-import ReloadIcon from "@mui/icons-material/Replay";
-import MarkerIcon from "@mui/icons-material/LocationOn";
+import LoadingSpinner from "./LoadingSpinner";
 import MapIcon from "@mui/icons-material/Map";
+import MarkerIcon from "@mui/icons-material/LocationOn";
+import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "./types";
 import { useSnackbar } from "notistack";
-import { JWTContext } from "./Auth";
 
 const Sidebar = React.lazy(() => import("./Sidebar"));
-import LoadingSpinner from "./LoadingSpinner";
-import BasicSensorInfo from "./BasicSensorInfo";
 
 mapboxgl.accessToken =
 	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5YXRxeXU5MDF1cTJ3cXZoOW02cTJqNCJ9.bHkJaPz9D1xnGfuEU5mmFA";
 
 function App() {
 	const theme = useTheme();
+
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
@@ -324,7 +330,15 @@ function App() {
 						}}
 					/>
 				</SpeedDial>
-
+				<Box
+					sx={{
+						position: "absolute",
+						top: (theme) => theme.spacing(4),
+						left: (theme) => theme.spacing(2),
+						zIndex: (theme) => theme.zIndex.drawer + 1,
+					}}>
+					<LoginFab />
+				</Box>
 				<div
 					style={{
 						position: "absolute",
