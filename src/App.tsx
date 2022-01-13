@@ -150,17 +150,33 @@ function App() {
 						.setLngLat([sensor.longitude, sensor.latitude])
 						.addTo(map);
 					const markerEl = marker.getElement();
-					markerEl.addEventListener("click", (event) => {
+					function clickHandler() {
+						const boundingRect = markerEl.getBoundingClientRect();
 						setPopover({
-							x: event.clientX,
-							y: event.clientY,
+							x: boundingRect.x,
+							y: boundingRect.y,
 							sensor,
 							marker,
 						});
 						if (map) {
 							flyToCoords(sensor.longitude, sensor.latitude);
 						}
+					}
+
+					markerEl.addEventListener("click", clickHandler);
+					// Terrible attempt to make the markers keyboard accessible
+					/*
+					markerEl.setAttribute("tabindex", "1");
+					markerEl.addEventListener("focus", () => {
+						markerEl.setAttribute("tabindex", "-1");
+						clickHandler();
 					});
+					markerEl.addEventListener("blur", () => {
+						setTimeout(
+							() => markerEl.setAttribute("tabindex", "1"),
+							2000,
+						);
+					// });*/
 					markerEl.addEventListener(
 						"contextmenu",
 						// @ts-ignore
@@ -178,6 +194,7 @@ function App() {
 							);
 						},
 					);
+
 					markers.push(marker);
 				}
 			});
@@ -259,7 +276,7 @@ function App() {
 					sx={{
 						position: "absolute",
 						left: window.innerWidth / 2 - 130,
-						top: window.innerHeight / 2 - 200,
+						top: window.innerHeight / 2 - 210,
 						"& > .MuiPaper-root": {
 							p: (theme) => theme.spacing(1),
 						},
