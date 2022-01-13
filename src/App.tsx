@@ -297,7 +297,7 @@ function App() {
 									setActiveSensor(popover.sensor);
 									setPopover(null);
 								}}>
-								More details
+								Show in sidebar
 							</Button>
 						</Stack>
 					</Popover>
