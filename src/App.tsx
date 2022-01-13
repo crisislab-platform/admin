@@ -3,10 +3,12 @@ import {
 	SpeedDialAction,
 	Menu,
 	MenuItem,
-	Tooltip,
+	Popover,
 	Typography,
-	Box,
+	Button,
 	useTheme,
+	Stack,
+	Box,
 } from "@mui/material";
 import React, {
 	MouseEvent,
@@ -21,7 +23,6 @@ import mapboxgl, {
 	NavigationControl,
 } from "mapbox-gl";
 import { Auth0Provider, AppState as Auth0AppState } from "@auth0/auth0-react";
-
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import ReloadIcon from "@mui/icons-material/Replay";
@@ -32,6 +33,7 @@ import { useSnackbar } from "notistack";
 
 const Sidebar = React.lazy(() => import("./Sidebar"));
 import LoadingSpinner from "./LoadingSpinner";
+import BasicSensorInfo from "./BasicSensorInfo";
 
 mapboxgl.accessToken =
 	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5YXRxeXU5MDF1cTJ3cXZoOW02cTJqNCJ9.bHkJaPz9D1xnGfuEU5mmFA";
@@ -43,12 +45,19 @@ function App() {
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
 	const [sensors, setSensors] = useState<Sensor[] | null>(null);
 	const [activeSensor, setActiveSensor] = useState<null | Sensor>(null);
-	const [map, setMap] = useState<null | MapboxMap>(null);
-	const [contextMenu, setContextMenu] = useState<{
-		mouseX: number;
-		mouseY: number;
+	const [popover, setPopover] = useState<null | {
+		x: number;
+		y: number;
 		sensor: Sensor;
-	} | null>(null);
+		marker: Marker;
+	}>(null);
+	const [map, setMap] = useState<null | MapboxMap>(null);
+	const [contextMenu, setContextMenu] = useState<null | {
+		x: number;
+		y: number;
+		sensor: Sensor;
+		marker: Marker;
+	}>(null);
 
 	// Simulate loading
 	function loadSensorLocations() {
@@ -141,8 +150,13 @@ function App() {
 						.setLngLat([sensor.longitude, sensor.latitude])
 						.addTo(map);
 					const markerEl = marker.getElement();
-					markerEl.addEventListener("click", () => {
-						setActiveSensor(sensor);
+					markerEl.addEventListener("click", (event) => {
+						setPopover({
+							x: event.clientX,
+							y: event.clientY,
+							sensor,
+							marker,
+						});
 						if (map) {
 							flyToCoords(sensor.longitude, sensor.latitude);
 						}
@@ -155,9 +169,10 @@ function App() {
 							setContextMenu(
 								contextMenu === null
 									? {
-											mouseX: event.clientX - 2,
-											mouseY: event.clientY - 4,
+											x: event.clientX - 2,
+											y: event.clientY - 4,
 											sensor,
+											marker,
 									  }
 									: null,
 							);
@@ -207,7 +222,7 @@ function App() {
 				anchorReference="anchorPosition"
 				anchorPosition={
 					contextMenu !== null
-						? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+						? { top: contextMenu.y, left: contextMenu.x }
 						: undefined
 				}>
 				<MenuItem
@@ -237,7 +252,45 @@ function App() {
 					<Typography>Copy coordinates</Typography>
 				</MenuItem>
 			</Menu>
+			<Popover
+				open={!!popover}
+				onClose={() => setPopover(null)}
+				sx={
+					popover
+						? {
+								position: "absolute",
+								left: window.innerWidth / 2 - 130,
+								top: window.innerHeight / 2 - 200,
+								"& > .MuiPaper-root": {
+									p: (theme) => theme.spacing(1),
+								},
+						  }
+						: undefined
+				}
+				// sx={{
+				// 	"& > .MuiPaper-root": {
+				// 		p: (theme) => theme.spacing(1),
+				// 	},
+				// }}
+				// anchorEl={popover ? popover.marker.getElement() : undefined}
+				// transformOrigin={{ vertical: "bottom", horizontal: "center" }}
+				// anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+			>
+				<Stack>
+					{popover && <BasicSensorInfo sensor={popover.sensor} />}
 
+					<Button
+						variant="outlined"
+						onClick={() => {
+							if (popover) {
+								setActiveSensor(popover.sensor);
+								setPopover(null);
+							}
+						}}>
+						More details
+					</Button>
+				</Stack>
+			</Popover>
 			<SpeedDial
 				sx={{
 					position: "absolute",

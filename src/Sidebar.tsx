@@ -14,12 +14,12 @@ import {
 } from "@mui/material";
 import React, { Suspense, forwardRef } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import ConnectedIcon from "@mui/icons-material/Sensors";
 import LocationIcon from "@mui/icons-material/MyLocation";
-import NotConnectedIcon from "@mui/icons-material/SensorsOff";
+
 import { Sensor } from "./types";
 import { TransitionProps } from "@mui/material/transitions";
 import LoadingSpinner from "./LoadingSpinner";
+import BasicSensorInfo from "./BasicSensorInfo";
 const LiveDataGraphs = React.lazy(() => import("./LiveDataGraphs"));
 
 const SlideUpTransition = forwardRef(function Transition(
@@ -56,30 +56,7 @@ export default function Sidebar({
 	const sidebarContent = activeSensor && (
 		<>
 			<Stack sx={{ p: 1 }}>
-				<Typography>
-					Sensor ID: <strong>{activeSensor.id}</strong>
-				</Typography>
-				<Stack direction="row" gap={0.5}>
-					<Typography>Connection status: </Typography>
-					{activeSensor.status === "online" ? (
-						<ConnectedIcon color="success" />
-					) : (
-						<NotConnectedIcon color="error" />
-					)}
-					<Typography>
-						<strong>
-							{activeSensor.status === "online"
-								? "Online"
-								: "Offline"}
-						</strong>
-					</Typography>
-				</Stack>
-				<Typography>
-					Longitude: <strong>{activeSensor.longitude}</strong>
-				</Typography>
-				<Typography>
-					Latitude: <strong>{activeSensor.latitude}</strong>
-				</Typography>
+				<BasicSensorInfo sensor={activeSensor} />
 				<Divider sx={{ my: (theme) => theme.spacing(1) }} />
 				<Suspense fallback={<LoadingSpinner />}>
 					<LiveDataGraphs />
