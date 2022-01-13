@@ -9,7 +9,6 @@ import { CssBaseline } from "@mui/material";
 import React from "react";
 import ReactDOM from "react-dom";
 import { SnackbarProvider } from "notistack";
-
 ReactDOM.render(
 	<React.StrictMode>
 		<CssBaseline enableColorScheme />

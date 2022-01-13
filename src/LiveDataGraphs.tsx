@@ -1,9 +1,9 @@
 import { ResponsiveLineCanvas } from "@nivo/line";
 import { Box, Stack, Typography, CircularProgress } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useMeasure } from "react-use";
 import { useAuth0 } from "@auth0/auth0-react";
-import { LoginButton, LogoutButton } from "./Auth";
+import { JWTContext, LoginButton, LogoutButton } from "./Auth";
 import { MotionData } from "./types";
 
 import NoDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet0Bar";
@@ -17,7 +17,7 @@ export default function LiveDataGraphs() {
 	const { user, isAuthenticated, isLoading, getAccessTokenSilently } =
 		useAuth0();
 
-	const [JWT, setJWT] = useState<null | string>(null);
+	const [JWT, setJWT] = useContext(JWTContext);
 
 	const [hundredthData, setHundredthData] = useState<{
 		EHZ: MotionData[];
@@ -47,20 +47,20 @@ export default function LiveDataGraphs() {
 	const [eightRef, eightMeasurements] = useMeasure();
 
 	useEffect(() => {
-		const getUserMetadata = async () => {
+		const asyncFunction = async () => {
 			try {
-				const accessToken = await getAccessTokenSilently({
+				const JWTToken = await getAccessTokenSilently({
 					audience: import.meta.env.VITE_AUTH0_AUDIENCE,
 					scope: import.meta.env.VITE_AUTH0_SCOPE,
 				});
-				console.log(`JWT: ${accessToken}`);
-				setJWT(accessToken);
+				console.log(`JWT: ${JWTToken}`);
+				setJWT(JWTToken);
 			} catch (e) {
 				console.log(e as any);
 			}
 		};
 
-		getUserMetadata();
+		asyncFunction();
 	}, [getAccessTokenSilently, user?.sub]);
 
 	if (isLoading) {

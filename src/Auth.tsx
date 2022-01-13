@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button, Box, Typography } from "@mui/material";
-
+import { createContext, Dispatch, SetStateAction } from "react";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 
@@ -33,3 +33,7 @@ export function LogoutButton({ message }: { message?: string }) {
 		</Box>
 	);
 }
+
+export const JWTContext = createContext<
+	[null | string, Dispatch<SetStateAction<string | null>>]
+>([null, () => {}]);

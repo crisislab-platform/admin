@@ -30,6 +30,7 @@ import MarkerIcon from "@mui/icons-material/LocationOn";
 import MapIcon from "@mui/icons-material/Map";
 import { Sensor } from "./types";
 import { useSnackbar } from "notistack";
+import { JWTContext } from "./Auth";
 
 const Sidebar = React.lazy(() => import("./Sidebar"));
 import LoadingSpinner from "./LoadingSpinner";
@@ -58,42 +59,42 @@ function App() {
 		sensor: Sensor;
 		marker: Marker;
 	}>(null);
+	const [JWT, setJWT] = useState<null | string>(null);
 
 	// Simulate loading
-	function loadSensorLocations() {
+	async function loadSensorLocations() {
 		const snack = enqueueSnackbar("Loading sensor locations...", {
 			variant: "info",
 		});
-		return setTimeout(() => {
+		try {
+			const res = await fetch(
+				`https://shakemap.benhong.me/api/v1/sensors`,
+				{
+					headers: {
+						Authorisation: `Bearer ${JWT}`,
+					},
+				},
+			);
+			const data = await res.json();
+			console.log(data);
+
 			closeSnackbar(snack);
-			enqueueSnackbar("Loaded sensor locations!", { variant: "success" });
-			setSensors([
-				{
-					status: "offline",
-					longitude: 174.8,
-					latitude: -41.325,
-					id: 2,
-				},
-				{
-					status: "online",
-					longitude: 174.81,
-					latitude: -41.326,
-					id: 1,
-				},
-				{
-					status: "online",
-					longitude: 174.82,
-					latitude: -41.327,
-					id: 0,
-				},
-			]);
-		}, 5000);
+			enqueueSnackbar("Loaded sensor locations!", {
+				variant: "success",
+			});
+			setSensors(data.sensors);
+		} catch (e) {
+			closeSnackbar(snack);
+			console.log("Failed to load sensor locations. Error: ", e);
+			enqueueSnackbar("Failed to load sensor locations!", {
+				variant: "error",
+			});
+		}
 	}
 
 	useEffect(() => {
-		const timeout = loadSensorLocations();
-		return () => clearTimeout(timeout);
-	}, []);
+		loadSensorLocations();
+	}, [enqueueSnackbar, closeSnackbar, setSensors]);
 
 	useEffect(() => {
 		setDrawerWidth(window.innerWidth / 3);
@@ -216,125 +217,127 @@ function App() {
 	}
 
 	return (
-		<Auth0Provider
-			domain={import.meta.env.VITE_AUTH0_DOMAIN}
-			clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
-			redirectUri={window.location.origin}
-			scope={import.meta.env.VITE_AUTH0_SCOPE}
-			audience={import.meta.env.VITE_AUTH0_AUDIENCE}
-			onRedirectCallback={(appState: Auth0AppState) => {
-				console.log(appState);
-			}}>
-			<Suspense fallback={<LoadingSpinner />}>
-				<Sidebar
-					activeSensor={activeSensor}
-					setActiveSensor={setActiveSensor}
-					width={drawerWidth}
-					flyToCoords={flyToCoords}
-				/>
-			</Suspense>
-			<Menu
-				open={contextMenu !== null}
-				onClose={() => setContextMenu(null)}
-				anchorReference="anchorPosition"
-				anchorPosition={
-					contextMenu !== null
-						? { top: contextMenu.y, left: contextMenu.x }
-						: undefined
-				}>
-				<MenuItem
-					onClick={() => {
-						if (contextMenu) {
-							navigator.clipboard.writeText(
-								contextMenu.sensor.id + "",
-							);
-							setContextMenu(null);
-						}
-					}}>
-					<FingerprintIcon sx={{ mr: 2 }} />
-					<Typography>
-						Sensor ID: <strong>{contextMenu?.sensor.id}</strong>
-					</Typography>
-				</MenuItem>
-				<MenuItem
-					onClick={() => {
-						if (contextMenu) {
-							navigator.clipboard.writeText(
-								`${contextMenu.sensor.longitude}, ${contextMenu.sensor.latitude}`,
-							);
-							setContextMenu(null);
-						}
-					}}>
-					<CopyIcon sx={{ mr: 2 }} />
-					<Typography>Copy coordinates</Typography>
-				</MenuItem>
-			</Menu>
-			{popover && (
-				<Popover
-					open={!!popover}
-					onClose={() => setPopover(null)}
+		<JWTContext.Provider value={[JWT, setJWT]}>
+			<Auth0Provider
+				domain={import.meta.env.VITE_AUTH0_DOMAIN}
+				clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+				redirectUri={window.location.origin}
+				scope={import.meta.env.VITE_AUTH0_SCOPE}
+				audience={import.meta.env.VITE_AUTH0_AUDIENCE}
+				onRedirectCallback={(appState: Auth0AppState) => {
+					console.log(appState);
+				}}>
+				<Suspense fallback={<LoadingSpinner />}>
+					<Sidebar
+						activeSensor={activeSensor}
+						setActiveSensor={setActiveSensor}
+						width={drawerWidth}
+						flyToCoords={flyToCoords}
+					/>
+				</Suspense>
+				<Menu
+					open={contextMenu !== null}
+					onClose={() => setContextMenu(null)}
+					anchorReference="anchorPosition"
+					anchorPosition={
+						contextMenu !== null
+							? { top: contextMenu.y, left: contextMenu.x }
+							: undefined
+					}>
+					<MenuItem
+						onClick={() => {
+							if (contextMenu) {
+								navigator.clipboard.writeText(
+									contextMenu.sensor.id + "",
+								);
+								setContextMenu(null);
+							}
+						}}>
+						<FingerprintIcon sx={{ mr: 2 }} />
+						<Typography>
+							Sensor ID: <strong>{contextMenu?.sensor.id}</strong>
+						</Typography>
+					</MenuItem>
+					<MenuItem
+						onClick={() => {
+							if (contextMenu) {
+								navigator.clipboard.writeText(
+									`${contextMenu.sensor.longitude}, ${contextMenu.sensor.latitude}`,
+								);
+								setContextMenu(null);
+							}
+						}}>
+						<CopyIcon sx={{ mr: 2 }} />
+						<Typography>Copy coordinates</Typography>
+					</MenuItem>
+				</Menu>
+				{popover && (
+					<Popover
+						open={!!popover}
+						onClose={() => setPopover(null)}
+						sx={{
+							position: "absolute",
+							left: window.innerWidth / 2 - 130,
+							top: window.innerHeight / 2 - 210,
+							"& > .MuiPaper-root": {
+								p: (theme) => theme.spacing(1),
+							},
+						}}>
+						<Stack>
+							<BasicSensorInfo sensor={popover.sensor} />
+							<Button
+								variant="outlined"
+								onClick={() => {
+									setActiveSensor(popover.sensor);
+									setPopover(null);
+								}}>
+								More details
+							</Button>
+						</Stack>
+					</Popover>
+				)}
+				<SpeedDial
 					sx={{
 						position: "absolute",
-						left: window.innerWidth / 2 - 130,
-						top: window.innerHeight / 2 - 210,
-						"& > .MuiPaper-root": {
-							p: (theme) => theme.spacing(1),
-						},
-					}}>
-					<Stack>
-						<BasicSensorInfo sensor={popover.sensor} />
-						<Button
-							variant="outlined"
-							onClick={() => {
-								setActiveSensor(popover.sensor);
-								setPopover(null);
-							}}>
-							More details
-						</Button>
-					</Stack>
-				</Popover>
-			)}
-			<SpeedDial
-				sx={{
-					position: "absolute",
-					right: (theme) => theme.spacing(2),
-					bottom: (theme) => theme.spacing(2),
-					zIndex: (theme) => theme.zIndex.drawer + 1,
-				}}
-				color="primary"
-				ariaLabel="Reload buttons"
-				icon={<ReloadIcon />}>
-				<SpeedDialAction
-					icon={<MarkerIcon />}
-					tooltipTitle="Reload sensor locations"
-					onClick={() => {
-						setSensors(null);
-						setActiveSensor(null);
-						loadSensorLocations();
+						right: (theme) => theme.spacing(2),
+						bottom: (theme) => theme.spacing(2),
+						zIndex: (theme) => theme.zIndex.drawer + 1,
 					}}
-				/>
-				<SpeedDialAction
-					icon={<MapIcon />}
-					tooltipTitle="Re-initalize map"
-					onClick={() => {
-						setMap(null);
-						loadMap();
-					}}
-				/>
-			</SpeedDial>
+					color="primary"
+					ariaLabel="Reload buttons"
+					icon={<ReloadIcon />}>
+					<SpeedDialAction
+						icon={<MarkerIcon />}
+						tooltipTitle="Reload sensor locations"
+						onClick={() => {
+							setSensors(null);
+							setActiveSensor(null);
+							loadSensorLocations();
+						}}
+					/>
+					<SpeedDialAction
+						icon={<MapIcon />}
+						tooltipTitle="Re-initalize map"
+						onClick={() => {
+							setMap(null);
+							loadMap();
+						}}
+					/>
+				</SpeedDial>
 
-			<div
-				style={{
-					position: "absolute",
-					top: 0,
-					bottom: 0,
-					left: 0,
-					right: 0,
-				}}
-				className="map-container"
-				ref={mapContainerRef}
-			/>
-		</Auth0Provider>
+				<div
+					style={{
+						position: "absolute",
+						top: 0,
+						bottom: 0,
+						left: 0,
+						right: 0,
+					}}
+					className="map-container"
+					ref={mapContainerRef}
+				/>
+			</Auth0Provider>
+		</JWTContext.Provider>
 	);
 }
 
