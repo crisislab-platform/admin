@@ -75,6 +75,19 @@ function App() {
 			enqueueSnackbar("Loaded sensor locations!", {
 				variant: "success",
 			});
+			const urlSensorID = new URL(
+				window.location.href.toString(),
+			).searchParams.get("sensor_id");
+			if (urlSensorID) {
+				const sensor = data.sensors.find(
+					(s: Sensor) => s.id == urlSensorID, // Non-strict equality comparison is on purpose to account for the id being either a number or a string
+				);
+
+				if (sensor) {
+					console.log("Sensor in URL: " + sensor.id);
+					setActiveSensor(sensor);
+				}
+			}
 			setSensors(data.sensors);
 		} catch (e) {
 			closeSnackbar(snack);
