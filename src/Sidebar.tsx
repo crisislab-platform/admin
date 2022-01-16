@@ -1,25 +1,28 @@
 import {
+	AppBar,
 	Box,
+	Dialog,
+	Divider,
 	Drawer,
 	IconButton,
-	Stack,
-	Typography,
-	Divider,
-	Dialog,
-	AppBar,
-	Toolbar,
 	Slide,
-	useTheme,
+	Stack,
+	Toolbar,
+	Typography,
 	useMediaQuery,
+	useTheme,
 } from "@mui/material";
+import {
+	BasicSensorInfo,
+	LoadingSpinner,
+	Sensor,
+} from "internship-react-components";
 import React, { Suspense, forwardRef } from "react";
+
 import CloseIcon from "@mui/icons-material/Close";
 import LocationIcon from "@mui/icons-material/MyLocation";
-
-import { Sensor } from "./types";
 import { TransitionProps } from "@mui/material/transitions";
-import LoadingSpinner from "./LoadingSpinner";
-import BasicSensorInfo from "./BasicSensorInfo";
+
 const LiveDataGraphs = React.lazy(() => import("./LiveDataGraphs"));
 
 const SlideUpTransition = forwardRef(function Transition(

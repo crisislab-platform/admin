@@ -1,4 +1,9 @@
 import {
+	BasicSensorInfo,
+	LoadingSpinner,
+	Sensor,
+} from "internship-react-components";
+import {
 	Button,
 	Menu,
 	MenuItem,
@@ -22,14 +27,11 @@ import mapboxgl, {
 	NavigationControl,
 } from "mapbox-gl";
 
-import BasicSensorInfo from "./BasicSensorInfo";
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
-import LoadingSpinner from "./LoadingSpinner";
 import MapIcon from "@mui/icons-material/Map";
 import MarkerIcon from "@mui/icons-material/LocationOn";
 import ReloadIcon from "@mui/icons-material/Replay";
-import { Sensor } from "./types";
 import { useSnackbar } from "notistack";
 
 const Sidebar = React.lazy(() => import("./Sidebar"));

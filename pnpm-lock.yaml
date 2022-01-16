@@ -15,6 +15,7 @@ specifiers:
   '@types/react': ^17.0.38
   '@types/react-dom': ^17.0.11
   '@vitejs/plugin-react': ^1.0.7
+  internship-react-components: link:..\internship-react-components
   mapbox-gl: ^2.6.1
   notistack: ^2.0.3
   prop-types: '>=15.5.10 <16.0.0'
@@ -36,6 +37,7 @@ dependencies:
   '@nivo/core': 0.79.0_c3f35d9bf7e70119e26874712f3b049e
   '@nivo/line': 0.79.0_d6b911f291990e4ea501d615c4dd6f55
   '@nivo/tooltip': 0.79.0_9c7f07924cbeec25308d700e0e3c6a98
+  internship-react-components: link:../internship-react-components
   mapbox-gl: 2.6.1
   notistack: 2.0.3_429b1f0b20a87d27693f043d0f52b449
   prop-types: 15.8.1

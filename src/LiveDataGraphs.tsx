@@ -4,7 +4,7 @@ import ALittleDataIcon from "@mui/icons-material/SignalCellularConnectedNoIntern
 import AllDataIcon from "@mui/icons-material/SignalCellular4Bar";
 import LatencyIcon from "@mui/icons-material/HourglassEmpty";
 import MostDataIcon from "@mui/icons-material/SignalCellular3Bar";
-import { MotionData } from "./types";
+import { MotionData } from "internship-react-components";
 import NoDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet0Bar";
 import { ResponsiveLineCanvas } from "@nivo/line";
 import SomeDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet2Bar";
