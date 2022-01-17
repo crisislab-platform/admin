@@ -87,9 +87,12 @@ function App() {
 				if (sensor) {
 					console.log("Sensor in URL: " + sensor.id);
 					setActiveSensor(sensor);
-					if (map) {
-						flyToCoords(sensor.longitude, sensor.latitude);
-					}
+
+					// Timeout to give the map time to load
+					setTimeout(
+						() => flyToCoords(sensor.longitude, sensor.latitude),
+						3000,
+					);
 				}
 			}
 			setSensors(data.sensors);
@@ -168,9 +171,8 @@ function App() {
 							sensor,
 							marker,
 						});
-						if (map) {
-							flyToCoords(sensor.longitude, sensor.latitude);
-						}
+
+						flyToCoords(sensor.longitude, sensor.latitude);
 					}
 
 					markerEl.addEventListener("click", clickHandler);
