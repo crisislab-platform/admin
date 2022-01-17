@@ -8,7 +8,6 @@ import {
 	Button,
 	useTheme,
 	Stack,
-	Box,
 } from "@mui/material";
 import React, {
 	MouseEvent,
