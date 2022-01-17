@@ -18,14 +18,14 @@
 		"@nivo/core": "^0.79.0",
 		"@nivo/line": "^0.79.0",
 		"@nivo/tooltip": "^0.79.0",
-		"internship-react-components": "file:..\\internship-react-components",
 		"mapbox-gl": "^2.6.1",
 		"notistack": "^2.0.3",
 		"prop-types": ">=15.5.10 <16.0.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-router-dom": "^6.2.1",
-		"react-use": "^17.3.2"
+		"react-use": "^17.3.2",
+		"internship-react-components": "file:..\\internship-react-components"
 	},
 	"devDependencies": {
 		"@types/mapbox-gl": "^2.6.0",
