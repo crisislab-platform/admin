@@ -1,24 +1,17 @@
-import { ResponsiveLineCanvas } from "@nivo/line";
-import { Box, Stack, Typography, CircularProgress } from "@mui/material";
-import { useState, useEffect, useContext } from "react";
-import { useMeasure } from "react-use";
-import { useAuth0 } from "@auth0/auth0-react";
-import { JWTContext, LoginButton, LogoutButton } from "./Auth";
-import { MotionData } from "./types";
+import { Box, Stack, Typography } from "@mui/material";
 
-import NoDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet0Bar";
 import ALittleDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet1Bar";
-import SomeDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet2Bar";
-import MostDataIcon from "@mui/icons-material/SignalCellular3Bar";
 import AllDataIcon from "@mui/icons-material/SignalCellular4Bar";
 import LatencyIcon from "@mui/icons-material/HourglassEmpty";
-import LoadingSpinner from "./LoadingSpinner";
+import MostDataIcon from "@mui/icons-material/SignalCellular3Bar";
+import { MotionData } from "internship-react-components";
+import NoDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet0Bar";
+import { ResponsiveLineCanvas } from "@nivo/line";
+import SomeDataIcon from "@mui/icons-material/SignalCellularConnectedNoInternet2Bar";
+import { useMeasure } from "react-use";
+import { useState } from "react";
+
 export default function LiveDataGraphs() {
-	const { user, isAuthenticated, isLoading, getAccessTokenSilently } =
-		useAuth0();
-
-	const [JWT, setJWT] = useContext(JWTContext);
-
 	const [hundredthData, setHundredthData] = useState<{
 		EHZ: MotionData[];
 		ENE: MotionData[];
@@ -45,31 +38,6 @@ export default function LiveDataGraphs() {
 	const [detrendTime, setDetrendTime] = useState(2000);
 	const [sixRef, sixMeasurements] = useMeasure();
 	const [eightRef, eightMeasurements] = useMeasure();
-
-	useEffect(() => {
-		const asyncFunction = async () => {
-			try {
-				const JWTToken = await getAccessTokenSilently({
-					audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-					scope: import.meta.env.VITE_AUTH0_SCOPE,
-				});
-				console.log(`JWT: ${JWTToken}`);
-				setJWT(JWTToken);
-			} catch (e) {
-				console.log(e as any);
-			}
-		};
-
-		asyncFunction();
-	}, [getAccessTokenSilently, user?.sub]);
-
-	if (isLoading) {
-		return <LoadingSpinner message="Logging in..." />;
-	}
-
-	if (!isAuthenticated) {
-		return <LoginButton message="Log in to view live data" />;
-	}
 
 	const percentRecieved =
 		timeDifferences.length /
@@ -172,12 +140,6 @@ export default function LiveDataGraphs() {
 					gridYValues={[0, 500, 1000, 1500, 2000, 2500]}
 				/>
 			</Box>
-			{JWT && (
-				<Typography sx={{ overflow: "auto" }}>
-					JWT: <strong>{JWT}</strong>
-				</Typography>
-			)}
-			<LogoutButton />
 		</Stack>
 	);
 }

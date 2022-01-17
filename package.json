@@ -1,5 +1,6 @@
 {
 	"name": "crisislab-live-sensor-website",
+	"private": true,
 	"version": "0.0.0",
 	"scripts": {
 		"dev": "vite",
@@ -7,7 +8,6 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@auth0/auth0-react": "^1.8.0",
 		"@babel/core": ">=7.0.0 <8.0.0",
 		"@emotion/react": "^11.7.1",
 		"@emotion/styled": "^11.6.0",
@@ -18,6 +18,7 @@
 		"@nivo/core": "^0.79.0",
 		"@nivo/line": "^0.79.0",
 		"@nivo/tooltip": "^0.79.0",
+		"internship-react-components": "file:..\\internship-react-components",
 		"mapbox-gl": "^2.6.1",
 		"notistack": "^2.0.3",
 		"prop-types": ">=15.5.10 <16.0.0",
