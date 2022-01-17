@@ -1,6 +1,7 @@
 import {
 	AppBar,
 	Box,
+	Button,
 	Dialog,
 	Divider,
 	Drawer,
@@ -43,11 +44,7 @@ export default function Sidebar({
 	activeSensor: Sensor | null;
 	setActiveSensor: (toSet: Sensor | null) => void;
 	width: number;
-	flyToCoords: (
-		longatude: number,
-		latitude: number,
-		sidebarOpen: boolean,
-	) => void;
+	flyToCoords: (longatude: number, latitude: number) => void;
 }) {
 	const theme = useTheme();
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
@@ -59,6 +56,20 @@ export default function Sidebar({
 	const sidebarContent = activeSensor && (
 		<>
 			<Stack sx={{ p: 1 }}>
+				<Box sx={{ mb: 1 }}>
+					<Button
+						startIcon={<LocationIcon />}
+						variant="outlined"
+						onClick={() => {
+							flyToCoords(
+								activeSensor.longitude,
+								activeSensor.latitude,
+							);
+							if (onMobile) handleClose();
+						}}>
+						Show sensor on map
+					</Button>
+				</Box>
 				<BasicSensorInfo sensor={activeSensor} />
 				<Divider sx={{ my: (theme) => theme.spacing(1) }} />
 				<Suspense fallback={<LoadingSpinner />}>
