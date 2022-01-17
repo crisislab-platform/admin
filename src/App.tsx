@@ -71,7 +71,7 @@ function App() {
 				`https://shakemap.benhong.me/api/v1/sensors`,
 			);
 			const data = await res.json();
-			console.log(data);
+			// console.log(data);
 
 			closeSnackbar(snack);
 			enqueueSnackbar("Loaded sensor locations!", {
@@ -110,8 +110,15 @@ function App() {
 	}, [enqueueSnackbar, closeSnackbar, setSensors]);
 
 	useEffect(() => {
-		setDrawerWidth(window.innerWidth / 3);
-	}, [window.innerWidth]);
+		function updateDrawerWidth() {
+			setDrawerWidth(window.innerWidth / 3);
+		}
+		updateDrawerWidth();
+
+		window.addEventListener("resize", updateDrawerWidth);
+
+		return () => window.removeEventListener("resize", updateDrawerWidth);
+	}, []);
 
 	function loadMap() {
 		if (mapContainerRef.current) {
