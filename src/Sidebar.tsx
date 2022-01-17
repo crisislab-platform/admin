@@ -17,23 +17,14 @@ import {
 	BasicSensorInfo,
 	LoadingSpinner,
 	Sensor,
+	MobileDialog,
 } from "internship-react-components";
-import React, { Suspense, forwardRef } from "react";
+import React, { Suspense } from "react";
 
 import CloseIcon from "@mui/icons-material/Close";
 import LocationIcon from "@mui/icons-material/MyLocation";
-import { TransitionProps } from "@mui/material/transitions";
 
 const LiveDataGraphs = React.lazy(() => import("./LiveDataGraphs"));
-
-const SlideUpTransition = forwardRef(function Transition(
-	props: TransitionProps & {
-		children: React.ReactElement;
-	},
-	ref: React.Ref<unknown>,
-) {
-	return <Slide direction="up" ref={ref} {...props} />;
-});
 
 export default function Sidebar({
 	activeSensor,
@@ -81,30 +72,12 @@ export default function Sidebar({
 
 	if (onMobile) {
 		return (
-			<Dialog
-				fullScreen
+			<MobileDialog
+				title={`Sensor${activeSensor && ` #${activeSensor.id}`}`}
 				open={!!activeSensor}
-				onClose={handleClose}
-				TransitionComponent={SlideUpTransition}>
-				<AppBar sx={{ position: "relative" }}>
-					<Toolbar>
-						<IconButton
-							edge="start"
-							color="inherit"
-							onClick={handleClose}
-							aria-label="close">
-							<CloseIcon />
-						</IconButton>
-						<Typography
-							sx={{ ml: 2, flex: 1 }}
-							variant="h6"
-							component="div">
-							Sensor #{activeSensor && activeSensor.id}
-						</Typography>
-					</Toolbar>
-				</AppBar>
+				onClose={handleClose}>
 				{sidebarContent}
-			</Dialog>
+			</MobileDialog>
 		);
 	}
 
