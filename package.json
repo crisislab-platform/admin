@@ -18,7 +18,7 @@
 		"@nivo/core": "^0.79.0",
 		"@nivo/line": "^0.79.0",
 		"@nivo/tooltip": "^0.79.0",
-		"internship-react-components": "link:..\\internship-react-components",
+		"internship-react-components": "file:..\\internship-react-components",
 		"mapbox-gl": "^2.6.1",
 		"notistack": "^2.0.3",
 		"prop-types": ">=15.5.10 <16.0.0",
