@@ -61,28 +61,14 @@ function App() {
 		marker: Marker;
 	}>(null);
 
-	// Simulate loading
-	async function loadSensorLocations() {
-		const snack = enqueueSnackbar("Loading sensor locations...", {
-			variant: "info",
-		});
-		try {
-			const res = await fetch(
-				`https://shakemap.benhong.me/api/v1/sensors`,
-			);
-			const data = await res.json();
-			// console.log(data);
-
-			closeSnackbar(snack);
-			enqueueSnackbar("Loaded sensor locations!", {
-				variant: "success",
-			});
+	useEffect(() => {
+		if (sensors) {
 			const urlSensorID = new URLSearchParams(window.location.search).get(
 				"sensor_id",
 			);
 
 			if (urlSensorID) {
-				const sensor = data.sensors.find(
+				const sensor = sensors.find(
 					(s: Sensor) => s.id == urlSensorID, // Non-strict equality comparison is on purpose to account for the id being either a number or a string
 				);
 				if (sensor) {
@@ -96,7 +82,31 @@ function App() {
 					);
 				}
 			}
-			setSensors(data.sensors);
+		}
+	}, [sensors]);
+
+	// Simulate loading
+	async function loadSensorLocations() {
+		const snack = enqueueSnackbar("Loading sensor locations...", {
+			variant: "info",
+		});
+		try {
+			const res = await fetch(
+				`https://shakemap.benhong.me/api/v1/sensors`,
+			);
+			const data = await res.json();
+			// console.log(data);
+			closeSnackbar(snack);
+			if (Array.isArray(data?.sensors)) {
+				setSensors(data.sensors);
+				enqueueSnackbar("Loaded sensor locations!", {
+					variant: "success",
+				});
+			} else {
+				enqueueSnackbar("Received invalid sensor data from server.", {
+					variant: "warning",
+				});
+			}
 		} catch (e) {
 			closeSnackbar(snack);
 			console.log("Failed to load sensor locations. Error: ", e);
@@ -156,35 +166,38 @@ function App() {
 	useEffect(() => {
 		let markers: Marker[] = [];
 		if (map) {
-			sensors?.map((sensor) => {
-				if (map) {
-					let markerColour =
-						sensor.status === "online"
-							? theme.palette.success.main
-							: theme.palette.error.main;
-					if (!!activeSensor && sensor.id === activeSensor.id) {
-						markerColour = theme.palette.primary.main;
-					}
-					const marker = new Marker({
-						color: markerColour,
-					})
-						.setLngLat([sensor.longitude, sensor.latitude])
-						.addTo(map);
-					const markerEl = marker.getElement();
-					function clickHandler() {
-						const boundingRect = markerEl.getBoundingClientRect();
-						setPopover({
-							x: boundingRect.x,
-							y: boundingRect.y,
-							sensor,
-							marker,
-						});
-						flyToCoords(sensor.longitude, sensor.latitude);
-					}
+			console.log(sensors);
+			sensors &&
+				sensors.map((sensor) => {
+					if (map) {
+						let markerColour =
+							sensor.status === "online"
+								? theme.palette.success.main
+								: theme.palette.error.main;
+						if (!!activeSensor && sensor.id === activeSensor.id) {
+							markerColour = theme.palette.primary.main;
+						}
+						const marker = new Marker({
+							color: markerColour,
+						})
+							.setLngLat([sensor.longitude, sensor.latitude])
+							.addTo(map);
+						const markerEl = marker.getElement();
+						function clickHandler() {
+							const boundingRect =
+								markerEl.getBoundingClientRect();
+							setPopover({
+								x: boundingRect.x,
+								y: boundingRect.y,
+								sensor,
+								marker,
+							});
+							flyToCoords(sensor.longitude, sensor.latitude);
+						}
 
-					markerEl.addEventListener("click", clickHandler);
-					// Terrible attempt to make the markers keyboard accessible
-					/*
+						markerEl.addEventListener("click", clickHandler);
+						// Terrible attempt to make the markers keyboard accessible
+						/*
 					markerEl.setAttribute("tabindex", "1");
 					markerEl.addEventListener("focus", () => {
 						markerEl.setAttribute("tabindex", "-1");
@@ -196,27 +209,27 @@ function App() {
 							2000,
 						);
 					// });*/
-					markerEl.addEventListener(
-						"contextmenu",
-						// @ts-ignore
-						(event: MouseEvent) => {
-							event.preventDefault();
-							setContextMenu(
-								contextMenu === null
-									? {
-											x: event.clientX - 2,
-											y: event.clientY - 4,
-											sensor,
-											marker,
-									  }
-									: null,
-							);
-						},
-					);
+						markerEl.addEventListener(
+							"contextmenu",
+							// @ts-ignore
+							(event: MouseEvent) => {
+								event.preventDefault();
+								setContextMenu(
+									contextMenu === null
+										? {
+												x: event.clientX - 2,
+												y: event.clientY - 4,
+												sensor,
+												marker,
+										  }
+										: null,
+								);
+							},
+						);
 
-					markers.push(marker);
-				}
-			});
+						markers.push(marker);
+					}
+				});
 		}
 		return () => {
 			markers.map((marker) => marker.remove());
