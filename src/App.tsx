@@ -166,8 +166,8 @@ function App() {
 	useEffect(() => {
 		let markers: Marker[] = [];
 		if (map) {
-			console.log(sensors);
 			sensors &&
+				Array.isArray(sensors) &&
 				sensors.map((sensor) => {
 					if (map) {
 						let markerColour =
