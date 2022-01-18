@@ -77,9 +77,10 @@ function App() {
 			enqueueSnackbar("Loaded sensor locations!", {
 				variant: "success",
 			});
-			const urlSensorID = new URL(
-				window.location.href.toString(),
-			).searchParams.get("sensor_id");
+			const urlSensorID = new URLSearchParams(window.location.search).get(
+				"sensor_id",
+			);
+
 			if (urlSensorID) {
 				const sensor = data.sensors.find(
 					(s: Sensor) => s.id == urlSensorID, // Non-strict equality comparison is on purpose to account for the id being either a number or a string
@@ -178,7 +179,6 @@ function App() {
 							sensor,
 							marker,
 						});
-
 						flyToCoords(sensor.longitude, sensor.latitude);
 					}
 
@@ -299,6 +299,22 @@ function App() {
 							onClick={() => {
 								setActiveSensor(popover.sensor);
 								setPopover(null);
+								const searchParams = new URLSearchParams(
+									window.location.search,
+								);
+								searchParams.set(
+									"sensor_id",
+									popover.sensor.id + "",
+								);
+								const newRelativePathQuery =
+									window.location.pathname +
+									"?" +
+									searchParams.toString();
+								history.pushState(
+									null,
+									"",
+									newRelativePathQuery,
+								);
 							}}>
 							Show in sidebar
 						</Button>
