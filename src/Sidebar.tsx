@@ -49,8 +49,8 @@ export default function Sidebar({
 	const sidebarContent = activeSensor && (
 		<>
 			<Stack sx={{ p: 1 }}>
-				<Stack direction="row">
-					<Box sx={{ mb: 1 }}>
+				<Stack direction="row" sx={{ mb: 1 }} gap={1}>
+					<Box>
 						<Button
 							startIcon={<LocationIcon />}
 							variant="outlined"
@@ -67,7 +67,7 @@ export default function Sidebar({
 					{"canShare" in navigator &&
 						"share" in navigator &&
 						navigator.canShare() && (
-							<Box sx={{ mb: 1 }}>
+							<Box>
 								<Button
 									startIcon={<ShareIcon />}
 									variant="outlined"
