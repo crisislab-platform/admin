@@ -20,9 +20,10 @@ import {
 	MobileDialog,
 } from "internship-react-components";
 import React, { Suspense } from "react";
-
+import ShareIcon from "@mui/icons-material/IosShare";
 import CloseIcon from "@mui/icons-material/Close";
 import LocationIcon from "@mui/icons-material/MyLocation";
+import { useSnackbar } from "notistack";
 
 const LiveDataGraphs = React.lazy(() => import("./LiveDataGraphs"));
 
@@ -37,6 +38,7 @@ export default function Sidebar({
 	width: number;
 	flyToCoords: (longatude: number, latitude: number) => void;
 }) {
+	const { enqueueSnackbar } = useSnackbar();
 	const theme = useTheme();
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -47,20 +49,52 @@ export default function Sidebar({
 	const sidebarContent = activeSensor && (
 		<>
 			<Stack sx={{ p: 1 }}>
-				<Box sx={{ mb: 1 }}>
-					<Button
-						startIcon={<LocationIcon />}
-						variant="outlined"
-						onClick={() => {
-							flyToCoords(
-								activeSensor.longitude,
-								activeSensor.latitude,
-							);
-							if (onMobile) handleClose();
-						}}>
-						Show sensor on map
-					</Button>
-				</Box>
+				<Stack direction="row">
+					<Box sx={{ mb: 1 }}>
+						<Button
+							startIcon={<LocationIcon />}
+							variant="outlined"
+							onClick={() => {
+								flyToCoords(
+									activeSensor.longitude,
+									activeSensor.latitude,
+								);
+								if (onMobile) handleClose();
+							}}>
+							Show sensor on map
+						</Button>
+					</Box>
+					{"canShare" in navigator &&
+						"share" in navigator &&
+						navigator.canShare() && (
+							<Box sx={{ mb: 1 }}>
+								<Button
+									startIcon={<ShareIcon />}
+									variant="outlined"
+									onClick={async () => {
+										try {
+											await navigator.share({
+												title: `Sensor #${activeSensor.id} on the CRISiSLab sensor map`,
+												text: `View live data from sensor #${
+													activeSensor.id
+												}${
+													activeSensor.name &&
+													` (${activeSensor.name})`
+												} plus live data from loads of other sensors on the CRISiSLab sensor map.`,
+												url: window.location.href,
+											});
+										} catch (err) {
+											enqueueSnackbar(
+												"Failed to share sensor information.",
+												{ variant: "warning" },
+											);
+										}
+									}}>
+									Share
+								</Button>
+							</Box>
+						)}
+				</Stack>
 				<BasicSensorInfo sensor={activeSensor} />
 				<Divider sx={{ my: (theme) => theme.spacing(1) }} />
 				<Suspense fallback={<LoadingSpinner />}>
