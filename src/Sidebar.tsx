@@ -64,36 +64,34 @@ export default function Sidebar({
 							Show sensor on map
 						</Button>
 					</Box>
-					{"canShare" in navigator &&
-						"share" in navigator &&
-						navigator.canShare() && (
-							<Box>
-								<Button
-									startIcon={<ShareIcon />}
-									variant="outlined"
-									onClick={async () => {
-										try {
-											await navigator.share({
-												title: `Sensor #${activeSensor.id} on the CRISiSLab sensor map`,
-												text: `View live data from sensor #${
-													activeSensor.id
-												}${
-													activeSensor.name &&
-													` (${activeSensor.name})`
-												} plus live data from loads of other sensors on the CRISiSLab sensor map.`,
-												url: window.location.href,
-											});
-										} catch (err) {
-											enqueueSnackbar(
-												"Failed to share sensor information.",
-												{ variant: "warning" },
-											);
-										}
-									}}>
-									Share
-								</Button>
-							</Box>
-						)}
+					{"share" in navigator && (
+						<Box>
+							<Button
+								startIcon={<ShareIcon />}
+								variant="outlined"
+								onClick={async () => {
+									try {
+										await navigator.share({
+											title: `Sensor #${activeSensor.id} on the CRISiSLab sensor map`,
+											text: `View live data from sensor #${
+												activeSensor.id
+											}${
+												activeSensor.name &&
+												` (${activeSensor.name})`
+											} plus live data from loads of other sensors on the CRISiSLab sensor map.`,
+											url: window.location.href,
+										});
+									} catch (err) {
+										enqueueSnackbar(
+											"Failed to share sensor information.",
+											{ variant: "warning" },
+										);
+									}
+								}}>
+								Share
+							</Button>
+						</Box>
+					)}
 				</Stack>
 				<BasicSensorInfo sensor={activeSensor} />
 				<Divider sx={{ my: (theme) => theme.spacing(1) }} />
