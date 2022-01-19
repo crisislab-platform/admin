@@ -76,8 +76,9 @@ export default function Sidebar({
 											text: `View live data from sensor #${
 												activeSensor.id
 											}${
-												activeSensor.name &&
-												` (${activeSensor.name})`
+												activeSensor.name
+													? ` (${activeSensor.name})`
+													: ""
 											} plus live data from loads of other sensors on the CRISiSLab sensor map.`,
 											url: window.location.href,
 										});
