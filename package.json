@@ -3,8 +3,6 @@
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
-		"typescript": "^4.5.4",
-		"web-vitals": "^2.1.3",
 		"@emotion/react": "^11.7.1",
 		"@emotion/styled": "^11.6.0",
 		"@fontsource/roboto": "^4.5.1",
@@ -14,6 +12,7 @@
 		"@nivo/core": "^0.79.0",
 		"@nivo/line": "^0.79.0",
 		"@nivo/tooltip": "^0.79.0",
+		"internship-react-components": "file:..\\internship-react-components",
 		"mapbox-gl": "^2.6.1",
 		"notistack": "^2.0.3",
 		"prop-types": ">=15.5.10 <16.0.0",
@@ -21,7 +20,8 @@
 		"react-dom": "^17.0.2",
 		"react-router-dom": "^6.2.1",
 		"react-use": "^17.3.2",
-		"internship-react-components": "file:..\\internship-react-components"
+		"typescript": "^4.5.4",
+		"web-vitals": "^2.1.3"
 	},
 	"devDependencies": {
 		"@types/mapbox-gl": "^2.6.0",
