@@ -169,6 +169,16 @@ function App() {
 			sensors &&
 				Array.isArray(sensors) &&
 				sensors.map((sensor) => {
+					function clickHandler(marker: any, markerEl: any) {
+						const boundingRect = markerEl.getBoundingClientRect();
+						setPopover({
+							x: boundingRect.x,
+							y: boundingRect.y,
+							sensor,
+							marker,
+						});
+						flyToCoords(sensor.longitude, sensor.latitude);
+					}
 					if (map) {
 						let markerColour =
 							sensor.status === "online"
@@ -183,19 +193,10 @@ function App() {
 							.setLngLat([sensor.longitude, sensor.latitude])
 							.addTo(map);
 						const markerEl = marker.getElement();
-						function clickHandler() {
-							const boundingRect =
-								markerEl.getBoundingClientRect();
-							setPopover({
-								x: boundingRect.x,
-								y: boundingRect.y,
-								sensor,
-								marker,
-							});
-							flyToCoords(sensor.longitude, sensor.latitude);
-						}
 
-						markerEl.addEventListener("click", clickHandler);
+						markerEl.addEventListener("click", (e) =>
+							clickHandler(marker, markerEl),
+						);
 						// Terrible attempt to make the markers keyboard accessible
 						/*
 					markerEl.setAttribute("tabindex", "1");
@@ -323,7 +324,7 @@ function App() {
 									window.location.pathname +
 									"?" +
 									searchParams.toString();
-								history.pushState(
+								window.history.pushState(
 									null,
 									"",
 									newRelativePathQuery,

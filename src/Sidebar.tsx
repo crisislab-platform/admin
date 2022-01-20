@@ -25,8 +25,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import LocationIcon from "@mui/icons-material/MyLocation";
 import { useSnackbar } from "notistack";
 
-const LiveDataGraphs = React.lazy(() => import("./LiveDataGraphs"));
-
 export default function Sidebar({
 	activeSensor,
 	setActiveSensor,
@@ -96,9 +94,6 @@ export default function Sidebar({
 				</Stack>
 				<BasicSensorInfo sensor={activeSensor} />
 				<Divider sx={{ my: (theme) => theme.spacing(1) }} />
-				<Suspense fallback={<LoadingSpinner />}>
-					<LiveDataGraphs />
-				</Suspense>
 			</Stack>
 		</>
 	);
