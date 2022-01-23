@@ -65,6 +65,10 @@ function App() {
 	}>(null);
 
 	useEffect(() => {
+		document.title = "CRISiSLab sensor map";
+	}, []);
+
+	useEffect(() => {
 		if (sensors) {
 			const urlSensorID = new URLSearchParams(window.location.search).get(
 				"sensor_id",

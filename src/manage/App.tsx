@@ -14,6 +14,7 @@ import { MissingPermission, useUser } from "../components";
 import { Outlet, Route as RouterRoute, Routes } from "react-router-dom";
 import { Route, SidebarLink } from "../types";
 import { SensorInfo, Sensors } from "./pages/index";
+import { useEffect, useState } from "react";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ManageUsersIcon from "@mui/icons-material/ManageAccounts";
@@ -22,7 +23,6 @@ import SensorsIcon from "@mui/icons-material/Sensors";
 import Sidebar from "./Sidebar";
 import { SnackbarProvider } from "notistack";
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
 
 let routes: (Route | SidebarLink)[] = [
 	{
@@ -88,6 +88,10 @@ function App() {
 	const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 	const location = useLocation();
 	const user = useUser();
+
+	useEffect(() => {
+		document.title = "Manage sensors";
+	}, []);
 
 	return (
 		<Box sx={{ pl: onMobile ? 0 : `${drawerWidth}px` }}>
