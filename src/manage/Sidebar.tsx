@@ -113,7 +113,9 @@ export default function Sidebar({
 							}
 							onClick={() => {
 								navigate(
-									`/manage/${link.index ? "" : link.slug}`,
+									`/manage${
+										link.index ? "" : `${link.slug}`
+									}`,
 								);
 								setMobileDrawerOpen(false);
 							}}>

@@ -11,17 +11,15 @@ import {
 	useTheme,
 } from "@mui/material";
 import { MissingPermission, useUser } from "../components";
-import { Outlet, Route as RouterRoute, Routes } from "react-router-dom";
+import { ReactChild, useEffect, useState } from "react";
 import { Route, SidebarLink } from "../types";
+import { Route as RouterRoute, Routes } from "react-router-dom";
 import { SensorInfo, Sensors } from "./pages/index";
-import { useEffect, useState } from "react";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ManageUsersIcon from "@mui/icons-material/ManageAccounts";
 import MenuIcon from "@mui/icons-material/Menu";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import Sidebar from "./Sidebar";
-import { SnackbarProvider } from "notistack";
 import { useLocation } from "react-router-dom";
 
 let routes: (Route | SidebarLink)[] = [
@@ -62,8 +60,8 @@ export default function AppRoutes() {
 	}
 
 	return (
-		<Routes>
-			<RouterRoute path="/" element={<App />}>
+		<App>
+			<Routes>
 				{routes.map((route) => (
 					<RouterRoute
 						key={route.slug}
@@ -77,12 +75,12 @@ export default function AppRoutes() {
 					path="*"
 					element={<Typography>Page not found :(</Typography>}
 				/>
-			</RouterRoute>
-		</Routes>
+			</Routes>
+		</App>
 	);
 }
 
-function App() {
+function App({ children }: { children: ReactChild | ReactChild[] }) {
 	const theme = useTheme();
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 	const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -141,7 +139,7 @@ function App() {
 			/>
 			<Stack sx={{ minHeight: "100vh", p: 2 }}>
 				<Toolbar variant={onMobile ? undefined : "dense"} />
-				<Outlet />
+				{children}
 			</Stack>
 		</Box>
 	);
