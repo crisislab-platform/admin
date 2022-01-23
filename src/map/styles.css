@@ -1,0 +1,11 @@
+/* .mapboxgl-ctrl-bottom-right {
+	top: 0 !important;
+	left: 0 !important;
+	right: initial !important;
+
+}*/
+.mapboxgl-ctrl-attrib {
+	box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.1);
+	backdrop-filter: blur(4px) !important;
+	border-bottom-right-radius: 8px !important;
+}

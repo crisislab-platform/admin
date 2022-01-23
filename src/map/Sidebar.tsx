@@ -13,16 +13,13 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import {
-	BasicSensorInfo,
-	LoadingSpinner,
-	Sensor,
-	MobileDialog,
-} from "internship-react-components";
+import { BasicSensorInfo, LoadingSpinner, MobileDialog } from "../components";
 import React, { Suspense } from "react";
-import ShareIcon from "@mui/icons-material/IosShare";
+
 import CloseIcon from "@mui/icons-material/Close";
 import LocationIcon from "@mui/icons-material/MyLocation";
+import { Sensor } from "../types";
+import ShareIcon from "@mui/icons-material/IosShare";
 import { useSnackbar } from "notistack";
 
 export default function Sidebar({
