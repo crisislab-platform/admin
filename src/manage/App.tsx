@@ -119,7 +119,9 @@ function App() {
 									? location.pathname.endsWith("manage")
 									: location.pathname.startsWith(
 											"/manage/" +
-												(route.indexSlug ?? route.slug),
+												("indexSlug" in route
+													? route.indexSlug
+													: route.slug),
 									  ),
 							)?.text || "Unknown page"}
 					</Typography>

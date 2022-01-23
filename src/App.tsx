@@ -1,12 +1,15 @@
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { JWTContext, LoadingSpinner, useUser } from "./components";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Suspense, useState } from "react";
 
 import React from "react";
 import { SnackbarProvider } from "notistack";
+import { theme } from "./theme";
 
 const MapApp = React.lazy(() => import("./map/App"));
 const ManageApp = React.lazy(() => import("./manage/App"));
+
 
 export function App() {
 	const [JWT, setJWT] = useState<null | string>(null);
@@ -18,43 +21,46 @@ export function App() {
 	);
 	return (
 		<JWTContext.Provider value={[JWT, setJWT]}>
-			<SnackbarProvider
-				classes={{
-					containerRoot: "SnackbarBottomSpacing",
-				}}
-				anchorOrigin={{
-					horizontal: "right",
-					vertical: "bottom",
-				}}>
-				<Routes>
-					<Route path="/">
-						<Route index element={redirectElement} />
-						<Route path="*" element={redirectElement} />
-						<Route
-							path="map"
-							element={
-								<Suspense
-									fallback={
-										<LoadingSpinner message="Loading map..." />
-									}>
-									<MapApp />
-								</Suspense>
-							}
-						/>
-						<Route
-							path="manage"
-							element={
-								<Suspense
-									fallback={
-										<LoadingSpinner message="Loading dashboard..." />
-									}>
-									<ManageApp />
-								</Suspense>
-							}
-						/>
-					</Route>
-				</Routes>
-			</SnackbarProvider>
+			<ThemeProvider theme={theme}>
+				<CssBaseline enableColorScheme />
+				<SnackbarProvider
+					classes={{
+						containerRoot: "SnackbarBottomSpacing",
+					}}
+					anchorOrigin={{
+						horizontal: "right",
+						vertical: "bottom",
+					}}>
+					<Routes>
+						<Route path="/">
+							<Route index element={redirectElement} />
+							<Route path="*" element={redirectElement} />
+							<Route
+								path="map"
+								element={
+									<Suspense
+										fallback={
+											<LoadingSpinner message="Loading map..." />
+										}>
+										<MapApp />
+									</Suspense>
+								}
+							/>
+							<Route
+								path="manage"
+								element={
+									<Suspense
+										fallback={
+											<LoadingSpinner message="Loading dashboard..." />
+										}>
+										<ManageApp />
+									</Suspense>
+								}
+							/>
+						</Route>
+					</Routes>
+				</SnackbarProvider>
+			</ThemeProvider>
 		</JWTContext.Provider>
 	);
 }

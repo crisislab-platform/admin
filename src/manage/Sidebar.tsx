@@ -56,6 +56,7 @@ export default function Sidebar({
 	const drawerContents = (
 		<>
 			{!onMobile && <Toolbar variant={onMobile ? undefined : "dense"} />}
+
 			<Stack gap={1} sx={{ p: onMobile ? 2 : 1 }}>
 				{user.isLoggedIn && user.info && (
 					<Stack direction="row" alignItems="center" gap={1}>
@@ -98,7 +99,9 @@ export default function Sidebar({
 								? location.pathname.endsWith("manage")
 								: location.pathname.startsWith(
 										"/manage/" +
-											(link.indexSlug ?? link.slug),
+											("indexSlug" in link
+												? link.indexSlug
+												: link.slug),
 								  )
 						}
 						disablePadding>
