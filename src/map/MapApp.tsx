@@ -4,12 +4,16 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { BasicSensorInfo, LoadingSpinner } from "../components";
 import {
 	Button,
+	FormControlLabel,
+	FormGroup,
 	Menu,
 	MenuItem,
+	Paper,
 	Popover,
 	SpeedDial,
 	SpeedDialAction,
 	Stack,
+	Switch,
 	Typography,
 	useTheme,
 } from "@mui/material";
@@ -44,7 +48,8 @@ mapboxgl.accessToken =
 
 export default function MapApp() {
 	const theme = useTheme();
-
+	const [sensorsVisible, setSensorsVisible] = useState(true);
+	const [faultLinesVisible, setFaultLinesVisible] = useState(true);
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
@@ -194,40 +199,38 @@ export default function MapApp() {
 
 	useEffect(() => {
 		let markers: Marker[] = [];
-		if (map) {
-			sensors &&
-				Array.isArray(sensors) &&
-				sensors.map((sensor) => {
-					function clickHandler(marker: any, markerEl: any) {
-						const boundingRect = markerEl.getBoundingClientRect();
-						setPopover({
-							x: boundingRect.x,
-							y: boundingRect.y,
-							sensor,
-							marker,
-						});
-						flyToCoords(sensor.longitude, sensor.latitude);
+		if (map && sensors && Array.isArray(sensors) && sensorsVisible) {
+			sensors.map((sensor) => {
+				function clickHandler(marker: any, markerEl: any) {
+					const boundingRect = markerEl.getBoundingClientRect();
+					setPopover({
+						x: boundingRect.x,
+						y: boundingRect.y,
+						sensor,
+						marker,
+					});
+					flyToCoords(sensor.longitude, sensor.latitude);
+				}
+				if (map) {
+					let markerColour =
+						sensor.status === "online"
+							? theme.palette.success.main
+							: theme.palette.error.main;
+					if (!!activeSensor && sensor.id === activeSensor.id) {
+						markerColour = theme.palette.primary.main;
 					}
-					if (map) {
-						let markerColour =
-							sensor.status === "online"
-								? theme.palette.success.main
-								: theme.palette.error.main;
-						if (!!activeSensor && sensor.id === activeSensor.id) {
-							markerColour = theme.palette.primary.main;
-						}
-						const marker = new Marker({
-							color: markerColour,
-						})
-							.setLngLat([sensor.longitude, sensor.latitude])
-							.addTo(map);
-						const markerEl = marker.getElement();
+					const marker = new Marker({
+						color: markerColour,
+					})
+						.setLngLat([sensor.longitude, sensor.latitude])
+						.addTo(map);
+					const markerEl = marker.getElement();
 
-						markerEl.addEventListener("click", (e) =>
-							clickHandler(marker, markerEl),
-						);
-						// Terrible attempt to make the markers keyboard accessible
-						/*
+					markerEl.addEventListener("click", (e) =>
+						clickHandler(marker, markerEl),
+					);
+					// Terrible attempt to make the markers keyboard accessible
+					/*
 					markerEl.setAttribute("tabindex", "1");
 					markerEl.addEventListener("focus", () => {
 						markerEl.setAttribute("tabindex", "-1");
@@ -239,32 +242,32 @@ export default function MapApp() {
 							2000,
 						);
 					// });*/
-						markerEl.addEventListener(
-							"contextmenu",
-							// @ts-ignore
-							(event: MouseEvent) => {
-								event.preventDefault();
-								setContextMenu(
-									contextMenu === null
-										? {
-												x: event.clientX - 2,
-												y: event.clientY - 4,
-												sensor,
-												marker,
-										  }
-										: null,
-								);
-							},
-						);
+					markerEl.addEventListener(
+						"contextmenu",
+						// @ts-ignore
+						(event: MouseEvent) => {
+							event.preventDefault();
+							setContextMenu(
+								contextMenu === null
+									? {
+											x: event.clientX - 2,
+											y: event.clientY - 4,
+											sensor,
+											marker,
+									  }
+									: null,
+							);
+						},
+					);
 
-						markers.push(marker);
-					}
-				});
+					markers.push(marker);
+				}
+			});
 		}
 		return () => {
 			markers.map((marker) => marker.remove());
 		};
-	}, [sensors, activeSensor, map]);
+	}, [sensors, activeSensor, map, sensorsVisible]);
 
 	function flyToCoords(longatude: number, latitude: number): void {
 		const flyTime = 1500;
@@ -365,7 +368,7 @@ export default function MapApp() {
 					position: "absolute",
 					right: (theme) => theme.spacing(2),
 					bottom: (theme) => theme.spacing(2),
-					zIndex: (theme) => theme.zIndex.drawer + 1,
+					zIndex: (theme) => theme.zIndex.snackbar + 1,
 				}}
 				color="primary"
 				ariaLabel="Reload buttons"
@@ -388,6 +391,29 @@ export default function MapApp() {
 					}}
 				/>
 			</SpeedDial>
+			<Paper
+				elevation={8}
+				sx={{
+					position: "absolute",
+					left: (theme) => theme.spacing(1),
+					bottom: (theme) => theme.spacing(9),
+					zIndex: (theme) => theme.zIndex.speedDial,
+					p: 1,
+				}}>
+				<FormGroup>
+					<FormControlLabel
+						control={
+							<Switch
+								checked={sensorsVisible}
+								onChange={(e) =>
+									setSensorsVisible(e.target.checked)
+								}
+							/>
+						}
+						label="Show CRISiSLab sensors"
+					/>
+				</FormGroup>
+			</Paper>
 			<div
 				style={{
 					position: "absolute",
