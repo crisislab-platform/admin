@@ -191,7 +191,7 @@ export default function MapApp() {
 					id: "fault-lines-layer",
 					type: "line",
 					source: "fault-lines-source",
-
+					"source-layer": "New_Zealand_Active_Faults_Database_1250k",
 					layout: {
 						// Make the layer visible by default.
 						visibility: "visible",
