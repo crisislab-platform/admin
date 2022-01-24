@@ -218,7 +218,7 @@ export default function MapApp() {
 	}, [theme]);
 
 	useEffect(() => {
-		if (map && map.loaded) {
+		if (map && map.loaded && map.getLayer("fault-lines-layer")) {
 			const visibility = map.getLayoutProperty(
 				"fault-lines-layer",
 				"visibility",
