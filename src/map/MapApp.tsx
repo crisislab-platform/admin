@@ -412,6 +412,17 @@ export default function MapApp() {
 						}
 						label="Show CRISiSLab sensors"
 					/>
+					<FormControlLabel
+						control={
+							<Switch
+								checked={faultLinesVisible}
+								onChange={(e) =>
+									setFaultLinesVisible(e.target.checked)
+								}
+							/>
+						}
+						label="Show fault lines"
+					/>
 				</FormGroup>
 			</Paper>
 			<div
