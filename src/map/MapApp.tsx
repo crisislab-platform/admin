@@ -42,7 +42,7 @@ const Sidebar = React.lazy(() => import("./Sidebar"));
 mapboxgl.accessToken =
 	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5YXRxeXU5MDF1cTJ3cXZoOW02cTJqNCJ9.bHkJaPz9D1xnGfuEU5mmFA";
 
-function App() {
+export default function MapApp() {
 	const theme = useTheme();
 
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -402,5 +402,3 @@ function App() {
 		</>
 	);
 }
-
-export default App;

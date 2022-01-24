@@ -10,77 +10,19 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { MissingPermission, useUser } from "../components";
 import { ReactChild, useEffect, useState } from "react";
-import { Route, SidebarLink } from "../types";
-import { Route as RouterRoute, Routes } from "react-router-dom";
-import { SensorInfo, Sensors } from "./pages/index";
 
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import MenuIcon from "@mui/icons-material/Menu";
-import SensorsIcon from "@mui/icons-material/Sensors";
+import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import { SidebarLink } from "../types";
+import { routes } from "./routes";
 import { useLocation } from "react-router-dom";
-
-let routes: (Route | SidebarLink)[] = [
-	{
-		index: true,
-		text: "Overview",
-		Icon: DashboardIcon,
-		Element: <div>Overview</div>,
-		requiredPermission: "logged_in",
-	},
-	{
-		slug: "sensors",
-		text: "Sensors",
-		Icon: SensorsIcon,
-		Element: <Sensors />,
-		requiredPermission: "sensors:read",
-	},
-	{
-		slug: "sensors/:sensorID",
-		indexSlug: "sensors/",
-		text: "Sensor info",
-		Element: <SensorInfo />,
-		requiredPermission: "sensors:read",
-	},
-];
+import { useUser } from "../components";
 
 const drawerWidth = 260;
 
-export default function AppRoutes() {
-	const user = useUser();
-
-	function routeElement(route: Route) {
-		return user.permissions.includes(route.requiredPermission) ? (
-			route.Element
-		) : (
-			<MissingPermission permission={route.requiredPermission} />
-		);
-	}
-
-	return (
-		<App>
-			<Routes>
-				{routes.map((route) => (
-					<RouterRoute
-						key={route.slug}
-						path={route.slug}
-						element={routeElement(route)}
-						index={route.index}
-					/>
-				))}
-				<RouterRoute
-					key="*"
-					path="*"
-					element={<Typography>Page not found :(</Typography>}
-				/>
-			</Routes>
-		</App>
-	);
-}
-
-function App({ children }: { children: ReactChild | ReactChild[] }) {
+export default function ManageApp() {
 	const theme = useTheme();
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 	const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -139,7 +81,7 @@ function App({ children }: { children: ReactChild | ReactChild[] }) {
 			/>
 			<Stack sx={{ minHeight: "100vh", p: 2 }}>
 				<Toolbar variant={onMobile ? undefined : "dense"} />
-				{children}
+				<Outlet />
 			</Stack>
 		</Box>
 	);
