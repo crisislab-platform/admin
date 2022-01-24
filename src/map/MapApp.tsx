@@ -4,16 +4,12 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { BasicSensorInfo, LoadingSpinner } from "../components";
 import {
 	Button,
-	FormControlLabel,
-	FormGroup,
 	Menu,
 	MenuItem,
-	Paper,
 	Popover,
 	SpeedDial,
 	SpeedDialAction,
 	Stack,
-	Switch,
 	Typography,
 	useTheme,
 } from "@mui/material";
@@ -39,6 +35,7 @@ import MapIcon from "@mui/icons-material/Map";
 import MarkerIcon from "@mui/icons-material/LocationOn";
 import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "../types";
+import SettingsPanel from "./SettingsPanel";
 import { useSnackbar } from "notistack";
 
 const Sidebar = React.lazy(() => import("./Sidebar"));
@@ -391,40 +388,12 @@ export default function MapApp() {
 					}}
 				/>
 			</SpeedDial>
-			<Paper
-				elevation={8}
-				sx={{
-					position: "absolute",
-					left: (theme) => theme.spacing(1),
-					bottom: (theme) => theme.spacing(9),
-					zIndex: (theme) => theme.zIndex.speedDial,
-					p: 1,
-				}}>
-				<FormGroup>
-					<FormControlLabel
-						control={
-							<Switch
-								checked={sensorsVisible}
-								onChange={(e) =>
-									setSensorsVisible(e.target.checked)
-								}
-							/>
-						}
-						label="Show CRISiSLab sensors"
-					/>
-					<FormControlLabel
-						control={
-							<Switch
-								checked={faultLinesVisible}
-								onChange={(e) =>
-									setFaultLinesVisible(e.target.checked)
-								}
-							/>
-						}
-						label="Show fault lines"
-					/>
-				</FormGroup>
-			</Paper>
+			<SettingsPanel
+				sensorsVisible={sensorsVisible}
+				setSensorsVisible={setSensorsVisible}
+				faultLinesVisible={faultLinesVisible}
+				setFaultLinesVisible={setFaultLinesVisible}
+			/>
 			<div
 				style={{
 					position: "absolute",
