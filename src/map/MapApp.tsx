@@ -40,8 +40,7 @@ import { useSnackbar } from "notistack";
 
 const Sidebar = React.lazy(() => import("./Sidebar"));
 
-mapboxgl.accessToken =
-	"pk.eyJ1IjoiemFkZXZpZ2dlcnMiLCJhIjoiY2t5YXRxeXU5MDF1cTJ3cXZoOW02cTJqNCJ9.bHkJaPz9D1xnGfuEU5mmFA";
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 export default function MapApp() {
 	const theme = useTheme();
