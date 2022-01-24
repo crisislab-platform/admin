@@ -23,7 +23,7 @@ export default function SettingsPanel({
 	sensorsVisible: boolean;
 	setSensorsVisible: Dispatch<SetStateAction<boolean>>;
 }) {
-	const [settingsPanelVisible, setSettingsPanelVisible] = useState(true);
+	const [settingsPanelVisible, setSettingsPanelVisible] = useState(false);
 	return (
 		<Stack
 			gap={1}

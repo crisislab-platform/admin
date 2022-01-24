@@ -152,36 +152,59 @@ export default function MapApp() {
 				zoom: 4.8,
 			});
 
-			newMap.addControl(new AttributionControl(), "top-left");
-			newMap.addControl(
-				new NavigationControl({
-					visualizePitch: true,
-					showZoom: true,
-					showCompass: true,
-				}),
-				"top-left",
-			);
-			newMap.addControl(
-				new GeolocateControl({
-					positionOptions: {
-						enableHighAccuracy: true,
-					},
-					showUserLocation: false,
-				}),
-				"top-left",
-			);
-			newMap.addControl(
-				new ScaleControl({
-					maxWidth: 150,
-					unit: "metric",
-				}),
-				"bottom-left",
-			);
-			setMap(newMap);
+			newMap
+				.addControl(new AttributionControl(), "top-left")
+				.addControl(
+					new NavigationControl({
+						visualizePitch: true,
+						showZoom: true,
+						showCompass: true,
+					}),
+					"top-left",
+				)
+				.addControl(
+					new GeolocateControl({
+						positionOptions: {
+							enableHighAccuracy: true,
+						},
+						showUserLocation: false,
+					}),
+					"top-left",
+				)
+				.addControl(
+					new ScaleControl({
+						maxWidth: 150,
+						unit: "metric",
+					}),
+					"bottom-left",
+				);
 
-			closeSnackbar(snack);
-			enqueueSnackbar("Loaded map!", {
-				variant: "success",
+			newMap.on("load", () => {
+				closeSnackbar(snack);
+				enqueueSnackbar("Loaded map!", {
+					variant: "success",
+				});
+				newMap.addSource("fault-lines-source", {
+					type: "vector",
+					url: "mapbox://zadeviggers.8hjwpez9",
+				});
+				newMap.addLayer({
+					id: "fault-lines-layer",
+					type: "line",
+					source: "fault-lines-source",
+
+					layout: {
+						// Make the layer visible by default.
+						visibility: "visible",
+						"line-join": "round",
+						"line-cap": "round",
+					},
+					paint: {
+						"line-color": theme.palette.error.main,
+					},
+				});
+
+				setMap(newMap);
 			});
 		}
 	}
@@ -192,7 +215,29 @@ export default function MapApp() {
 		return () => {
 			map?.remove();
 		};
-	}, []);
+	}, [theme]);
+
+	useEffect(() => {
+		if (map && map.loaded) {
+			const visibility = map.getLayoutProperty(
+				"fault-lines-layer",
+				"visibility",
+			);
+			if (faultLinesVisible && visibility !== "visible") {
+				map.setLayoutProperty(
+					"fault-lines-layer",
+					"visibility",
+					"visible",
+				);
+			} else if (!faultLinesVisible && visibility === "visible") {
+				map.setLayoutProperty(
+					"fault-lines-layer",
+					"visibility",
+					"none",
+				);
+			}
+		}
+	}, [map, faultLinesVisible]);
 
 	useEffect(() => {
 		let markers: Marker[] = [];

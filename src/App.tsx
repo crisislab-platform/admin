@@ -43,9 +43,14 @@ export function App() {
 					}}>
 					<Routes>
 						<Route path="/">
-							<Route index element={redirectElement} />
-							<Route path="*" element={redirectElement} />
 							<Route
+								key="index"
+								index
+								element={redirectElement}
+							/>
+							<Route key="*" path="*" element={redirectElement} />
+							<Route
+								key="map"
 								path="map"
 								element={
 									<Suspense
@@ -57,6 +62,7 @@ export function App() {
 								}
 							/>
 							<Route
+								key="manage"
 								path="manage"
 								element={
 									<Suspense
