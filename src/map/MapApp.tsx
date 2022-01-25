@@ -49,7 +49,7 @@ const mapStyles = {
 
 export default function MapApp() {
 	const theme = useTheme();
-	const [sateliteMode, setSateliteMode] = useState(true);
+	const [sateliteMode, setSateliteMode] = useState(false);
 	const [sensorsVisible, setSensorsVisible] = useState(true);
 	const [faultLinesVisible, setFaultLinesVisible] = useState(true);
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
