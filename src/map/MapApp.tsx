@@ -192,7 +192,7 @@ export default function MapApp() {
 				// GeoNet
 				newMap.addSource("geonet-source", {
 					type: "vector",
-					url: "mapbox://zadeviggers.bqxnj8uo",
+					url: "mapbox://zadeviggers.ckyti0ozu2wkk20rvo89kd6ur-6jsd8",
 				});
 				newMap.addLayer({
 					id: "geonet-layer",
