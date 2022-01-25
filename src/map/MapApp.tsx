@@ -198,7 +198,7 @@ export default function MapApp() {
 					id: "geonet-layer",
 					type: "symbol",
 					source: "geonet-source",
-					"source-layer": "stations-d3tse8",
+					"source-layer": "stations",
 					layout: {
 						visibility: "none",
 						"text-field": ["get", "Name"],
