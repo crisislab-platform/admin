@@ -51,6 +51,7 @@ export default function MapApp() {
 	const theme = useTheme();
 	const [sateliteMode, setSateliteMode] = useState(false);
 	const [sensorsVisible, setSensorsVisible] = useState(true);
+	const [geoNetSensorsVisible, setGeoNetSensorsVisible] = useState(false);
 	const [faultLinesVisible, setFaultLinesVisible] = useState(true);
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
@@ -99,7 +100,6 @@ export default function MapApp() {
 		}
 	}, [sensors]);
 
-	// Simulate loading
 	async function loadSensorLocations() {
 		const snack = enqueueSnackbar("Loading sensor locations...", {
 			variant: "info",
@@ -189,6 +189,31 @@ export default function MapApp() {
 				enqueueSnackbar("Loaded map!", {
 					variant: "success",
 				});
+				// GeoNet
+				newMap.addSource("geonet-source", {
+					type: "vector",
+					url: "mapbox://zadeviggers.bqxnj8uo",
+				});
+				newMap.addLayer({
+					id: "geonet-layer",
+					type: "symbol",
+					source: "geonet-source",
+					"source-layer": "stations-d3tse8",
+					layout: {
+						visibility: "none",
+						"text-field": ["get", "Name"],
+						"text-size": 10,
+						"icon-image": ["image", "border-dot-13"],
+					},
+					paint: {
+						"text-color": theme.palette.text.secondary,
+						"text-halo-blur": 1,
+						"text-halo-width": 1,
+						"text-halo-color": "#ffffff",
+						"icon-color": theme.palette.secondary.main,
+					},
+				});
+				// Fault lines
 				newMap.addSource("fault-lines-source", {
 					type: "vector",
 					url: "mapbox://zadeviggers.8hjwpez9",
@@ -214,6 +239,7 @@ export default function MapApp() {
 					source: "fault-lines-source",
 					"source-layer": "New_Zealand_Active_Faults_Database_1250k",
 					layout: {
+						visibility: "visible",
 						"text-field": ["get", "Name"],
 						"text-size": 12,
 					},
@@ -244,7 +270,12 @@ export default function MapApp() {
 	}, [theme, sateliteMode]);
 
 	useEffect(() => {
-		if (map && map.loaded && map.getLayer("fault-lines-layer")) {
+		if (
+			map &&
+			map.loaded &&
+			map.getLayer("fault-lines-layer") &&
+			map.getLayer("fault-lines-labels-layer")
+		) {
 			const visibility = map.getLayoutProperty(
 				"fault-lines-layer",
 				"visibility",
@@ -272,6 +303,20 @@ export default function MapApp() {
 			}
 		}
 	}, [map, faultLinesVisible]);
+
+	useEffect(() => {
+		if (map && map.loaded && map.getLayer("geonet-layer")) {
+			const visibility = map.getLayoutProperty(
+				"geonet-layer",
+				"visibility",
+			);
+			if (geoNetSensorsVisible && visibility !== "visible") {
+				map.setLayoutProperty("geonet-layer", "visibility", "visible");
+			} else if (!geoNetSensorsVisible && visibility === "visible") {
+				map.setLayoutProperty("geonet-layer", "visibility", "none");
+			}
+		}
+	}, [map, geoNetSensorsVisible]);
 
 	useEffect(() => {
 		let markers: Marker[] = [];
@@ -474,6 +519,8 @@ export default function MapApp() {
 				setFaultLinesVisible={setFaultLinesVisible}
 				sateliteMode={sateliteMode}
 				setSateliteMode={setSateliteMode}
+				geoNetSensorsVisible={geoNetSensorsVisible}
+				setGeoNetSensorsVisible={setGeoNetSensorsVisible}
 			/>
 			<div
 				style={{

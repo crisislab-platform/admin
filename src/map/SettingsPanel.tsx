@@ -19,6 +19,8 @@ export default function SettingsPanel({
 	setSensorsVisible,
 	sateliteMode,
 	setSateliteMode,
+	geoNetSensorsVisible,
+	setGeoNetSensorsVisible,
 }: {
 	faultLinesVisible: boolean;
 	setFaultLinesVisible: Dispatch<SetStateAction<boolean>>;
@@ -26,6 +28,8 @@ export default function SettingsPanel({
 	setSensorsVisible: Dispatch<SetStateAction<boolean>>;
 	sateliteMode: boolean;
 	setSateliteMode: Dispatch<SetStateAction<boolean>>;
+	geoNetSensorsVisible: boolean;
+	setGeoNetSensorsVisible: Dispatch<SetStateAction<boolean>>;
 }) {
 	const [settingsPanelVisible, setSettingsPanelVisible] = useState(false);
 	return (
@@ -60,6 +64,19 @@ export default function SettingsPanel({
 						<FormControlLabel
 							control={
 								<Switch
+									checked={geoNetSensorsVisible}
+									onChange={(e) =>
+										setGeoNetSensorsVisible(
+											e.target.checked,
+										)
+									}
+								/>
+							}
+							label="Show GeoNet sensors"
+						/>
+						<FormControlLabel
+							control={
+								<Switch
 									checked={faultLinesVisible}
 									onChange={(e) =>
 										setFaultLinesVisible(e.target.checked)
@@ -67,7 +84,7 @@ export default function SettingsPanel({
 								/>
 							}
 							label="Show fault lines"
-						/>{" "}
+						/>
 						<FormControlLabel
 							control={
 								<Switch
