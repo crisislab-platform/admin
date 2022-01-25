@@ -202,6 +202,25 @@ export default function MapApp() {
 						"line-color": theme.palette.error.main,
 					},
 				});
+				newMap.addLayer({
+					id: "fault-lines-labels-layer",
+					type: "symbol",
+					source: "fault-lines-source",
+					"source-layer": "New_Zealand_Active_Faults_Database_1250k",
+					layout: {
+						"text-field": ["get", "Name"],
+						"text-size": 12,
+					},
+					paint: {
+						"text-color": theme.palette.text.primary,
+						"text-halo-blur": 1,
+						"text-halo-width": 1,
+						"text-halo-color": "#ffffff",
+						// "text-color": theme.palette.error.main,
+						// "text-halo-width": 1,
+						// "text-halo-color": "#000000",
+					},
+				});
 
 				setMap(newMap);
 			});
@@ -227,10 +246,18 @@ export default function MapApp() {
 					"fault-lines-layer",
 					"visibility",
 					"visible",
+				).setLayoutProperty(
+					"fault-lines-labels-layer",
+					"visibility",
+					"visible",
 				);
 			} else if (!faultLinesVisible && visibility === "visible") {
 				map.setLayoutProperty(
 					"fault-lines-layer",
+					"visibility",
+					"none",
+				).setLayoutProperty(
+					"fault-lines-labels-layer",
 					"visibility",
 					"none",
 				);
