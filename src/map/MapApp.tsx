@@ -202,7 +202,7 @@ export default function MapApp() {
 					layout: {
 						visibility: "none",
 						"text-field": ["get", "Name"],
-						"text-size": 10,
+						"text-size": 12,
 						"icon-image": ["image", "border-dot-13"],
 					},
 					paint: {
