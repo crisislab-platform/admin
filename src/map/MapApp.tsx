@@ -206,7 +206,7 @@ export default function MapApp() {
 						"icon-image": ["image", "border-dot-13"],
 					},
 					paint: {
-						"text-color": theme.palette.text.secondary,
+						"text-color": theme.palette.text.primary,
 						"text-halo-width": 1,
 						"text-halo-color": "#ffffff",
 						"icon-color": theme.palette.secondary.main,
