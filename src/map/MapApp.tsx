@@ -207,7 +207,6 @@ export default function MapApp() {
 					},
 					paint: {
 						"text-color": theme.palette.text.secondary,
-						"text-halo-blur": 1,
 						"text-halo-width": 1,
 						"text-halo-color": "#ffffff",
 						"icon-color": theme.palette.secondary.main,
@@ -245,7 +244,6 @@ export default function MapApp() {
 					},
 					paint: {
 						"text-color": theme.palette.text.primary,
-						"text-halo-blur": 1,
 						"text-halo-width": 1,
 						"text-halo-color": "#ffffff",
 						// Other theme - try out later
