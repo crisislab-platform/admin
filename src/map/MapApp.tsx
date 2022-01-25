@@ -216,6 +216,7 @@ export default function MapApp() {
 						"text-halo-blur": 1,
 						"text-halo-width": 1,
 						"text-halo-color": "#ffffff",
+						// Other theme - try out later
 						// "text-color": theme.palette.error.main,
 						// "text-halo-width": 1,
 						// "text-halo-color": "#000000",
