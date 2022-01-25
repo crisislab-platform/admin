@@ -42,8 +42,14 @@ const Sidebar = React.lazy(() => import("./Sidebar"));
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
+const mapStyles = {
+	normal: "mapbox://styles/zadeviggers/ckypfzqia407v15qo1lruw30b",
+	satelite: "mapbox://styles/zadeviggers/ckyteodd6000414pbra6c7e9x",
+};
+
 export default function MapApp() {
 	const theme = useTheme();
+	const [sateliteMode, setSateliteMode] = useState(true);
 	const [sensorsVisible, setSensorsVisible] = useState(true);
 	const [faultLinesVisible, setFaultLinesVisible] = useState(true);
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -146,7 +152,7 @@ export default function MapApp() {
 			});
 			const newMap = new MapboxMap({
 				container: mapContainerRef.current,
-				style: "mapbox://styles/zadeviggers/ckypfzqia407v15qo1lruw30b",
+				style: sateliteMode ? mapStyles.satelite : mapStyles.normal,
 				center: [174.8, -41.325],
 				zoom: 4.8,
 			});
@@ -229,12 +235,13 @@ export default function MapApp() {
 	}
 
 	useEffect(() => {
+		setMap(null);
 		loadMap();
 		// Clean up on unmount
 		return () => {
 			map?.remove();
 		};
-	}, [theme]);
+	}, [theme, sateliteMode]);
 
 	useEffect(() => {
 		if (map && map.loaded && map.getLayer("fault-lines-layer")) {
@@ -465,6 +472,8 @@ export default function MapApp() {
 				setSensorsVisible={setSensorsVisible}
 				faultLinesVisible={faultLinesVisible}
 				setFaultLinesVisible={setFaultLinesVisible}
+				sateliteMode={sateliteMode}
+				setSateliteMode={setSateliteMode}
 			/>
 			<div
 				style={{

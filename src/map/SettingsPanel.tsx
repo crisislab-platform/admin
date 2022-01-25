@@ -17,11 +17,15 @@ export default function SettingsPanel({
 	setFaultLinesVisible,
 	sensorsVisible,
 	setSensorsVisible,
+	sateliteMode,
+	setSateliteMode,
 }: {
 	faultLinesVisible: boolean;
 	setFaultLinesVisible: Dispatch<SetStateAction<boolean>>;
 	sensorsVisible: boolean;
 	setSensorsVisible: Dispatch<SetStateAction<boolean>>;
+	sateliteMode: boolean;
+	setSateliteMode: Dispatch<SetStateAction<boolean>>;
 }) {
 	const [settingsPanelVisible, setSettingsPanelVisible] = useState(false);
 	return (
@@ -63,6 +67,17 @@ export default function SettingsPanel({
 								/>
 							}
 							label="Show fault lines"
+						/>{" "}
+						<FormControlLabel
+							control={
+								<Switch
+									checked={sateliteMode}
+									onChange={(e) =>
+										setSateliteMode(e.target.checked)
+									}
+								/>
+							}
+							label="Satelite view"
 						/>
 					</FormGroup>
 				</Paper>
