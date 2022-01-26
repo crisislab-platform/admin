@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 
+import { LoginButton } from "../components";
 import SettingsIcon from "@mui/icons-material/Settings";
 
 export default function SettingsPanel({
@@ -97,6 +98,9 @@ export default function SettingsPanel({
 							label="Satelite view"
 						/>
 					</FormGroup>
+					<Box>
+						<LoginButton />
+					</Box>
 				</Paper>
 			</Grow>
 			<Box>

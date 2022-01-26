@@ -6,22 +6,14 @@ import {
 	Divider,
 	Drawer,
 	IconButton,
-	Slide,
 	Stack,
-	Toolbar,
-	Typography,
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import {
-	BasicSensorInfo,
-	LoadingSpinner,
-	MobileDialog,
-	useUser,
-} from "../components";
-import React, { Suspense } from "react";
+import { BasicSensorInfo, MobileDialog, useUser } from "../components";
 
 import CloseIcon from "@mui/icons-material/Close";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import LocationIcon from "@mui/icons-material/MyLocation";
 import { Sensor } from "../types";
 import ShareIcon from "@mui/icons-material/IosShare";
@@ -50,7 +42,7 @@ export default function Sidebar({
 	const sidebarContent = activeSensor && (
 		<>
 			<Stack sx={{ p: 1 }}>
-				<Stack direction="row" sx={{ mb: 1 }} gap={1}>
+				<Stack direction="row" flexWrap="wrap" sx={{ mb: 1 }} gap={1}>
 					<Box>
 						<Button
 							startIcon={<LocationIcon />}
@@ -65,6 +57,16 @@ export default function Sidebar({
 							Fly to sensor
 						</Button>
 					</Box>
+					{user.isLoggedIn && (
+						<Box>
+							<Button
+								startIcon={<DashboardIcon />}
+								variant="outlined"
+								href={`/manage/sensors/${activeSensor.id}`}>
+								Open in dashboard
+							</Button>
+						</Box>
+					)}
 					{"share" in navigator && (
 						<Box>
 							<Button
@@ -91,15 +93,6 @@ export default function Sidebar({
 									}
 								}}>
 								Share
-							</Button>
-						</Box>
-					)}
-					{user.isLoggedIn && (
-						<Box>
-							<Button
-								variant="outlined"
-								href={`/manage/sensors/${activeSensor.id}`}>
-								Open in dashboard
 							</Button>
 						</Box>
 					)}

@@ -1,7 +1,7 @@
 import "./styles.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import { BasicSensorInfo, LoadingSpinner, LoginFab } from "../components";
+import { BasicSensorInfo, LoadingSpinner } from "../components";
 import {
 	Button,
 	Menu,
@@ -528,6 +528,7 @@ export default function MapApp() {
 				geoNetSensorsVisible={geoNetSensorsVisible}
 				setGeoNetSensorsVisible={setGeoNetSensorsVisible}
 			/>
+
 			<div
 				style={{
 					position: "absolute",
