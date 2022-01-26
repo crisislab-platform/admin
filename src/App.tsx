@@ -48,7 +48,13 @@ export function App() {
 								index
 								element={redirectElement}
 							/>
-							<Route key="*" path="*" element={redirectElement} />
+							<Route
+								key="*"
+								path="*"
+								element={
+									<Typography>Page not found :(</Typography>
+								}
+							/>
 							<Route
 								key="map"
 								path="map"
@@ -80,15 +86,6 @@ export function App() {
 										index={route.index}
 									/>
 								))}
-								<Route
-									key="*"
-									path="*"
-									element={
-										<Typography>
-											Page not found :(
-										</Typography>
-									}
-								/>
 							</Route>
 						</Route>
 					</Routes>
