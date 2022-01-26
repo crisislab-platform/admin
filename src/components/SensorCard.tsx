@@ -1,11 +1,9 @@
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 
 import AndroidIcon from "@mui/icons-material/PhoneAndroid";
-import ExternalLinkIcon from "@mui/icons-material/OpenInNew";
 import PiIcon from "@mui/icons-material/RouterOutlined";
 import { Sensor } from "../types";
 import { SensorStatusIcon } from "./BasicSensorInfo";
-const shakemapOrigin = "https://shakemap.viggers.net";
 
 export function SensorCard({
 	sensor,
@@ -74,13 +72,10 @@ export function generateSensorCardTitle(
 }
 
 export function OpenInMapButton({ sensor }: { sensor: Sensor }) {
-	const shakemapURL = new URL(shakemapOrigin);
-	shakemapURL.searchParams.set("sensor_id", sensor.id + "");
 	return (
 		<Button
-			href={shakemapURL.toString()}
+			href={`/map?sensor_id=${sensor.id}`}
 			target="_blank"
-			startIcon={<ExternalLinkIcon />}
 			color="primary"
 			variant="outlined">
 			Open in map
