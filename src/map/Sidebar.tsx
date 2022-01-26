@@ -13,7 +13,12 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { BasicSensorInfo, LoadingSpinner, MobileDialog } from "../components";
+import {
+	BasicSensorInfo,
+	LoadingSpinner,
+	MobileDialog,
+	useUser,
+} from "../components";
 import React, { Suspense } from "react";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -36,6 +41,7 @@ export default function Sidebar({
 	const { enqueueSnackbar } = useSnackbar();
 	const theme = useTheme();
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
+	const user = useUser();
 
 	function handleClose() {
 		setActiveSensor(null);
@@ -56,7 +62,7 @@ export default function Sidebar({
 								);
 								if (onMobile) handleClose();
 							}}>
-							Show sensor on map
+							Fly to sensor
 						</Button>
 					</Box>
 					{"share" in navigator && (
@@ -85,6 +91,15 @@ export default function Sidebar({
 									}
 								}}>
 								Share
+							</Button>
+						</Box>
+					)}
+					{user.isLoggedIn && (
+						<Box>
+							<Button
+								variant="outlined"
+								href={`/manage/sensors/${activeSensor.id}`}>
+								Open in dashboard
 							</Button>
 						</Box>
 					)}

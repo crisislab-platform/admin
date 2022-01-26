@@ -1,7 +1,7 @@
 import "./styles.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import { BasicSensorInfo, LoadingSpinner } from "../components";
+import { BasicSensorInfo, LoadingSpinner, LoginFab } from "../components";
 import {
 	Button,
 	Menu,
@@ -388,6 +388,26 @@ export default function MapApp() {
 		};
 	}, [sensors, activeSensor, map, sensorsVisible]);
 
+	useEffect(() => {
+		const newRelativePathQuery = new URL(window.location.href);
+		if (activeSensor) {
+			newRelativePathQuery.searchParams.set(
+				"sensor_id",
+				activeSensor.id + "",
+			);
+		} else {
+			try {
+				newRelativePathQuery.searchParams.delete("sensor_id");
+			} catch (e) {
+				console.warn(
+					"Failed to remove sensor_id from url search params: ",
+					e,
+				);
+			}
+		}
+		window.history.pushState(null, "", newRelativePathQuery.href);
+	}, [activeSensor]);
+
 	function flyToCoords(longatude: number, latitude: number): void {
 		const flyTime = 1500;
 		if (map) {
@@ -464,18 +484,6 @@ export default function MapApp() {
 							onClick={() => {
 								setActiveSensor(popover.sensor);
 								setPopover(null);
-								const newRelativePathQuery = new URL(
-									window.location.href,
-								);
-								newRelativePathQuery.searchParams.set(
-									"sensor_id",
-									popover.sensor.id + "",
-								);
-								window.history.pushState(
-									null,
-									"",
-									newRelativePathQuery.href,
-								);
 							}}>
 							Show in sidebar
 						</Button>

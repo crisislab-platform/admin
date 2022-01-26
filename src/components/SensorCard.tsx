@@ -75,7 +75,7 @@ export function OpenInMapButton({ sensor }: { sensor: Sensor }) {
 	return (
 		<Button
 			href={`/map?sensor_id=${sensor.id}`}
-			target="_blank"
+			// target="_blank"
 			color="primary"
 			variant="outlined">
 			Open in map
