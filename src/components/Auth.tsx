@@ -87,6 +87,7 @@ export function useUser() {
 		}
 		asyncFunction();
 	}, [setClaims, getIdTokenClaims, isAuthenticated]);
+	const loggedIn = isAuthenticated && JWT;
 	let userObj: AppUser = {
 		isLoggedIn: false,
 		isLoading,
@@ -100,7 +101,7 @@ export function useUser() {
 		claimsPerms = claims["https://crisislab.org.nz/roles"];
 	}
 
-	if (isAuthenticated) {
+	if (loggedIn) {
 		userObj = {
 			...userObj,
 			isLoggedIn: true,
@@ -110,8 +111,6 @@ export function useUser() {
 			permissions: ["none", "logged_in", "sensors:read", ...claimsPerms],
 		};
 	}
-
-	// console.log(userObj);
 
 	return userObj;
 }
