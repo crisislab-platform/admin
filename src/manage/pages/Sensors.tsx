@@ -1,22 +1,5 @@
-import {
-	BasicSensorInfo,
-	LoadingSpinner,
-	MobileDialog,
-	OpenInMapButton,
-	SensorCard,
-	generateSensorCardTitle,
-	useUser,
-} from "../../components";
-import {
-	Box,
-	Fab,
-	List,
-	ListItem,
-	Tooltip,
-	Typography,
-	useMediaQuery,
-	useTheme,
-} from "@mui/material";
+import { Box, Fab, List, ListItem, Tooltip } from "@mui/material";
+import { LoadingSpinner, SensorCard, useUser } from "../../components";
 import { useEffect, useState } from "react";
 
 import ReloadIcon from "@mui/icons-material/Refresh";
@@ -28,10 +11,7 @@ import { useSnackbar } from "notistack";
 export function Sensors() {
 	const user = useUser();
 	const navigate = useNavigate();
-	const theme = useTheme();
-	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 	const [sensors, setSensors] = useState<null | Sensor[]>(null);
-	const [selectedSensor, setSelectedSensor] = useState<null | Sensor>(null);
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 	async function loadSensorLocations() {
@@ -43,7 +23,6 @@ export function Sensors() {
 			const res = await fetch(`${sensorsAPIBase}/sensors`);
 			const data = await res.json();
 			console.log(data);
-
 			closeSnackbar(snack);
 			enqueueSnackbar("Loaded sensor locations!", {
 				variant: "success",
@@ -61,54 +40,34 @@ export function Sensors() {
 		loadSensorLocations();
 	}, [enqueueSnackbar, closeSnackbar, setSensors]);
 
-	const sensorList = sensors ? (
-		<List
-			disablePadding
-			sx={{
-				display: "flex",
-				flexDirection: "row",
-				flexWrap: "wrap",
-				gap: 2,
-			}}>
-			{sensors.map((sensor) => (
-				<ListItem key={sensor.id} disablePadding sx={{ flex: "0" }}>
-					<SensorCard
-						sensor={sensor}
-						onDetailsClick={() => navigate(`./${sensor.id}`)}
-					/>
-				</ListItem>
-			))}
-		</List>
-	) : (
-		<LoadingSpinner message="Loading sensors" />
-	);
-
-	const sensorInfo = selectedSensor ? (
+	return (
 		<>
-			<Box sx={{ mb: 1 }}>
-				<OpenInMapButton sensor={selectedSensor} />
-			</Box>
-			<BasicSensorInfo sensor={selectedSensor} />
-		</>
-	) : (
-		<Typography>
-			Press "view details" on a sensor to view information about it.
-		</Typography>
-	);
-
-	return onMobile ? (
-		<>
-			{sensorList}
-			<MobileDialog
-				open={!!selectedSensor}
-				onClose={() => setSelectedSensor(null)}
-				title={generateSensorCardTitle(selectedSensor)}>
-				{sensorInfo}
-			</MobileDialog>
-		</>
-	) : (
-		<>
-			{sensorList}
+			{sensors ? (
+				<List
+					disablePadding
+					sx={{
+						display: "flex",
+						flexDirection: "row",
+						flexWrap: "wrap",
+						gap: 2,
+					}}>
+					{sensors.map((sensor) => (
+						<ListItem
+							key={sensor.id}
+							disablePadding
+							sx={{ flex: "0" }}>
+							<SensorCard
+								sensor={sensor}
+								onDetailsClick={() =>
+									navigate(`./${sensor.id}`)
+								}
+							/>
+						</ListItem>
+					))}
+				</List>
+			) : (
+				<LoadingSpinner message="Loading sensors" />
+			)}
 			<Tooltip title="Reload sensor list" placement="left">
 				<Fab
 					color="primary"
