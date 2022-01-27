@@ -109,8 +109,10 @@ export default function SettingsPanel({
 						setSettingsPanelVisible(!settingsPanelVisible)
 					}>
 					<SettingsIcon
-						sx={{ color: "rgba(0, 0, 0, 0.7)" }}
-						color="inherit"
+						sx={{
+							fill: "rgba(255, 255, 255, 0.7)",
+							stroke: "rgba(0, 0, 0, 0.7)",
+						}}
 					/>
 				</IconButton>
 			</Box>
