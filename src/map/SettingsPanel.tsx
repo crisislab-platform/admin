@@ -1,5 +1,6 @@
 import {
 	Box,
+	Button,
 	FormControlLabel,
 	FormGroup,
 	Grow,
@@ -10,8 +11,8 @@ import {
 	Tooltip,
 } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
+import { LoginButton, useUser } from "../components";
 
-import { LoginButton } from "../components";
 import SettingsIcon from "@mui/icons-material/Settings";
 
 export default function SettingsPanel({
@@ -33,6 +34,7 @@ export default function SettingsPanel({
 	geoNetSensorsVisible: boolean;
 	setGeoNetSensorsVisible: Dispatch<SetStateAction<boolean>>;
 }) {
+	const user = useUser();
 	const [settingsPanelVisible, setSettingsPanelVisible] = useState(false);
 	return (
 		<Stack
@@ -99,9 +101,18 @@ export default function SettingsPanel({
 							label="Satelite view"
 						/>
 					</FormGroup>
-					<Box>
-						<LoginButton />
-					</Box>
+					<Stack gap={1}>
+						{user.isLoggedIn && (
+							<Box>
+								<Button variant="outlined" href="/manage">
+									Go to dashboard
+								</Button>
+							</Box>
+						)}
+						<Box>
+							<LoginButton />
+						</Box>
+					</Stack>
 				</Paper>
 			</Grow>
 			<Box>
