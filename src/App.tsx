@@ -82,6 +82,14 @@ export function App() {
 									index
 									element={<Navigate to="./sensors" />}
 								/>
+								<Route
+									path="*"
+									element={
+										<Typography>
+											Page not found :{"("}
+										</Typography>
+									}
+								/>
 								{manageRoutes.map((route) => (
 									<Route
 										key={route.slug}
