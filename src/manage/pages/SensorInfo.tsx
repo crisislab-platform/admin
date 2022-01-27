@@ -48,7 +48,7 @@ export function SensorInfo() {
 	}
 	useEffect(() => {
 		loadSensorInfo();
-	}, [sensorID, setSensor, user]);
+	}, [sensorID, user]);
 
 	return (
 		<>
