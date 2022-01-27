@@ -59,14 +59,12 @@ export default function ManageApp() {
 								return bLength - aLength;
 							})
 							.find((route) =>
-								route.index
-									? location.pathname.endsWith("manage")
-									: location.pathname.startsWith(
-											"/manage/" +
-												("indexSlug" in route
-													? route.indexSlug
-													: route.slug),
-									  ),
+								location.pathname.startsWith(
+									"/manage/" +
+										("indexSlug" in route
+											? route.indexSlug
+											: route.slug),
+								),
 							)?.text || "Unknown page"}
 					</Typography>
 				</Toolbar>

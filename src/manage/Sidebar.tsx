@@ -94,16 +94,7 @@ export default function Sidebar({
 				{links.map((link) => (
 					<ListItem
 						key={link.slug}
-						selected={
-							link.index
-								? location.pathname.endsWith("manage")
-								: location.pathname.startsWith(
-										"/manage/" +
-											("indexSlug" in link
-												? link.indexSlug
-												: link.slug),
-								  )
-						}
+						selected={location.pathname.endsWith(link.slug)}
 						disablePadding>
 						<ListItemButton
 							disabled={
@@ -112,9 +103,7 @@ export default function Sidebar({
 								)
 							}
 							onClick={() => {
-								navigate(
-									`./${link.index ? "" : `${link.slug}`}`,
-								);
+								navigate(`./${link.slug}`);
 								setMobileDrawerOpen(false);
 							}}>
 							<ListItemIcon>

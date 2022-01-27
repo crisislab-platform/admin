@@ -25,24 +25,19 @@ export type AppUser = {
 	  }
 	| { isLoggedIn: false }
 );
-
 export type User = Auth0User;
+
 export type Route = {
 	Element: ReactNode;
 	text: string;
 	requiredPermission: Permission;
-} & (
-	| { index: true; slug?: "" }
-	| {
-			index?: false;
-			slug: string;
-			indexSlug?: string;
-	  }
-);
-
+	slug: string;
+	indexSlug?: string;
+};
 export type SidebarLink = Route & {
 	Icon: typeof SvgIcon;
 };
+
 export interface Sensor {
 	status: "online" | "offline";
 	longitude: number;

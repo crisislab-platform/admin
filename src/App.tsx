@@ -78,12 +78,15 @@ export function App() {
 										<ManageApp />
 									</Suspense>
 								}>
+								<Route
+									index
+									element={<Navigate to="./sensors" />}
+								/>
 								{manageRoutes.map((route) => (
 									<Route
 										key={route.slug}
 										path={route.slug}
 										element={routeElement(route)}
-										index={route.index}
 									/>
 								))}
 							</Route>
