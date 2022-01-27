@@ -7,6 +7,7 @@ import {
 	Paper,
 	Stack,
 	Switch,
+	Tooltip,
 } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 
@@ -104,17 +105,19 @@ export default function SettingsPanel({
 				</Paper>
 			</Grow>
 			<Box>
-				<IconButton
-					onClick={() =>
-						setSettingsPanelVisible(!settingsPanelVisible)
-					}>
-					<SettingsIcon
-						sx={{
-							fill: "rgba(255, 255, 255, 0.7)",
-							stroke: "rgba(0, 0, 0, 0.7)",
-						}}
-					/>
-				</IconButton>
+				<Tooltip title="Options" placement="right">
+					<IconButton
+						onClick={() =>
+							setSettingsPanelVisible(!settingsPanelVisible)
+						}>
+						<SettingsIcon
+							sx={{
+								fill: "rgba(255, 255, 255, 0.7)",
+								stroke: "rgba(0, 0, 0, 0.7)",
+							}}
+						/>
+					</IconButton>
+				</Tooltip>
 			</Box>
 		</Stack>
 	);
