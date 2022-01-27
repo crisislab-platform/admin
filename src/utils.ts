@@ -1,1 +1,1 @@
-export const sensorsAPIBase = "https://shakemap.benhong.me/api/v1/";
+export const sensorsAPIBase = "https://shakemap.benhong.me/api/v1";

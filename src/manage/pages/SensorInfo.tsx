@@ -32,9 +32,7 @@ export function SensorInfo() {
 		try {
 			const res = await fetch(`${sensorsAPIBase}/sensors/${sensorID}`, {
 				headers: user.JWT
-					? {
-							Authorisation: `Bearer ${user.JWT}`,
-					  }
+					? { Authorization: `Bearer ${user.JWT}` }
 					: undefined,
 			});
 			const data = await res.json();
