@@ -61,7 +61,13 @@ function useLogIn() {
 
 	function logOutFn() {
 		setJWT(null);
-		logout({ returnTo: window.location.origin });
+		logout({
+			returnTo: `${window.location.origin}/${
+				window.location.pathname.slice(1).startsWith("manage")
+					? "manage"
+					: "map"
+			}`,
+		});
 	}
 
 	return {
@@ -87,7 +93,9 @@ export function useUser() {
 		}
 		asyncFunction();
 	}, [setClaims, getIdTokenClaims, isAuthenticated]);
-	const loggedIn = isAuthenticated && JWT;
+
+	const loggedIn = isAuthenticated && !!JWT;
+
 	let userObj: AppUser = {
 		isLoggedIn: false,
 		isLoading,
@@ -100,7 +108,6 @@ export function useUser() {
 	if (claims) {
 		claimsPerms = claims["https://crisislab.org.nz/roles"];
 	}
-
 	if (loggedIn) {
 		userObj = {
 			...userObj,
@@ -111,7 +118,6 @@ export function useUser() {
 			permissions: ["none", "logged_in", "sensors:read", ...claimsPerms],
 		};
 	}
-
 	return userObj;
 }
 

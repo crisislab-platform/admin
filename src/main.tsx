@@ -4,24 +4,33 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "./styles.css";
 
+import { StrictMode, useState } from "react";
+
 import { App } from "./App";
 import { Auth0Provider } from "@auth0/auth0-react";
+import { JWTContext } from "./components";
 import { BrowserRouter as Router } from "react-router-dom";
-import { StrictMode } from "react";
 import { render } from "react-dom";
 
-render(
-	<StrictMode>
-		<Auth0Provider
-			domain={import.meta.env.VITE_AUTH0_DOMAIN}
-			clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
-			redirectUri={window.location.origin}
-			scope={import.meta.env.VITE_AUTH0_SCOPE}
-			audience={import.meta.env.VITE_AUTH0_AUDIENCE}>
-			<Router>
-				<App />
-			</Router>
-		</Auth0Provider>
-	</StrictMode>,
-	document.getElementById("root"),
-);
+function Entrypoint() {
+	const [JWT, setJWT] = useState<null | string>(null);
+
+	return (
+		<StrictMode>
+			<Auth0Provider
+				domain={import.meta.env.VITE_AUTH0_DOMAIN}
+				clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+				redirectUri={window.location.origin}
+				scope={import.meta.env.VITE_AUTH0_SCOPE}
+				audience={import.meta.env.VITE_AUTH0_AUDIENCE}>
+				<JWTContext.Provider value={[JWT, setJWT]}>
+					<Router>
+						<App />
+					</Router>
+				</JWTContext.Provider>
+			</Auth0Provider>
+		</StrictMode>
+	);
+}
+
+render(<Entrypoint />, document.getElementById("root"));
