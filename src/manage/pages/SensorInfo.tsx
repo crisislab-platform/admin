@@ -23,6 +23,19 @@ export function SensorInfo() {
 	const [socketState, setSocketState] = useState<
 		null | "CLOSED" | "OPEN" | "ERRORED"
 	>(null);
+
+	function onOpen() {
+		console.info("Socket opened");
+		setSocketState("OPEN");
+	}
+	function onClose() {
+		console.info("Socket closed");
+		setSocketState("CLOSED");
+	}
+	function onError(e) {
+		console.warn("Socket errored", e);
+		setSocketState("ERRORED");
+	}
 	function openSocket() {
 		window.shakingData = {
 			EHZ: [],
@@ -38,7 +51,7 @@ export function SensorInfo() {
 				...number[]
 			];
 			const type = allData[0];
-			console.log(type);
+			// console.log(type);
 			const data = allData.slice(1) as number[];
 			for (const lump of data) {
 				if (!window.shakingData) {
@@ -52,23 +65,18 @@ export function SensorInfo() {
 				window.shakingData[type].push(lump);
 			}
 		});
-		ws.addEventListener("open", () => {
-			console.info("Socket opened");
-			setSocketState("OPEN");
-		});
-		ws.addEventListener("close", () => {
-			console.info("Socket closed");
-			setSocketState("CLOSED");
-		});
-		ws.addEventListener("error", (e) => {
-			console.warn("Socket errored", e);
-			setSocketState("ERRORED");
-		});
+		ws.addEventListener("open", onOpen);
+		ws.addEventListener("close", onClose);
+		ws.addEventListener("error", onError);
 		setSocket(ws);
 	}
 	function closeSocket() {
+		if (!socket) return;
 		console.info("Closing socket");
-		socket?.close();
+		socket.close();
+		socket.removeEventListener("open", onOpen);
+		socket.removeEventListener("close", onClose);
+		socket.removeEventListener("error", onError);
 		window.shakingData = null;
 		setSocket(null);
 	}
