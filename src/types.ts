@@ -3,6 +3,12 @@ import { User as Auth0User, IdToken } from "@auth0/auth0-react";
 import { ReactNode } from "react";
 import { SvgIcon } from "@mui/material";
 
+declare global {
+	interface Window {
+		shakingData: null | Record<ShakingDataChannel, number[]>;
+	}
+}
+
 export interface MotionData {
 	time: number;
 	value: number;
@@ -46,3 +52,5 @@ export interface Sensor {
 	type?: "android" | "raspberry-pi";
 	name?: string;
 }
+
+export type ShakingDataChannel = "EHZ" | "ENE" | "ENZ" | "ENN";

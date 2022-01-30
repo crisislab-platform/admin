@@ -1,98 +1,108 @@
-import { Alert, AlertTitle, Fab, Tooltip } from "@mui/material";
 import {
 	BasicSensorInfo,
+	LiveDataGraph,
 	LoadingSpinner,
 	MissingPermission,
 	useUser,
 } from "../../components";
+import { Box, Fab, Stack, Tooltip, Typography } from "@mui/material";
+import { WindowOutlined, WindowSharp } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 
 import ReloadIcon from "@mui/icons-material/Refresh";
-import { Sensor } from "../../types";
+import { ShakingDataChannel } from "../../types";
 import { sensorsAPIBase } from "../../utils";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
+const liveDataWebsocketURI = "wss://ingest-worker.benhong.workers.dev/consume";
+
 export function SensorInfo() {
 	const { sensorID } = useParams();
-	const user = useUser();
-	const [sensor, setSensor] = useState<null | Sensor>(null);
-	const [error, setError] = useState<null | [string, Error]>(null);
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
-	async function loadSensorInfo() {
-		if (!user.isLoggedIn) {
-			return enqueueSnackbar(
-				"You must be logged in to view sensor info",
-				{ variant: "warning" },
-			);
-		}
-		const snack = enqueueSnackbar("Loading sensor info...", {
-			variant: "info",
-			persist: true,
+	const [socket, setSocket] = useState<null | WebSocket>(null);
+	const [socketState, setSocketState] = useState<
+		null | "CLOSED" | "OPEN" | "ERRORED"
+	>(null);
+	function openSocket() {
+		console.info("Opening socket");
+		const ws = new WebSocket(`${liveDataWebsocketURI}/${sensorID}`);
+		ws.addEventListener(
+			"message",
+			(message: { data: [ShakingDataChannel, ...number[]] }) => {
+				if (!window.shakingData) {
+					window.shakingData = {
+						EHZ: [],
+						ENE: [],
+						ENZ: [],
+						ENN: [],
+					};
+				}
+				const type = message.data[0];
+				const data = message.data.slice(1) as number[];
+				for (const lump of data) {
+					window.shakingData[type].push(lump);
+				}
+			},
+		);
+		ws.addEventListener("open", () => {
+			console.info("Socket opened");
+			setSocketState("OPEN");
 		});
-		try {
-			const res = await fetch(`${sensorsAPIBase}/sensors/${sensorID}`, {
-				headers: user.JWT
-					? { Authorization: `Bearer ${user.JWT}` }
-					: undefined,
-			});
-			const data = await res.json();
-			setSensor(data);
-			closeSnackbar(snack);
-			enqueueSnackbar("Loaded sensor info!", { variant: "success" });
-		} catch (e) {
-			closeSnackbar(snack);
-			enqueueSnackbar("Failed to load sensor info.", {
-				variant: "error",
-			});
-			setError(["Failed to load sensor information.", e]);
-		}
+		ws.addEventListener("close", () => {
+			console.info("Socket closed");
+			setSocketState("CLOSED");
+		});
+		ws.addEventListener("error", (e) => {
+			console.info("Socket errored", e);
+			setSocketState("ERRORED");
+		});
+		setSocket(ws);
 	}
+	function closeSocket() {
+		console.info("Closing socket");
+		socket?.close();
+		window.shakingData = null;
+		setSocket(null);
+	}
+
 	useEffect(() => {
-		console.log("Something happened!");
-		if (user.isLoggedIn) {
-			loadSensorInfo();
-		}
-	}, [user.isLoggedIn, sensorID]);
+		openSocket();
+		return closeSocket;
+	}, [sensorID, setSocket]);
 
 	return (
 		<>
-			{user.isLoggedIn ? (
-				sensor ? (
-					<>
-						<BasicSensorInfo sensor={sensor} />
-					</>
-				) : error ? (
-					<Alert severity="error">
-						<AlertTitle>{error[0]}</AlertTitle>
-						{error[1] + ""}
-					</Alert>
+			{socket ? (
+				socketState === "OPEN" ? (
+					<Stack gap={2}>
+						<LiveDataGraph channel="EHZ" />
+						<LiveDataGraph channel="ENE" />
+						<LiveDataGraph channel="ENZ" />
+						<LiveDataGraph channel="ENN" />
+					</Stack>
+				) : socketState === "CLOSED" ? (
+					<Typography>Socket closed</Typography>
 				) : (
-					<LoadingSpinner message="Loading sensor info" />
+					<LoadingSpinner message="Connecting" />
 				)
 			) : (
-				<MissingPermission permission="sensors:read" />
+				<Typography>Socket is null</Typography>
 			)}
-			<Tooltip title="Reload sensor info" placement="left">
-				<span>
-					<Fab
-						color="primary"
-						disabled={!user.isLoggedIn}
-						onClick={() => {
-							console.log("Fab clicked");
-							setSensor(null);
-							setError(null);
-							loadSensorInfo();
-						}}
-						sx={{
-							position: "fixed",
-							right: (theme) => theme.spacing(2),
-							bottom: (theme) => theme.spacing(2),
-						}}>
-						<ReloadIcon />
-					</Fab>
-				</span>
+
+			<Tooltip title="Reconnect websocket" placement="left">
+				<Fab
+					sx={{
+						position: "fixed",
+						bottom: (theme) => theme.spacing(2),
+						right: (theme) => theme.spacing(2),
+					}}
+					color="primary"
+					onClick={() => {
+						closeSocket();
+						openSocket();
+					}}>
+					<ReloadIcon />
+				</Fab>
 			</Tooltip>
 		</>
 	);
