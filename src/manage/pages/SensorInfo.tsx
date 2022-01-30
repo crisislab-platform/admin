@@ -83,7 +83,7 @@ export function SensorInfo() {
 
 	useEffect(() => {
 		openSocket();
-		return closeSocket;
+		return () => closeSocket();
 	}, [sensorID, setSocket]);
 
 	return (

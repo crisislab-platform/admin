@@ -29,7 +29,7 @@ export function LiveDataGraph({
 			let previous = window.shakingData[channel][0];
 			let wasAtEnd = true;
 			const interval = setInterval(() => {
-				if (containerRef?.current) {
+				if (containerRef?.current && window.shakingData[channel]) {
 					// Add 25 elements to the container
 					const parent = document.createElement("span");
 					parent.classList.add("parent");
