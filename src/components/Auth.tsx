@@ -86,7 +86,7 @@ export function useUser() {
 	useEffect(() => {
 		async function asyncFunction() {
 			const freshClaims = await getIdTokenClaims();
-			console.log("Fresh claims: ", freshClaims);
+			// console.log("Fresh claims: ", freshClaims);
 			if (freshClaims) {
 				setClaims(freshClaims);
 			}

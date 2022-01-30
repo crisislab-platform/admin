@@ -24,11 +24,23 @@ export function SensorInfo() {
 		null | "CLOSED" | "OPEN" | "ERRORED"
 	>(null);
 	function openSocket() {
+		window.shakingData = {
+			EHZ: [],
+			ENE: [],
+			ENZ: [],
+			ENN: [],
+		};
 		console.info("Opening socket");
 		const ws = new WebSocket(`${liveDataWebsocketURI}/${sensorID}`);
-		ws.addEventListener(
-			"message",
-			(message: { data: [ShakingDataChannel, ...number[]] }) => {
+		ws.addEventListener("message", (message: { data: string }) => {
+			const allData = JSON.parse(message.data) as [
+				ShakingDataChannel,
+				...number[]
+			];
+			const type = allData[0];
+			console.log(type);
+			const data = allData.slice(1) as number[];
+			for (const lump of data) {
 				if (!window.shakingData) {
 					window.shakingData = {
 						EHZ: [],
@@ -37,13 +49,9 @@ export function SensorInfo() {
 						ENN: [],
 					};
 				}
-				const type = message.data[0];
-				const data = message.data.slice(1) as number[];
-				for (const lump of data) {
-					window.shakingData[type].push(lump);
-				}
-			},
-		);
+				window.shakingData[type].push(lump);
+			}
+		});
 		ws.addEventListener("open", () => {
 			console.info("Socket opened");
 			setSocketState("OPEN");
@@ -53,7 +61,7 @@ export function SensorInfo() {
 			setSocketState("CLOSED");
 		});
 		ws.addEventListener("error", (e) => {
-			console.info("Socket errored", e);
+			console.warn("Socket errored", e);
 			setSocketState("ERRORED");
 		});
 		setSocket(ws);

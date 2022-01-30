@@ -21,7 +21,7 @@ export function App() {
 		<Navigate to="/map" replace />
 	);
 	function routeElement(route: RouteType) {
-		console.log(user.permissions);
+		// console.log(user.permissions);
 		return user.permissions.includes(route.requiredPermission) ? (
 			route.Element
 		) : (
