@@ -331,37 +331,42 @@ export default function MapApp() {
 					flyToCoords(sensor.longitude, sensor.latitude);
 				}
 				if (map) {
-					let markerColour =
-						sensor.status === "online"
-							? theme.palette.success.main
-							: theme.palette.error.main;
-					if (!!activeSensor && sensor.id === activeSensor.id) {
-						markerColour = theme.palette.primary.main;
+					const markerElement = document.createElement("div");
+					markerElement.classList.add("crisislab-sensor-marker");
+					if (sensor.status === "online") {
+						markerElement.classList.add("online");
+						markerElement.classList.remove("offline");
+					} else {
+						markerElement.classList.remove("online");
+						markerElement.classList.add("offline");
 					}
-					const marker = new Marker({
-						color: markerColour,
-					})
+					if (!!activeSensor && sensor.id === activeSensor.id) {
+						markerElement.classList.add("active");
+					} else {
+						markerElement.classList.remove("active");
+					}
+
+					const marker = new Marker(markerElement)
 						.setLngLat([sensor.longitude, sensor.latitude])
 						.addTo(map);
-					const markerEl = marker.getElement();
 
-					markerEl.addEventListener("click", (e) =>
-						clickHandler(marker, markerEl),
+					markerElement.addEventListener("click", (e) =>
+						clickHandler(marker, markerElement),
 					);
 					// Terrible attempt to make the markers keyboard accessible
 					/*
-					markerEl.setAttribute("tabindex", "1");
-					markerEl.addEventListener("focus", () => {
-						markerEl.setAttribute("tabindex", "-1");
+					markerElement.setAttribute("tabindex", "1");
+					markerElement.addEventListener("focus", () => {
+						markerElement.setAttribute("tabindex", "-1");
 						clickHandler();
 					});
-					markerEl.addEventListener("blur", () => {
+					markerElement.addEventListener("blur", () => {
 						setTimeout(
-							() => markerEl.setAttribute("tabindex", "1"),
+							() => markerElement.setAttribute("tabindex", "1"),
 							2000,
 						);
 					// });*/
-					markerEl.addEventListener(
+					markerElement.addEventListener(
 						"contextmenu",
 						// @ts-ignore
 						(event: MouseEvent) => {
@@ -378,7 +383,7 @@ export default function MapApp() {
 							);
 						},
 					);
-
+					console.log(markerElement);
 					markers.push(marker);
 				}
 			});
@@ -463,7 +468,7 @@ export default function MapApp() {
 					sx={{
 						position: "absolute",
 						left: window.innerWidth / 2 - 130,
-						top: window.innerHeight / 2 - 210,
+						top: window.innerHeight / 2 - 180,
 						"& > .MuiPaper-root": {
 							p: (theme) => theme.spacing(1),
 						},

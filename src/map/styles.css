@@ -6,3 +6,18 @@
 .mapboxgl-ctrl-bottom-right > .mapboxgl-ctrl-attrib {
 	display: none;
 }
+.crisislab-sensor-marker {
+	width: 15px;
+	height: 15px;
+	border: 2px solid black;
+	border-radius: calc(var(--spacing) / 2);
+}
+.crisislab-sensor-marker.online {
+	background-color: var(--success);
+}
+.crisislab-sensor-marker.offline {
+	background-color: var(--error);
+}
+.crisislab-sensor-marker.active {
+	background-color: var(--primary);
+}

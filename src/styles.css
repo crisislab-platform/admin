@@ -1,3 +1,9 @@
+:root {
+	--primary: #536dfe;
+	--success: #04e762;
+	--error: #f44336;
+	--spacing: 8px;
+}
 .SnackbarBottomSpacing {
 	margin-bottom: 64px; /* 56 + 8  */
 }
