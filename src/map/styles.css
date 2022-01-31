@@ -7,9 +7,9 @@
 	display: none;
 }
 .crisislab-sensor-marker {
-	width: 15px;
-	height: 15px;
-	border: 2px solid black;
+	width: 10px;
+	height: 10px;
+	/* border: 2px solid black; */
 	border-radius: calc(var(--spacing) / 2);
 }
 .crisislab-sensor-marker.online {
