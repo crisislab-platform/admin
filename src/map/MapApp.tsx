@@ -103,6 +103,7 @@ export default function MapApp() {
 	async function loadSensorLocations() {
 		const snack = enqueueSnackbar("Loading sensor locations...", {
 			variant: "info",
+			persist: true,
 		});
 		try {
 			const res = await fetch(
@@ -149,6 +150,7 @@ export default function MapApp() {
 		if (mapContainerRef.current) {
 			const snack = enqueueSnackbar("Loading map...", {
 				variant: "info",
+				persist: true,
 			});
 			const newMap = new MapboxMap({
 				container: mapContainerRef.current,
