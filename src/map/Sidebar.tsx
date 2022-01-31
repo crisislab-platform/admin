@@ -1,8 +1,12 @@
 import {
-	AppBar,
+	BasicSensorInfo,
+	LiveDataGraphs,
+	MobileDialog,
+	useUser,
+} from "../components";
+import {
 	Box,
 	Button,
-	Dialog,
 	Divider,
 	Drawer,
 	IconButton,
@@ -10,7 +14,6 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { BasicSensorInfo, MobileDialog, useUser } from "../components";
 
 import CloseIcon from "@mui/icons-material/Close";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -99,6 +102,7 @@ export default function Sidebar({
 				</Stack>
 				<BasicSensorInfo sensor={activeSensor} />
 				<Divider sx={{ my: (theme) => theme.spacing(1) }} />
+				<LiveDataGraphs sensorID={activeSensor.id + ""} />
 			</Stack>
 		</>
 	);

@@ -1,12 +1,25 @@
-import { Alert, Box, Collapse, Paper, Typography } from "@mui/material";
+import {
+	Alert,
+	Box,
+	Collapse,
+	Fab,
+	Paper,
+	Stack,
+	Tooltip,
+	Typography,
+} from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 
+import { LoadingSpinner } from "./index";
+import ReloadIcon from "@mui/icons-material/Refresh";
 import { ShakingDataChannel } from "../types";
 import { useSnackbar } from "notistack";
 
 // const data = Array.from(Array(10000)).map(() =>
 // 	Math.floor(Math.random() * 4000),
 // );
+
+const liveDataWebsocketURI = "wss://ingest-worker.benhong.workers.dev/consume";
 
 export function LiveDataGraph({
 	title,
@@ -135,5 +148,111 @@ export function LiveDataGraph({
 				</Collapse>
 			)}
 		</Paper>
+	);
+}
+
+export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
+	const [socket, setSocket] = useState<null | WebSocket>(null);
+	const [socketState, setSocketState] = useState<
+		null | "CLOSED" | "OPEN" | "ERRORED"
+	>(null);
+
+	function onOpen() {
+		console.info("Socket opened");
+		setSocketState("OPEN");
+	}
+	function onClose() {
+		console.info("Socket closed");
+		setSocketState("CLOSED");
+	}
+	function onError(e) {
+		console.warn("Socket errored", e);
+		setSocketState("ERRORED");
+	}
+	function openSocket() {
+		window.shakingData = {
+			EHZ: [],
+			ENE: [],
+			ENZ: [],
+			ENN: [],
+		};
+		console.info("Opening socket");
+		const ws = new WebSocket(`${liveDataWebsocketURI}/${sensorID}`);
+		ws.addEventListener("message", (message: { data: string }) => {
+			const allData = JSON.parse(message.data) as [
+				ShakingDataChannel,
+				...number[]
+			];
+			const type = allData[0];
+			// console.log(type);
+			const data = allData.slice(1) as number[];
+			for (const lump of data) {
+				if (!window.shakingData) {
+					window.shakingData = {
+						EHZ: [],
+						ENE: [],
+						ENZ: [],
+						ENN: [],
+					};
+				}
+				window.shakingData[type].push(lump);
+			}
+		});
+		ws.addEventListener("open", onOpen);
+		ws.addEventListener("close", onClose);
+		ws.addEventListener("error", onError);
+		setSocket(ws);
+	}
+	function closeSocket() {
+		if (!socket) return;
+		console.info("Closing socket");
+		socket.close();
+		socket.removeEventListener("open", onOpen);
+		socket.removeEventListener("close", onClose);
+		socket.removeEventListener("error", onError);
+		window.shakingData = null;
+		setSocket(null);
+	}
+
+	useEffect(() => {
+		openSocket();
+		return () => closeSocket();
+	}, [sensorID, setSocket]);
+
+	return (
+		<>
+			{socket ? (
+				socketState === "OPEN" ? (
+					<Stack gap={2}>
+						<LiveDataGraph channel="EHZ" />
+						<LiveDataGraph channel="ENE" />
+						<LiveDataGraph channel="ENZ" />
+						<LiveDataGraph channel="ENN" />
+					</Stack>
+				) : socketState === "CLOSED" ? (
+					<Typography>Socket closed</Typography>
+				) : (
+					<LoadingSpinner message="Connecting" />
+				)
+			) : (
+				<Typography>Socket is null</Typography>
+			)}
+
+			<Tooltip title="Reconnect websocket" placement="left">
+				<Fab
+					sx={{
+						position: "fixed",
+						bottom: (theme) => theme.spacing(2),
+						right: (theme) => theme.spacing(2),
+					}}
+					color="primary"
+					onClick={() => {
+						closeSocket();
+						openSocket();
+					}}>
+					<ReloadIcon />
+				</Fab>
+			</Tooltip>
+		</>
 	);
 }
