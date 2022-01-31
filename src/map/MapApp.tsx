@@ -395,15 +395,6 @@ export default function MapApp() {
 				"sensor_id",
 				activeSensor.id + "",
 			);
-		} else {
-			try {
-				newRelativePathQuery.searchParams.delete("sensor_id");
-			} catch (e) {
-				console.warn(
-					"Failed to remove sensor_id from url search params: ",
-					e,
-				);
-			}
 		}
 		window.history.pushState(null, "", newRelativePathQuery.href);
 	}, [activeSensor]);
