@@ -158,33 +158,27 @@ export default function MapApp() {
 				center: [174.8, -41.325],
 				zoom: 4.8,
 			});
-
-			newMap
-				.addControl(new AttributionControl(), "top-left")
-				.addControl(
-					new NavigationControl({
-						visualizePitch: true,
-						showZoom: true,
-						showCompass: true,
-					}),
-					"top-left",
-				)
-				.addControl(
-					new GeolocateControl({
-						positionOptions: {
-							enableHighAccuracy: true,
-						},
-						showUserLocation: false,
-					}),
-					"top-left",
-				)
-				.addControl(
-					new ScaleControl({
-						maxWidth: 150,
-						unit: "metric",
-					}),
-					"bottom-left",
-				);
+			const attributionControl = new AttributionControl();
+			newMap.addControl(attributionControl, "top-left");
+			const navigationControl = new NavigationControl({
+				visualizePitch: true,
+				showZoom: true,
+				showCompass: true,
+			});
+			newMap.addControl(navigationControl, "top-left");
+			const geoLocateControl = new GeolocateControl({
+				positionOptions: {
+					enableHighAccuracy: true,
+				},
+				showUserLocation: false,
+			});
+			newMap.addControl(geoLocateControl, "top-left").addControl(
+				new ScaleControl({
+					maxWidth: 150,
+					unit: "metric",
+				}),
+				"bottom-left",
+			);
 
 			function onError(e) {
 				closeSnackbar(snack);
@@ -269,6 +263,9 @@ export default function MapApp() {
 			return () => {
 				newMap.off("error", onError);
 				newMap.off("load", onLoad);
+				newMap.removeControl(navigationControl);
+				newMap.removeControl(geoLocateControl);
+				newMap.removeControl(attributionControl);
 				newMap.remove();
 			};
 		}
