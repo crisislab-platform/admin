@@ -158,7 +158,7 @@ export function LiveDataGraph({
 export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 	const [socket, setSocket] = useState<null | WebSocket>(null);
 	const [socketState, setSocketState] = useState<
-		null | "CLOSED" | "OPEN" | "ERRORED"
+		null | "CLOSED" | "OPEN" | "ERRORED" | "CONNECTED"
 	>(null);
 
 	function onOpen() {
@@ -173,6 +173,29 @@ export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 		console.warn("Socket errored", e);
 		setSocketState("ERRORED");
 	}
+	function onMessage(message: { data: string }) {
+		// Show loading state until messages actually start coming through
+		if (socketState === "OPEN") setSocketState("CONNECTED");
+		const allData = JSON.parse(message.data) as [
+			ShakingDataChannel,
+			...number[]
+		];
+		const type = allData[0];
+		// console.log(type);
+		const data = allData.slice(1) as number[];
+		for (const lump of data) {
+			if (!window.shakingData) {
+				window.shakingData = {
+					EHZ: [],
+					ENE: [],
+					ENZ: [],
+					ENN: [],
+				};
+			}
+			console.log(lump);
+			window.shakingData[type].push(lump);
+		}
+	}
 	function openSocket() {
 		window.shakingData = {
 			EHZ: [],
@@ -182,27 +205,7 @@ export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 		};
 		console.info("Opening socket");
 		const ws = new WebSocket(`${liveDataWebsocketURI}/${sensorID}`);
-		ws.addEventListener("message", (message: { data: string }) => {
-			const allData = JSON.parse(message.data) as [
-				ShakingDataChannel,
-				...number[]
-			];
-			const type = allData[0];
-			// console.log(type);
-			const data = allData.slice(1) as number[];
-			for (const lump of data) {
-				if (!window.shakingData) {
-					window.shakingData = {
-						EHZ: [],
-						ENE: [],
-						ENZ: [],
-						ENN: [],
-					};
-				}
-				console.log(lump);
-				window.shakingData[type].push(lump);
-			}
-		});
+		ws.addEventListener("message", onMessage);
 		ws.addEventListener("open", onOpen);
 		ws.addEventListener("close", onClose);
 		ws.addEventListener("error", onError);
@@ -212,6 +215,7 @@ export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 		if (!socket) return;
 		console.info("Closing socket");
 		socket.close();
+		socket.removeEventListener("message", onMessage);
 		socket.removeEventListener("open", onOpen);
 		socket.removeEventListener("close", onClose);
 		socket.removeEventListener("error", onError);
@@ -227,7 +231,7 @@ export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 	return (
 		<>
 			{socket ? (
-				socketState === "OPEN" ? (
+				socketState === "CONNECTED" ? (
 					<Stack gap={2}>
 						<LiveDataGraph channel="EHZ" />
 						<LiveDataGraph channel="ENE" />
