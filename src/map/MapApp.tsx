@@ -146,7 +146,7 @@ export default function MapApp() {
 		return () => window.removeEventListener("resize", updateDrawerWidth);
 	}, []);
 
-	function loadMap() {
+	function loadMap(): () => void {
 		if (mapContainerRef.current) {
 			const snack = enqueueSnackbar("Loading map...", {
 				variant: "info",
@@ -186,7 +186,14 @@ export default function MapApp() {
 					"bottom-left",
 				);
 
-			newMap.on("load", () => {
+			function onError(e) {
+				closeSnackbar(snack);
+				console.log("Failed to load map. Error: ", e);
+				enqueueSnackbar("Failed to load map!", {
+					variant: "error",
+				});
+			}
+			function onLoad() {
 				closeSnackbar(snack);
 				enqueueSnackbar("Loaded map!", {
 					variant: "success",
@@ -254,19 +261,24 @@ export default function MapApp() {
 						// "text-halo-color": "#000000",
 					},
 				});
-
 				setMap(newMap);
-			});
+			}
+			newMap.on("error", onError);
+			newMap.on("load", onLoad);
+
+			return () => {
+				newMap.off("error", onError);
+				newMap.off("load", onLoad);
+				newMap.remove();
+			};
 		}
+		return () => {};
 	}
 
 	useEffect(() => {
 		setMap(null);
-		loadMap();
-		// Clean up on unmount
-		return () => {
-			map?.remove();
-		};
+		const removeMap = loadMap();
+		return () => removeMap();
 	}, [theme, sateliteMode]);
 
 	useEffect(() => {
