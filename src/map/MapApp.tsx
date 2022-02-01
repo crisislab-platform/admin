@@ -245,6 +245,7 @@ export default function MapApp() {
 						visibility: "visible",
 						"text-field": ["get", "Name"],
 						"text-size": 12,
+						"symbol-placement": "line-center",
 					},
 					paint: {
 						"text-color": theme.palette.text.primary,
