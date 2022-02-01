@@ -429,6 +429,16 @@ export default function MapApp() {
 		}
 	}
 
+	function reloadSensors() {
+		setSensors(null);
+		setActiveSensor(null);
+		loadSensorLocations();
+	}
+	function reloadMap() {
+		setMap(null);
+		loadMap();
+	}
+
 	return (
 		<>
 			<Suspense fallback={<LoadingSpinner />}>
@@ -509,23 +519,20 @@ export default function MapApp() {
 				}}
 				color="primary"
 				ariaLabel="Reload buttons"
-				icon={<ReloadIcon />}>
+				icon={<ReloadIcon />}
+				onClick={() => {
+					reloadSensors();
+					reloadMap();
+				}}>
 				<SpeedDialAction
 					icon={<MarkerIcon />}
 					tooltipTitle="Reload sensor locations"
-					onClick={() => {
-						setSensors(null);
-						setActiveSensor(null);
-						loadSensorLocations();
-					}}
+					onClick={reloadSensors}
 				/>
 				<SpeedDialAction
 					icon={<MapIcon />}
 					tooltipTitle="Re-initalize map"
-					onClick={() => {
-						setMap(null);
-						loadMap();
-					}}
+					onClick={reloadMap}
 				/>
 			</SpeedDial>
 			<SettingsPanel
