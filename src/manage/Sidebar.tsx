@@ -22,11 +22,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { SidebarLink } from "../types";
 
-const auth0 = {
-	audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-	scope: import.meta.env.VITE_AUTH0_SCOPE,
-};
-
 const longTextMixin = {
 	textOverflow: "ellipsis",
 	overflow: "hidden",

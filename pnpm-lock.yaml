@@ -14,6 +14,7 @@ specifiers:
   '@types/mapbox-gl': ^2.6.0
   '@types/react': ^17.0.38
   '@types/react-dom': ^17.0.11
+  '@types/suncalc': ^1.8.1
   '@vitejs/plugin-react': ^1.0.7
   mapbox-gl: ^2.6.1
   notistack: ^2.0.3
@@ -22,6 +23,7 @@ specifiers:
   react-dom: ^17.0.2
   react-router-dom: ^6.2.1
   react-use: ^17.3.2
+  suncalc: ^1.8.0
   typescript: ^4.5.4
   vite: ^2.7.2
 
@@ -43,12 +45,14 @@ dependencies:
   react-dom: 17.0.2_react@17.0.2
   react-router-dom: 6.2.1_react-dom@17.0.2+react@17.0.2
   react-use: 17.3.2_react-dom@17.0.2+react@17.0.2
+  suncalc: 1.8.0
   typescript: 4.5.4
 
 devDependencies:
   '@types/mapbox-gl': 2.6.0
   '@types/react': 17.0.38
   '@types/react-dom': 17.0.11
+  '@types/suncalc': 1.8.1
   '@vitejs/plugin-react': 1.1.4
   vite: 2.7.10
 
@@ -949,6 +953,10 @@ packages:
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
+
+  /@types/suncalc/1.8.1:
+    resolution: {integrity: sha512-PNtzFQhdAIw3x5HEjVMxbyBwciX42C/Cg6J1foq2z/t9rucLGGu9nqQxOl005wGZR/fOxw49exwZUCmbnT/vGw==}
+    dev: true
 
   /@vitejs/plugin-react/1.1.4:
     resolution: {integrity: sha512-cMUBDonNY8PPeHWjIrYKbRn6bLSunh/Ixo2XLLBd3DM0uYBZft+c+04zkGhhN1lAwvoRKJ2FdtvhGhPgViHc6w==}
@@ -1968,6 +1976,10 @@ packages:
 
   /stylis/4.0.13:
     resolution: {integrity: sha512-xGPXiFVl4YED9Jh7Euv2V220mriG9u4B2TA6Ybjc1catrstKD2PpIdU3U0RKpkVBC2EhmL/F0sPCr9vrFTNRag==}
+    dev: false
+
+  /suncalc/1.8.0:
+    resolution: {integrity: sha1-HZiYEJVjB4dQ9JlKlZ5lTYdqy/U=}
     dev: false
 
   /supercluster/7.1.4:

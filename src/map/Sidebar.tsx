@@ -40,6 +40,16 @@ export default function Sidebar({
 
 	function handleClose() {
 		setActiveSensor(null);
+		const newRelativePathQuery = new URL(window.location.href);
+		try {
+			newRelativePathQuery.searchParams.delete("sensor_id");
+		} catch (e) {
+			console.warn(
+				"Failed to remove sensor_id from url search params: ",
+				e,
+			);
+		}
+		window.history.pushState(null, "", newRelativePathQuery.href);
 	}
 
 	const sidebarContent = activeSensor && (

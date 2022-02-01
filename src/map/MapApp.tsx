@@ -36,6 +36,7 @@ import MarkerIcon from "@mui/icons-material/LocationOn";
 import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "../types";
 import SettingsPanel from "./SettingsPanel";
+import SunCalc from "suncalc";
 import { useSnackbar } from "notistack";
 
 const Sidebar = React.lazy(() => import("./Sidebar"));
@@ -253,6 +254,40 @@ export default function MapApp() {
 						// "text-color": theme.palette.error.main,
 						// "text-halo-width": 1,
 						// "text-halo-color": "#000000",
+					},
+				});
+				function getSunPosition() {
+					const center = newMap.getCenter();
+					const sunPos = SunCalc.getPosition(
+						new Date(),
+						center.lat,
+						center.lng,
+					);
+					const sunAzimuth = 180 + (sunPos.azimuth * 180) / Math.PI;
+					const sunAltitude = 90 - (sunPos.altitude * 180) / Math.PI;
+					return [sunAzimuth, sunAltitude];
+				}
+				newMap.addLayer({
+					id: "sky",
+					type: "sky",
+					paint: {
+						"sky-opacity": [
+							"interpolate",
+							["linear"],
+							["zoom"],
+							0,
+							0,
+							5,
+							0.3,
+							8,
+							1,
+						],
+						// set up the sky layer for atmospheric scattering
+						"sky-type": "atmosphere",
+						// explicitly set the position of the sun rather than allowing the sun to be attached to the main light source
+						"sky-atmosphere-sun": getSunPosition(),
+						// set the intensity of the sun as a light source (0-100 with higher values corresponding to brighter skies)
+						"sky-atmosphere-sun-intensity": 5,
 					},
 				});
 				setMap(newMap);
