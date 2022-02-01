@@ -430,7 +430,7 @@ export default function MapApp() {
 							);
 						},
 					);
-					console.log(markerElement);
+					// console.log(markerElement);
 					markers.push(marker);
 				}
 			});

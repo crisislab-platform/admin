@@ -42,7 +42,11 @@ export function LiveDataGraph({
 			let previous = window.shakingData[channel][0];
 			let wasAtEnd = true;
 			const interval = setInterval(() => {
-				if (containerRef?.current && window.shakingData[channel]) {
+				if (
+					containerRef?.current &&
+					window.shakingData[channel] &&
+					window.shakingData[channel].length - 1 >= b
+				) {
 					// Add 25 elements to the container
 					const parent = document.createElement("span");
 					parent.classList.add("parent");
@@ -195,6 +199,7 @@ export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 						ENN: [],
 					};
 				}
+				console.log(lump);
 				window.shakingData[type].push(lump);
 			}
 		});
