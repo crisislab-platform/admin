@@ -62,8 +62,8 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 		const [channel, timestamp, ...measurments] = JSON.parse(
 			message.data,
 		) as [ShakingDataChannel, number, ...number[]];
-		if !(channels.includes(channel)) {
-			setChannels(oldChannels => [...oldChannels, channel]);
+		if (!channels.includes(channel)) {
+			setChannels((oldChannels) => [...oldChannels, channel]);
 		}
 		setData((oldData) =>
 			oldData
