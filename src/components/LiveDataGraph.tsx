@@ -14,6 +14,7 @@ import { LoadingSpinner } from "./index";
 import ReloadIcon from "@mui/icons-material/Refresh";
 import { ResponsiveLineCanvas } from "@nivo/line";
 import { ShakingDataChannel } from "../types";
+import { SimpleDataGraph } from "./SimpleDataGraph.jsx";
 
 // const data = Array.from(Array(10000)).map(() =>
 // 	Math.floor(Math.random() * 4000),
@@ -33,6 +34,9 @@ export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 				style={{ overflowY: "hidden" }}
 			/>
 		);
+	}
+	if (useBensCode) {
+		return <SimpleDataGraph sensorId={sensorID} />;
 	}
 	return <_LiveDataGraphs sensorID={sensorID} />;
 }

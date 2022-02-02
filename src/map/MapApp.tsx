@@ -548,7 +548,6 @@ export default function MapApp() {
 					position: "absolute",
 					right: (theme) => theme.spacing(2),
 					bottom: (theme) => theme.spacing(2),
-					zIndex: (theme) => theme.zIndex.snackbar + 1,
 				}}
 				color="primary"
 				ariaLabel="Reload buttons"
