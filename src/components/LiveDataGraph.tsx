@@ -21,7 +21,22 @@ import { useSnackbar } from "notistack";
 
 const liveDataWebsocketURI = "wss://ingest-worker.benhong.workers.dev/consume";
 
+const useIframe = false;
+
 export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
+	if (useIframe) {
+		return (
+			<iframe
+				src={`https://ingest-worker.benhong.workers.dev/consume/${sensorID}`}
+				height={512}
+				style={{ overflowY: "hidden" }}
+			/>
+		);
+	}
+	return <_LiveDataGraphs sensorID={sensorID} />;
+}
+
+function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 	const [socket, setSocket] = useState<null | WebSocket>(null);
 	const [socketState, setSocketState] = useState<
 		null | "CLOSED" | "OPEN" | "ERRORED" | "CONNECTED"
@@ -202,7 +217,7 @@ export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 										display: "flex",
 										alignItems: "center",
 										whiteSpace: "nowrap",
-										width: "auto",
+										// width: "auto",
 										"& > .parent": {
 											contentVisibility: "auto",
 											containIntrinsicSize:
