@@ -3,12 +3,10 @@ import { User as Auth0User, IdToken } from "@auth0/auth0-react";
 import { ReactNode } from "react";
 import { SvgIcon } from "@mui/material";
 
-declare global {
-	interface Window {
-		shakingData: null | Record<ShakingDataChannel, number[]>;
-	}
-}
-
+type ShakingDataLump = {
+	d: number;
+	t: number;
+};
 export interface MotionData {
 	time: number;
 	value: number;
