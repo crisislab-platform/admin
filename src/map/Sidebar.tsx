@@ -1,6 +1,6 @@
 import {
 	BasicSensorInfo,
-	LiveDataGraphs,
+	SimpleDataGraph as LiveDataGraphs,
 	MobileDialog,
 	useUser,
 } from "../components";
