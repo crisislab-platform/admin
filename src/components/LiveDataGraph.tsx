@@ -65,8 +65,9 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 		if (!channels.has(channel)) {
 			setChannels((oldChannels) => oldChannels.add(channel));
 		}
-		setData((oldData) =>
-			oldData
+		setData((oldData) => {
+			// console.log(oldData);
+			return oldData
 				? {
 						...oldData,
 						[channel]: [
@@ -76,8 +77,8 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 				  }
 				: {
 						[channel]: measurments.map((m) => m + 9999999),
-				  },
-		);
+				  };
+		});
 	}
 	useEffect(() => {
 		console.info("Opening socket");
@@ -93,7 +94,7 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 			ws.close();
 			setSocket(null);
 		};
-	}, [sensorID]);
+	}, [sensorID, setSocket]);
 
 	return (
 		<>
@@ -114,6 +115,8 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 											gap: 1,
 											minWidth: "min-content",
 											whiteSpace: "nowrap",
+											height: (theme) =>
+												theme.spacing(250),
 										}}
 										onWheel={(e) => {
 											if (e.movementX !== 0) return;
@@ -124,7 +127,7 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 										<Typography variant="h6">
 											{`${channel} channel`}
 										</Typography>
-										{!!data[channel] ? (
+										{data[channel] ? (
 											<ResponsiveLineCanvas
 												data={[
 													{
