@@ -1,7 +1,6 @@
 import { Button, Paper, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import { LoadingSpinner } from "./index";
 import { ResponsiveLineCanvas } from "@nivo/line";
 import { ShakingDataChannel } from "../types";
@@ -27,20 +26,7 @@ export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 		);
 	}
 	if (useBensCode) {
-		return (
-			<Stack gap={1}>
-				<span>
-					<Button
-						variant="outlined"
-						color="primary"
-						startIcon={<FullscreenIcon />}
-						href={`https://ingest-worker.benhong.workers.dev/consume/${sensorID}`}>
-						Open in full-screen
-					</Button>
-				</span>
-				<SimpleDataGraph sensorId={sensorID} />
-			</Stack>
-		);
+		return <SimpleDataGraph sensorId={sensorID} />;
 	}
 	return <_LiveDataGraphs sensorID={sensorID} />;
 }

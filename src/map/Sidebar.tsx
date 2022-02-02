@@ -17,6 +17,7 @@ import {
 
 import CloseIcon from "@mui/icons-material/Close";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import LocationIcon from "@mui/icons-material/MyLocation";
 import { Sensor } from "../types";
 import ShareIcon from "@mui/icons-material/IosShare";
@@ -112,6 +113,15 @@ export default function Sidebar({
 				</Stack>
 				<BasicSensorInfo sensor={activeSensor} />
 				<Divider sx={{ my: (theme) => theme.spacing(1) }} />
+				<Box>
+					<Button
+						variant="outlined"
+						color="primary"
+						startIcon={<FullscreenIcon />}
+						href={`https://ingest-worker.benhong.workers.dev/consume/${activeSensor.id}`}>
+						Open in full-screen
+					</Button>
+				</Box>
 				<LiveDataGraphs sensorID={activeSensor.id + ""} />
 			</Stack>
 		</>
