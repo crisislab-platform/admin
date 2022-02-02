@@ -22,7 +22,7 @@ function renderChunks(deps: Record<string, string>) {
 export default defineConfig({
 	plugins: [react()],
 	build: {
-		sourcemap: true,
+		sourcemap: false,
 		rollupOptions: {
 			output: {
 				manualChunks: {
