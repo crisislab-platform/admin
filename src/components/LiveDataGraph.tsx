@@ -193,6 +193,7 @@ export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 				};
 			}
 			console.log(lump);
+			console.log(socketState);
 			window.shakingData[type].push(lump);
 		}
 	}
