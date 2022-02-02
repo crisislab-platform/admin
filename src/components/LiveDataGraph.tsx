@@ -22,6 +22,7 @@ import { ShakingDataChannel } from "../types";
 const liveDataWebsocketURI = "wss://ingest-worker.benhong.workers.dev/consume";
 
 const useIframe = false;
+const useBensCode = true;
 
 export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 	if (useIframe) {
@@ -116,7 +117,7 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 											minWidth: "min-content",
 											whiteSpace: "nowrap",
 											height: (theme) =>
-												theme.spacing(250),
+												theme.spacing(25),
 										}}
 										onWheel={(e) => {
 											if (e.movementX !== 0) return;
@@ -132,6 +133,7 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 												data={[
 													{
 														id: "shakingData",
+														color: "red",
 														data: data[channel].map(
 															(m, i) => ({
 																x: i,
@@ -149,24 +151,12 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 												xScale={{ type: "linear" }}
 												yScale={{
 													type: "linear",
-													stacked: true,
-													min: 0,
-													max: 2500,
+													min: -250000,
+													max: 250000,
 												}}
 												yFormat=" >-.2f"
 												axisTop={null}
-												axisRight={{
-													tickValues: [
-														0, 500, 1000, 1500,
-														2000, 2500,
-													],
-													tickSize: 5,
-													tickPadding: 5,
-													tickRotation: 0,
-													format: ".2s",
-													legend: "",
-													legendOffset: 0,
-												}}
+												axisRight={null}
 												axisBottom={{
 													tickValues: [
 														0, 20, 40, 60, 80, 100,
@@ -182,8 +172,10 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 												}}
 												axisLeft={{
 													tickValues: [
-														0, 500, 1000, 1500,
-														2000, 2500,
+														-25000, -20000, -15000,
+														-10000, -5000, 0, 5000,
+														10000, 15000, 20000,
+														25000,
 													],
 													tickSize: 5,
 													tickPadding: 5,
