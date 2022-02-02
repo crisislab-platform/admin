@@ -1,17 +1,8 @@
-import {
-	Alert,
-	Box,
-	Collapse,
-	Fab,
-	Paper,
-	Stack,
-	Tooltip,
-	Typography,
-} from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { Button, Paper, Stack, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import { LoadingSpinner } from "./index";
-import ReloadIcon from "@mui/icons-material/Refresh";
 import { ResponsiveLineCanvas } from "@nivo/line";
 import { ShakingDataChannel } from "../types";
 import { SimpleDataGraph } from "./SimpleDataGraph.jsx";
@@ -36,7 +27,20 @@ export function LiveDataGraphs({ sensorID }: { sensorID: string }) {
 		);
 	}
 	if (useBensCode) {
-		return <SimpleDataGraph sensorId={sensorID} />;
+		return (
+			<Stack gap={1}>
+				<span>
+					<Button
+						variant="outlined"
+						color="primary"
+						startIcon={<FullscreenIcon />}
+						href={`https://ingest-worker.benhong.workers.dev/consume/${sensorID}`}>
+						Open in full-screen
+					</Button>
+				</span>
+				<SimpleDataGraph sensorId={sensorID} />
+			</Stack>
+		);
 	}
 	return <_LiveDataGraphs sensorID={sensorID} />;
 }
