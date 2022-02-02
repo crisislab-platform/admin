@@ -41,7 +41,7 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 	const [socketState, setSocketState] = useState<
 		null | "CLOSED" | "OPEN" | "ERRORED" | "CONNECTED"
 	>(null);
-	const [channels, setChannels] = useState<string[]>([]);
+	const [channels, setChannels] = useState<Set<string>>(new Set());
 	const [data, setData] = useState<null | { [key: string]: number[] }>(null);
 
 	function onOpen() {
@@ -62,8 +62,8 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 		const [channel, timestamp, ...measurments] = JSON.parse(
 			message.data,
 		) as [ShakingDataChannel, number, ...number[]];
-		if (!channels.includes(channel)) {
-			setChannels((oldChannels) => [...oldChannels, channel]);
+		if (!channels.has(channel)) {
+			setChannels((oldChannels) => oldChannels.add(channel));
 		}
 		setData((oldData) =>
 			oldData
@@ -89,9 +89,8 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 		setSocket(ws);
 
 		return () => {
-			if (!socket) return;
 			console.info("Closing socket");
-			socket.close();
+			ws.close();
 			setSocket(null);
 		};
 	}, [sensorID]);
@@ -102,118 +101,125 @@ function _LiveDataGraphs({ sensorID }: { sensorID: string }) {
 				socketState === "CONNECTED" ? (
 					data ? (
 						<Stack gap={2}>
-							{channels.map((channel) => (
-								<Paper
-									key={channel}
-									variant="outlined"
-									sx={{
-										p: 1,
-										display: "inline-flex",
-										flexDirection: "column",
-										gap: 1,
-										minWidth: "min-content",
-										whiteSpace: "nowrap",
-									}}
-									onWheel={(e) => {
-										if (e.movementX !== 0) return;
-										// enqueueSnackbar(
-										// 	"Use Shift+Scrollwheel to scroll horizontally.",
-										// );
-									}}>
-									<Typography variant="h6">
-										{`${channel} channel`}
-									</Typography>
-									{!!data[channel] ? (
-										<ResponsiveLineCanvas
-											data={[
-												{
-													id: "shakingData",
-													data: data[channel].map(
-														(m, i) => ({
-															x: i,
-															y: m,
-														}),
-													),
-												},
-											]}
-											margin={{
-												top: 50,
-												right: 160,
-												bottom: 50,
-												left: 60,
-											}}
-											xScale={{ type: "linear" }}
-											yScale={{
-												type: "linear",
-												stacked: true,
-												min: 0,
-												max: 2500,
-											}}
-											yFormat=" >-.2f"
-											axisTop={null}
-											axisRight={{
-												tickValues: [
-													0, 500, 1000, 1500, 2000,
-													2500,
-												],
-												tickSize: 5,
-												tickPadding: 5,
-												tickRotation: 0,
-												format: ".2s",
-												legend: "",
-												legendOffset: 0,
-											}}
-											axisBottom={{
-												tickValues: [
-													0, 20, 40, 60, 80, 100, 120,
-												],
-												tickSize: 5,
-												tickPadding: 5,
-												tickRotation: 0,
-												format: ".2f",
-												legend: "price",
-												legendOffset: 36,
-												legendPosition: "middle",
-											}}
-											axisLeft={{
-												tickValues: [
-													0, 500, 1000, 1500, 2000,
-													2500,
-												],
-												tickSize: 5,
-												tickPadding: 5,
-												tickRotation: 0,
-												format: ".2s",
-												legend: "volume",
-												legendOffset: -40,
-												legendPosition: "middle",
-											}}
-											enableGridX={false}
-											colors={{ scheme: "spectral" }}
-											lineWidth={1}
-											enablePoints={false}
-											pointSize={4}
-											pointColor={{ theme: "background" }}
-											pointBorderWidth={1}
-											pointBorderColor={{
-												from: "serieColor",
-											}}
-											isInteractive={false}
-											gridXValues={[
-												0, 20, 40, 60, 80, 100, 120,
-											]}
-											gridYValues={[
-												0, 500, 1000, 1500, 2000, 2500,
-											]}
-											legends={[]}
-										/>
-									) : (
-										<Typography>
-											No data found for channel {channel}
+							{Array.from(channels)
+								.sort()
+								.map((channel) => (
+									<Paper
+										key={channel}
+										variant="outlined"
+										sx={{
+											p: 1,
+											display: "inline-flex",
+											flexDirection: "column",
+											gap: 1,
+											minWidth: "min-content",
+											whiteSpace: "nowrap",
+										}}
+										onWheel={(e) => {
+											if (e.movementX !== 0) return;
+											// enqueueSnackbar(
+											// 	"Use Shift+Scrollwheel to scroll horizontally.",
+											// );
+										}}>
+										<Typography variant="h6">
+											{`${channel} channel`}
 										</Typography>
-									)}
-								</Paper>
-							))}
+										{!!data[channel] ? (
+											<ResponsiveLineCanvas
+												data={[
+													{
+														id: "shakingData",
+														data: data[channel].map(
+															(m, i) => ({
+																x: i,
+																y: m,
+															}),
+														),
+													},
+												]}
+												margin={{
+													top: 50,
+													right: 160,
+													bottom: 50,
+													left: 60,
+												}}
+												xScale={{ type: "linear" }}
+												yScale={{
+													type: "linear",
+													stacked: true,
+													min: 0,
+													max: 2500,
+												}}
+												yFormat=" >-.2f"
+												axisTop={null}
+												axisRight={{
+													tickValues: [
+														0, 500, 1000, 1500,
+														2000, 2500,
+													],
+													tickSize: 5,
+													tickPadding: 5,
+													tickRotation: 0,
+													format: ".2s",
+													legend: "",
+													legendOffset: 0,
+												}}
+												axisBottom={{
+													tickValues: [
+														0, 20, 40, 60, 80, 100,
+														120,
+													],
+													tickSize: 5,
+													tickPadding: 5,
+													tickRotation: 0,
+													format: ".2f",
+													legend: "price",
+													legendOffset: 36,
+													legendPosition: "middle",
+												}}
+												axisLeft={{
+													tickValues: [
+														0, 500, 1000, 1500,
+														2000, 2500,
+													],
+													tickSize: 5,
+													tickPadding: 5,
+													tickRotation: 0,
+													format: ".2s",
+													legend: "volume",
+													legendOffset: -40,
+													legendPosition: "middle",
+												}}
+												enableGridX={false}
+												colors={{ scheme: "spectral" }}
+												lineWidth={1}
+												enablePoints={false}
+												pointSize={4}
+												pointColor={{
+													theme: "background",
+												}}
+												pointBorderWidth={1}
+												pointBorderColor={{
+													from: "serieColor",
+												}}
+												isInteractive={false}
+												gridXValues={[
+													0, 20, 40, 60, 80, 100, 120,
+												]}
+												gridYValues={[
+													0, 500, 1000, 1500, 2000,
+													2500,
+												]}
+												legends={[]}
+											/>
+										) : (
+											<Typography>
+												No data found for channel{" "}
+												{channel}
+											</Typography>
+										)}
+									</Paper>
+								))}
 						</Stack>
 					) : (
 						<Typography>No data</Typography>
