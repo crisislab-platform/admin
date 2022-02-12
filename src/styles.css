@@ -1,7 +1,7 @@
 :root {
-	--primary: #536dfe;
-	--success: #04e762;
-	--error: #f44336;
+	--primary: #1162a1;
+	--success: #157f1f;
+	--error: #d00000;
 	--spacing: 8px;
 }
 .SnackbarBottomSpacing {
