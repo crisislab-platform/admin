@@ -1,5 +1,5 @@
 import { Button, Link, Stack, TextField, Typography } from "@mui/material";
-import { FormEvent, useEffect } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 import { useSnackbar } from "notistack";
@@ -30,11 +30,12 @@ export const authRoutes: AuthRoute[] = [
 ];
 
 export function PasswordResetStartPage() {
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
 	useEffect(() => {
 		document.title = `Request a password reset${titleSuffix}`;
 	}, []);
+
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+	const [submitted, setSubmitted] = useState(false);
 
 	function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -45,8 +46,31 @@ export function PasswordResetStartPage() {
 				variant: "warning",
 			});
 		} else {
-			alert(`Email: ${email}`);
+			enqueueSnackbar("Password reset email sent.", {
+				variant: "success",
+			});
+			setSubmitted(true);
 		}
+	}
+
+	if (submitted) {
+		return (
+			<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
+				<Typography
+					variant="h4"
+					component="h2"
+					sx={{ textAlign: "center" }}>
+					Password reset email sent
+				</Typography>
+				<Typography variant="body1">
+					If you don't see it, make sure to check your junk/spam
+					folder.
+				</Typography>
+				<Link component={RouterLink} to="../login">
+					← Back to login
+				</Link>
+			</Stack>
+		);
 	}
 
 	return (
@@ -98,7 +122,9 @@ export function PasswordResetFinishPage() {
 				variant: "warning",
 			});
 		} else {
-			alert(`Password: ${password}`);
+			enqueueSnackbar("Password updated.", {
+				variant: "success",
+			});
 			navigate("../login");
 		}
 	}
@@ -152,7 +178,9 @@ export function LoginPage() {
 				variant: "warning",
 			});
 		} else {
-			alert(`Email: ${email}\nPassword: ${password}`);
+			enqueueSnackbar("Logged in.", {
+				variant: "success",
+			});
 		}
 	}
 
