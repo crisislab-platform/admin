@@ -1,7 +1,7 @@
 import { Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useEffect } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
-import { Link as RouterLink } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
 const titleSuffix = " | CRISiSLab Shakemap auth";
@@ -86,7 +86,49 @@ export function PasswordResetFinishPage() {
 		document.title = `Choose a new password${titleSuffix}`;
 	}, []);
 
-	return <>Enter a new password</>;
+	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+	const navigate = useNavigate();
+
+	function onSubmit(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+		const data = new FormData(e.currentTarget);
+		const password = data.get("password");
+		if (!password) {
+			enqueueSnackbar("Please provide a password.", {
+				variant: "warning",
+			});
+		} else {
+			alert(`Password: ${password}`);
+			navigate("../login");
+		}
+	}
+
+	return (
+		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
+			<Typography
+				variant="h4"
+				component="h2"
+				sx={{ textAlign: "center" }}>
+				Reset password
+			</Typography>
+			<Typography variant="body1" sx={{ textAlign: "center" }}>
+				Chose your new password below.
+			</Typography>
+			<form action="#" onSubmit={onSubmit}>
+				<Stack gap={2}>
+					<TextField
+						name="password"
+						required
+						label="New password"
+						type="password"
+					/>
+					<Button variant="contained" type="submit" color="secondary">
+						Save new password
+					</Button>
+				</Stack>
+			</form>
+		</Stack>
+	);
 }
 
 export function LoginPage() {
