@@ -6,6 +6,7 @@ import React, { Suspense } from "react";
 import { MissingPermission } from "./components";
 import { Route as RouteType } from "./types";
 import { SnackbarProvider } from "notistack";
+import { authRoutes } from "./auth/authRoutes";
 import { routes as manageRoutes } from "./manage/routes";
 import { theme } from "./theme";
 
@@ -60,49 +61,13 @@ export function App() {
 								</Suspense>
 							}>
 							<Route index element={<Navigate to="./login" />} />
-							<Route
-								key="reset-password-start"
-								path="reset-password-start"
-								element={
-									<>Enter email to reset your password</>
-								}
-							/>
-							<Route
-								key="reset-password-new-password"
-								path="reset-password-new-password"
-								element={<>Enter a new password</>}
-							/>
-							<Route
-								key="login"
-								path="login"
-								element={
-									<>
-										Login here
-										<Link
-											component={RouterLink}
-											to="../register">
-											Register →
-										</Link>
-									</>
-								}
-							/>
-							<Route
-								key="register"
-								path="register"
-								element={
-									<>
-										<p>
-											To get an account, ask a site admin
-											to create one for you.
-										</p>
-										<Link
-											component={RouterLink}
-											to="../login">
-											← Back to login
-										</Link>
-									</>
-								}
-							/>
+							{authRoutes.map((route) => (
+								<Route
+									key={route.path}
+									path={route.path}
+									element={route.component}
+								/>
+							))}
 						</Route>
 						<Route
 							key="map"
