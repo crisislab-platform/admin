@@ -35,7 +35,11 @@ export function App() {
 			<CssBaseline enableColorScheme />
 			<SnackbarProvider
 				classes={{
-					containerRoot: "SnackbarBottomSpacing",
+					containerRoot: "Snackbar-Bottom-Spacing",
+					variantSuccess: "Snackbar-Success",
+					variantError: "Snackbar-Error",
+					variantWarning: "Snackbar-Warning",
+					variantInfo: "Snackbar-Info",
 				}}
 				anchorOrigin={{
 					horizontal: "right",
