@@ -22,9 +22,13 @@ export default function AuthPagesWrapper() {
 				height: smallScreen ? "100%" : (theme) => theme.spacing(65),
 			}}>
 			<Stack alignItems="center">
-				<Typography variant="h5" component="h1">
-					CRISiSLab Shakemap
-				</Typography>
+				<img
+					src="/logo.png"
+					alt="CRISiSLab Logo"
+					title="CRISiSLab logo"
+					width={90}
+					height={90}
+				/>
 				<Outlet />
 			</Stack>
 		</Paper>
