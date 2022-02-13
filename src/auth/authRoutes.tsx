@@ -165,6 +165,9 @@ export function PasswordResetFinishPage() {
 					</Button>
 				</Stack>
 			</form>
+			<Link component={RouterLink} to="../login">
+				← Back to login
+			</Link>
 		</Stack>
 	);
 }
