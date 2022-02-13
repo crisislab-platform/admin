@@ -69,7 +69,16 @@ export function App() {
 								<Route
 									key={route.path}
 									path={route.path}
-									element={route.component}
+									element={
+										<Suspense
+											fallback={
+												<LoadingSpinner
+													message={`Loading ${route.path}`}
+												/>
+											}>
+											{route.component}
+										</Suspense>
+									}
 								/>
 							))}
 						</Route>
