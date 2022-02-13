@@ -39,7 +39,8 @@ export default function AuthPagesWrapper() {
 			sx={{
 				width: "100%",
 				height: "100%",
-				backgroundColor: (theme) => theme.palette.primary.light,
+				background: (theme) =>
+					`linear-gradient(${theme.palette.primary.light}, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
