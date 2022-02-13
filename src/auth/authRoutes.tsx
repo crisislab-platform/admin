@@ -2,7 +2,9 @@ import { Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 
+import LoginIcon from "@mui/icons-material/VpnKey";
 import MagicIcon from "@mui/icons-material/AutoFixHigh";
+import PasswordIcon from "@mui/icons-material/Password";
 import { useSnackbar } from "notistack";
 
 const titleSuffix = " | CRISiSLab Shakemap auth";
@@ -95,7 +97,11 @@ export function PasswordResetStartPage() {
 						placeholder="john@doe.net"
 						type="email"
 					/>
-					<Button variant="contained" type="submit" color="secondary">
+					<Button
+						variant="contained"
+						type="submit"
+						color="secondary"
+						endIcon={<PasswordIcon />}>
 						Reset password
 					</Button>
 				</Stack>
@@ -150,7 +156,11 @@ export function PasswordResetFinishPage() {
 						label="New password"
 						type="password"
 					/>
-					<Button variant="contained" type="submit" color="secondary">
+					<Button
+						variant="contained"
+						type="submit"
+						color="secondary"
+						endIcon={<PasswordIcon />}>
 						Save new password
 					</Button>
 				</Stack>
@@ -209,7 +219,11 @@ export function LoginPage() {
 						label="Password"
 						type="password"
 					/>
-					<Button variant="contained" type="submit" color="secondary">
+					<Button
+						variant="contained"
+						type="submit"
+						color="secondary"
+						endIcon={<LoginIcon />}>
 						Login
 					</Button>
 				</Stack>
