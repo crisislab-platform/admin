@@ -380,7 +380,7 @@ export default function MapApp() {
 				if (map) {
 					const markerElement = document.createElement("div");
 					markerElement.classList.add("crisislab-sensor-marker");
-					if (sensor.status === "online") {
+					if (sensor.online) {
 						markerElement.classList.add("online");
 						markerElement.classList.remove("offline");
 					} else {

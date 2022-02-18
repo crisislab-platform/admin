@@ -43,7 +43,7 @@ export type SidebarLink = Route & {
 };
 
 export interface Sensor {
-	status: "online" | "offline";
+	online: boolean;
 	longitude: number;
 	latitude: number;
 	id: number | string;

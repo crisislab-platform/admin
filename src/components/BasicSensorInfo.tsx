@@ -12,7 +12,7 @@ export function BasicSensorInfo({ sensor }: { sensor: Sensor }) {
 			</Typography>
 			<Stack direction="row" gap={0.5}>
 				<Typography>Connection status: </Typography>
-				<SensorStatusText status={sensor.status} />
+				<SensorStatusText online={sensor.online} />
 			</Stack>
 			<Typography>
 				Longitude: <strong>{sensor.longitude}</strong>
@@ -24,8 +24,8 @@ export function BasicSensorInfo({ sensor }: { sensor: Sensor }) {
 	);
 }
 
-export function SensorStatusIcon({ status }: { status: "online" | "offline" }) {
-	return status === "online" ? (
+export function SensorStatusIcon({ online }: { online: boolean }) {
+	return online ? (
 		<ConnectedIcon
 			sx={{
 				color: (theme) => {
@@ -42,21 +42,21 @@ export function SensorStatusIcon({ status }: { status: "online" | "offline" }) {
 		/>
 	);
 }
-export function SensorStatusText({ status }: { status: "online" | "offline" }) {
+export function SensorStatusText({ online }: { online: boolean }) {
 	return (
 		<Stack direction="row" gap={0.5} alignItems="center">
-			<SensorStatusIcon status={status} />
+			<SensorStatusIcon online={online} />
 			<Typography
 				variant="button"
 				sx={{
 					color: (theme) => {
 						// console.log(theme);
-						return status === "online"
+						return online
 							? theme.palette.success.main
 							: theme.palette.error.main;
 					},
 				}}>
-				{status}
+				{online ? "Online" : "Offline"}
 			</Typography>
 		</Stack>
 	);
