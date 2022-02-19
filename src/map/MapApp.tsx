@@ -3,13 +3,16 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { BasicSensorInfo, LoadingSpinner } from "../components";
 import {
+	Box,
 	Button,
+	IconButton,
 	Menu,
 	MenuItem,
 	Popover,
 	SpeedDial,
 	SpeedDialAction,
 	Stack,
+	Tooltip,
 	Typography,
 	useTheme,
 } from "@mui/material";
@@ -29,6 +32,7 @@ import mapboxgl, {
 	ScaleControl,
 } from "mapbox-gl";
 
+import CloseIcon from "@mui/icons-material/Close";
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import MapIcon from "@mui/icons-material/Map";
@@ -379,6 +383,7 @@ export default function MapApp() {
 				}
 				if (map) {
 					const markerElement = document.createElement("div");
+					markerElement.setAttribute("title", `Sensor #${sensor.id}`);
 					markerElement.classList.add("crisislab-sensor-marker");
 					if ("online" in sensor) {
 						if (sensor.online === true) {
@@ -393,6 +398,12 @@ export default function MapApp() {
 						markerElement.classList.add("active");
 					} else {
 						markerElement.classList.remove("active");
+					}
+
+					if (!!popover && sensor.id === popover.sensor.id) {
+						markerElement.classList.add("popover-open");
+					} else {
+						markerElement.classList.remove("popover-open");
 					}
 
 					const marker = new Marker(markerElement)
@@ -458,7 +469,7 @@ export default function MapApp() {
 		if (map) {
 			map.easeTo({
 				center: [longatude, latitude],
-				zoom: 13,
+				zoom: 10,
 				duration: flyTime,
 			});
 		}
@@ -527,12 +538,21 @@ export default function MapApp() {
 					sx={{
 						position: "absolute",
 						left: window.innerWidth / 2 - 130,
-						top: window.innerHeight / 2 - 180,
+						top: window.innerHeight / 2 - 260,
 						"& > .MuiPaper-root": {
 							p: (theme) => theme.spacing(1),
 						},
 					}}>
-					<Stack>
+					<Stack gap={1}>
+						<Box sx={{ display: "flex" }}>
+							<Tooltip title="Close popup" placement="right">
+								<IconButton
+									sx={{ ml: "auto" }}
+									onClick={() => setPopover(null)}>
+									<CloseIcon />
+								</IconButton>
+							</Tooltip>
+						</Box>
 						<BasicSensorInfo sensor={popover.sensor} />
 						<Button
 							variant="outlined"
@@ -545,6 +565,7 @@ export default function MapApp() {
 					</Stack>
 				</Popover>
 			)}
+
 			<SpeedDial
 				sx={{
 					position: "absolute",

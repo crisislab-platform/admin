@@ -11,6 +11,7 @@ import {
 	Drawer,
 	IconButton,
 	Stack,
+	Tooltip,
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
@@ -154,9 +155,11 @@ export default function Sidebar({
 			anchor="right">
 			<Stack direction="row">
 				<Box>
-					<IconButton onClick={handleClose}>
-						<CloseIcon />
-					</IconButton>
+					<Tooltip title="Close sidebar" placement="right">
+						<IconButton onClick={handleClose}>
+							<CloseIcon />
+						</IconButton>
+					</Tooltip>
 				</Box>
 			</Stack>
 			{sidebarContent}

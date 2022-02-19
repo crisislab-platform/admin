@@ -21,7 +21,12 @@
 .crisislab-sensor-marker.offline {
 	background-color: var(--error);
 }
+
 .crisislab-sensor-marker.active {
 	border-color: var(--primary);
 	z-index: 1;
+}
+.crisislab-sensor-marker.popover-open {
+	border-color: var(--light-primary);
+	z-index: 2;
 }
