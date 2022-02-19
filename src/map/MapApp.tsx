@@ -1,5 +1,6 @@
 import "./styles.css";
 import "mapbox-gl/dist/mapbox-gl.css";
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 import { BasicSensorInfo, LoadingSpinner } from "../components";
 import {
@@ -36,6 +37,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import MapIcon from "@mui/icons-material/Map";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import MarkerIcon from "@mui/icons-material/LocationOn";
 import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "../types";
@@ -165,6 +167,12 @@ export default function MapApp() {
 			});
 			const attributionControl = new AttributionControl();
 			newMap.addControl(attributionControl, "top-left");
+			const geocoderControl = new MapboxGeocoder({
+				accessToken: mapboxgl.accessToken,
+				mapboxgl: newMap,
+			});
+			newMap.addControl(geocoderControl, "top-left");
+
 			const navigationControl = new NavigationControl({
 				visualizePitch: true,
 				showZoom: true,
