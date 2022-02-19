@@ -12,7 +12,6 @@ export function SensorCard({
 	sensor: Sensor;
 	onDetailsClick?: () => void;
 }) {
-	const online = sensor.status === "online";
 	return (
 		<Paper
 			variant="outlined"
@@ -28,17 +27,17 @@ export function SensorCard({
 					<Typography variant="body1">{sensor.name}</Typography>
 				)}
 				<Stack direction="row" gap={1} alignItems="center">
-					<SensorStatusIcon status={sensor.status} />
+					<SensorStatusIcon online={sensor.online} />
 					<Typography
 						variant="button"
 						sx={{
 							color: (theme) =>
-								online
+								sensor.online
 									? theme.palette.success.main
 									: theme.palette.error.main,
 						}}>
 						{" "}
-						{online ? "Online" : "Offline"}
+						{sensor.online ? "Online" : "Offline"}
 					</Typography>
 				</Stack>
 				<Stack direction="row" gap={1} sx={{ width: "100%" }}>
