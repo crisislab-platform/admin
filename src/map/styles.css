@@ -2,6 +2,7 @@
 	box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.1);
 	backdrop-filter: blur(4px) !important;
 	border-bottom-right-radius: 8px !important;
+	background-color: white !important;
 }
 .mapboxgl-ctrl-bottom-right > .mapboxgl-ctrl-attrib {
 	display: none;
@@ -13,7 +14,7 @@
 	border-radius: calc(var(--spacing) / 2);
 	cursor: pointer !important;
 	background-color: var(--secondary);
-	border: 2px solid transparent;
+	border: 2px solid black;
 }
 .crisislab-sensor-marker.online {
 	background-color: var(--success);
