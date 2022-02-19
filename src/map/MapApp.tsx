@@ -81,6 +81,8 @@ export default function MapApp() {
 
 	useEffect(() => {
 		document.title = "CRISiSLab sensor map";
+		// @ts-expect-error
+		window.theme = theme;
 	}, []);
 
 	useEffect(() => {
