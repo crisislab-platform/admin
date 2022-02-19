@@ -11,6 +11,7 @@
 	height: 15px;
 	/* border: 2px solid black; */
 	border-radius: calc(var(--spacing) / 2);
+	cursor: pointer !important;
 }
 .crisislab-sensor-marker.online {
 	background-color: var(--success);
