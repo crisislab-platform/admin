@@ -380,12 +380,14 @@ export default function MapApp() {
 				if (map) {
 					const markerElement = document.createElement("div");
 					markerElement.classList.add("crisislab-sensor-marker");
-					if (sensor.online) {
-						markerElement.classList.add("online");
-						markerElement.classList.remove("offline");
-					} else {
-						markerElement.classList.remove("online");
-						markerElement.classList.add("offline");
+					if ("online" in sensor) {
+						if (sensor.online === true) {
+							markerElement.classList.add("online");
+							markerElement.classList.remove("offline");
+						} else if (sensor.online === false) {
+							markerElement.classList.remove("online");
+							markerElement.classList.add("offline");
+						}
 					}
 					if (!!activeSensor && sensor.id === activeSensor.id) {
 						markerElement.classList.add("active");

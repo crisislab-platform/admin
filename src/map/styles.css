@@ -12,6 +12,7 @@
 	/* border: 2px solid black; */
 	border-radius: calc(var(--spacing) / 2);
 	cursor: pointer !important;
+	background-color: var(--secondary);
 }
 .crisislab-sensor-marker.online {
 	background-color: var(--success);

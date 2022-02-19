@@ -2,6 +2,7 @@ import { Stack, Typography } from "@mui/material";
 
 import ConnectedIcon from "@mui/icons-material/Sensors";
 import NotConnectedIcon from "@mui/icons-material/SensorsOff";
+import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import { Sensor } from "../types";
 
 export function BasicSensorInfo({ sensor }: { sensor: Sensor }) {
@@ -24,8 +25,8 @@ export function BasicSensorInfo({ sensor }: { sensor: Sensor }) {
 	);
 }
 
-export function SensorStatusIcon({ online }: { online: boolean }) {
-	return online ? (
+export function SensorStatusIcon({ online }: { online?: boolean }) {
+	return online === true ? (
 		<ConnectedIcon
 			sx={{
 				color: (theme) => {
@@ -34,15 +35,21 @@ export function SensorStatusIcon({ online }: { online: boolean }) {
 				},
 			}}
 		/>
-	) : (
+	) : online === false ? (
 		<NotConnectedIcon
 			sx={{
 				color: (theme) => theme.palette.error.main,
 			}}
 		/>
+	) : (
+		<QuestionMarkIcon
+			sx={{
+				color: (theme) => theme.palette.secondary.main,
+			}}
+		/>
 	);
 }
-export function SensorStatusText({ online }: { online: boolean }) {
+export function SensorStatusText({ online }: { online?: boolean }) {
 	return (
 		<Stack direction="row" gap={0.5} alignItems="center">
 			<SensorStatusIcon online={online} />
@@ -51,12 +58,18 @@ export function SensorStatusText({ online }: { online: boolean }) {
 				sx={{
 					color: (theme) => {
 						// console.log(theme);
-						return online
+						return online === true
 							? theme.palette.success.main
-							: theme.palette.error.main;
+							: online === false
+							? theme.palette.error.main
+							: theme.palette.secondary.main;
 					},
 				}}>
-				{online ? "Online" : "Offline"}
+				{online === true
+					? "Online"
+					: online === false
+					? "Offline"
+					: "Unknown"}
 			</Typography>
 		</Stack>
 	);
