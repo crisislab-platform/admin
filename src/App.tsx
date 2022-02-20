@@ -10,7 +10,7 @@ import { authRoutes } from "./auth/authRoutes";
 import { routes as manageRoutes } from "./manage/routes";
 import { theme } from "./theme";
 
-const MapApp = React.lazy(() => import("./map/MapApp"));
+import MapApp from "./map/MapApp";
 const ManageApp = React.lazy(() => import("./manage/ManageApp"));
 const AuthWrapper = React.lazy(() => import("./auth/AuthWrapper"));
 
