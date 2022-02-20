@@ -3,7 +3,6 @@ import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LinkWithQuery } from "../components";
 
-import PasswordIcon from "@mui/icons-material/Password";
 import { titleSuffix } from "./utils";
 import { useSnackbar } from "notistack";
 
@@ -50,11 +49,7 @@ export default function PasswordResetFinishPage() {
 						label="New password"
 						type="password"
 					/>
-					<Button
-						variant="contained"
-						type="submit"
-						color="secondary"
-						endIcon={<PasswordIcon />}>
+					<Button variant="contained" type="submit" color="secondary">
 						Save new password
 					</Button>
 				</Stack>

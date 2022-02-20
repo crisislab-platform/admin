@@ -1,10 +1,10 @@
-import { Button, Stack, TextField, Typography } from "@mui/material";
+import { Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
 import { LinkWithQuery } from "../components";
-import PasswordIcon from "@mui/icons-material/Password";
 import { titleSuffix, useAuth } from "./utils";
 import { useSnackbar } from "notistack";
 import { LoadingButton } from "@mui/lab";
+
 export default function PasswordResetStartPage() {
 	useEffect(() => {
 		document.title = `Request a password reset${titleSuffix}`;
@@ -69,8 +69,7 @@ export default function PasswordResetStartPage() {
 						loading={status === "loading"}
 						variant="contained"
 						type="submit"
-						color="secondary"
-						endIcon={<PasswordIcon />}>
+						color="secondary">
 						Reset password
 					</LoadingButton>
 				</Stack>
