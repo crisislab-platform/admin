@@ -5,7 +5,7 @@ const PasswordResetFinishPage = React.lazy(
 	() => import("./PasswordResetFinish"),
 );
 const LoginPage = React.lazy(() => import("./Login"));
-const MagicLinkPage = React.lazy(() => import("./MagicLink"));
+const LoginLinkPage = React.lazy(() => import("./LoginLink"));
 const RegisterPage = React.lazy(() => import("./Register"));
 
 export interface AuthRoute {
@@ -26,8 +26,8 @@ export const authRoutes: AuthRoute[] = [
 		component: <LoginPage />,
 	},
 	{
-		path: "magic-link",
-		component: <MagicLinkPage />,
+		path: "login-link",
+		component: <LoginLinkPage />,
 	},
 	{
 		path: "register",

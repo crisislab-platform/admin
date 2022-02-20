@@ -1,6 +1,7 @@
-import { Button, Link, Stack, TextField, Typography } from "@mui/material";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { LinkWithQuery } from "../components";
 
 import PasswordIcon from "@mui/icons-material/Password";
 import { titleSuffix } from "./utils";
@@ -58,9 +59,7 @@ export default function PasswordResetFinishPage() {
 					</Button>
 				</Stack>
 			</form>
-			<Link component={RouterLink} to="../login">
-				← Back to login
-			</Link>
+			<LinkWithQuery to="../login">← Back to login</LinkWithQuery>
 		</Stack>
 	);
 }

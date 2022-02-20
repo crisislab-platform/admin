@@ -1,7 +1,6 @@
-import { Link } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
 import { titleSuffix } from "./utils";
 import { useEffect } from "react";
+import { LinkWithQuery } from "../components";
 
 export default function RegisterPage() {
 	useEffect(() => {
@@ -11,9 +10,7 @@ export default function RegisterPage() {
 	return (
 		<>
 			<p>To get an account, ask a site admin to create one for you.</p>
-			<Link component={RouterLink} to="../login">
-				← Back to login
-			</Link>
+			<LinkWithQuery to="../login">← Back to login</LinkWithQuery>
 		</>
 	);
 }

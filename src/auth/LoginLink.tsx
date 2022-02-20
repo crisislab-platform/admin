@@ -1,11 +1,9 @@
-import { Button, Link, Stack, TextField, Typography } from "@mui/material";
+import { Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
-
-import LoginIcon from "@mui/icons-material/VpnKey";
+import { LinkWithQuery } from "../components";
 import MagicIcon from "@mui/icons-material/AutoFixHigh";
-import PasswordIcon from "@mui/icons-material/Password";
-import { titleSuffix } from "./utils";
+import { LoadingButton } from "@mui/lab";
+import { titleSuffix, useAuth } from "./utils";
 import { useSnackbar } from "notistack";
 
 export default function MagicLinkPage() {
@@ -15,8 +13,9 @@ export default function MagicLinkPage() {
 
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const [sent, setSent] = useState<false | string>(false);
+	const { sendLoginLink, status } = useAuth();
 
-	function onSubmit(e: FormEvent<HTMLFormElement>) {
+	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const data = new FormData(e.currentTarget);
 		const email = data.get("email");
@@ -25,10 +24,10 @@ export default function MagicLinkPage() {
 				variant: "warning",
 			});
 		} else {
-			enqueueSnackbar("Magic link email sent.", {
-				variant: "success",
-			});
-			setSent(email + "");
+			const succeeded = await sendLoginLink(email.toString());
+			if (succeeded) {
+				setSent(email.toString());
+			}
 		}
 	}
 
@@ -36,16 +35,13 @@ export default function MagicLinkPage() {
 		return (
 			<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
 				<Typography variant="body1" sx={{ textAlign: "center" }}>
-					An email with a magic link to log in with has been sent to{" "}
-					{sent}.
+					An email with a login link has been sent to {sent}.
 				</Typography>
 				<Typography variant="body1">
 					If you don't see it, make sure to check your junk/spam
 					folder.
 				</Typography>
-				<Link component={RouterLink} to="../login">
-					← Back to login
-				</Link>
+				<LinkWithQuery to="../login">← Back to login</LinkWithQuery>
 			</Stack>
 		);
 	}
@@ -56,10 +52,10 @@ export default function MagicLinkPage() {
 				variant="h4"
 				component="h2"
 				sx={{ textAlign: "center" }}>
-				Get a Magic Link
+				Get a login link
 			</Typography>
 			<Typography variant="body1" sx={{ textAlign: "center" }}>
-				Enter your email address to request a magic login link.
+				Enter your email address to request a login link.
 			</Typography>
 			<form action="#" onSubmit={onSubmit}>
 				<Stack gap={2}>
@@ -70,18 +66,17 @@ export default function MagicLinkPage() {
 						placeholder="john@doe.net"
 						type="email"
 					/>
-					<Button
+					<LoadingButton
+						loading={status === "loading"}
 						variant="contained"
 						type="submit"
 						color="secondary"
 						endIcon={<MagicIcon />}>
-						Do Magic
-					</Button>
+						Send the link
+					</LoadingButton>
 				</Stack>
 			</form>
-			<Link component={RouterLink} to="../login">
-				← Back to login
-			</Link>
+			<LinkWithQuery to="../login">← Back to login</LinkWithQuery>
 		</Stack>
 	);
 }

@@ -1,20 +1,20 @@
-import { Button, Link, Stack, TextField, Typography } from "@mui/material";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
-
+import { LinkWithQuery } from "../components";
 import PasswordIcon from "@mui/icons-material/Password";
-import { titleSuffix } from "./utils";
+import { titleSuffix, useAuth } from "./utils";
 import { useSnackbar } from "notistack";
-
+import { LoadingButton } from "@mui/lab";
 export default function PasswordResetStartPage() {
 	useEffect(() => {
 		document.title = `Request a password reset${titleSuffix}`;
 	}, []);
+	const { sendPasswordResetLink, status } = useAuth();
 
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const [sent, setSent] = useState<false | string>(false);
 
-	function onSubmit(e: FormEvent<HTMLFormElement>) {
+	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const data = new FormData(e.currentTarget);
 		const email = data.get("email");
@@ -23,10 +23,10 @@ export default function PasswordResetStartPage() {
 				variant: "warning",
 			});
 		} else {
-			enqueueSnackbar("Password reset email sent.", {
-				variant: "success",
-			});
-			setSent(email + "");
+			const success = await sendPasswordResetLink(email.toString());
+			if (success) {
+				setSent(email.toString());
+			}
 		}
 	}
 
@@ -40,9 +40,7 @@ export default function PasswordResetStartPage() {
 					If you don't see it, make sure to check your junk/spam
 					folder.
 				</Typography>
-				<Link component={RouterLink} to="../login">
-					← Back to login
-				</Link>
+				<LinkWithQuery to="../login">← Back to login</LinkWithQuery>
 			</Stack>
 		);
 	}
@@ -67,18 +65,17 @@ export default function PasswordResetStartPage() {
 						placeholder="john@doe.net"
 						type="email"
 					/>
-					<Button
+					<LoadingButton
+						loading={status === "loading"}
 						variant="contained"
 						type="submit"
 						color="secondary"
 						endIcon={<PasswordIcon />}>
 						Reset password
-					</Button>
+					</LoadingButton>
 				</Stack>
 			</form>
-			<Link component={RouterLink} to="../login">
-				← Back to login
-			</Link>
+			<LinkWithQuery to="../login">← Back to login</LinkWithQuery>
 		</Stack>
 	);
 }

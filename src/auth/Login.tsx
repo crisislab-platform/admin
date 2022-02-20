@@ -1,19 +1,22 @@
-import { Button, Link, Stack, TextField, Typography } from "@mui/material";
+import { Link, Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { apiBase, titleSuffix } from "./utils";
+import { useAuth, titleSuffix } from "./utils";
+import { LoadingButton } from "@mui/lab";
+import { LinkWithQuery } from "../components";
 
 import LoginIcon from "@mui/icons-material/VpnKey";
 import { useSnackbar } from "notistack";
 
 export default function LoginPage() {
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+	const { login, status } = useAuth();
 
 	useEffect(() => {
 		document.title = `Login${titleSuffix}`;
 	}, []);
 
-	function onSubmit(e: FormEvent<HTMLFormElement>) {
+	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const data = new FormData(e.currentTarget);
 		const email = data.get("email");
@@ -27,9 +30,10 @@ export default function LoginPage() {
 				variant: "warning",
 			});
 		} else {
-			enqueueSnackbar("Logged in.", {
-				variant: "success",
-			});
+			const succeeded = await login(
+				email.toString(),
+				password.toString(),
+			);
 		}
 	}
 
@@ -56,24 +60,21 @@ export default function LoginPage() {
 						label="Password"
 						type="password"
 					/>
-					<Button
+					<LoadingButton
+						loading={status === "loading"}
 						variant="contained"
 						type="submit"
 						color="secondary"
 						endIcon={<LoginIcon />}>
 						Login
-					</Button>
+					</LoadingButton>
 				</Stack>
 			</form>
-			<Link component={RouterLink} to="../password-reset-start">
+			<LinkWithQuery to="../password-reset-start">
 				Reset password →
-			</Link>
-			<Link component={RouterLink} to="../magic-link">
-				Get a magic link →
-			</Link>
-			<Link component={RouterLink} to="../register">
-				Register →
-			</Link>
+			</LinkWithQuery>
+			<LinkWithQuery to="../login-link">Get a login link →</LinkWithQuery>
+			<LinkWithQuery to="../register">Register →</LinkWithQuery>
 		</Stack>
 	);
 }
