@@ -1,31 +1,35 @@
 import { useSnackbar } from "notistack";
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 export const titleSuffix = " | CRISiSLab Shakemap auth";
 
 export const apiBase = `https://shakemap.benhong.me/api/v1/auth`;
 
-export function getReturnTo(): null | string {
-	const searchParams = new URLSearchParams(window.location.href);
-	const returnTo = searchParams.get("return_to");
+export function getQueryParam(paramName: string): null | string {
+	const searchParams = new URL(window.location.href).searchParams;
+	const param = searchParams.get(paramName);
 
-	if (returnTo) {
-		return window.decodeURIComponent(returnTo);
+	if (param) {
+		return window.decodeURIComponent(param);
 	}
 
 	return null;
 }
 
-export function useGetReturnTo(): null | string {
-	const location = useLocation();
-	const memo = useMemo(getReturnTo, [location]);
-	return memo;
+export function useGetQueryParam(paramName: string): null | string {
+	const { search } = useLocation();
+	const [param, setParam] = useState<null | string>(null);
+	useEffect(() => {
+		setParam(getQueryParam(paramName));
+	}, [search]);
+	console.log(param);
+	return param;
 }
 
 export function useAuth() {
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-	const returnTo = useGetReturnTo();
+	const returnTo = useGetQueryParam("return_to");
 
 	const [status, setStatus] = useState<
 		"loading" | "logged_in" | "logged_out"
@@ -64,7 +68,7 @@ export function useAuth() {
 					returnTo !== null ? `?return_to=${returnTo}` : ""
 				}`,
 			);
-			const data = await res.json();
+			const data = await res.text();
 			succeeded = true;
 			console.log(data);
 			enqueueSnackbar("Magic link email sent.", {
@@ -85,11 +89,11 @@ export function useAuth() {
 		let succeeded = false;
 		try {
 			const res = await fetch(
-				`${apiBase}/link/${email}/sign-in${
+				`${apiBase}/link/${email}/reset${
 					returnTo !== null ? `?return_to=${returnTo}` : ""
 				}`,
 			);
-			const data = await res.json();
+			const data = await res.text();
 			succeeded = true;
 			console.log(data);
 			enqueueSnackbar("Password reset email sent.", {
@@ -108,5 +112,55 @@ export function useAuth() {
 		return succeeded;
 	}
 
-	return { status, login, sendLoginLink, sendPasswordResetLink };
+	async function updatePassword(
+		password: string,
+		token: string,
+	): Promise<boolean> {
+		setStatus("loading");
+		let succeeded = false;
+		try {
+			const res = await fetch(
+				`${apiBase}/reset-password${
+					returnTo !== null ? `?return_to=${returnTo}` : ""
+				}`,
+				{
+					body: JSON.stringify({ password }),
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${token}`,
+					},
+				},
+			);
+			if (res.status === 200) {
+				succeeded = true;
+				enqueueSnackbar("Password updated.", {
+					variant: "success",
+				});
+				setStatus("logged_in");
+				const data = await res.text();
+				console.log(data);
+			} else {
+				console.info(
+					`Error ${res.status} (${res.statusText}) when trying to change password.`,
+				);
+			}
+		} catch (e) {
+			console.info(`Error when trying to update password: ${e}`, e);
+			enqueueSnackbar("Error updating password.", {
+				variant: "success",
+			});
+			setStatus("logged_out");
+		}
+
+		return succeeded;
+	}
+
+	return {
+		status,
+		login,
+		sendLoginLink,
+		sendPasswordResetLink,
+		updatePassword,
+	};
 }

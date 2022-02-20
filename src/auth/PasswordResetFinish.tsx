@@ -1,10 +1,11 @@
-import { Button, Stack, TextField, Typography } from "@mui/material";
-import { FormEvent, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Stack, TextField, Typography } from "@mui/material";
+import { FormEvent, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { LinkWithQuery } from "../components";
-
-import { titleSuffix } from "./utils";
+import { LoadingButton } from "@mui/lab";
+import { titleSuffix, useAuth, useGetQueryParam } from "./utils";
 import { useSnackbar } from "notistack";
+import { useState } from "react";
 
 export default function PasswordResetFinishPage() {
 	useEffect(() => {
@@ -13,8 +14,10 @@ export default function PasswordResetFinishPage() {
 
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const navigate = useNavigate();
+	const token = useGetQueryParam("token");
+	const { status, updatePassword } = useAuth();
 
-	function onSubmit(e: FormEvent<HTMLFormElement>) {
+	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const data = new FormData(e.currentTarget);
 		const password = data.get("password");
@@ -22,11 +25,15 @@ export default function PasswordResetFinishPage() {
 			enqueueSnackbar("Please provide a password.", {
 				variant: "warning",
 			});
-		} else {
-			enqueueSnackbar("Password updated.", {
-				variant: "success",
+		} else if (!token) {
+			enqueueSnackbar("Please make sure that there is a token.", {
+				variant: "warning",
 			});
-			navigate("../login");
+		} else {
+			const succeeded = await updatePassword(password.toString(), token);
+			if (succeeded) {
+				navigate("../login");
+			}
 		}
 	}
 
@@ -49,9 +56,13 @@ export default function PasswordResetFinishPage() {
 						label="New password"
 						type="password"
 					/>
-					<Button variant="contained" type="submit" color="secondary">
+					<LoadingButton
+						loading={status === "loading"}
+						variant="contained"
+						type="submit"
+						color="secondary">
 						Save new password
-					</Button>
+					</LoadingButton>
 				</Stack>
 			</form>
 			<LinkWithQuery to="../login">← Back to login</LinkWithQuery>

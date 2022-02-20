@@ -6,3 +6,4 @@ export * from "./MobileDialog";
 export * from "./LiveDataGraph";
 export * from "./SimpleDataGraph";
 export * from "./LinkWithQuery";
+export * from "./NavigateWithQuery";

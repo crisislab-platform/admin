@@ -1,5 +1,6 @@
 import React from "react";
-
+import { NavigateWithQuery } from "../components";
+import { useGetQueryParam } from "./utils";
 const PasswordResetStartPage = React.lazy(() => import("./PasswordResetStart"));
 const PasswordResetFinishPage = React.lazy(
 	() => import("./PasswordResetFinish"),
@@ -13,6 +14,10 @@ export interface AuthRoute {
 	component: any;
 }
 export const authRoutes: AuthRoute[] = [
+	{
+		path: "token-sign-in",
+		component: <TokenSignIn />,
+	},
 	{
 		path: "password-reset-start",
 		component: <PasswordResetStartPage />,
@@ -34,3 +39,11 @@ export const authRoutes: AuthRoute[] = [
 		component: <RegisterPage />,
 	},
 ];
+
+function TokenSignIn() {
+	const type = useGetQueryParam("type");
+	if (type === "reset") {
+		return <NavigateWithQuery to="../password-reset-finish" />;
+	}
+	return <p>Something has gone terribly wrong: Unknown type query param</p>;
+}

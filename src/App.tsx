@@ -1,9 +1,9 @@
-import { CssBaseline, Link, ThemeProvider, Typography } from "@mui/material";
+import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { LoadingSpinner, useUser } from "./components";
-import { Navigate, Route, Link as RouterLink, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import React, { Suspense } from "react";
 
-import { MissingPermission } from "./components";
+import { MissingPermission, NavigateWithQuery } from "./components";
 import { Route as RouteType } from "./types";
 import { SnackbarProvider } from "notistack";
 import { authRoutes } from "./auth/authRoutes";
@@ -52,6 +52,13 @@ export function App() {
 							key="*"
 							path="*"
 							element={<Typography>Page not found :(</Typography>}
+						/>
+						<Route
+							key="token-sign-in"
+							path="token-sign-in"
+							element={
+								<NavigateWithQuery to="../auth/token-sign-in" />
+							}
 						/>
 						<Route
 							key="auth"
