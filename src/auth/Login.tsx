@@ -11,7 +11,6 @@ import { useSnackbar } from "notistack";
 export default function LoginPage() {
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const { login, loading } = useAuth();
-	console.log("login fn", login);
 
 	useEffect(() => {
 		document.title = `Login${titleSuffix}`;

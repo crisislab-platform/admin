@@ -8,10 +8,10 @@ import {
 	useMemo,
 	useState,
 } from "react";
+import { showErrorSnackbar, useGetQueryParam } from "./utils";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { User } from "../types";
-import { showErrorSnackbar } from "./utils";
 import { useSnackbar } from "notistack";
 
 const authUserNamespace = "auth-v2-user";
@@ -43,6 +43,7 @@ export function AuthProvider({
 	const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
 	const navigate = useNavigate();
 	const location = useLocation();
+	const returnTo = useGetQueryParam("return_to");
 
 	// Every time the user updates, save their data to localStorage
 	useEffect(() => {
@@ -86,7 +87,11 @@ export function AuthProvider({
 			setUser(user);
 			// @ts-ignore
 			window.user = user;
-			navigate("/");
+			if (returnTo) {
+				navigate(returnTo);
+			} else {
+				navigate("/");
+			}
 			enqueueSnackbar("Successfully logged in.", { variant: "success" });
 		} catch (error) {
 			showErrorSnackbar(enqueueSnackbar, error);
@@ -105,7 +110,7 @@ export function AuthProvider({
 		type: "welcome" | "sign-in" | "reset",
 	): Promise<boolean> {
 		try {
-			await authAPI.sendLink(email, type);
+			await authAPI.sendLink(email, type, returnTo);
 			enqueueSnackbar("Link sent.", { variant: "success" });
 			return true;
 		} catch (error) {
@@ -128,7 +133,8 @@ export function AuthProvider({
 	}
 
 	function goToLogin() {
-		navigate(`/auth/login?return_to=${window.location.href}`);
+		const newReturnTo = encodeURIComponent(location.pathname);
+		navigate(`/auth/login?return_to=${newReturnTo}`);
 	}
 
 	// Make the provider update only when it should.

@@ -53,12 +53,12 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 export async function sendLink(
 	email: string,
 	type: "welcome" | "sign-in" | "reset",
-	returnTo?: string,
+	returnTo?: string | null,
 ) {
 	try {
 		const response = await fetch(
 			`${apiBase}/link/${email}/${type}${
-				returnTo ? `?return_to=${returnTo}` : ""
+				!!returnTo ? `?return_to=${returnTo}` : ""
 			}`,
 			{ method: "GET" },
 		);
