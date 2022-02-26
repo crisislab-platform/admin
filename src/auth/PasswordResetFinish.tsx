@@ -32,12 +32,7 @@ export default function PasswordResetFinishPage() {
 				variant: "warning",
 			});
 		} else {
-			try {
-				await resetPassword(password.toString(), token);
-				navigate("../login");
-			} catch (error) {
-				showErrorSnackbar(enqueueSnackbar, error);
-			}
+			await resetPassword(password.toString(), token);
 		}
 	}
 

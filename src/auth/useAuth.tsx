@@ -16,13 +16,16 @@ import { useSnackbar } from "notistack";
 const authUserNamespace = "auth-v2-user";
 
 interface AuthContextType {
-	// We defined the user type in `index.d.ts`, but it's
-	// a simple object with email, name and password.
 	user?: authAPI.User;
 	loading: boolean;
 	error?: any;
-	login: (emailOrToken: string, password?: string) => void;
+	login: (emailOrToken: string, password?: string) => Promise<void>;
 	logout: () => void;
+	sendLink: (
+		email: string,
+		type: "welcome" | "sign-in" | "reset",
+	) => Promise<boolean>;
+	resetPassword: (password: string, token: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -86,6 +89,32 @@ export function AuthProvider({
 		localStorage.removeItem(authUserNamespace);
 	}
 
+	async function sendLink(
+		email: string,
+		type: "welcome" | "sign-in" | "reset",
+	): Promise<boolean> {
+		try {
+			await authAPI.sendLink(email, type);
+			enqueueSnackbar("Link sent.", { variant: "success" });
+			return true;
+		} catch (error) {
+			showErrorSnackbar(enqueueSnackbar, error);
+			return false;
+		}
+	}
+
+	async function resetPassword(
+		password: string,
+		token: string,
+	): Promise<void> {
+		try {
+			await authAPI.resetPassword(password, token);
+			enqueueSnackbar("Password changed.", { variant: "success" });
+		} catch (error) {
+			showErrorSnackbar(enqueueSnackbar, error);
+		}
+	}
+
 	// Make the provider update only when it should.
 	// We only want to force re-renders if the user
 	// or loading states change.
@@ -101,6 +130,8 @@ export function AuthProvider({
 			loading,
 			login,
 			logout,
+			sendLink,
+			resetPassword,
 		}),
 		[user, loading],
 	);

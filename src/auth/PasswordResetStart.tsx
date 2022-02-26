@@ -4,7 +4,6 @@ import { showErrorSnackbar, titleSuffix } from "./utils";
 
 import { LinkWithQuery } from "../components";
 import { LoadingButton } from "@mui/lab";
-import { sendLink } from "./auth";
 import useAuth from "./useAuth";
 import { useSnackbar } from "notistack";
 
@@ -12,7 +11,7 @@ export default function PasswordResetStartPage() {
 	useEffect(() => {
 		document.title = `Request a password reset${titleSuffix}`;
 	}, []);
-	const { loading } = useAuth();
+	const { loading, sendLink } = useAuth();
 
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const [sent, setSent] = useState<false | string>(false);
@@ -26,11 +25,9 @@ export default function PasswordResetStartPage() {
 				variant: "warning",
 			});
 		} else {
-			try {
-				await sendLink(email.toString(), "reset");
+			const success = await sendLink(email.toString(), "reset");
+			if (success) {
 				setSent(email.toString());
-			} catch (error) {
-				showErrorSnackbar(enqueueSnackbar, error);
 			}
 		}
 	}

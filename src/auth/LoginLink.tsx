@@ -5,7 +5,6 @@ import { showErrorSnackbar, titleSuffix } from "./utils";
 import { LinkWithQuery } from "../components";
 import { LoadingButton } from "@mui/lab";
 import MagicIcon from "@mui/icons-material/AutoFixHigh";
-import { sendLink } from "./auth";
 import useAuth from "./useAuth";
 import { useSnackbar } from "notistack";
 
@@ -16,7 +15,7 @@ export default function MagicLinkPage() {
 
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const [sent, setSent] = useState<false | string>(false);
-	const { loading } = useAuth();
+	const { loading, sendLink } = useAuth();
 
 	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -27,11 +26,9 @@ export default function MagicLinkPage() {
 				variant: "warning",
 			});
 		} else {
-			try {
-				await sendLink(email.toString(), "sign-in");
+			const success = await sendLink(email.toString(), "sign-in");
+			if (success) {
 				setSent(email.toString());
-			} catch (error) {
-				showErrorSnackbar(enqueueSnackbar, error);
 			}
 		}
 	}

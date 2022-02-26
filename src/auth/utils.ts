@@ -34,7 +34,7 @@ export function decodeJWT(token: string) {
 }
 
 export function showErrorSnackbar(
-	enqueueSnackbar: (message: string) => void,
+	enqueueSnackbar: (message: string, options: any) => void,
 	error: any,
 ) {
 	enqueueSnackbar(
@@ -43,6 +43,7 @@ export function showErrorSnackbar(
 			: "message" in error
 			? error.message
 			: error + "",
+		{ variant: "error" },
 	);
 }
 
