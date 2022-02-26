@@ -10,7 +10,7 @@ import {
 import { LoadingSpinner } from "./LoadingSpinner";
 import LoginIcon from "@mui/icons-material/VpnKey";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Permission } from "../types";
+import { Role } from "../types";
 import useAuth from "../auth/useAuth";
 
 export function LoginButton({ message }: { message?: string }) {
