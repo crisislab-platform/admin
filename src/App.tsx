@@ -1,18 +1,44 @@
 import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { LoadingSpinner, useUser } from "./components";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { MissingPermission, NavigateWithQuery } from "./components";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import React, { Suspense } from "react";
 
-import { MissingPermission, NavigateWithQuery } from "./components";
+import { AuthProvider } from "./auth/useAuth";
+import MapApp from "./map/MapApp";
 import { Route as RouteType } from "./types";
 import { SnackbarProvider } from "notistack";
 import { authRoutes } from "./auth/authRoutes";
 import { routes as manageRoutes } from "./manage/routes";
 import { theme } from "./theme";
 
-import MapApp from "./map/MapApp";
 const ManageApp = React.lazy(() => import("./manage/ManageApp"));
 const AuthWrapper = React.lazy(() => import("./auth/AuthWrapper"));
+
+function EverythingWrapper() {
+	return (
+		<ThemeProvider theme={theme}>
+			<CssBaseline enableColorScheme />
+
+			<SnackbarProvider
+				classes={{
+					containerRoot: "Snackbar-Bottom-Spacing",
+					variantSuccess: "Snackbar-Success",
+					variantError: "Snackbar-Error",
+					variantWarning: "Snackbar-Warning",
+					variantInfo: "Snackbar-Info",
+				}}
+				anchorOrigin={{
+					horizontal: "right",
+					vertical: "bottom",
+				}}>
+				<AuthProvider>
+					<Outlet />
+				</AuthProvider>
+			</SnackbarProvider>
+		</ThemeProvider>
+	);
+}
 
 export function App() {
 	const user = useUser();
@@ -31,110 +57,85 @@ export function App() {
 	}
 
 	return (
-		<ThemeProvider theme={theme}>
-			<CssBaseline enableColorScheme />
-			<SnackbarProvider
-				classes={{
-					containerRoot: "Snackbar-Bottom-Spacing",
-					variantSuccess: "Snackbar-Success",
-					variantError: "Snackbar-Error",
-					variantWarning: "Snackbar-Warning",
-					variantInfo: "Snackbar-Info",
-				}}
-				anchorOrigin={{
-					horizontal: "right",
-					vertical: "bottom",
-				}}>
-				<Routes>
-					<Route path="/">
-						<Route key="index" index element={redirectElement} />
-						<Route
-							key="*"
-							path="*"
-							element={<Typography>Page not found :(</Typography>}
-						/>
-						<Route
-							key="token-sign-in"
-							path="token-sign-in"
-							element={
-								<NavigateWithQuery to="../auth/token-sign-in" />
-							}
-						/>
-						<Route
-							key="auth"
-							path="auth"
-							element={
-								<Suspense
-									fallback={
-										<LoadingSpinner message="Loading login page(s)..." />
-									}>
-									<AuthWrapper />
-								</Suspense>
+		<Routes>
+			<Route path="/" element={<EverythingWrapper />}>
+				<Route key="index" index element={redirectElement} />
+				<Route
+					key="*"
+					path="*"
+					element={<Typography>Page not found :(</Typography>}
+				/>
+				<Route
+					key="token-sign-in"
+					path="token-sign-in"
+					element={<NavigateWithQuery to="../auth/token-sign-in" />}
+				/>
+				<Route
+					key="auth"
+					path="auth"
+					element={
+						<Suspense
+							fallback={
+								<LoadingSpinner message="Loading login page(s)..." />
 							}>
-							<Route index element={<Navigate to="./login" />} />
-							{authRoutes.map((route) => (
-								<Route
-									key={route.path}
-									path={route.path}
-									element={
-										<Suspense
-											fallback={
-												<LoadingSpinner
-													message={`Loading ${route.path}`}
-												/>
-											}>
-											{route.component}
-										</Suspense>
-									}
-								/>
-							))}
-						</Route>
+							<AuthWrapper />
+						</Suspense>
+					}>
+					<Route index element={<Navigate to="./login" />} />
+					{authRoutes.map((route) => (
 						<Route
-							key="map"
-							path="map"
+							key={route.path}
+							path={route.path}
 							element={
 								<Suspense
 									fallback={
-										<LoadingSpinner message="Loading map..." />
+										<LoadingSpinner
+											message={`Loading ${route.path}`}
+										/>
 									}>
-									<MapApp />
+									{route.component}
 								</Suspense>
 							}
 						/>
-						<Route
-							key="manage"
-							path="manage"
-							element={
-								<Suspense
-									fallback={
-										<LoadingSpinner message="Loading dashboard..." />
-									}>
-									<ManageApp />
-								</Suspense>
+					))}
+				</Route>
+				<Route
+					key="map"
+					path="map"
+					element={
+						<Suspense
+							fallback={
+								<LoadingSpinner message="Loading map..." />
 							}>
-							<Route
-								index
-								element={<Navigate to="./sensors" />}
-							/>
-							<Route
-								path="*"
-								element={
-									<Typography>
-										Page not found :{"("}
-									</Typography>
-								}
-							/>
-							{manageRoutes.map((route) => (
-								<Route
-									key={route.slug}
-									path={route.slug}
-									element={routeElement(route)}
-								/>
-							))}
-						</Route>
-					</Route>
-				</Routes>
-			</SnackbarProvider>
-		</ThemeProvider>
+							<MapApp />
+						</Suspense>
+					}
+				/>
+				<Route
+					key="manage"
+					path="manage"
+					element={
+						<Suspense
+							fallback={
+								<LoadingSpinner message="Loading dashboard..." />
+							}>
+							<ManageApp />
+						</Suspense>
+					}>
+					<Route index element={<Navigate to="./sensors" />} />
+					<Route
+						path="*"
+						element={<Typography>Page not found :{"("}</Typography>}
+					/>
+					{manageRoutes.map((route) => (
+						<Route
+							key={route.slug}
+							path={route.slug}
+							element={routeElement(route)}
+						/>
+					))}
+				</Route>
+			</Route>
+		</Routes>
 	);
 }

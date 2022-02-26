@@ -1,19 +1,22 @@
-import { Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
+import { Stack, TextField, Typography } from "@mui/material";
+import { showErrorSnackbar, titleSuffix } from "./utils";
+
 import { LinkWithQuery } from "../components";
-import MagicIcon from "@mui/icons-material/AutoFixHigh";
 import { LoadingButton } from "@mui/lab";
-import { titleSuffix, useAuth } from "./utils";
+import MagicIcon from "@mui/icons-material/AutoFixHigh";
+import { sendLink } from "./auth";
+import useAuth from "./useAuth";
 import { useSnackbar } from "notistack";
 
 export default function MagicLinkPage() {
 	useEffect(() => {
-		document.title = `Request a magic link${titleSuffix}`;
+		document.title = `Request a login link${titleSuffix}`;
 	}, []);
 
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const [sent, setSent] = useState<false | string>(false);
-	const { sendLoginLink, status } = useAuth();
+	const { loading } = useAuth();
 
 	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -24,9 +27,11 @@ export default function MagicLinkPage() {
 				variant: "warning",
 			});
 		} else {
-			const succeeded = await sendLoginLink(email.toString());
-			if (succeeded) {
+			try {
+				await sendLink(email.toString(), "sign-in");
 				setSent(email.toString());
+			} catch (error) {
+				showErrorSnackbar(enqueueSnackbar, error);
 			}
 		}
 	}
@@ -67,7 +72,7 @@ export default function MagicLinkPage() {
 						type="email"
 					/>
 					<LoadingButton
-						loading={status === "loading"}
+						loading={loading}
 						variant="contained"
 						type="submit"
 						color="secondary"

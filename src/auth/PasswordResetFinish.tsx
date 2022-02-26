@@ -1,11 +1,13 @@
-import { Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Stack, TextField, Typography } from "@mui/material";
+import { showErrorSnackbar, titleSuffix, useGetQueryParam } from "./utils";
+
 import { LinkWithQuery } from "../components";
 import { LoadingButton } from "@mui/lab";
-import { titleSuffix, useAuth, useGetQueryParam } from "./utils";
+import { resetPassword } from "./auth";
+import useAuth from "./useAuth";
+import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import { useState } from "react";
 
 export default function PasswordResetFinishPage() {
 	useEffect(() => {
@@ -15,7 +17,7 @@ export default function PasswordResetFinishPage() {
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const navigate = useNavigate();
 	const token = useGetQueryParam("token");
-	const { status, updatePassword } = useAuth();
+	const { loading } = useAuth();
 
 	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -30,9 +32,11 @@ export default function PasswordResetFinishPage() {
 				variant: "warning",
 			});
 		} else {
-			const succeeded = await updatePassword(password.toString(), token);
-			if (succeeded) {
+			try {
+				await resetPassword(password.toString(), token);
 				navigate("../login");
+			} catch (error) {
+				showErrorSnackbar(enqueueSnackbar, error);
 			}
 		}
 	}
@@ -57,7 +61,7 @@ export default function PasswordResetFinishPage() {
 						type="password"
 					/>
 					<LoadingButton
-						loading={status === "loading"}
+						loading={loading}
 						variant="contained"
 						type="submit"
 						color="secondary">

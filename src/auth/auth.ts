@@ -2,8 +2,10 @@ import { apiBase, decodeJWT } from "./utils";
 
 const APIBase = `https://shakemap.benhong.me/api/v1/auth`;
 
-interface User {
+export interface User {
 	email: string;
+	token: string;
+	name?: string;
 }
 
 export async function login(token: string): Promise<User>;
@@ -23,8 +25,12 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 				method: "POST",
 			});
 			if (response.status !== 200) {
+				let message = "";
+				try {
+					message = ` ${await response.text()}.`;
+				} catch (_) {}
 				throw new Error(
-					`E: Non-200 status code returned from server. ${response.status} (${response.statusText})`,
+					`E: Non-200 status code returned from server.${message} ${response.status} (${response.statusText})`,
 				);
 			}
 			try {
@@ -61,8 +67,12 @@ export async function sendLink(
 			{ method: "GET" },
 		);
 		if (response.status !== 200) {
+			let message = "";
+			try {
+				message = ` ${await response.text()}.`;
+			} catch (_) {}
 			throw new Error(
-				`E: Non-200 status code returned from server. ${response.status} (${response.statusText})`,
+				`E: Non-200 status code returned from server.${message} ${response.status} (${response.statusText})`,
 			);
 		}
 	} catch (error) {
@@ -86,8 +96,12 @@ export async function resetPassword(password: string, token: string) {
 			},
 		});
 		if (response.status !== 200) {
+			let message = "";
+			try {
+				message = ` ${await response.text()}.`;
+			} catch (_) {}
 			throw new Error(
-				`E: Non-200 status code returned from server. ${response.status} (${response.statusText})`,
+				`E: Non-200 status code returned from server.${message} ${response.status} (${response.statusText})`,
 			);
 		}
 	} catch (error) {

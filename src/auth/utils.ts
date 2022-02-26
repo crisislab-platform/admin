@@ -33,6 +33,19 @@ export function decodeJWT(token: string) {
 	return JSON.parse(jsonPayload);
 }
 
+export function showErrorSnackbar(
+	enqueueSnackbar: (message: string) => void,
+	error: any,
+) {
+	enqueueSnackbar(
+		typeof error === "string"
+			? error
+			: "message" in error
+			? error.message
+			: error + "",
+	);
+}
+
 export function useGetQueryParam(paramName: string): null | string {
 	const { search } = useLocation();
 	const [param, setParam] = useState<null | string>(null);

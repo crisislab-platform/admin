@@ -1,15 +1,16 @@
-import { Stack, TextField, Typography } from "@mui/material";
 import { FormEvent, useEffect } from "react";
-import { useAuth, titleSuffix } from "./utils";
-import { LoadingButton } from "@mui/lab";
-import { LinkWithQuery } from "../components";
+import { Stack, TextField, Typography } from "@mui/material";
 
+import { LinkWithQuery } from "../components";
+import { LoadingButton } from "@mui/lab";
 import LoginIcon from "@mui/icons-material/VpnKey";
+import { titleSuffix } from "./utils";
+import useAuth from "./useAuth";
 import { useSnackbar } from "notistack";
 
 export default function LoginPage() {
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-	const { login, status } = useAuth();
+	const { login, loading } = useAuth();
 
 	useEffect(() => {
 		document.title = `Login${titleSuffix}`;
@@ -29,10 +30,7 @@ export default function LoginPage() {
 				variant: "warning",
 			});
 		} else {
-			const succeeded = await login(
-				email.toString(),
-				password.toString(),
-			);
+			await login(email.toString(), password.toString());
 		}
 	}
 
@@ -60,7 +58,7 @@ export default function LoginPage() {
 						type="password"
 					/>
 					<LoadingButton
-						loading={status === "loading"}
+						loading={loading}
 						variant="contained"
 						type="submit"
 						color="secondary"
