@@ -73,3 +73,30 @@ export async function sendLink(
 		throw new Error(`E: Failed to get the server to send a link. ${error}`);
 	}
 }
+
+export async function resetPassword(password: string, token: string) {
+	try {
+		const response = await fetch(`${apiBase}/reset-password`, {
+			method: "POST",
+			body: JSON.stringify({
+				password,
+			}),
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		if (response.status !== 200) {
+			throw new Error(
+				`E: Non-200 status code returned from server. ${response.status} (${response.statusText})`,
+			);
+		}
+	} catch (error) {
+		// Don't double-handle errors
+		if (typeof error === "string" && error.startsWith("E:")) {
+			throw new Error(error);
+		}
+		throw new Error(
+			`E: Failed to get the server to change password. ${error}`,
+		);
+	}
+}
