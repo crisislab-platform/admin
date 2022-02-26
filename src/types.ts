@@ -1,5 +1,3 @@
-import { User as Auth0User, IdToken } from "@auth0/auth0-react";
-
 import { ReactNode } from "react";
 import { SvgIcon } from "@mui/material";
 
@@ -13,28 +11,20 @@ export interface MotionData {
 }
 type CRUDOp = "create" | "read" | "update" | "delete";
 type Section = "sensors";
-export type Permission = "none" | "logged_in" | `${Section}:${CRUDOp}`;
+export type Role = "none" | "logged_in" | `${Section}:${CRUDOp}`;
 
-export type AppUser = {
-	isLoading: boolean;
-	permissions: Permission[];
-	login: () => void;
-	logout: () => void;
-} & (
-	| {
-			isLoggedIn: true;
-			JWT: string | null;
-			info?: Auth0User;
-			claims: null | IdToken;
-	  }
-	| { isLoggedIn: false }
-);
-export type User = Auth0User;
+export type User = {
+	roles: Role[];
+	name?: string;
+	email: string;
+	token: string;
+	picture?: string;
+};
 
 export type Route = {
 	Element: ReactNode;
 	text: string;
-	requiredPermission: Permission;
+	requiredRole: Role;
 	slug: string;
 	indexSlug?: string;
 };

@@ -1,5 +1,5 @@
 import { Box, Fab, List, ListItem, Tooltip } from "@mui/material";
-import { LoadingSpinner, SensorCard, useUser } from "../../components";
+import { LoadingSpinner, SensorCard } from "../../components";
 import { useEffect, useState } from "react";
 
 import ReloadIcon from "@mui/icons-material/Refresh";
@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
 export function Sensors() {
-	const user = useUser();
 	const navigate = useNavigate();
 	const [sensors, setSensors] = useState<null | Sensor[]>(null);
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();

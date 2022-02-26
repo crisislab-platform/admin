@@ -31,3 +31,6 @@
 	border-color: var(--light-primary);
 	z-index: 2;
 }
+.Snackbar-Bottom-Spacing {
+	margin-bottom: 64px; /* 56 + 8  */
+}

@@ -3,12 +3,7 @@ import { dependencies } from "./package.json";
 import react from "@vitejs/plugin-react";
 
 // Packages we want in the vendor aka the deps needed in the entire app.
-const globalVendorPackages = [
-	"react",
-	"react-dom",
-	"react-router-dom",
-	"@auth0/auth0-react",
-];
+const globalVendorPackages = ["react", "react-dom", "react-router-dom"];
 
 function renderChunks(deps: Record<string, string>) {
 	let chunks = {};
