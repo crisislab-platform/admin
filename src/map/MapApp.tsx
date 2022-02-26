@@ -6,12 +6,11 @@ import { BasicSensorInfo, LoadingSpinner } from "../components";
 import {
 	Box,
 	Button,
+	Fab,
 	IconButton,
 	Menu,
 	MenuItem,
 	Popover,
-	SpeedDial,
-	SpeedDialAction,
 	Stack,
 	Tooltip,
 	Typography,
@@ -36,9 +35,7 @@ import mapboxgl, {
 import CloseIcon from "@mui/icons-material/Close";
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
-import MapIcon from "@mui/icons-material/Map";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import MarkerIcon from "@mui/icons-material/LocationOn";
 import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "../types";
 import SettingsPanel from "./SettingsPanel";
@@ -133,7 +130,7 @@ export default function MapApp() {
 			}
 		} catch (e) {
 			closeSnackbar(snack);
-			console.log("Failed to load sensor locations. Error: ", e);
+			console.warn("Failed to load sensor locations. Error: ", e);
 			enqueueSnackbar("Failed to load sensor locations!", {
 				variant: "error",
 			});
@@ -142,7 +139,12 @@ export default function MapApp() {
 
 	useEffect(() => {
 		loadSensorLocations();
-	}, [enqueueSnackbar, closeSnackbar, setSensors]);
+
+		() => {
+			setSensors(null);
+			setActiveSensor(null);
+		};
+	}, [enqueueSnackbar, closeSnackbar, setSensors, setActiveSensor]);
 
 	useEffect(() => {
 		function updateDrawerWidth() {
@@ -157,6 +159,8 @@ export default function MapApp() {
 
 	function loadMap(): () => void {
 		if (mapContainerRef.current) {
+			console.info("Loading map...");
+
 			const snack = enqueueSnackbar("Loading map...", {
 				variant: "info",
 				persist: true,
@@ -167,8 +171,10 @@ export default function MapApp() {
 				center: [174.8, -41.325],
 				zoom: 4.8,
 			});
+
 			const attributionControl = new AttributionControl();
 			newMap.addControl(attributionControl, "top-left");
+
 			const geocoderControl = new MapboxGeocoder({
 				accessToken: mapboxgl.accessToken,
 				mapboxgl: newMap,
@@ -181,19 +187,20 @@ export default function MapApp() {
 				showCompass: true,
 			});
 			newMap.addControl(navigationControl, "top-left");
+
 			const geoLocateControl = new GeolocateControl({
 				positionOptions: {
 					enableHighAccuracy: true,
 				},
 				showUserLocation: false,
 			});
-			newMap.addControl(geoLocateControl, "top-left").addControl(
-				new ScaleControl({
-					maxWidth: 150,
-					unit: "metric",
-				}),
-				"bottom-left",
-			);
+			newMap.addControl(geoLocateControl, "top-left");
+
+			const scaleControl = new ScaleControl({
+				maxWidth: 150,
+				unit: "metric",
+			});
+			newMap.addControl(scaleControl, "bottom-left");
 
 			function onError(e) {
 				closeSnackbar(snack);
@@ -311,19 +318,24 @@ export default function MapApp() {
 			newMap.on("load", onLoad);
 
 			return () => {
+				console.info("Removing map...");
 				newMap.off("error", onError);
 				newMap.off("load", onLoad);
 				newMap.removeControl(navigationControl);
 				newMap.removeControl(geoLocateControl);
 				newMap.removeControl(attributionControl);
+				newMap.removeControl(geocoderControl);
+				newMap.removeControl(scaleControl);
 				newMap.remove();
+				if (mapContainerRef && mapContainerRef.current) {
+					mapContainerRef.current.innerHTML = "";
+				}
 			};
 		}
 		return () => {};
 	}
 
 	useEffect(() => {
-		setMap(null);
 		const removeMap = loadMap();
 		return () => removeMap();
 	}, [theme, sateliteMode]);
@@ -490,10 +502,10 @@ export default function MapApp() {
 		setActiveSensor(null);
 		loadSensorLocations();
 	}
-	function reloadMap() {
-		setMap(null);
-		loadMap();
-	}
+	// function reloadMap() {
+	// 	setMap(null);
+	// 	loadMap();
+	// }
 
 	return (
 		<>
@@ -576,30 +588,22 @@ export default function MapApp() {
 				</Popover>
 			)}
 
-			<SpeedDial
-				sx={{
-					position: "absolute",
-					right: (theme) => theme.spacing(2),
-					bottom: (theme) => theme.spacing(2),
-				}}
-				color="primary"
-				ariaLabel="Reload buttons"
-				icon={<ReloadIcon />}
-				onClick={() => {
-					reloadSensors();
-					reloadMap();
-				}}>
-				<SpeedDialAction
-					icon={<MarkerIcon />}
-					tooltipTitle="Reload sensor locations"
-					onClick={reloadSensors}
-				/>
-				<SpeedDialAction
-					icon={<MapIcon />}
-					tooltipTitle="Re-initalize map"
-					onClick={reloadMap}
-				/>
-			</SpeedDial>
+			<Tooltip title="Reload sensor locations" placement="left">
+				<Fab
+					sx={{
+						position: "absolute",
+						right: (theme) => theme.spacing(2),
+						bottom: (theme) => theme.spacing(2),
+						zIndex: (theme) => theme.zIndex.snackbar + 1,
+					}}
+					color="primary"
+					onClick={() => {
+						reloadSensors();
+					}}>
+					<ReloadIcon />
+				</Fab>
+			</Tooltip>
+
 			<SettingsPanel
 				sensorsVisible={sensorsVisible}
 				setSensorsVisible={setSensorsVisible}
