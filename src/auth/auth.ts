@@ -1,4 +1,4 @@
-import { decodeJWT } from "./utils";
+import { apiBase, decodeJWT } from "./utils";
 
 const APIBase = `https://shakemap.benhong.me/api/v1/auth`;
 
@@ -20,17 +20,56 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 		try {
 			const response = await fetch(`${APIBase}/password`, {
 				body: JSON.stringify({ username, password }),
+				method: "POST",
 			});
+			if (response.status !== 200) {
+				throw new Error(
+					`E: Non-200 status code returned from server. ${response.status} (${response.statusText})`,
+				);
+			}
 			try {
 				const data = await response.json();
 				return data;
 			} catch (error) {
-				throw new Error(`Failed to decode data from server. ${error}`);
+				throw new Error(
+					`E: Failed to decode data from server. ${error}`,
+				);
 			}
 		} catch (error) {
+			// Don't double-handle errors
+			if (typeof error === "string" && error.startsWith("E:")) {
+				throw new Error(error);
+			}
+
 			throw new Error(
-				`Failed so far to authenticate with server. ${error}`,
+				`E: Failed so far to authenticate with server. ${error}`,
 			);
 		}
+	}
+}
+
+export async function sendLink(
+	email: string,
+	type: "welcome" | "sign-in" | "reset",
+	returnTo?: string,
+) {
+	try {
+		const response = await fetch(
+			`${apiBase}/link/${email}/${type}${
+				returnTo ? `?return_to=${returnTo}` : ""
+			}`,
+			{ method: "GET" },
+		);
+		if (response.status !== 200) {
+			throw new Error(
+				`E: Non-200 status code returned from server. ${response.status} (${response.statusText})`,
+			);
+		}
+	} catch (error) {
+		// Don't double-handle errors
+		if (typeof error === "string" && error.startsWith("E:")) {
+			throw new Error(error);
+		}
+		throw new Error(`E: Failed to get the server to send a link. ${error}`);
 	}
 }
