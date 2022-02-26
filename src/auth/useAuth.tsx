@@ -110,6 +110,7 @@ export function AuthProvider({
 		try {
 			await authAPI.resetPassword(password, token);
 			enqueueSnackbar("Password changed.", { variant: "success" });
+			await login(token);
 		} catch (error) {
 			showErrorSnackbar(enqueueSnackbar, error);
 		}
