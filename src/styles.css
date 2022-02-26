@@ -8,9 +8,7 @@
 	--error: #d00000;
 	--spacing: 8px;
 }
-.Snackbar-Bottom-Spacing {
-	margin-bottom: 64px; /* 56 + 8  */
-}
+
 .Snackbar-Success {
 	background-color: var(--success);
 }

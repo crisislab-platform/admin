@@ -1,3 +1,6 @@
 #root {
 	min-height: 100vh;
 }
+.Snackbar-Bottom-Spacing {
+	margin-bottom: 64px; /* 56 + 8  */
+}

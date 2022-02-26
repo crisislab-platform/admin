@@ -4,7 +4,6 @@ import { showErrorSnackbar, titleSuffix, useGetQueryParam } from "./utils";
 
 import { LinkWithQuery } from "../components";
 import { LoadingButton } from "@mui/lab";
-import { resetPassword } from "./auth";
 import useAuth from "./useAuth";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -17,7 +16,7 @@ export default function PasswordResetFinishPage() {
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const navigate = useNavigate();
 	const token = useGetQueryParam("token");
-	const { loading } = useAuth();
+	const { loading, resetPassword } = useAuth();
 
 	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
