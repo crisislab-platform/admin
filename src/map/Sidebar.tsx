@@ -2,7 +2,6 @@ import {
 	BasicSensorInfo,
 	SimpleDataGraph as LiveDataGraphs,
 	MobileDialog,
-	useUser,
 } from "../components";
 import {
 	Box,
@@ -22,6 +21,7 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import LocationIcon from "@mui/icons-material/MyLocation";
 import { Sensor } from "../types";
 import ShareIcon from "@mui/icons-material/IosShare";
+import useAuth from "../auth/useAuth";
 import { useSnackbar } from "notistack";
 
 export default function Sidebar({
@@ -38,7 +38,7 @@ export default function Sidebar({
 	const { enqueueSnackbar } = useSnackbar();
 	const theme = useTheme();
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
-	const user = useUser();
+	const { user } = useAuth();
 
 	function handleClose() {
 		setActiveSensor(null);
@@ -72,7 +72,7 @@ export default function Sidebar({
 							Fly to sensor
 						</Button>
 					</Box>
-					{user.isLoggedIn && (
+					{!!user && (
 						<Box>
 							<Button
 								startIcon={<DashboardIcon />}

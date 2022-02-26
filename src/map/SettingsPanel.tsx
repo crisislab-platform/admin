@@ -11,9 +11,10 @@ import {
 	Tooltip,
 } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
-import { LoginButton, useUser } from "../components";
 
+import { LoginButton } from "../components";
 import SettingsIcon from "@mui/icons-material/Settings";
+import useAuth from "../auth/useAuth";
 
 export default function SettingsPanel({
 	faultLinesVisible,
@@ -34,7 +35,7 @@ export default function SettingsPanel({
 	geoNetSensorsVisible: boolean;
 	setGeoNetSensorsVisible: Dispatch<SetStateAction<boolean>>;
 }) {
-	const user = useUser();
+	const { user } = useAuth();
 	const [settingsPanelVisible, setSettingsPanelVisible] = useState(false);
 	return (
 		<Stack
@@ -102,7 +103,7 @@ export default function SettingsPanel({
 						/>
 					</FormGroup>
 					<Stack gap={1}>
-						{user.isLoggedIn && (
+						{!!user && (
 							<Box>
 								<Button variant="outlined" href="/manage">
 									Go to dashboard

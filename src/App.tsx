@@ -1,16 +1,17 @@
 import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
-import { LoadingSpinner, useUser } from "./components";
-import { MissingPermission, NavigateWithQuery } from "./components";
+import { MissingRole, NavigateWithQuery } from "./components";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import React, { Suspense } from "react";
 
 import { AuthProvider } from "./auth/useAuth";
+import { LoadingSpinner } from "./components";
 import MapApp from "./map/MapApp";
 import { Route as RouteType } from "./types";
 import { SnackbarProvider } from "notistack";
 import { authRoutes } from "./auth/authRoutes";
 import { routes as manageRoutes } from "./manage/routes";
 import { theme } from "./theme";
+import useAuth from "./auth/useAuth";
 
 const ManageApp = React.lazy(() => import("./manage/ManageApp"));
 const AuthWrapper = React.lazy(() => import("./auth/AuthWrapper"));
@@ -41,18 +42,18 @@ function EverythingWrapper() {
 }
 
 export function App() {
-	const user = useUser();
-	const redirectElement = user.isLoggedIn ? (
+	const { user } = useAuth();
+	const redirectElement = !!user ? (
 		<Navigate to="/manage" replace />
 	) : (
 		<Navigate to="/map" replace />
 	);
 	function routeElement(route: RouteType) {
 		// console.log(user.permissions);
-		return user.permissions.includes(route.requiredPermission) ? (
+		return !!user && user.roles.includes(route.requiredRole) ? (
 			route.Element
 		) : (
-			<MissingPermission permission={route.requiredPermission} />
+			<MissingRole role={route.requiredRole} />
 		);
 	}
 

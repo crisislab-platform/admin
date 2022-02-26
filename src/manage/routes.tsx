@@ -10,20 +10,20 @@ export const routes: (Route | SidebarLink)[] = [
 		text: "Global configuration",
 		Icon: SettingsIcon,
 		Element: <div>Global sensor configuration</div>,
-		requiredPermission: "sensors:update",
+		requiredRole: "sensors:update",
 	},
 	{
 		slug: "sensors",
 		text: "Sensors",
 		Icon: SensorsIcon,
 		Element: <Sensors />,
-		requiredPermission: "sensors:read",
+		requiredRole: "sensors:read",
 	},
 	{
 		slug: "sensors/:sensorID",
 		indexSlug: "sensors/",
 		text: "Sensor info",
 		Element: <SensorInfo />,
-		requiredPermission: "sensors:read",
+		requiredRole: "sensors:read",
 	},
 ];

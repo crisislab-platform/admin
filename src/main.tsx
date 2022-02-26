@@ -8,13 +8,10 @@ import { StrictMode, useState } from "react";
 
 import { App } from "./App";
 import { Auth0Provider } from "@auth0/auth0-react";
-import { JWTContext } from "./components";
 import { BrowserRouter as Router } from "react-router-dom";
 import { render } from "react-dom";
 
 function Entrypoint() {
-	const [JWT, setJWT] = useState<null | string>(null);
-
 	return (
 		<StrictMode>
 			<Auth0Provider
@@ -23,11 +20,9 @@ function Entrypoint() {
 				redirectUri={window.location.origin}
 				scope={import.meta.env.VITE_AUTH0_SCOPE}
 				audience={import.meta.env.VITE_AUTH0_AUDIENCE}>
-				<JWTContext.Provider value={[JWT, setJWT]}>
-					<Router>
-						<App />
-					</Router>
-				</JWTContext.Provider>
+				<Router>
+					<App />
+				</Router>
 			</Auth0Provider>
 		</StrictMode>
 	);

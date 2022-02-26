@@ -17,10 +17,11 @@ import {
 	useTheme,
 } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
-import { LoginButton, useUser } from "../components";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { LoginButton } from "../components";
 import { SidebarLink } from "../types";
+import useAuth from "../auth/useAuth";
 
 const longTextMixin = {
 	textOverflow: "ellipsis",
@@ -41,7 +42,7 @@ export default function Sidebar({
 }) {
 	const theme = useTheme();
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
-	const user = useUser();
+	const { user } = useAuth();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const onIOS =
@@ -53,30 +54,29 @@ export default function Sidebar({
 			{!onMobile && <Toolbar variant={onMobile ? undefined : "dense"} />}
 
 			<Stack gap={1} sx={{ p: onMobile ? 2 : 1 }}>
-				{user.isLoggedIn && user.info && (
+				{!!user && (
 					<Stack direction="row" alignItems="center" gap={1}>
-						{user.info.picture && (
+						{user.picture && (
 							<Avatar
-								src={user.info.picture}
-								alt={user.info.name}
+								src={user.picture}
+								alt={user.name || user.email}
 							/>
 						)}
 						<Stack>
-							{user.info.name && (
+							{user.name && (
 								<Typography sx={{ ...longTextMixin }}>
-									{user.info.name}
+									{user.name}
 								</Typography>
 							)}
-							{user.info.email && (
-								<Typography
-									sx={{
-										color: (theme) =>
-											theme.palette.text.secondary,
-										...longTextMixin,
-									}}>
-									{user.info.email}
-								</Typography>
-							)}
+
+							<Typography
+								sx={{
+									color: (theme) =>
+										theme.palette.text.secondary,
+									...longTextMixin,
+								}}>
+								{user.email}
+							</Typography>
 						</Stack>
 					</Stack>
 				)}
@@ -93,9 +93,7 @@ export default function Sidebar({
 						disablePadding>
 						<ListItemButton
 							disabled={
-								!user.permissions.includes(
-									link.requiredPermission,
-								)
+								user && !user.roles.includes(link.requiredRole)
 							}
 							onClick={() => {
 								navigate(`./${link.slug}`);

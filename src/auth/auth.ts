@@ -1,12 +1,8 @@
 import { apiBase, decodeJWT } from "./utils";
 
-const APIBase = `https://shakemap.benhong.me/api/v1/auth`;
+import { User } from "../types";
 
-export interface User {
-	email: string;
-	token: string;
-	name?: string;
-}
+const APIBase = `https://shakemap.benhong.me/api/v1/auth`;
 
 export async function login(token: string): Promise<User>;
 export async function login(username: string, password: string): Promise<User>;

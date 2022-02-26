@@ -10,15 +10,15 @@ import {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { User } from "../types";
 import { showErrorSnackbar } from "./utils";
 import { useSnackbar } from "notistack";
 
 const authUserNamespace = "auth-v2-user";
 
 interface AuthContextType {
-	user?: authAPI.User;
+	user: User | null;
 	loading: boolean;
-	error?: any;
 	login: (emailOrToken: string, password?: string) => Promise<void>;
 	logout: () => void;
 	sendLink: (
@@ -26,6 +26,7 @@ interface AuthContextType {
 		type: "welcome" | "sign-in" | "reset",
 	) => Promise<boolean>;
 	resetPassword: (password: string, token: string) => Promise<void>;
+	goToLogin: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -36,7 +37,7 @@ export function AuthProvider({
 }: {
 	children: ReactNode;
 }): JSX.Element {
-	const [user, setUser] = useState<authAPI.User>();
+	const [user, setUser] = useState<User | null>(null);
 	const { enqueueSnackbar } = useSnackbar();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
@@ -62,7 +63,14 @@ export function AuthProvider({
 			const storedData = localStorage.getItem(authUserNamespace);
 			if (storedData) {
 				const data = JSON.parse(storedData);
-				setUser(data);
+				// If the expiry date is in the past, delete the data and don't log in with it
+				if ("exp" in data && Date.now() > data.exp * 1000) {
+					localStorage.deleteItem(authUserNamespace);
+				} else {
+					setUser(data);
+					//@ts-ignore
+					window.user = data;
+				}
 			}
 		} catch (e) {
 			// If there is an error, it means there is no active session.
@@ -76,6 +84,8 @@ export function AuthProvider({
 		try {
 			const user = await authAPI.login(email, password);
 			setUser(user);
+			// @ts-ignore
+			window.user = user;
 			navigate("/");
 			enqueueSnackbar("Successfully logged in.", { variant: "success" });
 		} catch (error) {
@@ -117,6 +127,10 @@ export function AuthProvider({
 		}
 	}
 
+	function goToLogin() {
+		navigate(`/auth/login?return_to=${window.location.href}`);
+	}
+
 	// Make the provider update only when it should.
 	// We only want to force re-renders if the user
 	// or loading states change.
@@ -134,6 +148,7 @@ export function AuthProvider({
 			logout,
 			sendLink,
 			resetPassword,
+			goToLogin,
 		}),
 		[user, loading],
 	);

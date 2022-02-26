@@ -17,8 +17,8 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { SidebarLink } from "../types";
 import { routes } from "./routes";
+import useAuth from "../auth/useAuth";
 import { useLocation } from "react-router-dom";
-import { useUser } from "../components";
 
 const drawerWidth = 260;
 
@@ -27,7 +27,6 @@ export default function ManageApp() {
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 	const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 	const location = useLocation();
-	const user = useUser();
 
 	useEffect(() => {
 		document.title = "Manage sensors";
