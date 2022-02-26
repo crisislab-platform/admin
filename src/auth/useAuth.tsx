@@ -77,6 +77,7 @@ export function AuthProvider({
 			const user = await authAPI.login(email, password);
 			setUser(user);
 			navigate("/");
+			enqueueSnackbar("Successfully logged in.", { variant: "success" });
 		} catch (error) {
 			showErrorSnackbar(enqueueSnackbar, error);
 		}
