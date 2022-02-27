@@ -34,7 +34,7 @@ theme = createTheme(theme, {
 			},
 		},
 	},
-	primaryShadows: createShadows(theme.palette.primary.main),
+	shadows: createShadows(theme.palette.primary.main),
 });
 
 export { theme };
