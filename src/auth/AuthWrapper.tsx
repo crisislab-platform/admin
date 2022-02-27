@@ -18,57 +18,6 @@ export default function AuthPagesWrapper() {
 	const navigate = useNavigate();
 	const returnTo = useGetQueryParam("return_to");
 
-	const backButton = (
-		<Tooltip title="Return to main app" placement="right">
-			<Fab
-				sx={{
-					position: "fixed",
-					top: (theme) => theme.spacing(2),
-					left: (theme) => theme.spacing(2),
-					zIndex: (theme) => theme.zIndex.snackbar + 1,
-				}}
-				onClick={() => {
-					if (returnTo) {
-						navigate(returnTo);
-					} else {
-						navigate("/");
-					}
-				}}>
-				<BackIcon color="primary" />
-			</Fab>
-		</Tooltip>
-	);
-
-	const card = (
-		<Paper
-			elevation={16}
-			sx={{
-				p: 4,
-				width: smallScreen ? "100%" : (theme) => theme.spacing(45),
-				height: smallScreen ? "100%" : (theme) => theme.spacing(65),
-			}}>
-			<Stack alignItems="center">
-				<img
-					src="/logo.png"
-					alt="CRISiSLab Logo"
-					title="CRISiSLab logo"
-					width={90}
-					height={90}
-				/>
-				<Outlet />
-			</Stack>
-		</Paper>
-	);
-
-	if (smallScreen) {
-		return (
-			<>
-				{backButton}
-				{card}
-			</>
-		);
-	}
-
 	return (
 		<Box
 			sx={{
@@ -80,8 +29,45 @@ export default function AuthPagesWrapper() {
 				alignItems: "center",
 				justifyContent: "center",
 			}}>
-			{backButton}
-			{card}
+			<Tooltip title="Return to main app" placement="right">
+				<Fab
+					sx={{
+						position: "fixed",
+						top: (theme) => theme.spacing(2),
+						left: (theme) => theme.spacing(2),
+						zIndex: (theme) => theme.zIndex.snackbar + 1,
+					}}
+					onClick={() => {
+						if (returnTo) {
+							navigate(returnTo);
+						} else {
+							navigate("/");
+						}
+					}}>
+					<BackIcon color="primary" />
+				</Fab>
+			</Tooltip>
+			<Paper
+				elevation={16}
+				sx={{
+					p: 4,
+					width: smallScreen ? "100%" : (theme) => theme.spacing(45),
+					height: smallScreen ? "100%" : (theme) => theme.spacing(65),
+					borderRadius: smallScreen
+						? 0
+						: (theme) => theme.spacing(0.5),
+				}}>
+				<Stack alignItems="center">
+					<img
+						src="/logo.png"
+						alt="CRISiSLab Logo"
+						title="CRISiSLab logo"
+						width={90}
+						height={90}
+					/>
+					<Outlet />
+				</Stack>
+			</Paper>
 		</Box>
 	);
 }
