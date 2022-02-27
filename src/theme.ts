@@ -1,3 +1,4 @@
+import createShadows from "./shadows.js";
 import { createTheme } from "@mui/material";
 
 let theme = createTheme({
@@ -33,6 +34,7 @@ theme = createTheme(theme, {
 			},
 		},
 	},
+	primaryShadows: createShadows(theme.palette.primary.dark),
 });
 
 export { theme };

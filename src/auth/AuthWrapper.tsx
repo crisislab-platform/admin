@@ -26,6 +26,13 @@ export default function AuthPagesWrapper() {
 					top: (theme) => theme.spacing(2),
 					left: (theme) => theme.spacing(2),
 					zIndex: (theme) => theme.zIndex.snackbar + 1,
+					color: (theme) => theme.palette.primary.dark,
+					// @ts-ignore
+					boxShadow: (theme) => theme.primaryShadows[6],
+					"&:active": {
+						// @ts-ignore
+						boxShadow: theme.primaryShadows[12],
+					},
 				}}
 				onClick={() => {
 					if (returnTo) {
@@ -34,7 +41,7 @@ export default function AuthPagesWrapper() {
 						navigate("/");
 					}
 				}}>
-				<BackIcon />
+				<BackIcon color="primary" />
 			</Fab>
 		</Tooltip>
 	);
