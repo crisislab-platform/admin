@@ -31,7 +31,7 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 			}
 			try {
 				const data = await response.json();
-				return data;
+				return { ...decodeJWT(data.token), token: data.token };
 			} catch (error) {
 				throw new Error(
 					`E: Failed to decode data from server. ${error}`,
@@ -43,9 +43,7 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 				throw new Error(error);
 			}
 
-			throw new Error(
-				`E: Failed so far to authenticate with server. ${error}`,
-			);
+			throw new Error(`E: Failed to authenticate with server. ${error}`);
 		}
 	}
 }
