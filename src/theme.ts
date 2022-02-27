@@ -23,8 +23,9 @@ let theme = createTheme({
 		},
 	},
 });
-
-theme = createTheme(theme, {
+const shadowColour = theme.palette.primary.main;
+theme = {
+	...theme,
 	components: {
 		MuiFab: {
 			styleOverrides: {
@@ -34,7 +35,7 @@ theme = createTheme(theme, {
 			},
 		},
 	},
-	shadows: createShadows(theme.palette.primary.main),
-});
+	shadows: createShadows(shadowColour) as any,
+};
 
 export { theme };

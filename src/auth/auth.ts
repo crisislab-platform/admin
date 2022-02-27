@@ -10,7 +10,7 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 	if (arg2 === undefined) {
 		// The function has been given a token
 		const token: string = arg1;
-		return decodeJWT(token);
+		return { ...decodeJWT(token), token };
 	} else {
 		// The function has been given a username and password
 		const username: string = arg1;
