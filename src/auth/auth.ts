@@ -13,11 +13,11 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 		return { ...decodeJWT(token), token };
 	} else {
 		// The function has been given a username and password
-		const username: string = arg1;
+		const email: string = arg1;
 		const password: string = arg2;
 		try {
 			const response = await fetch(`${APIBase}/password`, {
-				body: JSON.stringify({ username, password }),
+				body: JSON.stringify({ email, password }),
 				method: "POST",
 			});
 			if (response.status !== 200) {
