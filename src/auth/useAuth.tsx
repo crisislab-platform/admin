@@ -91,6 +91,8 @@ export function AuthProvider({
 		loadUserFromStorage();
 		setLoadingInitial(false);
 
+		// Only fires when other windows/tabs update localstorage.
+		// Ideal for keeping pages in sync.
 		window.addEventListener("storage", loadUserFromStorage);
 
 		return () => {
@@ -182,7 +184,6 @@ export function AuthProvider({
 	 * Make sure this function is called from an event listener for a user-generated action like a clik
 	 */
 	function goToLogin() {
-		console.log("use_popup", getQueryParam("use_popup"));
 		if (getQueryParam("use_popup")) {
 			console.log("Logging in with popup...");
 			const popupWidth = 400;
