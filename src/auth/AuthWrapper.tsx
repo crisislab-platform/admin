@@ -12,12 +12,16 @@ import { Outlet, useNavigate } from "react-router-dom";
 import BackIcon from "@mui/icons-material/ArrowBack";
 import { useGetQueryParam } from "./utils";
 
-export default function AuthPagesWrapper() {
+export default function AuthPagesWrapper({
+	popupMode,
+}: {
+	popupMode?: boolean;
+}) {
 	const theme = useTheme();
 	const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 	const navigate = useNavigate();
 	const returnTo = useGetQueryParam("return_to");
-	const inPopup = useGetQueryParam("in_popup");
+	const inPopupWindow = useGetQueryParam("in_popup_window");
 
 	return (
 		<Box
@@ -30,7 +34,7 @@ export default function AuthPagesWrapper() {
 				alignItems: "center",
 				justifyContent: "center",
 			}}>
-			{!inPopup && (
+			{!inPopupWindow && (
 				<Tooltip title="Return to main app" placement="right">
 					<Fab
 						sx={{

@@ -134,7 +134,7 @@ export function AuthProvider({
 			setUser(user);
 			// @ts-ignore
 			window.user = user;
-			if (getQueryParam("in_popup")) {
+			if (getQueryParam("in_popup_window")) {
 				console.info(
 					"In popup, will try and close because login succeeded.",
 				);
@@ -195,8 +195,8 @@ export function AuthProvider({
 	 * Make sure this function is called from an event listener for a user-generated action like a clik
 	 */
 	function goToLogin() {
-		if (getQueryParam("use_popup")) {
-			console.log("Logging in with popup...");
+		if (getQueryParam("use_popup_window")) {
+			console.log("Logging in with popup window...");
 			const popupWidth = 400;
 			const popupHeight = 600;
 			const popupLeft =
@@ -207,7 +207,7 @@ export function AuthProvider({
 			setLoading(true);
 			setPopupWindowRef(
 				window.open(
-					`${baseURL}/auth/login?in_popup=true`,
+					`${baseURL}/auth/login?in_popup_window=true`,
 					"crisislab-shakemap-auth-popup",
 					`popup,width=${popupWidth},height=${popupHeight},left=${popupLeft},top=${popupTop}`,
 				),
