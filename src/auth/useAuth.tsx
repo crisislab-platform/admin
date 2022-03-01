@@ -51,7 +51,7 @@ export function AuthProvider({
 	const [popupCloseTimeout, setPopupCloseTimeout] = useState<null | any>(
 		null,
 	);
-	const [popupRef, setPopupRef] = useState<null | Window>(null);
+	const [popupWindowRef, setPopupWindowRef] = useState<null | Window>(null);
 
 	// Every time the user updates, save their data to localStorage
 	useEffect(() => {
@@ -103,7 +103,7 @@ export function AuthProvider({
 	useEffect(() => {
 		setPopupCloseTimeout(
 			setTimeout(() => {
-				popupRef?.close();
+				popupWindowRef?.close();
 				setLoading(false);
 				enqueueSnackbar("Popup closed after 2 minutes.", {
 					variant: "warning",
@@ -113,7 +113,7 @@ export function AuthProvider({
 		return () => {
 			clearTimeout(popupCloseTimeout);
 		};
-	}, [setPopupCloseTimeout, popupRef, setLoading, enqueueSnackbar]);
+	}, [setPopupCloseTimeout, popupWindowRef, setLoading, enqueueSnackbar]);
 
 	async function login(email: string, password?: string) {
 		setLoading(true);
@@ -194,13 +194,14 @@ export function AuthProvider({
 				window.screenY + (window.innerHeight - popupHeight) / 2;
 
 			setLoading(true);
-			const popupRef = window.open(
-				`${baseURL}/auth/login?in_popup=true`,
-				"crisislab-shakemap-auth-popup",
-				`popup,width=${popupWidth},height=${popupHeight},left=${popupLeft},top=${popupTop}`,
+			setPopupWindowRef(
+				window.open(
+					`${baseURL}/auth/login?in_popup=true`,
+					"crisislab-shakemap-auth-popup",
+					`popup,width=${popupWidth},height=${popupHeight},left=${popupLeft},top=${popupTop}`,
+				),
 			);
-
-			popupRef.addEventListener("close", () => {
+			popupWindowRef?.addEventListener("close", () => {
 				if (popupCloseTimeout) {
 					clearTimeout(popupCloseTimeout);
 				}
