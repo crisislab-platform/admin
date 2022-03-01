@@ -23,6 +23,8 @@ const baseURL =
 interface AuthContextType {
 	user: User | null;
 	loading: boolean;
+	popupOpen: boolean;
+	closePopup: () => void;
 	login: (emailOrToken: string, password?: string) => Promise<void>;
 	logout: () => void;
 	sendLink: (
@@ -52,6 +54,7 @@ export function AuthProvider({
 		null | any
 	>(null);
 	const [popupWindowRef, setPopupWindowRef] = useState<null | Window>(null);
+	const [popupOpen, setPopupOpen] = useState<boolean>(false);
 
 	// Every time the user updates, save their data to localStorage
 	useEffect(() => {
@@ -225,6 +228,8 @@ export function AuthProvider({
 		}
 	}
 
+	const closePopup = () => setPopupOpen(false);
+
 	// Make the provider update only when it should.
 	// We only want to force re-renders if the user
 	// or loading states change.
@@ -238,13 +243,15 @@ export function AuthProvider({
 		() => ({
 			user,
 			loading,
+			popupOpen,
+			closePopup,
 			login,
 			logout,
 			sendLink,
 			resetPassword,
 			goToLogin,
 		}),
-		[user, loading],
+		[user, loading, popupOpen],
 	);
 
 	return (
