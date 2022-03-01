@@ -17,6 +17,7 @@ export default function AuthPagesWrapper() {
 	const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 	const navigate = useNavigate();
 	const returnTo = useGetQueryParam("return_to");
+	const inPopup = useGetQueryParam("in_popup");
 
 	return (
 		<Box
@@ -29,24 +30,26 @@ export default function AuthPagesWrapper() {
 				alignItems: "center",
 				justifyContent: "center",
 			}}>
-			<Tooltip title="Return to main app" placement="right">
-				<Fab
-					sx={{
-						position: "fixed",
-						top: (theme) => theme.spacing(2),
-						left: (theme) => theme.spacing(2),
-						zIndex: (theme) => theme.zIndex.snackbar + 1,
-					}}
-					onClick={() => {
-						if (returnTo) {
-							navigate(returnTo);
-						} else {
-							navigate("/");
-						}
-					}}>
-					<BackIcon color="primary" />
-				</Fab>
-			</Tooltip>
+			{!inPopup && (
+				<Tooltip title="Return to main app" placement="right">
+					<Fab
+						sx={{
+							position: "fixed",
+							top: (theme) => theme.spacing(2),
+							left: (theme) => theme.spacing(2),
+							zIndex: (theme) => theme.zIndex.snackbar + 1,
+						}}
+						onClick={() => {
+							if (returnTo) {
+								navigate(returnTo);
+							} else {
+								navigate("/");
+							}
+						}}>
+						<BackIcon color="primary" />
+					</Fab>
+				</Tooltip>
+			)}
 			<Paper
 				elevation={16}
 				sx={{

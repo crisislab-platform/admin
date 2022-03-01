@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import { useLocation } from "react-router-dom";
-import { useSnackbar } from "notistack";
 
 export const titleSuffix = " | CRISiSLab Shakemap auth";
 
@@ -12,7 +11,11 @@ export function getQueryParam(paramName: string): null | string {
 	const param = searchParams.get(paramName);
 
 	if (param) {
-		return window.decodeURIComponent(param);
+		const decoded = window.decodeURIComponent(param);
+		if (decoded === "") {
+			return "true";
+		}
+		return decoded;
 	}
 
 	return null;
@@ -53,6 +56,5 @@ export function useGetQueryParam(paramName: string): null | string {
 	useEffect(() => {
 		setParam(getQueryParam(paramName));
 	}, [search]);
-	console.log(param);
 	return param;
 }

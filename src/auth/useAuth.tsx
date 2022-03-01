@@ -8,13 +8,17 @@ import {
 	useMemo,
 	useState,
 } from "react";
-import { showErrorSnackbar, useGetQueryParam } from "./utils";
+import { getQueryParam, showErrorSnackbar, useGetQueryParam } from "./utils";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { User } from "../types";
 import { useSnackbar } from "notistack";
 
 const authUserNamespace = "auth-v2-user";
+const baseURL =
+	import.meta.env.MODE === "production"
+		? "https://shakemap.crisislab.org.nz"
+		: "http://localhost:3000";
 
 interface AuthContextType {
 	user: User | null;
@@ -44,6 +48,10 @@ export function AuthProvider({
 	const navigate = useNavigate();
 	const location = useLocation();
 	const returnTo = useGetQueryParam("return_to");
+	const [popupCloseTimeout, setPopupCloseTimeout] = useState<null | any>(
+		null,
+	);
+	const [popupRef, setPopupRef] = useState<null | Window>(null);
 
 	// Every time the user updates, save their data to localStorage
 	useEffect(() => {
@@ -59,7 +67,8 @@ export function AuthProvider({
 	//
 	// Finally, just signal the component that the initial load
 	// is over.
-	useEffect(() => {
+
+	function loadUserFromStorage() {
 		try {
 			const storedData = localStorage.getItem(authUserNamespace);
 			if (storedData) {
@@ -76,8 +85,33 @@ export function AuthProvider({
 		} catch (e) {
 			// If there is an error, it means there is no active session.
 		}
+		setLoading(false);
+	}
+	useEffect(() => {
+		loadUserFromStorage();
 		setLoadingInitial(false);
+
+		window.addEventListener("storage", loadUserFromStorage);
+
+		return () => {
+			window.removeEventListener("storage", loadUserFromStorage);
+		};
 	}, []);
+
+	useEffect(() => {
+		setPopupCloseTimeout(
+			setTimeout(() => {
+				popupRef?.close();
+				setLoading(false);
+				enqueueSnackbar("Popup closed after 2 minutes.", {
+					variant: "warning",
+				});
+			}, 2 * 60 * 1000 /*2 minutes */),
+		);
+		return () => {
+			clearTimeout(popupCloseTimeout);
+		};
+	}, [setPopupCloseTimeout, popupRef, setLoading, enqueueSnackbar]);
 
 	async function login(email: string, password?: string) {
 		setLoading(true);
@@ -87,11 +121,23 @@ export function AuthProvider({
 			setUser(user);
 			// @ts-ignore
 			window.user = user;
-			if (returnTo) {
-				navigate(returnTo);
+			if (getQueryParam("in_popup")) {
+				console.info(
+					"In popup, will try and close because login succeeded.",
+				);
+				try {
+					window.close();
+				} catch (e) {
+					console.warn("Failed to close popup window");
+				}
 			} else {
-				navigate("/");
+				if (returnTo) {
+					navigate(returnTo);
+				} else {
+					navigate("/");
+				}
 			}
+
 			enqueueSnackbar("Successfully logged in.", { variant: "success" });
 		} catch (error) {
 			showErrorSnackbar(enqueueSnackbar, error);
@@ -132,9 +178,39 @@ export function AuthProvider({
 		}
 	}
 
+	/*
+	 * Make sure this function is called from an event listener for a user-generated action like a clik
+	 */
 	function goToLogin() {
-		const newReturnTo = encodeURIComponent(location.pathname);
-		navigate(`/auth/login?return_to=${newReturnTo}`);
+		console.log("use_popup", getQueryParam("use_popup"));
+		if (getQueryParam("use_popup")) {
+			console.log("Logging in with popup...");
+			const popupWidth = 400;
+			const popupHeight = 600;
+			const popupLeft =
+				window.screenX + (window.innerWidth - popupWidth) / 2;
+			const popupTop =
+				window.screenY + (window.innerHeight - popupHeight) / 2;
+
+			setLoading(true);
+			const popupRef = window.open(
+				`${baseURL}/auth/login?in_popup=true`,
+				"crisislab-shakemap-auth-popup",
+				`popup,width=${popupWidth},height=${popupHeight},left=${popupLeft},top=${popupTop}`,
+			);
+
+			popupRef.addEventListener("close", () => {
+				if (popupCloseTimeout) {
+					clearTimeout(popupCloseTimeout);
+				}
+				setLoading(false);
+			});
+		} else {
+			console.log("Logging in with redirect...");
+
+			const newReturnTo = encodeURIComponent(location.pathname);
+			navigate(`/auth/login?return_to=${newReturnTo}`);
+		}
 	}
 
 	// Make the provider update only when it should.

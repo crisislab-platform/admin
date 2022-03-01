@@ -2,6 +2,8 @@ import { apiBase, decodeJWT } from "./utils";
 
 import { User } from "../types";
 
+// This file just handles the API calls, all of the other logic (such as popups) is in useAuth.tsx
+
 const APIBase = `https://shakemap.benhong.me/api/v1/auth`;
 
 export async function login(token: string): Promise<User>;
