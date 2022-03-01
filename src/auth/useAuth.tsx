@@ -48,9 +48,9 @@ export function AuthProvider({
 	const navigate = useNavigate();
 	const location = useLocation();
 	const returnTo = useGetQueryParam("return_to");
-	const [popupCloseTimeout, setPopupCloseTimeout] = useState<null | any>(
-		null,
-	);
+	const [popupWindowCloseTimeout, setPopupWindowCloseTimeout] = useState<
+		null | any
+	>(null);
 	const [popupWindowRef, setPopupWindowRef] = useState<null | Window>(null);
 
 	// Every time the user updates, save their data to localStorage
@@ -101,9 +101,12 @@ export function AuthProvider({
 	}, []);
 
 	useEffect(() => {
-		setPopupCloseTimeout(
+		setPopupWindowCloseTimeout(
 			setTimeout(() => {
-				popupWindowRef?.close();
+				if (popupWindowRef) {
+					popupWindowRef.close();
+				}
+
 				setLoading(false);
 				enqueueSnackbar("Popup closed after 2 minutes.", {
 					variant: "warning",
@@ -111,9 +114,14 @@ export function AuthProvider({
 			}, 2 * 60 * 1000 /*2 minutes */),
 		);
 		return () => {
-			clearTimeout(popupCloseTimeout);
+			clearTimeout(popupWindowCloseTimeout);
 		};
-	}, [setPopupCloseTimeout, popupWindowRef, setLoading, enqueueSnackbar]);
+	}, [
+		setPopupWindowCloseTimeout,
+		popupWindowRef,
+		setLoading,
+		enqueueSnackbar,
+	]);
 
 	async function login(email: string, password?: string) {
 		setLoading(true);
@@ -201,12 +209,14 @@ export function AuthProvider({
 					`popup,width=${popupWidth},height=${popupHeight},left=${popupLeft},top=${popupTop}`,
 				),
 			);
-			popupWindowRef?.addEventListener("close", () => {
-				if (popupCloseTimeout) {
-					clearTimeout(popupCloseTimeout);
-				}
-				setLoading(false);
-			});
+			if (popupWindowRef) {
+				popupWindowRef.addEventListener("close", () => {
+					if (popupWindowCloseTimeout) {
+						clearTimeout(popupWindowCloseTimeout);
+					}
+					setLoading(false);
+				});
+			}
 		} else {
 			console.log("Logging in with redirect...");
 
