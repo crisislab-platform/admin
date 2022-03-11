@@ -2,10 +2,12 @@ import { AuthContext, AuthProvider } from "./auth/useAuth";
 import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { MissingRole, NavigateWithQuery } from "./components";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
 import React, { Suspense, useContext } from "react";
 
 import { LoadingSpinner } from "./components";
 import MapApp from "./map/MapApp";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { Route as RouteType } from "./types";
 import { SnackbarProvider } from "notistack";
 import { authRoutes } from "./auth/authRoutes";
@@ -16,11 +18,12 @@ import useAuth from "./auth/useAuth";
 const ManageApp = React.lazy(() => import("./manage/ManageApp"));
 const AuthWrapper = React.lazy(() => import("./auth/AuthWrapper"));
 
+const queryClient = new QueryClient();
+
 export function WrappedApp() {
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline enableColorScheme />
-
 			<SnackbarProvider
 				classes={{
 					containerRoot: "Snackbar-Bottom-Spacing",
@@ -33,9 +36,12 @@ export function WrappedApp() {
 					horizontal: "right",
 					vertical: "bottom",
 				}}>
-				<AuthProvider>
-					<App />
-				</AuthProvider>
+				<QueryClientProvider client={queryClient}>
+					<AuthProvider>
+						<App />
+					</AuthProvider>
+					<ReactQueryDevtools />
+				</QueryClientProvider>
 			</SnackbarProvider>
 		</ThemeProvider>
 	);
