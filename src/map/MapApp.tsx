@@ -114,6 +114,7 @@ export default function MapApp() {
 		});
 		try {
 			const res = await fetch(sensorsAPIBase);
+			const data = await res.json();
 			closeSnackbar(snack);
 			if (Array.isArray(data?.sensors)) {
 				setSensors(data.sensors);
