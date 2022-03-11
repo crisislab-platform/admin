@@ -52,7 +52,7 @@ function routeElement(route: RouteType) {
 		route.requiredRole === "sensors:read" ? (
 		route.Element
 	) : (
-		<MissingRole role={route.requiredRole} />
+		<MissingRole role={route.requiredRole} addPadding />
 	);
 }
 

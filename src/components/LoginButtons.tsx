@@ -53,10 +53,16 @@ export function LoginFab({ message }: { message?: string }) {
 	);
 }
 
-export function MissingRole({ role }: { role: Role }) {
+export function MissingRole({
+	role,
+	addPadding,
+}: {
+	role: Role;
+	addPadding?: boolean;
+}) {
 	const { user } = useAuth();
 	return (
-		<Box>
+		<Box sx={{ p: addPadding ? 2 : 0 }}>
 			<Typography>
 				You do not have the required role to acces this:{" "}
 				<code>{role}</code>.
