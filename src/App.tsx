@@ -1,9 +1,9 @@
-import { AuthContext, AuthProvider } from "./auth/useAuth";
 import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { MissingRole, NavigateWithQuery } from "./components";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-import React, { Suspense, useContext } from "react";
+import React, { Suspense } from "react";
+import useAuth, { AuthProvider } from "./auth/useAuth";
 
 import { LoadingSpinner } from "./components";
 import MapApp from "./map/MapApp";
@@ -13,7 +13,6 @@ import { SnackbarProvider } from "notistack";
 import { authRoutes } from "./auth/authRoutes";
 import { routes as manageRoutes } from "./manage/routes";
 import { theme } from "./theme";
-import useAuth from "./auth/useAuth";
 
 const ManageApp = React.lazy(() => import("./manage/ManageApp"));
 const AuthWrapper = React.lazy(() => import("./auth/AuthWrapper"));
@@ -48,8 +47,7 @@ export function WrappedApp() {
 }
 
 function routeElement(route: RouteType) {
-	const { user } = useContext(AuthContext);
-	console.log(user);
+	const { user } = useAuth();
 	return (!!user && user.roles.includes(route.requiredRole)) ||
 		route.requiredRole === "sensors:read" ? (
 		route.Element

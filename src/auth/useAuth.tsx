@@ -242,7 +242,6 @@ export function AuthProvider({
 	// you only get re-renders when logging in and out
 	// we want to keep things very performant.
 	const memoedValue = useMemo(() => {
-		console.log("user updated");
 		return {
 			user,
 			loading,
