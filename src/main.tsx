@@ -4,17 +4,16 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "./styles.css";
 
-import { StrictMode, useState } from "react";
-
-import { App } from "./App";
 import { BrowserRouter as Router } from "react-router-dom";
+import { StrictMode } from "react";
+import { WrappedApp } from "./App";
 import { render } from "react-dom";
 
 function Entrypoint() {
 	return (
 		<StrictMode>
 			<Router>
-				<App />
+				<WrappedApp />
 			</Router>
 		</StrictMode>
 	);

@@ -15,7 +15,7 @@ export const routes: (Route | SidebarLink)[] = [
 		ActiveIcon: SettingsIcon,
 		Icon: SettingsOutlinedIcon,
 		Element: <div>Global sensor configuration</div>,
-		requiredRole: "sensors:update",
+		requiredRole: "sensors:write",
 	},
 	{
 		slug: "sensors",

@@ -30,7 +30,6 @@ export function SensorStatusIcon({ online }: { online?: boolean }) {
 		<ConnectedIcon
 			sx={{
 				color: (theme) => {
-					// console.log(theme);
 					return theme.palette.success.main;
 				},
 			}}
@@ -57,7 +56,6 @@ export function SensorStatusText({ online }: { online?: boolean }) {
 				variant="button"
 				sx={{
 					color: (theme) => {
-						// console.log(theme);
 						return online === true
 							? theme.palette.success.main
 							: online === false

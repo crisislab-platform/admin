@@ -21,7 +21,6 @@ export function Sensors() {
 		try {
 			const res = await fetch(`${sensorsAPIBase}/sensors`);
 			const data = await res.json();
-			console.log(data);
 			closeSnackbar(snack);
 			enqueueSnackbar("Loaded sensor locations!", {
 				variant: "success",
@@ -29,7 +28,7 @@ export function Sensors() {
 			setSensors(data.sensors);
 		} catch (e) {
 			closeSnackbar(snack);
-			console.log("Failed to load sensor locations. Error: ", e);
+			console.info("Failed to load sensor locations. Error: ", e);
 			enqueueSnackbar("Failed to load sensor locations!", {
 				variant: "error",
 			});

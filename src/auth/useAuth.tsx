@@ -35,7 +35,9 @@ interface AuthContextType {
 	goToLogin: () => void;
 }
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+export const AuthContext = createContext<AuthContextType>(
+	{} as AuthContextType,
+);
 
 // Export the provider as we need to wrap the entire app with it
 export function AuthProvider({
@@ -196,7 +198,7 @@ export function AuthProvider({
 	 */
 	function goToLogin() {
 		if (getQueryParam("use_popup_window")) {
-			console.log("Logging in with popup window...");
+			console.info("Logging in with popup window...");
 			const popupWidth = 400;
 			const popupHeight = 600;
 			const popupLeft =
@@ -221,7 +223,7 @@ export function AuthProvider({
 				});
 			}
 		} else {
-			console.log("Logging in with redirect...");
+			console.info("Logging in with redirect...");
 
 			const newReturnTo = encodeURIComponent(location.pathname);
 			navigate(`/auth/login?return_to=${newReturnTo}`);
@@ -239,8 +241,9 @@ export function AuthProvider({
 	// that can be very costly! Even in this case, where
 	// you only get re-renders when logging in and out
 	// we want to keep things very performant.
-	const memoedValue = useMemo(
-		() => ({
+	const memoedValue = useMemo(() => {
+		console.log("user updated");
+		return {
 			user,
 			loading,
 			popupOpen,
@@ -250,9 +253,8 @@ export function AuthProvider({
 			sendLink,
 			resetPassword,
 			goToLogin,
-		}),
-		[user, loading, popupOpen],
-	);
+		};
+	}, [user, loading, popupOpen]);
 
 	return (
 		<AuthContext.Provider value={memoedValue}>

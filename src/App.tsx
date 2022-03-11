@@ -1,9 +1,9 @@
+import { AuthContext, AuthProvider } from "./auth/useAuth";
 import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { MissingRole, NavigateWithQuery } from "./components";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import React, { Suspense } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import React, { Suspense, useContext } from "react";
 
-import { AuthProvider } from "./auth/useAuth";
 import { LoadingSpinner } from "./components";
 import MapApp from "./map/MapApp";
 import { Route as RouteType } from "./types";
@@ -16,7 +16,7 @@ import useAuth from "./auth/useAuth";
 const ManageApp = React.lazy(() => import("./manage/ManageApp"));
 const AuthWrapper = React.lazy(() => import("./auth/AuthWrapper"));
 
-function EverythingWrapper() {
+export function WrappedApp() {
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline enableColorScheme />
@@ -34,32 +34,36 @@ function EverythingWrapper() {
 					vertical: "bottom",
 				}}>
 				<AuthProvider>
-					<Outlet />
+					<App />
 				</AuthProvider>
 			</SnackbarProvider>
 		</ThemeProvider>
 	);
 }
 
-export function App() {
+function routeElement(route: RouteType) {
+	const { user } = useContext(AuthContext);
+	console.log(user);
+	return (!!user && user.roles.includes(route.requiredRole)) ||
+		route.requiredRole === "sensors:read" ? (
+		route.Element
+	) : (
+		<MissingRole role={route.requiredRole} />
+	);
+}
+
+function App() {
 	const { user } = useAuth();
+
 	const redirectElement = !!user ? (
 		<Navigate to="/manage" replace />
 	) : (
 		<Navigate to="/map" replace />
 	);
-	function routeElement(route: RouteType) {
-		// console.log(user.permissions);
-		return !!user && user.roles.includes(route.requiredRole) ? (
-			route.Element
-		) : (
-			<MissingRole role={route.requiredRole} />
-		);
-	}
 
 	return (
 		<Routes>
-			<Route path="/" element={<EverythingWrapper />}>
+			<Route path="/">
 				<Route key="index" index element={redirectElement} />
 				<Route
 					key="*"

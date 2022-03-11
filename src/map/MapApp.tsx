@@ -93,7 +93,7 @@ export default function MapApp() {
 					(s: Sensor) => s.id == urlSensorID, // Non-strict equality comparison is on purpose to account for the id being either a number or a string
 				);
 				if (sensor) {
-					console.log("Sensor in URL: " + sensor.id);
+					console.info("Sensor in URL: " + sensor.id);
 					setActiveSensor(sensor);
 
 					// Timeout to give the map time to load
@@ -115,8 +115,6 @@ export default function MapApp() {
 			const res = await fetch(
 				`https://shakemap.benhong.me/api/v1/sensors`,
 			);
-			const data = await res.json();
-			// console.log(data);
 			closeSnackbar(snack);
 			if (Array.isArray(data?.sensors)) {
 				setSensors(data.sensors);
@@ -204,7 +202,7 @@ export default function MapApp() {
 
 			function onError(e) {
 				closeSnackbar(snack);
-				console.log("Failed to load map. Error: ", e);
+				console.info("Failed to load map. Error: ", e);
 				enqueueSnackbar("Failed to load map!", {
 					variant: "error",
 				});
@@ -465,7 +463,6 @@ export default function MapApp() {
 							);
 						},
 					);
-					// console.log(markerElement);
 					markers.push(marker);
 				}
 			});

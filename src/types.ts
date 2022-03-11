@@ -9,7 +9,7 @@ export interface MotionData {
 	time: number;
 	value: number;
 }
-type CRUDOp = "create" | "read" | "update" | "delete";
+type CRUDOp = "write" | "read";
 type Section = "sensors" | "users";
 export type Role = "none" | "logged_in" | `${Section}:${CRUDOp}`;
 
