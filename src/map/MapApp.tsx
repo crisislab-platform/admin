@@ -40,6 +40,7 @@ import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "../types";
 import SettingsPanel from "./SettingsPanel";
 import SunCalc from "suncalc";
+import { sensorsAPIBase } from "../utils";
 import { useSnackbar } from "notistack";
 
 const Sidebar = React.lazy(() => import("./Sidebar"));
@@ -112,9 +113,7 @@ export default function MapApp() {
 			persist: true,
 		});
 		try {
-			const res = await fetch(
-				`https://shakemap.benhong.me/api/v1/sensors`,
-			);
+			const res = await fetch(sensorsAPIBase);
 			closeSnackbar(snack);
 			if (Array.isArray(data?.sensors)) {
 				setSensors(data.sensors);

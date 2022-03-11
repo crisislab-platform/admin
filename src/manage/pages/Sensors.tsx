@@ -1,4 +1,4 @@
-import { Box, Fab, List, ListItem, Tooltip } from "@mui/material";
+import { Fab, List, ListItem, Tooltip } from "@mui/material";
 import { LoadingSpinner, SensorCard } from "../../components";
 import { useEffect, useState } from "react";
 
@@ -19,7 +19,7 @@ export function Sensors() {
 			persist: true,
 		});
 		try {
-			const res = await fetch(`${sensorsAPIBase}/sensors`);
+			const res = await fetch(sensorsAPIBase);
 			const data = await res.json();
 			closeSnackbar(snack);
 			enqueueSnackbar("Loaded sensor locations!", {
