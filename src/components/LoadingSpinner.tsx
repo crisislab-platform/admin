@@ -16,7 +16,7 @@ export function LoadingSpinner({
 			sx={{ p: addPadding ? 2 : 0 }}>
 			<CircularProgress size={20} color={color} />
 			<Typography sx={{ ml: (theme) => theme.spacing(1) }}>
-				{message || "Loading..."}...
+				{message || "Loading"}...
 			</Typography>
 		</Stack>
 	);
