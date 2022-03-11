@@ -1,4 +1,4 @@
-import { Fab, List, ListItem, Tooltip } from "@mui/material";
+import { Box, Fab, List, ListItem, Tooltip } from "@mui/material";
 import { LoadingSpinner, SensorCard } from "../../components";
 import { useEffect, useState } from "react";
 
@@ -39,7 +39,7 @@ export function Sensors() {
 	}, [enqueueSnackbar, closeSnackbar, setSensors]);
 
 	return (
-		<>
+		<Box p={2}>
 			{sensors ? (
 				<List
 					disablePadding
@@ -81,6 +81,6 @@ export function Sensors() {
 					<ReloadIcon />
 				</Fab>
 			</Tooltip>
-		</>
+		</Box>
 	);
 }

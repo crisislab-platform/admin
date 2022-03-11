@@ -75,7 +75,7 @@ export default function ManageApp() {
 				setMobileDrawerOpen={setMobileDrawerOpen}
 				mobileDrawerOpen={mobileDrawerOpen}
 			/>
-			<Stack sx={{ minHeight: "100vh", p: 2 }}>
+			<Stack sx={{ minHeight: "100vh" }}>
 				<Toolbar variant={onMobile ? undefined : "dense"} />
 				<Outlet />
 			</Stack>

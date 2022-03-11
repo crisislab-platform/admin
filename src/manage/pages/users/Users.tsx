@@ -21,12 +21,12 @@ export function UsersPanel() {
 	});
 
 	if (accountsQuery.isLoading) {
-		return <LoadingSpinner message="Loading users" />;
+		return <LoadingSpinner addPadding message="Loading users" />;
 	}
 
 	if (accountsQuery.isError) {
 		return (
-			<Alert severity="error">
+			<Alert severity="error" sx={{ m: 2 }}>
 				<AlertTitle>Failed to load users</AlertTitle>
 				{(accountsQuery.error as any)?.message ||
 					accountsQuery.error + ""}
