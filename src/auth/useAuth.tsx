@@ -53,7 +53,6 @@ export function AuthProvider({
 	const navigate = useNavigate();
 	const location = useLocation();
 	const returnTo = useGetQueryParam("return_to");
-	console.log(returnTo);
 	const [popupWindowCloseTimeout, setPopupWindowCloseTimeout] = useState<
 		null | any
 	>(null);

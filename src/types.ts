@@ -27,7 +27,9 @@ export type Route = {
 	requiredRole: Role;
 	slug: string;
 	indexSlug?: string;
+	subRoutes?: Route[];
 };
+
 export type SidebarLink = Route & {
 	Icon: typeof SvgIcon;
 	ActiveIcon?: typeof SvgIcon;

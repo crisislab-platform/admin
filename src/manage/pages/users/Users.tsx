@@ -1,4 +1,4 @@
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, List, ListItemButton } from "@mui/material";
 
 import { LoadingSpinner } from "../../../components";
 import useAuth from "../../../auth/useAuth";
@@ -27,12 +27,18 @@ export function UsersPanel() {
 	if (accountsQuery.isError) {
 		return (
 			<Alert severity="error" sx={{ m: 2 }}>
-				<AlertTitle>Failed to load users</AlertTitle>
+				<AlertTitle>Failed to load users.</AlertTitle>
 				{(accountsQuery.error as any)?.message ||
 					accountsQuery.error + ""}
 			</Alert>
 		);
 	}
 
-	return <>Users</>;
+	return (
+		<List>
+			{accountsQuery.data.map((account) => (
+				<ListItemButton>{account.email}</ListItemButton>
+			))}
+		</List>
+	);
 }

@@ -56,6 +56,23 @@ function routeElement(route: RouteType) {
 	);
 }
 
+function renderRoutes(routes: RouteType[]) {
+	return routes.map((route) => {
+		console.info(`Rendering route with slug: ${route.slug}`);
+
+		return (
+			<Route
+				key={route.slug}
+				path={route.slug}
+				element={routeElement(route)}
+				children={
+					route.subRoutes ? renderRoutes(route.subRoutes) : undefined
+				}
+			/>
+		);
+	});
+}
+
 function App() {
 	const { user } = useAuth();
 
@@ -135,17 +152,11 @@ function App() {
 						index
 						element={<NavigateWithQuery to="./sensors" />}
 					/>
+					{renderRoutes(manageRoutes)}
 					<Route
 						path="*"
 						element={<Typography>Page not found :{"("}</Typography>}
 					/>
-					{manageRoutes.map((route) => (
-						<Route
-							key={route.slug}
-							path={route.slug}
-							element={routeElement(route)}
-						/>
-					))}
 				</Route>
 			</Route>
 		</Routes>
