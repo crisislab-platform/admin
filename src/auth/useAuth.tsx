@@ -12,6 +12,7 @@ import { getQueryParam, showErrorSnackbar, useGetQueryParam } from "./utils";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { User } from "../types";
+import { generateFromString } from "generate-avatar";
 import { useSnackbar } from "notistack";
 
 const authUserNamespace = "auth-v2-user";
@@ -52,6 +53,7 @@ export function AuthProvider({
 	const navigate = useNavigate();
 	const location = useLocation();
 	const returnTo = useGetQueryParam("return_to");
+	console.log(returnTo);
 	const [popupWindowCloseTimeout, setPopupWindowCloseTimeout] = useState<
 		null | any
 	>(null);
@@ -132,10 +134,13 @@ export function AuthProvider({
 		setLoading(true);
 
 		try {
-			const user = await authAPI.login(email, password);
-			setUser(user);
+			let newUser = await authAPI.login(email, password);
+			newUser.picture = `data:image/svg+xml;utf8,${generateFromString(
+				email,
+			)}`;
+			setUser(newUser);
 			// @ts-ignore
-			window.user = user;
+			window.user = newUser;
 			if (getQueryParam("in_popup_window")) {
 				console.info(
 					"In popup, will try and close because login succeeded.",

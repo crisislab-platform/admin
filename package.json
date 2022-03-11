@@ -17,6 +17,7 @@
 		"@mui/lab": "^5.0.0-alpha.70",
 		"@mui/material": "^5.4.3",
 		"events": "^3.3.0",
+		"generate-avatar": "^1.4.10",
 		"mapbox-gl": "^2.7.0",
 		"notistack": "^2.0.3",
 		"prop-types": "^15.8.1",
