@@ -60,9 +60,9 @@ function App() {
 	const { user } = useAuth();
 
 	const redirectElement = !!user ? (
-		<Navigate to="/manage" replace />
+		<NavigateWithQuery to="/manage" replace />
 	) : (
-		<Navigate to="/map" replace />
+		<NavigateWithQuery to="/map" replace />
 	);
 
 	return (
@@ -90,7 +90,7 @@ function App() {
 							<AuthWrapper />
 						</Suspense>
 					}>
-					<Route index element={<Navigate to="./login" />} />
+					<Route index element={<NavigateWithQuery to="./login" />} />
 					{authRoutes.map((route) => (
 						<Route
 							key={route.path}
@@ -131,7 +131,10 @@ function App() {
 							<ManageApp />
 						</Suspense>
 					}>
-					<Route index element={<Navigate to="./sensors" />} />
+					<Route
+						index
+						element={<NavigateWithQuery to="./sensors" />}
+					/>
 					<Route
 						path="*"
 						element={<Typography>Page not found :{"("}</Typography>}

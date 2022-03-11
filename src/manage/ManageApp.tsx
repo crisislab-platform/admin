@@ -10,14 +10,13 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { ReactChild, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { SidebarLink } from "../types";
 import { routes } from "./routes";
-import useAuth from "../auth/useAuth";
 import { useLocation } from "react-router-dom";
 
 const drawerWidth = 260;
