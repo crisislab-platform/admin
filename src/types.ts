@@ -10,7 +10,7 @@ export interface MotionData {
 	value: number;
 }
 type CRUDOp = "create" | "read" | "update" | "delete";
-type Section = "sensors";
+type Section = "sensors" | "users";
 export type Role = "none" | "logged_in" | `${Section}:${CRUDOp}`;
 
 export type User = {
@@ -30,6 +30,7 @@ export type Route = {
 };
 export type SidebarLink = Route & {
 	Icon: typeof SvgIcon;
+	ActiveIcon?: typeof SvgIcon;
 };
 
 export interface Sensor {

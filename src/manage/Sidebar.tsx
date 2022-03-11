@@ -100,7 +100,11 @@ export default function Sidebar({
 								setMobileDrawerOpen(false);
 							}}>
 							<ListItemIcon>
-								<link.Icon />
+								{location.pathname.endsWith(link.slug) ? (
+									<link.ActiveIcon />
+								) : (
+									<link.Icon />
+								)}
 							</ListItemIcon>
 							<ListItemText primary={link.text} />
 						</ListItemButton>
