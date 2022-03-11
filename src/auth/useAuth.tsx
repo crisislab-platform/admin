@@ -12,7 +12,7 @@ import { getQueryParam, showErrorSnackbar, useGetQueryParam } from "./utils";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { User } from "../types";
-import { generateFromString } from "generate-avatar";
+import { generateAvatar } from "../utils";
 import { useSnackbar } from "notistack";
 
 const authUserNamespace = "auth-v2-user";
@@ -134,9 +134,7 @@ export function AuthProvider({
 
 		try {
 			let newUser = await authAPI.login(email, password);
-			newUser.picture = `data:image/svg+xml;utf8,${generateFromString(
-				email,
-			)}`;
+			newUser.picture = generateAvatar(newUser.email);
 			setUser(newUser);
 			// @ts-ignore
 			window.user = newUser;

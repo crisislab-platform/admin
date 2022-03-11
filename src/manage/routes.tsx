@@ -1,5 +1,5 @@
+import { AccountPanel, AccountsPage, SensorInfo, Sensors } from "./pages/index";
 import { Route, SidebarLink } from "../types";
-import { SensorInfo, Sensors, UserPanel, UsersPanel } from "./pages/index";
 
 import PersonIcon from "@mui/icons-material/Person";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
@@ -33,17 +33,17 @@ export const routes: (Route | SidebarLink)[] = [
 		requiredRole: "sensors:read",
 	},
 	{
-		slug: "users",
-		text: "Users",
+		slug: "accounts",
+		text: "Accounts",
 		Icon: PersonOutlineOutlinedIcon,
 		ActiveIcon: PersonIcon,
-		Element: <UsersPanel />,
+		Element: <AccountsPage />,
 		requiredRole: "users:read",
 		subRoutes: [
 			{
 				slug: ":userID",
 				text: "User information",
-				Element: <UserPanel />,
+				Element: <AccountPanel />,
 				requiredRole: "users:read",
 			},
 		],
