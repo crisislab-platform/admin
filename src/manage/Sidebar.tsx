@@ -92,13 +92,6 @@ export default function Sidebar({
 						selected={location.pathname.split("/")[2] === link.slug}
 						disablePadding>
 						<ListItemButton
-							disabled={
-								user &&
-								!user.roles.find(
-									(role) =>
-										role.raw === link.requiredRole.raw,
-								)
-							}
 							onClick={() => {
 								navigate(`./${link.slug}`);
 								setMobileDrawerOpen(false);
