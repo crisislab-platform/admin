@@ -224,6 +224,7 @@ export function AccountPanel() {
 						</MenuItem>
 					</Menu>
 					<Button
+						disabled={account.email === user.email}
 						variant="outlined"
 						color="error"
 						startIcon={<DeleteIcon />}
