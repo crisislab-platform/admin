@@ -217,7 +217,7 @@ export function AccountsPage() {
 					<AccountsList />
 				</Stack>
 			</Grid>
-			<Grid item xs={12} md={6} p={2}>
+			<Grid item xs={12} md={6} p={1}>
 				<Outlet />
 			</Grid>
 		</Grid>

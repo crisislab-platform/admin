@@ -89,11 +89,15 @@ export default function Sidebar({
 				{links.map((link) => (
 					<ListItem
 						key={link.slug}
-						selected={location.pathname.endsWith(link.slug)}
+						selected={location.pathname.startsWith(link.slug)}
 						disablePadding>
 						<ListItemButton
 							disabled={
-								user && !user.roles.includes(link.requiredRole)
+								user &&
+								!user.roles.find(
+									(role) =>
+										role.raw === link.requiredRole.raw,
+								)
 							}
 							onClick={() => {
 								navigate(`./${link.slug}`);

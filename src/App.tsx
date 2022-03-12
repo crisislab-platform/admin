@@ -48,7 +48,8 @@ export function WrappedApp() {
 
 function routeElement(route: RouteType) {
 	const { user } = useAuth();
-	return (!!user && user.roles.includes(route.requiredRole)) ||
+	return (!!user &&
+		!!user.roles.find((role) => role.raw === route.requiredRole.raw)) ||
 		route.requiredRole === "sensors:read" ? (
 		route.Element
 	) : (

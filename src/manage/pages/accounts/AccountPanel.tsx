@@ -3,6 +3,7 @@ import {
 	AlertTitle,
 	Avatar,
 	Box,
+	Button,
 	List,
 	ListItem,
 	ListItemText,
@@ -10,16 +11,19 @@ import {
 	Typography,
 } from "@mui/material";
 
+import EditIcon from "@mui/icons-material/Edit";
 import { LoadingSpinner } from "../../../components";
 import { makeFetchAccounts } from "./api";
 import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
+import { useState } from "react";
 
 export function AccountPanel() {
 	const { user } = useAuth();
 	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
 	const { accountID: encodedAccountID } = useParams();
+	const [editMode, setEditMode] = useState(false);
 
 	const accountID = encodedAccountID
 		? decodeURIComponent(encodedAccountID)
@@ -53,12 +57,24 @@ export function AccountPanel() {
 
 	return (
 		<Stack>
+			{!!user.roles.find((role) => role.raw === "users:write") && (
+				<Stack direction="row">
+					<Button
+						sx={{ mb: 2, ml: "auto" }}
+						variant="outlined"
+						onClick={() => setEditMode(true)}
+						startIcon={<EditIcon />}>
+						Edit account details
+					</Button>
+				</Stack>
+			)}
 			<Stack alignItems="center" gap={2}>
 				<Avatar
 					src={account.picture}
 					alt={account.name || account.picture}
 					sx={{ width: 160, height: 160 }}
 				/>
+
 				<Typography variant="h2">
 					{account.name || account.email}
 				</Typography>

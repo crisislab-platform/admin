@@ -7,6 +7,7 @@ import SensorsIcon from "@mui/icons-material/Sensors";
 import SensorsOutlinedIcon from "@mui/icons-material/SensorsOutlined";
 import SettingsIcon from "@mui/icons-material/Settings";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import { roles } from "../utils";
 
 export const routes: (Route | SidebarLink)[] = [
 	{
@@ -15,7 +16,7 @@ export const routes: (Route | SidebarLink)[] = [
 		ActiveIcon: SettingsIcon,
 		Icon: SettingsOutlinedIcon,
 		Element: <div>Global sensor configuration</div>,
-		requiredRole: "sensors:write",
+		requiredRole: roles["sensors:write"],
 	},
 	{
 		slug: "sensors",
@@ -23,14 +24,14 @@ export const routes: (Route | SidebarLink)[] = [
 		ActiveIcon: SensorsIcon,
 		Icon: SensorsOutlinedIcon,
 		Element: <Sensors />,
-		requiredRole: "sensors:read",
+		requiredRole: roles["sensors:read"],
 	},
 	{
 		slug: "sensors/:sensorID",
 		indexSlug: "sensors/",
 		text: "Sensor info",
 		Element: <SensorInfo />,
-		requiredRole: "sensors:read",
+		requiredRole: roles["sensors:read"],
 	},
 	{
 		slug: "accounts",
@@ -38,13 +39,13 @@ export const routes: (Route | SidebarLink)[] = [
 		Icon: PersonOutlineOutlinedIcon,
 		ActiveIcon: PersonIcon,
 		Element: <AccountsPage />,
-		requiredRole: "users:read",
+		requiredRole: roles["users:read"],
 		subRoutes: [
 			{
 				slug: ":accountID",
 				text: "Account information",
 				Element: <AccountPanel />,
-				requiredRole: "users:read",
+				requiredRole: roles["users:read"],
 			},
 		],
 	},
