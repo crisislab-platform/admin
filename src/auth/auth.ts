@@ -1,6 +1,7 @@
 import { apiBase, decodeJWT } from "./utils";
 
 import { User } from "../types";
+import { roles } from "../utils";
 
 // This file just handles the API calls, all of the other logic (such as popups) is in useAuth.tsx
 
@@ -12,7 +13,12 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 	if (arg2 === undefined) {
 		// The function has been given a token
 		const token: string = arg1;
-		return { ...decodeJWT(token), token };
+		const decoded = decodeJWT(token);
+		return {
+			...decoded,
+			token: token,
+			roles: decoded.roles.map((role) => roles[role]),
+		};
 	} else {
 		// The function has been given a username and password
 		const email: string = arg1;
@@ -33,7 +39,12 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 			}
 			try {
 				const data = await response.json();
-				return { ...decodeJWT(data.token), token: data.token };
+				const decoded = decodeJWT(data.token);
+				return {
+					...decoded,
+					token: data.token,
+					roles: decoded.roles.map((role) => roles[role]),
+				};
 			} catch (error) {
 				throw new Error(
 					`E: Failed to decode data from server. ${error}`,

@@ -11,14 +11,21 @@ export interface MotionData {
 }
 type CRUDOp = "write" | "read";
 type Section = "sensors" | "users";
-export type Role = `${Section}:${CRUDOp}`;
+export type RawRole = `${Section}:${CRUDOp}`;
+export type Role = {
+	text: string;
+	raw: RawRole;
+};
 
-export type User = {
-	roles: Role[];
+export type Account = {
 	name?: string;
 	email: string;
+	roles: Role[];
+	picture: string;
+};
+
+export type User = Account & {
 	token: string;
-	picture?: string;
 };
 
 export type Route = {

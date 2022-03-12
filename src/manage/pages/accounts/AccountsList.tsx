@@ -10,7 +10,7 @@ import {
 import { Link as RouterLink, useParams } from "react-router-dom";
 
 import { LoadingSpinner } from "../../../components";
-import { makeFetchUsers } from "./api";
+import { makeFetchAccounts } from "./api";
 import useAuth from "../../../auth/useAuth";
 import { useQuery } from "react-query";
 
@@ -20,7 +20,7 @@ export function AccountsList() {
 	const selectedAccountID = encodedSelectedAccountID
 		? atob(encodedSelectedAccountID)
 		: null;
-	const accountsQuery = useQuery("accounts", makeFetchUsers(user.token));
+	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
 
 	if (accountsQuery.isLoading) {
 		return <LoadingSpinner addPadding message="Loading users" />;

@@ -65,7 +65,7 @@ export function MissingRole({
 		<Box sx={{ p: addPadding ? 2 : 0 }}>
 			<Typography>
 				You do not have the required role to acces this:{" "}
-				<code>{role}</code>.
+				<code>{role.email}</code>.
 			</Typography>
 			{!user && (
 				<LoginButton message="You might have the rol required to view this if you log in." />

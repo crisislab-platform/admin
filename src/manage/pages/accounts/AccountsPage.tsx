@@ -1,3 +1,4 @@
+import { Account, Role } from "../../../types";
 import {
 	Alert,
 	AlertTitle,
@@ -13,16 +14,16 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { makeCreateAccount, makeFetchAccounts } from "./api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { AccountsList } from "./AccountsList";
 import { Outlet } from "react-router-dom";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import { Role } from "../../../types";
-import { makeFetchUsers } from "./api";
 import { roles } from "../../../utils";
 import useAuth from "../../../auth/useAuth";
-import { useQuery } from "react-query";
+import { useSnackbar } from "notistack";
+import { useState } from "react";
 
 function CreateAccountDialog({
 	open,
@@ -35,24 +36,85 @@ function CreateAccountDialog({
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
-	const accountsQuery = useQuery("accounts", makeFetchUsers(user.token));
+	const [errors, setErrors] = useState<[string, string][]>([]);
+	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
+	const queryClient = useQueryClient();
+	const { enqueueSnackbar } = useSnackbar();
+	const mutation = useMutation(makeCreateAccount(user.token), {
+		onMutate: async (newAccount) => {
+			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+			await queryClient.cancelQueries("accounts");
+
+			// Snapshot the previous value
+			const previousAccounts = queryClient.getQueryData("accounts");
+
+			// Optimistically update to the new value
+
+			queryClient.setQueryData("accounts", (oldAccounts: Account[]) => [
+				...oldAccounts,
+				newAccount,
+			]);
+
+			// Return a context object with the snapshotted value
+			return { previousAccounts };
+		},
+		onError: (error, newAccount, context) => {
+			queryClient.setQueryData(
+				"accounts",
+				(context as { previousAccounts: Account[] }).previousAccounts,
+			);
+			enqueueSnackbar(`Failed to create new account: ${error}`, {
+				variant: "error",
+			});
+		},
+		onSuccess: () => {
+			enqueueSnackbar(`Created new user (email: ${email})`, {
+				variant: "success",
+			});
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries("accounts");
+		},
+	});
 
 	const duplicateEmail = accountsQuery.isSuccess
 		? !!accountsQuery.data.find((account) => account.email === email)
 		: false;
 
-	const hasDangerousPermissions =
-		selectedRoles.includes("users:write") ||
-		selectedRoles.includes("sensors:write");
+	const hasUsersWrite = !!selectedRoles.find(
+		(role) => role.raw === "users:write",
+	);
+	const hasSensorsWrite = !!selectedRoles.find(
+		(role) => role.raw === "sensors:write",
+	);
 
 	function onSubmit() {
-		onClose();
+		setErrors([]);
+		let newErrors: [string, string][] = [];
+		if (!/^\S+@\S+$/.test(email)) {
+			newErrors.push([
+				"Please enter a valid email address.",
+				"Email addresses usually have an @ in them and are over 5 characters long.",
+			]);
+		}
+		setErrors(newErrors);
+		if (newErrors.length === 0 && !duplicateEmail) {
+			mutation.mutate({ name, email, roles: selectedRoles });
+			onClose();
+		}
 	}
 
 	return (
 		<Dialog fullWidth open={open} onClose={onClose}>
 			<DialogTitle>Create account</DialogTitle>
 			<DialogContent>
+				{errors.length > 0 &&
+					errors.map((error) => (
+						<Alert severity="error">
+							<AlertTitle>{error[0]}</AlertTitle>
+							{error[1]}
+						</Alert>
+					))}
 				<TextField
 					value={name}
 					onChange={(event) => setName(event.target.value)}
@@ -90,10 +152,11 @@ function CreateAccountDialog({
 					onChange={(event, newValue: Role[] | null) => {
 						setSelectedRoles(newValue);
 					}}
-					options={roles}
+					options={Object.values(roles) as Role[]}
 					multiple
 					id="roles"
 					filterSelectedOptions
+					getOptionLabel={(role: Role) => role.text}
 					renderInput={(params) => (
 						<TextField
 							{...params}
@@ -103,15 +166,15 @@ function CreateAccountDialog({
 						/>
 					)}
 				/>
-				{hasDangerousPermissions && (
+				{(hasUsersWrite || hasSensorsWrite) && (
 					<Alert severity="warning">
 						<AlertTitle>
 							You are granting this account dangerous permissions.
 						</AlertTitle>
-						{selectedRoles.includes("users:write") &&
+						{hasUsersWrite &&
 							"This account will be able to create, modify, or delete any account, including their own."}
 						<br />
-						{selectedRoles.includes("sensors:write") &&
+						{hasSensorsWrite &&
 							"This account will be able to create, modify, or delete any sensor."}
 					</Alert>
 				)}
