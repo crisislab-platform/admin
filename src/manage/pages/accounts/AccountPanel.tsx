@@ -2,6 +2,7 @@ import { Account, Role } from "../../../types";
 import {
 	Alert,
 	AlertTitle,
+	AppBar,
 	Autocomplete,
 	Avatar,
 	Button,
@@ -10,34 +11,49 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogTitle,
+	IconButton,
 	List,
 	ListItem,
 	ListItemIcon,
 	ListItemText,
 	Menu,
 	MenuItem,
+	Slide,
 	Stack,
 	TextField,
+	Toolbar,
 	Typography,
+	useMediaQuery,
+	useTheme,
 } from "@mui/material";
+import { LoadingSpinner, useNavigateWithQuery } from "../../../components";
+import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
 import { makeDeleteAccount, makeEditAccount, makeFetchAccounts } from "./api";
-import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import LinkIcon from "@mui/icons-material/Link";
-import { LoadingSpinner } from "../../../components";
 import LockResetIcon from "@mui/icons-material/LockReset";
 import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from "@mui/icons-material/Send";
+import { TransitionProps } from "@mui/material/transitions";
 import WaveIcon from "@mui/icons-material/EmojiPeople";
 import { roles } from "../../../utils";
 import { sendLink } from "../../../auth/auth";
 import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
+
+const SlideUpTransition = forwardRef(function Transition(
+	props: TransitionProps & {
+		children: ReactElement;
+	},
+	ref: Ref<unknown>,
+) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
 
 export function AccountPanel() {
 	const { user } = useAuth();
@@ -50,6 +66,9 @@ export function AccountPanel() {
 	const [deletionConfirmModalOpen, setDeletionConfirmModalOpen] =
 		useState(false);
 	const { enqueueSnackbar } = useSnackbar();
+	const theme = useTheme();
+	const onMobile = useMediaQuery(theme.breakpoints.down("md"));
+	const navigateWithQuery = useNavigateWithQuery();
 
 	const queryClient = useQueryClient();
 	const mutation = useMutation(makeDeleteAccount(user.token), {
@@ -124,24 +143,6 @@ export function AccountPanel() {
 		setEditMode(false);
 	}
 
-	if (editMode) {
-		return (
-			<Stack>
-				<Stack direction="row">
-					<Button
-						sx={{ mb: 2, ml: "auto" }}
-						variant="outlined"
-						color="warning"
-						onClick={exitEditMode}
-						startIcon={<CloseIcon />}>
-						Stop editing (discard changes)
-					</Button>
-				</Stack>
-				<EditUserInfo exitEditMode={exitEditMode} account={account} />
-			</Stack>
-		);
-	}
-
 	function onDeletionConfirmModalClose() {
 		setDeletionConfirmModalOpen(false);
 	}
@@ -175,8 +176,12 @@ export function AccountPanel() {
 		};
 	}
 
-	return (
-		<Stack>
+	function onDialogCLose() {
+		navigateWithQuery("..");
+	}
+
+	let layout = (
+		<Stack sx={{ p: onMobile ? 2 : 0 }}>
 			{!!user.roles.find((role) => role.raw === "users:write") && (
 				<Stack direction="row" gap={1} flexWrap="wrap" sx={{ mb: 2 }}>
 					<Button
@@ -287,6 +292,56 @@ export function AccountPanel() {
 			</List>
 		</Stack>
 	);
+	if (editMode) {
+		layout = (
+			<Stack sx={{ p: onMobile ? 2 : 0 }}>
+				<Stack direction="row">
+					<Button
+						sx={{ mb: 2, ml: "auto" }}
+						variant="outlined"
+						color="warning"
+						onClick={exitEditMode}
+						startIcon={<CloseIcon />}>
+						Stop editing (discard changes)
+					</Button>
+				</Stack>
+				<EditUserInfo exitEditMode={exitEditMode} account={account} />
+			</Stack>
+		);
+	}
+
+	if (onMobile) {
+		return (
+			<Dialog
+				fullScreen
+				open
+				onClose={onDialogCLose}
+				TransitionComponent={SlideUpTransition}>
+				<AppBar sx={{ position: "relative" }}>
+					<Toolbar>
+						<IconButton
+							edge="start"
+							color="inherit"
+							onClick={onDialogCLose}
+							aria-label="close">
+							<CloseIcon />
+						</IconButton>
+						<Typography
+							sx={{ ml: 2, flex: 1 }}
+							variant="h6"
+							component="div">
+							{editMode
+								? "Editing user information"
+								: "User information"}
+						</Typography>
+					</Toolbar>
+				</AppBar>
+				{layout}
+			</Dialog>
+		);
+	}
+
+	return layout;
 }
 
 function EditUserInfo({
