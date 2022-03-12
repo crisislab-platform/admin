@@ -60,3 +60,22 @@ export function makeCreateAccount(
 		};
 	};
 }
+
+export function makeDeleteAccount(
+	token: string,
+): ({ email }: { email: string }) => Promise<void> {
+	return async ({ email }) => {
+		const response = await fetch(`${usersAPIBase}/${email}`, {
+			headers: { Authorization: `Bearer ${token}` },
+			method: "DELETE",
+		});
+		if (!response.ok) {
+			const data = await response.text();
+			throw new Error(
+				`Network response was not ok (${response.status}: ${
+					response.statusText
+				})${data ? ` ${data}` : ""}`,
+			);
+		}
+	};
+}

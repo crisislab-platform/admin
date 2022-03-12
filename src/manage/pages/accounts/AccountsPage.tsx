@@ -37,9 +37,9 @@ function CreateAccountDialog({
 	const [email, setEmail] = useState("");
 	const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
 	const [errors, setErrors] = useState<[string, string][]>([]);
+	const { enqueueSnackbar } = useSnackbar();
 	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
 	const queryClient = useQueryClient();
-	const { enqueueSnackbar } = useSnackbar();
 	const mutation = useMutation(makeCreateAccount(user.token), {
 		onMutate: async (newAccount) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
@@ -63,12 +63,12 @@ function CreateAccountDialog({
 				"accounts",
 				(context as { previousAccounts: Account[] }).previousAccounts,
 			);
-			enqueueSnackbar(`Failed to create new account: ${error}`, {
+			enqueueSnackbar(`Failed to create new account: ${error}.`, {
 				variant: "error",
 			});
 		},
 		onSuccess: () => {
-			enqueueSnackbar(`Created new user (email: ${email})`, {
+			enqueueSnackbar(`Created new account (email: ${email}).`, {
 				variant: "success",
 			});
 		},

@@ -15,15 +15,17 @@ import {
 	Stack,
 	Typography,
 } from "@mui/material";
+import { makeDeleteAccount, makeFetchAccounts } from "./api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
+import { Account } from "../../../types";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { LoadingSpinner } from "../../../components";
-import { makeFetchAccounts } from "./api";
 import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useSnackbar } from "notistack";
 import { useState } from "react";
 
 export function AccountPanel() {
@@ -33,6 +35,46 @@ export function AccountPanel() {
 	const [editMode, setEditMode] = useState(false);
 	const [deletionConfirmModalOpen, setDeletionConfirmModalOpen] =
 		useState(false);
+	const { enqueueSnackbar } = useSnackbar();
+
+	const queryClient = useQueryClient();
+	const mutation = useMutation(makeDeleteAccount(user.token), {
+		onMutate: async (accountToDelete: Account) => {
+			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+			await queryClient.cancelQueries("accounts");
+
+			// Snapshot the previous value
+			const previousAccounts = queryClient.getQueryData("accounts");
+
+			// Optimistically update to the new value
+
+			queryClient.setQueryData("accounts", (oldAccounts: Account[]) =>
+				oldAccounts.filter(
+					(account) => account.email !== accountToDelete.email,
+				),
+			);
+
+			// Return a context object with the snapshotted value
+			return { previousAccounts };
+		},
+		onError: (error, newAccount, context) => {
+			queryClient.setQueryData(
+				"accounts",
+				(context as { previousAccounts: Account[] }).previousAccounts,
+			);
+			enqueueSnackbar(`Failed to delete account: ${error}.`, {
+				variant: "error",
+			});
+		},
+		onSuccess: () => {
+			enqueueSnackbar(`Deleted account.`, {
+				variant: "success",
+			});
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries("accounts");
+		},
+	});
 
 	const accountID = encodedAccountID
 		? decodeURIComponent(encodedAccountID)
@@ -84,6 +126,11 @@ export function AccountPanel() {
 		setDeletionConfirmModalOpen(false);
 	}
 
+	function deleteAccount() {
+		mutation.mutate(account);
+		onDeletionConfirmModalClose();
+	}
+
 	return (
 		<Stack>
 			{!!user.roles.find((role) => role.raw === "users:write") && (
@@ -112,7 +159,7 @@ export function AccountPanel() {
 							<Button onClick={onDeletionConfirmModalClose}>
 								Cancel
 							</Button>
-							<Button color="error" onClick={() => {}}>
+							<Button color="error" onClick={deleteAccount}>
 								Delete
 							</Button>
 						</DialogActions>
