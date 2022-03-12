@@ -111,12 +111,12 @@ export function AuthProvider({
 			setTimeout(() => {
 				if (popupWindowRef) {
 					popupWindowRef.close();
+					enqueueSnackbar("Popup closed after 2 minutes.", {
+						variant: "warning",
+					});
 				}
 
 				setLoading(false);
-				enqueueSnackbar("Popup closed after 2 minutes.", {
-					variant: "warning",
-				});
 			}, 2 * 60 * 1000 /*2 minutes */),
 		);
 		return () => {
