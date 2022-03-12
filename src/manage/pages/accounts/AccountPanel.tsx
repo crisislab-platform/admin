@@ -12,7 +12,10 @@ import {
 	DialogTitle,
 	List,
 	ListItem,
+	ListItemIcon,
 	ListItemText,
+	Menu,
+	MenuItem,
 	Stack,
 	TextField,
 	Typography,
@@ -24,9 +27,14 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import LinkIcon from "@mui/icons-material/Link";
 import { LoadingSpinner } from "../../../components";
+import LockResetIcon from "@mui/icons-material/LockReset";
 import SaveIcon from "@mui/icons-material/Save";
+import SendIcon from "@mui/icons-material/Send";
+import WaveIcon from "@mui/icons-material/EmojiPeople";
 import { roles } from "../../../utils";
+import { sendLink } from "../../../auth/auth";
 import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -36,6 +44,9 @@ export function AccountPanel() {
 	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
 	const { accountID: encodedAccountID } = useParams();
 	const [editMode, setEditMode] = useState(false);
+	const [sendLinkMenuAnchorEl, setSendLinkMenuAnchorEl] =
+		useState<null | HTMLElement>(null);
+	const sendLinkMenuOpen = Boolean(sendLinkMenuAnchorEl);
 	const [deletionConfirmModalOpen, setDeletionConfirmModalOpen] =
 		useState(false);
 	const { enqueueSnackbar } = useSnackbar();
@@ -140,12 +151,79 @@ export function AccountPanel() {
 		onDeletionConfirmModalClose();
 	}
 
+	function onSendLinkMenuClose() {
+		setSendLinkMenuAnchorEl(null);
+	}
+	function createOnSendLinkMenuItemClick(
+		type: "welcome" | "sign-in" | "reset",
+	) {
+		return async () => {
+			try {
+				onSendLinkMenuClose();
+				await sendLink(account.email, type);
+				enqueueSnackbar(`Sent ${type} link to ${account.email}.`, {
+					variant: "success",
+				});
+			} catch (error) {
+				enqueueSnackbar(
+					`Error sendding ${type} link to ${account.email}: ${
+						error.message || error
+					}.`,
+					{ variant: "error" },
+				);
+			}
+		};
+	}
+
 	return (
 		<Stack>
 			{!!user.roles.find((role) => role.raw === "users:write") && (
-				<Stack direction="row" gap={1}>
+				<Stack direction="row" gap={1} flexWrap="wrap" sx={{ mb: 2 }}>
 					<Button
-						sx={{ mb: 2, ml: "auto" }}
+						variant="outlined"
+						startIcon={<SendIcon />}
+						onClick={(event) => {
+							setSendLinkMenuAnchorEl(event.currentTarget);
+						}}
+						id="send-link-button"
+						aria-controls={
+							sendLinkMenuOpen ? "send-link-menu" : undefined
+						}
+						aria-haspopup="true"
+						aria-expanded={sendLinkMenuOpen ? "true" : undefined}>
+						Send link
+					</Button>
+					<Menu
+						id="send-link-menu"
+						anchorEl={sendLinkMenuAnchorEl}
+						open={sendLinkMenuOpen}
+						onClose={onSendLinkMenuClose}
+						MenuListProps={{
+							"aria-labelledby": "send-link-button",
+						}}>
+						<MenuItem
+							onClick={createOnSendLinkMenuItemClick("welcome")}>
+							<ListItemIcon>
+								<WaveIcon fontSize="small" />
+							</ListItemIcon>
+							<ListItemText>Welcome</ListItemText>
+						</MenuItem>
+						<MenuItem
+							onClick={createOnSendLinkMenuItemClick("reset")}>
+							<ListItemIcon>
+								<LockResetIcon fontSize="small" />
+							</ListItemIcon>
+							<ListItemText>Reset password</ListItemText>
+						</MenuItem>
+						<MenuItem
+							onClick={createOnSendLinkMenuItemClick("sign-in")}>
+							<ListItemIcon>
+								<LinkIcon fontSize="small" />
+							</ListItemIcon>
+							<ListItemText>Login link</ListItemText>
+						</MenuItem>
+					</Menu>
+					<Button
 						variant="outlined"
 						color="error"
 						startIcon={<DeleteIcon />}
@@ -174,7 +252,6 @@ export function AccountPanel() {
 						</DialogActions>
 					</Dialog>
 					<Button
-						sx={{ mb: 2 }}
 						variant="outlined"
 						onClick={() => setEditMode(true)}
 						startIcon={<EditIcon />}>
