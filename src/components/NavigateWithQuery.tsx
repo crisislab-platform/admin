@@ -10,5 +10,5 @@ export function useNavigateWithQuery() {
 	const { search } = useLocation();
 	const navigate = useNavigate();
 
-	return (to, options) => navigate(to + search, options);
+	return (to: string, options?: any) => navigate(to + search, options);
 }
