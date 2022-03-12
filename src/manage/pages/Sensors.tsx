@@ -1,3 +1,5 @@
+import "../import-to-add-snackbar-bottom-spacing.css";
+
 import { Box, Fab, List, ListItem, Tooltip } from "@mui/material";
 import { LoadingSpinner, SensorCard } from "../../components";
 import { useEffect, useState } from "react";

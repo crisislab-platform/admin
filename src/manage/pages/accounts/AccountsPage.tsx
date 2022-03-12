@@ -25,6 +25,43 @@ import useAuth from "../../../auth/useAuth";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 
+export function AccountsPage() {
+	// emFkZUB2aWdnZXJzLm5ldA==
+	const theme = useTheme();
+	const onMobile = useMediaQuery(theme.breakpoints.down("md"));
+	const [createAccountPopupOpen, setCreateAccountPopupOpen] = useState(false);
+
+	function onCreateAccountPopupClose() {
+		setCreateAccountPopupOpen(false);
+	}
+
+	return (
+		<Grid container sx={{ w: "100%", h: "100%", flex: 1 }}>
+			<Grid item xs={12} md={6}>
+				<Stack>
+					<Stack direction="row" sx={{ pt: 1 }}>
+						<Button
+							sx={{ ml: "auto", mr: onMobile ? 1 : 0 }}
+							variant="contained"
+							startIcon={<PersonAddIcon />}
+							onClick={() => setCreateAccountPopupOpen(true)}>
+							Create account
+						</Button>
+						<CreateAccountDialog
+							open={createAccountPopupOpen}
+							onClose={onCreateAccountPopupClose}
+						/>
+					</Stack>
+					<AccountsList />
+				</Stack>
+			</Grid>
+			<Grid item xs={12} md={6} p={1}>
+				<Outlet />
+			</Grid>
+		</Grid>
+	);
+}
+
 function CreateAccountDialog({
 	open,
 	onClose,
@@ -187,42 +224,5 @@ function CreateAccountDialog({
 				<Button onClick={onSubmit}>Create</Button>
 			</DialogActions>
 		</Dialog>
-	);
-}
-
-export function AccountsPage() {
-	// emFkZUB2aWdnZXJzLm5ldA==
-	const theme = useTheme();
-	const onMobile = useMediaQuery(theme.breakpoints.down("md"));
-	const [createAccountPopupOpen, setCreateAccountPopupOpen] = useState(false);
-
-	function onCreateAccountPopupClose() {
-		setCreateAccountPopupOpen(false);
-	}
-
-	return (
-		<Grid container sx={{ w: "100%", h: "100%", flex: 1 }}>
-			<Grid item xs={12} md={6}>
-				<Stack>
-					<Stack direction="row" sx={{ pt: 1 }}>
-						<Button
-							sx={{ ml: "auto", mr: onMobile ? 1 : 0 }}
-							variant="contained"
-							startIcon={<PersonAddIcon />}
-							onClick={() => setCreateAccountPopupOpen(true)}>
-							Create account
-						</Button>
-						<CreateAccountDialog
-							open={createAccountPopupOpen}
-							onClose={onCreateAccountPopupClose}
-						/>
-					</Stack>
-					<AccountsList />
-				</Stack>
-			</Grid>
-			<Grid item xs={12} md={6} p={1}>
-				<Outlet />
-			</Grid>
-		</Grid>
 	);
 }
