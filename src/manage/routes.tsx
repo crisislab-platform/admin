@@ -41,8 +41,8 @@ export const routes: (Route | SidebarLink)[] = [
 		requiredRole: "users:read",
 		subRoutes: [
 			{
-				slug: ":userID",
-				text: "User information",
+				slug: ":accountID",
+				text: "Account information",
 				Element: <AccountPanel />,
 				requiredRole: "users:read",
 			},

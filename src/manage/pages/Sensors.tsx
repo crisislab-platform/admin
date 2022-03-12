@@ -10,7 +10,9 @@ import { useSnackbar } from "notistack";
 
 export function Sensors() {
 	const navigate = useNavigate();
-	const [sensors, setSensors] = useState<null | Sensor[]>(null);
+	const [sensors, setSensors] = useState<null | {
+		[id: string | number]: Sensor;
+	}>(null);
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 	async function loadSensorLocations() {
@@ -49,7 +51,7 @@ export function Sensors() {
 						flexWrap: "wrap",
 						gap: 2,
 					}}>
-					{sensors.map((sensor) => (
+					{Object.values(sensors).map((sensor) => (
 						<ListItem
 							key={sensor.id}
 							disablePadding

@@ -61,7 +61,9 @@ export default function MapApp() {
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
-	const [sensors, setSensors] = useState<Sensor[] | null>(null);
+	const [sensors, setSensors] = useState<{
+		[id: string | number]: Sensor;
+	} | null>(null);
 	const [activeSensor, setActiveSensor] = useState<null | Sensor>(null);
 	const [popover, setPopover] = useState<null | {
 		x: number;
@@ -90,9 +92,7 @@ export default function MapApp() {
 			);
 
 			if (urlSensorID) {
-				const sensor = sensors.find(
-					(s: Sensor) => s.id == urlSensorID, // Non-strict equality comparison is on purpose to account for the id being either a number or a string
-				);
+				const sensor = sensors[urlSensorID];
 				if (sensor) {
 					console.info("Sensor in URL: " + sensor.id);
 					setActiveSensor(sensor);
@@ -390,7 +390,7 @@ export default function MapApp() {
 	useEffect(() => {
 		let markers: Marker[] = [];
 		if (map && sensors && Array.isArray(sensors) && sensorsVisible) {
-			sensors.map((sensor) => {
+			Object.values(sensors).map((sensor) => {
 				function clickHandler(marker: any, markerEl: any) {
 					const boundingRect = markerEl.getBoundingClientRect();
 					setPopover({

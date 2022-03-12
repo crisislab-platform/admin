@@ -11,7 +11,7 @@ export interface MotionData {
 }
 type CRUDOp = "write" | "read";
 type Section = "sensors" | "users";
-export type Role = "none" | "logged_in" | `${Section}:${CRUDOp}`;
+export type Role = `${Section}:${CRUDOp}`;
 
 export type User = {
 	roles: Role[];
