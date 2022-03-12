@@ -116,7 +116,7 @@ export default function MapApp() {
 			const res = await fetch(sensorsAPIBase);
 			const data = await res.json();
 			closeSnackbar(snack);
-			if (Array.isArray(data?.sensors)) {
+			if (data?.sensors) {
 				setSensors(data.sensors);
 				enqueueSnackbar("Loaded sensor locations!", {
 					variant: "success",
@@ -389,7 +389,7 @@ export default function MapApp() {
 
 	useEffect(() => {
 		let markers: Marker[] = [];
-		if (map && sensors && Array.isArray(sensors) && sensorsVisible) {
+		if (map && sensors && sensorsVisible) {
 			Object.values(sensors).map((sensor) => {
 				function clickHandler(marker: any, markerEl: any) {
 					const boundingRect = markerEl.getBoundingClientRect();
