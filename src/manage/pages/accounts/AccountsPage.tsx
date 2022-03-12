@@ -15,8 +15,67 @@ import {
 import { AccountsList } from "./AccountsList";
 import { Outlet } from "react-router-dom";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import { Role } from "../../../types";
 import { roles } from "../../../utils";
 import { useState } from "react";
+
+function CreateAccountDialog({
+	open,
+	onClose,
+}: {
+	open: boolean;
+	onClose: () => void;
+}) {
+	const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
+
+	return (
+		<Dialog fullWidth open={open} onClose={onClose}>
+			<DialogTitle>Create account</DialogTitle>
+			<DialogContent>
+				<TextField
+					autoFocus
+					margin="dense"
+					id="name"
+					label="Full name"
+					type="text"
+					fullWidth
+					variant="standard"
+				/>
+				<TextField
+					required
+					margin="dense"
+					id="email"
+					label="Email address"
+					type="email"
+					fullWidth
+					variant="standard"
+				/>
+				<Autocomplete
+					value={selectedRoles}
+					onChange={(event, newValue: Role[] | null) => {
+						setSelectedRoles(newValue);
+					}}
+					options={roles}
+					multiple
+					id="roles"
+					filterSelectedOptions
+					renderInput={(params) => (
+						<TextField
+							{...params}
+							label="Roles"
+							margin="dense"
+							fullWidth
+						/>
+					)}
+				/>
+			</DialogContent>
+			<DialogActions>
+				<Button onClick={onClose}>Close</Button>
+				<Button onClick={onClose}>Create</Button>
+			</DialogActions>
+		</Dialog>
+	);
+}
 
 export function AccountsPage() {
 	// emFkZUB2aWdnZXJzLm5ldA==
@@ -40,53 +99,10 @@ export function AccountsPage() {
 							onClick={() => setCreateAccountPopupOpen(true)}>
 							Create account
 						</Button>
-						<Dialog
+						<CreateAccountDialog
 							open={createAccountPopupOpen}
-							onClose={onCreateAccountPopupClose}>
-							<DialogTitle>Create account</DialogTitle>
-							<DialogContent>
-								<TextField
-									autoFocus
-									margin="dense"
-									id="name"
-									label="Full name"
-									type="text"
-									fullWidth
-									variant="standard"
-								/>
-								<TextField
-									margin="dense"
-									id="email"
-									label="Email address"
-									type="email"
-									fullWidth
-									variant="standard"
-								/>
-								<Autocomplete
-									options={roles}
-									multiple
-									id="roles"
-									filterSelectedOptions
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											label="Roles"
-											margin="dense"
-											variant="standard"
-											fullWidth
-										/>
-									)}
-								/>
-							</DialogContent>
-							<DialogActions>
-								<Button onClick={onCreateAccountPopupClose}>
-									Close
-								</Button>
-								<Button onClick={onCreateAccountPopupClose}>
-									Create
-								</Button>
-							</DialogActions>
-						</Dialog>
+							onClose={onCreateAccountPopupClose}
+						/>
 					</Stack>
 					<AccountsList />
 				</Stack>
