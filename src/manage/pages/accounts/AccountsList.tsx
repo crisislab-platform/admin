@@ -17,10 +17,11 @@ import { useQuery } from "react-query";
 export function AccountsList() {
 	const { user } = useAuth();
 	const { accountID: encodedSelectedAccountID } = useParams();
-	const selectedAccountID = encodedSelectedAccountID
-		? atob(encodedSelectedAccountID)
-		: null;
 	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
+
+	const selectedAccountID = encodedSelectedAccountID
+		? decodeURIComponent(encodedSelectedAccountID)
+		: null;
 
 	if (accountsQuery.isLoading) {
 		return <LoadingSpinner addPadding message="Loading users" />;
@@ -42,7 +43,7 @@ export function AccountsList() {
 				<ListItemButton
 					key={account.email}
 					component={RouterLink}
-					to={`./${btoa(account.email)}`}
+					to={`./${encodeURIComponent(account.email)}`}
 					selected={selectedAccountID === account.email}>
 					<ListItemAvatar>
 						<Avatar
