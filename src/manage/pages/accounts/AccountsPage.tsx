@@ -63,9 +63,12 @@ function CreateAccountDialog({
 				"accounts",
 				(context as { previousAccounts: Account[] }).previousAccounts,
 			);
-			enqueueSnackbar(`Failed to create new account: ${error}.`, {
-				variant: "error",
-			});
+			enqueueSnackbar(
+				`Failed to create new account (email: ${email}): ${error}.`,
+				{
+					variant: "error",
+				},
+			);
 		},
 		onSuccess: () => {
 			enqueueSnackbar(`Created new account (email: ${email}).`, {

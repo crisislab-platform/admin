@@ -61,6 +61,44 @@ export function makeCreateAccount(
 	};
 }
 
+export function makeEditAccount(
+	token: string,
+): ({
+	name,
+	email,
+	roles,
+}: {
+	name?: string;
+	email: string;
+	roles: Role[];
+}) => Promise<Account> {
+	return async ({ name, email, roles }) => {
+		const response = await fetch(`${usersAPIBase}/${email}`, {
+			headers: { Authorization: `Bearer ${token}` },
+			method: "PUT",
+			body: JSON.stringify({
+				name,
+				email,
+				roles: roles.map((role) => role.raw),
+			}),
+		});
+		if (!response.ok) {
+			const data = await response.text();
+			throw new Error(
+				`Network response was not ok (${response.status}: ${
+					response.statusText
+				})${data ? ` ${data}` : ""}`,
+			);
+		}
+		return {
+			email,
+			name,
+			roles,
+			picture: generateAvatar(email),
+		};
+	};
+}
+
 export function makeDeleteAccount(
 	token: string,
 ): ({ email }: { email: string }) => Promise<void> {
