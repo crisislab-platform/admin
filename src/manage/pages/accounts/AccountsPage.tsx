@@ -1,4 +1,6 @@
 import {
+	Alert,
+	AlertTitle,
 	Autocomplete,
 	Button,
 	Dialog,
@@ -11,13 +13,16 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
+import { useEffect, useState } from "react";
 
 import { AccountsList } from "./AccountsList";
 import { Outlet } from "react-router-dom";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { Role } from "../../../types";
+import { makeFetchUsers } from "./api";
 import { roles } from "../../../utils";
-import { useState } from "react";
+import useAuth from "../../../auth/useAuth";
+import { useQuery } from "react-query";
 
 function CreateAccountDialog({
 	open,
@@ -26,13 +31,31 @@ function CreateAccountDialog({
 	open: boolean;
 	onClose: () => void;
 }) {
+	const { user } = useAuth();
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
 	const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
+	const accountsQuery = useQuery("accounts", makeFetchUsers(user.token));
+
+	const duplicateEmail = accountsQuery.isSuccess
+		? !!accountsQuery.data.find((account) => account.email === email)
+		: false;
+
+	const hasDangerousPermissions =
+		selectedRoles.includes("users:write") ||
+		selectedRoles.includes("sensors:write");
+
+	function onSubmit() {
+		onClose();
+	}
 
 	return (
 		<Dialog fullWidth open={open} onClose={onClose}>
 			<DialogTitle>Create account</DialogTitle>
 			<DialogContent>
 				<TextField
+					value={name}
+					onChange={(event) => setName(event.target.value)}
 					autoFocus
 					margin="dense"
 					id="name"
@@ -42,6 +65,9 @@ function CreateAccountDialog({
 					variant="standard"
 				/>
 				<TextField
+					error={duplicateEmail}
+					value={email}
+					onChange={(event) => setEmail(event.target.value)}
 					required
 					margin="dense"
 					id="email"
@@ -50,6 +76,15 @@ function CreateAccountDialog({
 					fullWidth
 					variant="standard"
 				/>
+				{duplicateEmail && (
+					<Alert severity="error">
+						<AlertTitle>Email address already in use.</AlertTitle>
+						Another account is already using the email address{" "}
+						{email}. Either choose a different email address or
+						remove the account that is currently using this email
+						address.
+					</Alert>
+				)}
 				<Autocomplete
 					value={selectedRoles}
 					onChange={(event, newValue: Role[] | null) => {
@@ -68,10 +103,22 @@ function CreateAccountDialog({
 						/>
 					)}
 				/>
+				{hasDangerousPermissions && (
+					<Alert severity="warning">
+						<AlertTitle>
+							You are granting this account dangerous permissions.
+						</AlertTitle>
+						{selectedRoles.includes("users:write") &&
+							"This account will be able to create, modify, or delete any account, including their own."}
+						<br />
+						{selectedRoles.includes("sensors:write") &&
+							"This account will be able to create, modify, or delete any sensor."}
+					</Alert>
+				)}
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={onClose}>Close</Button>
-				<Button onClick={onClose}>Create</Button>
+				<Button onClick={onSubmit}>Create</Button>
 			</DialogActions>
 		</Dialog>
 	);
