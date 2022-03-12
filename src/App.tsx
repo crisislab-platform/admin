@@ -50,7 +50,7 @@ function routeElement(route: RouteType) {
 	const { user } = useAuth();
 	return (!!user &&
 		!!user.roles.find((role) => role.raw === route.requiredRole.raw)) ||
-		route.requiredRole === "sensors:read" ? (
+		route.requiredRole.raw === "sensors:read" ? (
 		route.Element
 	) : (
 		<MissingRole role={route.requiredRole} addPadding />
