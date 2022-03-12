@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { dependencies } from "./package.json";
+import pluginRewriteAll from "vite-plugin-rewrite-all";
 import react from "@vitejs/plugin-react";
 
 // Packages we want in the vendor aka the deps needed in the entire app.
@@ -15,7 +16,7 @@ function renderChunks(deps: Record<string, string>) {
 }
 
 export default defineConfig({
-	plugins: [react()],
+	plugins: [react(), pluginRewriteAll()],
 	build: {
 		sourcemap: false,
 		rollupOptions: {
