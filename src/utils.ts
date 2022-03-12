@@ -10,7 +10,7 @@ export function generateAvatar(email: string) {
 	return `data:image/svg+xml;utf8,${generateFromString(email)}`;
 }
 
-export const roles: { [roleID: RawRole]: Role } = {
+export const roles: Record<RawRole, Role> = {
 	"users:read": { raw: "users:read", text: "View accounts" },
 	"users:write": {
 		raw: "users:write",
