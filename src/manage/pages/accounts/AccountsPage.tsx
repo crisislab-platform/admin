@@ -203,7 +203,7 @@ export function AccountsPage() {
 				<Stack>
 					<Stack direction="row" sx={{ pt: 1 }}>
 						<Button
-							sx={{ ml: "auto" }}
+							sx={{ ml: "auto", mr: onMobile ? 1 : 0 }}
 							variant="contained"
 							startIcon={<PersonAddIcon />}
 							onClick={() => setCreateAccountPopupOpen(true)}>

@@ -4,6 +4,11 @@ import {
 	Avatar,
 	Box,
 	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 	List,
 	ListItem,
 	ListItemText,
@@ -11,6 +16,8 @@ import {
 	Typography,
 } from "@mui/material";
 
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { LoadingSpinner } from "../../../components";
 import { makeFetchAccounts } from "./api";
@@ -24,6 +31,8 @@ export function AccountPanel() {
 	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
 	const { accountID: encodedAccountID } = useParams();
 	const [editMode, setEditMode] = useState(false);
+	const [deletionConfirmModalOpen, setDeletionConfirmModalOpen] =
+		useState(false);
 
 	const accountID = encodedAccountID
 		? decodeURIComponent(encodedAccountID)
@@ -55,12 +64,61 @@ export function AccountPanel() {
 		);
 	}
 
-	return (
-		<Stack>
-			{!!user.roles.find((role) => role.raw === "users:write") && (
+	if (editMode) {
+		return (
+			<Stack>
 				<Stack direction="row">
 					<Button
 						sx={{ mb: 2, ml: "auto" }}
+						variant="outlined"
+						onClick={() => setEditMode(false)}
+						startIcon={<CloseIcon />}>
+						Stop editing
+					</Button>
+				</Stack>
+			</Stack>
+		);
+	}
+
+	function onDeletionConfirmModalClose() {
+		setDeletionConfirmModalOpen(false);
+	}
+
+	return (
+		<Stack>
+			{!!user.roles.find((role) => role.raw === "users:write") && (
+				<Stack direction="row" gap={1}>
+					<Button
+						sx={{ mb: 2, ml: "auto" }}
+						variant="outlined"
+						color="error"
+						startIcon={<DeleteIcon />}
+						onClick={() => setDeletionConfirmModalOpen(true)}>
+						Delete account
+					</Button>
+					<Dialog
+						fullWidth
+						open={deletionConfirmModalOpen}
+						onClose={onDeletionConfirmModalClose}>
+						<DialogTitle>Confirm deletion</DialogTitle>
+						<DialogContent>
+							<DialogContentText>
+								Are you sure that you want to delete the account{" "}
+								{account.email}? It will be gone forever with no
+								way of recovering it.
+							</DialogContentText>
+						</DialogContent>
+						<DialogActions>
+							<Button onClick={onDeletionConfirmModalClose}>
+								Cancel
+							</Button>
+							<Button color="error" onClick={() => {}}>
+								Delete
+							</Button>
+						</DialogActions>
+					</Dialog>
+					<Button
+						sx={{ mb: 2 }}
 						variant="outlined"
 						onClick={() => setEditMode(true)}
 						startIcon={<EditIcon />}>

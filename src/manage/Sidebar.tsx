@@ -89,7 +89,7 @@ export default function Sidebar({
 				{links.map((link) => (
 					<ListItem
 						key={link.slug}
-						selected={location.pathname.startsWith(link.slug)}
+						selected={location.pathname.split("/")[2] === link.slug}
 						disablePadding>
 						<ListItemButton
 							disabled={
@@ -104,7 +104,8 @@ export default function Sidebar({
 								setMobileDrawerOpen(false);
 							}}>
 							<ListItemIcon>
-								{location.pathname.endsWith(link.slug) ? (
+								{location.pathname.split("/")[2] ===
+								link.slug ? (
 									<link.ActiveIcon />
 								) : (
 									<link.Icon />
