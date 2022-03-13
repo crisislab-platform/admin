@@ -143,6 +143,7 @@ export function makeCreateSensor(
 				longitude,
 				latitude,
 				type,
+				id,
 			}),
 		});
 		if (!response.ok) {

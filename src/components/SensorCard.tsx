@@ -27,45 +27,39 @@ export function SensorCard({
 				gap: 0.5,
 			}}>
 			<Stack direction="row" alignItems="center" gap={0.5}>
-				{sensor.type === "android" ? <AndroidIcon /> : <PiIcon />}
-				<Typography variant="h6">
-					{generateSensorCardTitle(sensor)}
-				</Typography>
+				{sensor.type &&
+				sensor.type.toLowerCase().includes("android") ? (
+					<AndroidIcon />
+				) : (
+					<PiIcon />
+				)}
+				<Typography variant="h6">{sensor.type || "Sensor"}</Typography>
 			</Stack>
 			{sensor.name && (
-				<Typography variant="body1">{sensor.name}</Typography>
+				<Typography variant="body1">
+					{'"'}
+					{sensor.name}
+					{'"'}
+				</Typography>
 			)}
-			{sensor.type && (
-				<Typography variant="body2">{sensor.type}</Typography>
-			)}
-			<SensorStatusText online={sensor.online} />
-			<Stack direction="row" gap={1} sx={{ width: "100%" }}>
-				<Box>
-					<Button
-						color="primary"
-						variant="contained"
-						onClick={onDetailsClick}>
-						View details
-					</Button>
-				</Box>
-				<Box>
-					<OpenInMapButton sensor={sensor} />
-				</Box>
+			<Stack sx={{ marginTop: "auto" }} gap={0.5}>
+				<SensorStatusText online={sensor.online} />
+				<Stack direction="row" gap={1} sx={{ width: "100%" }}>
+					<Box>
+						<Button
+							color="primary"
+							variant="contained"
+							onClick={onDetailsClick}>
+							View details
+						</Button>
+					</Box>
+					<Box>
+						<OpenInMapButton sensor={sensor} />
+					</Box>
+				</Stack>
 			</Stack>
 		</Paper>
 	);
-}
-
-export function generateSensorCardTitle(
-	sensor: Sensor | null,
-): string | undefined {
-	return sensor
-		? `${
-				sensor.type
-					? `${sensor.type === "android" ? "Android" : "Pi"}`
-					: "Sensor"
-		  } (${sensor.id})`
-		: undefined;
 }
 
 export function OpenInMapButton({ sensor }: { sensor: Sensor }) {

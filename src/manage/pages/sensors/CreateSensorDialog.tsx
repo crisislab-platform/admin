@@ -105,14 +105,13 @@ export function CreateSensorDialog({
 				"If you select 'other', make sure to enter a value in the text box provided.",
 			]);
 		}
-		console.log(type, newErrors);
 		if (newErrors.length > 0) {
 			setErrors(newErrors);
 		} else {
-			let ids = Object.keys(sensorsQuery.data);
+			let ids = Object.keys(sensorsQuery.data.sensors);
 			ids.sort();
-			const id = Number(ids.at(-1)) + 1;
-
+			const id = Number(ids[ids.length - 1]) + 1;
+			console.log(id);
 			mutation.mutate({
 				id,
 				name,
