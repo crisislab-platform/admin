@@ -1,4 +1,4 @@
-import { Account, Role, Sensor, SensorID, SensorType } from "./types";
+import { Account, Role, Sensor, SensorID } from "./types";
 import { generateAvatar, roles, sensorsAPIBase, usersAPIBase } from "./utils";
 
 export function makeFetchAccounts(token: string): () => Promise<Account[]> {

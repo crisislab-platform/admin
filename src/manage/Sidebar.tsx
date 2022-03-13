@@ -17,10 +17,10 @@ import {
 	useTheme,
 } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
+import { LoginButton, useNavigateWithQuery } from "../components";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import LaunchIcon from "@mui/icons-material/Launch";
-import { LoginButton } from "../components";
+import MapIcon from "@mui/icons-material/Map";
 import { SidebarLink } from "../types";
 import useAuth from "../auth/useAuth";
 
@@ -44,7 +44,9 @@ export default function Sidebar({
 	const theme = useTheme();
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 	const { user } = useAuth();
+	const navigateWithQuery = useNavigateWithQuery();
 	const navigate = useNavigate();
+
 	const location = useLocation();
 	const onIOS =
 		typeof navigator !== "undefined" &&
@@ -94,7 +96,7 @@ export default function Sidebar({
 						disablePadding>
 						<ListItemButton
 							onClick={() => {
-								navigate(`./${link.slug}`);
+								navigateWithQuery(`./${link.slug}`);
 								setMobileDrawerOpen(false);
 							}}>
 							<ListItemIcon>
@@ -111,13 +113,15 @@ export default function Sidebar({
 				))}
 				<ListItem key="go-to-map-link" disablePadding>
 					<ListItemButton
-						onClick={() => {
-							navigate(`/map`);
+						href="/map"
+						onClick={(event) => {
+							event.preventDefault();
+							navigate("/map");
 						}}>
 						<ListItemIcon>
-							<LaunchIcon />
+							<MapIcon />
 						</ListItemIcon>
-						<ListItemText primary="Go to map" />
+						<ListItemText primary="Launch map" />
 					</ListItemButton>
 				</ListItem>
 			</List>

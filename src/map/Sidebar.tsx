@@ -2,6 +2,7 @@ import {
 	BasicSensorInfo,
 	SimpleDataGraph as LiveDataGraphs,
 	MobileDialog,
+	useNavigateWithQuery,
 } from "../components";
 import {
 	Box,
@@ -39,6 +40,7 @@ export default function Sidebar({
 	const theme = useTheme();
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 	const { user } = useAuth();
+	const navigate = useNavigateWithQuery();
 
 	function handleClose() {
 		setActiveSensor(null);
@@ -54,115 +56,129 @@ export default function Sidebar({
 		window.history.pushState(null, "", newRelativePathQuery.href);
 	}
 
-	const sidebarContent = activeSensor && (
-		<>
-			<Stack sx={{ p: 1 }}>
-				<Stack direction="row" flexWrap="wrap" sx={{ mb: 1 }} gap={1}>
+	if (activeSensor) {
+		const openInDashboardHref = `/manage/sensors/${activeSensor.id}`;
+
+		const sidebarContent = (
+			<>
+				<Stack sx={{ p: 1 }}>
+					<Stack
+						direction="row"
+						flexWrap="wrap"
+						sx={{ mb: 1 }}
+						gap={1}>
+						<Box>
+							<Button
+								startIcon={<LocationIcon />}
+								variant="outlined"
+								onClick={() => {
+									flyToCoords(
+										activeSensor.longitude,
+										activeSensor.latitude,
+									);
+									if (onMobile) handleClose();
+								}}>
+								Fly to sensor
+							</Button>
+						</Box>
+						{!!user && (
+							<Box>
+								<Button
+									startIcon={<DashboardIcon />}
+									variant="outlined"
+									href={openInDashboardHref}
+									onClick={(event) => {
+										event.preventDefault();
+										navigate(openInDashboardHref);
+									}}>
+									Open in dashboard
+								</Button>
+							</Box>
+						)}
+						{"share" in navigator && (
+							<Box>
+								<Button
+									startIcon={<ShareIcon />}
+									variant="outlined"
+									onClick={async () => {
+										try {
+											await navigator.share({
+												title: `Sensor #${activeSensor.id} on the CRISiSLab sensor map`,
+												text: `View live data from sensor #${
+													activeSensor.id
+												}${
+													activeSensor.name
+														? ` (${activeSensor.name})`
+														: ""
+												} plus live data from loads of other sensors on the CRISiSLab sensor map.`,
+												url: window.location.href,
+											});
+										} catch (err) {
+											enqueueSnackbar(
+												"Failed to share sensor information.",
+												{ variant: "warning" },
+											);
+										}
+									}}>
+									Share
+								</Button>
+							</Box>
+						)}
+					</Stack>
+					<BasicSensorInfo sensor={activeSensor} />
+					<Divider sx={{ my: (theme) => theme.spacing(1) }} />
 					<Box>
 						<Button
-							startIcon={<LocationIcon />}
 							variant="outlined"
-							onClick={() => {
-								flyToCoords(
-									activeSensor.longitude,
-									activeSensor.latitude,
-								);
-								if (onMobile) handleClose();
-							}}>
-							Fly to sensor
+							color="primary"
+							startIcon={<FullscreenIcon />}
+							href={`https://ingest-worker.benhong.workers.dev/consume/${activeSensor.id}`}>
+							Open in full-screen
 						</Button>
 					</Box>
-					{!!user && (
-						<Box>
-							<Button
-								startIcon={<DashboardIcon />}
-								variant="outlined"
-								href={`/manage/sensors/${activeSensor.id}`}>
-								Open in dashboard
-							</Button>
-						</Box>
-					)}
-					{"share" in navigator && (
-						<Box>
-							<Button
-								startIcon={<ShareIcon />}
-								variant="outlined"
-								onClick={async () => {
-									try {
-										await navigator.share({
-											title: `Sensor #${activeSensor.id} on the CRISiSLab sensor map`,
-											text: `View live data from sensor #${
-												activeSensor.id
-											}${
-												activeSensor.name
-													? ` (${activeSensor.name})`
-													: ""
-											} plus live data from loads of other sensors on the CRISiSLab sensor map.`,
-											url: window.location.href,
-										});
-									} catch (err) {
-										enqueueSnackbar(
-											"Failed to share sensor information.",
-											{ variant: "warning" },
-										);
-									}
-								}}>
-								Share
-							</Button>
-						</Box>
-					)}
+					<LiveDataGraphs sensorID={activeSensor.id + ""} />
 				</Stack>
-				<BasicSensorInfo sensor={activeSensor} />
-				<Divider sx={{ my: (theme) => theme.spacing(1) }} />
-				<Box>
-					<Button
-						variant="outlined"
-						color="primary"
-						startIcon={<FullscreenIcon />}
-						href={`https://ingest-worker.benhong.workers.dev/consume/${activeSensor.id}`}>
-						Open in full-screen
-					</Button>
-				</Box>
-				<LiveDataGraphs sensorID={activeSensor.id + ""} />
-			</Stack>
-		</>
-	);
+			</>
+		);
 
-	if (onMobile) {
+		if (onMobile) {
+			return (
+				<MobileDialog
+					title={`Sensor${activeSensor && ` #${activeSensor.id}`}`}
+					open={!!activeSensor}
+					onClose={handleClose}>
+					{sidebarContent}
+				</MobileDialog>
+			);
+		}
+
 		return (
-			<MobileDialog
-				title={`Sensor${activeSensor && ` #${activeSensor.id}`}`}
+			<Drawer
+				sx={{
+					width: width,
+					flexShrink: 0,
+					"& .MuiDrawer-paper": {
+						width: width,
+						boxSizing: "border-box",
+						p: 1,
+					},
+				}}
 				open={!!activeSensor}
-				onClose={handleClose}>
+				variant="persistent"
+				anchor="right">
+				<Stack direction="row">
+					<Box>
+						<Tooltip title="Close sidebar" placement="right">
+							<IconButton onClick={handleClose}>
+								<CloseIcon />
+							</IconButton>
+						</Tooltip>
+					</Box>
+				</Stack>
 				{sidebarContent}
-			</MobileDialog>
+			</Drawer>
 		);
 	}
-
-	return (
-		<Drawer
-			sx={{
-				width: width,
-				flexShrink: 0,
-				"& .MuiDrawer-paper": {
-					width: width,
-					boxSizing: "border-box",
-					p: 1,
-				},
-			}}
-			open={!!activeSensor}
-			variant="persistent"
-			anchor="right">
-			<Stack direction="row">
-				<Box>
-					<Tooltip title="Close sidebar" placement="right">
-						<IconButton onClick={handleClose}>
-							<CloseIcon />
-						</IconButton>
-					</Tooltip>
-				</Box>
-			</Stack>
-			{sidebarContent}
-		</Drawer>
-	);
+	// Don't render if there isn't an acive sensor
+	return null;
 }

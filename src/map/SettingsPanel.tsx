@@ -11,11 +11,12 @@ import {
 	Tooltip,
 } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
+import { LoginButton, useNavigateWithQuery } from "../components";
 
-import LaunchIcon from "@mui/icons-material/Launch";
-import { LoginButton } from "../components";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useAuth from "../auth/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function SettingsPanel({
 	faultLinesVisible,
@@ -38,6 +39,7 @@ export default function SettingsPanel({
 }) {
 	const { user } = useAuth();
 	const [settingsPanelVisible, setSettingsPanelVisible] = useState(false);
+	const navigate = useNavigate();
 	return (
 		<Stack
 			gap={1}
@@ -109,8 +111,12 @@ export default function SettingsPanel({
 								<Button
 									variant="outlined"
 									href="/manage"
-									startIcon={<LaunchIcon />}>
-									Go to dashboard
+									onClick={(event) => {
+										event.preventDefault();
+										navigate("/manage");
+									}}
+									startIcon={<DashboardIcon />}>
+									Launch dashboard
 								</Button>
 							</Box>
 						)}
