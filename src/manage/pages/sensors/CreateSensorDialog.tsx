@@ -92,6 +92,7 @@ export function CreateSensorDialog({
 	});
 
 	function onSubmit() {
+		if (!sensorsQuery.isSuccess) return;
 		setErrors([]);
 		let newErrors: typeof errors = [];
 		let type = menuType;
@@ -375,7 +376,9 @@ export function CreateSensorDialog({
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={onSubmit}>Create</Button>
-				<Button onClick={onClose}>Close</Button>
+				<Button onClick={onClose} disabled={!sensorsQuery.isSuccess}>
+					Close
+				</Button>
 			</DialogActions>
 		</Dialog>
 	);

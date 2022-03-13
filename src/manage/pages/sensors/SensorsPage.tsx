@@ -26,10 +26,6 @@ export function SensorsPage() {
 	const queryClient = useQueryClient();
 	const [createSensorDialogOpen, setCreateSensorDialogOpen] = useState(false);
 
-	if (sensorsQuery.isLoading) {
-		return <LoadingSpinner addPadding message="Loading sensors" />;
-	}
-
 	if (sensorsQuery.isError) {
 		return (
 			<Alert severity="error" sx={{ m: 2 }}>
@@ -57,36 +53,32 @@ export function SensorsPage() {
 					onClose={onCreateSensorDialogClose}
 				/>
 			</Stack>
-			<List
-				disablePadding
-				sx={{
-					display: "flex",
-					flexDirection: "row",
-					flexWrap: "wrap",
-					gap: 2,
-				}}>
-				{Object.values(sensorsQuery.data.sensors).map((sensor) => (
-					<ListItem key={sensor.id} disablePadding sx={{ flex: "0" }}>
-						<SensorCard
-							sensor={sensor}
-							onDetailsClick={() => navigate(`./${sensor.id}`)}
-						/>
-					</ListItem>
-				))}
-			</List>
-
-			<Tooltip title="Reload sensor list" placement="left">
-				<Fab
-					color="primary"
-					onClick={() => queryClient.invalidateQueries("sensors")}
+			{sensorsQuery.isLoading ? (
+				<LoadingSpinner addPadding message="Loading sensors" />
+			) : (
+				<List
+					disablePadding
 					sx={{
-						position: "fixed",
-						right: (theme) => theme.spacing(2),
-						bottom: (theme) => theme.spacing(2),
+						display: "flex",
+						flexDirection: "row",
+						flexWrap: "wrap",
+						gap: 2,
 					}}>
-					<ReloadIcon />
-				</Fab>
-			</Tooltip>
+					{Object.values(sensorsQuery.data.sensors).map((sensor) => (
+						<ListItem
+							key={sensor.id}
+							disablePadding
+							sx={{ flex: "0" }}>
+							<SensorCard
+								sensor={sensor}
+								onDetailsClick={() =>
+									navigate(`./${sensor.id}`)
+								}
+							/>
+						</ListItem>
+					))}
+				</List>
+			)}
 		</Stack>
 	);
 }
