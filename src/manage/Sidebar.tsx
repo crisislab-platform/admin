@@ -21,7 +21,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import LaunchIcon from "@mui/icons-material/Launch";
 import { LoginButton } from "../components";
-import MapIcon from "@mui/icons-material/Map";
 import { SidebarLink } from "../types";
 import useAuth from "../auth/useAuth";
 

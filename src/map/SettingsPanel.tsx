@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 
+import LaunchIcon from "@mui/icons-material/Launch";
 import { LoginButton } from "../components";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useAuth from "../auth/useAuth";
@@ -105,7 +106,10 @@ export default function SettingsPanel({
 					<Stack gap={1}>
 						{!!user && (
 							<Box>
-								<Button variant="outlined" href="/manage">
+								<Button
+									variant="outlined"
+									href="/manage"
+									startIcon={<LaunchIcon />}>
 									Go to dashboard
 								</Button>
 							</Box>
