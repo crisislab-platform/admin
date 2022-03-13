@@ -31,6 +31,7 @@ import mapboxgl, {
 	NavigationControl,
 	ScaleControl,
 } from "mapbox-gl";
+import { useQuery, useQueryClient } from "react-query";
 
 import CloseIcon from "@mui/icons-material/Close";
 import CopyIcon from "@mui/icons-material/FileCopy";
@@ -40,7 +41,8 @@ import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "../types";
 import SettingsPanel from "./SettingsPanel";
 import SunCalc from "suncalc";
-import { sensorsAPIBase } from "../utils";
+import { makeFetchSensors } from "../api";
+import useAuth from "../auth/useAuth";
 import { useSnackbar } from "notistack";
 
 const Sidebar = React.lazy(() => import("./Sidebar"));
@@ -53,6 +55,7 @@ const mapStyles = {
 };
 
 export default function MapApp() {
+	const { user } = useAuth();
 	const theme = useTheme();
 	const [sateliteMode, setSateliteMode] = useState(false);
 	const [sensorsVisible, setSensorsVisible] = useState(true);
@@ -61,9 +64,8 @@ export default function MapApp() {
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
-	const [sensors, setSensors] = useState<{
-		[id: string | number]: Sensor;
-	} | null>(null);
+	const queryClient = useQueryClient();
+	const sensorsQuery = useQuery("sensors", makeFetchSensors(user.token));
 	const [activeSensor, setActiveSensor] = useState<null | Sensor>(null);
 	const [popover, setPopover] = useState<null | {
 		x: number;
@@ -86,13 +88,13 @@ export default function MapApp() {
 	}, []);
 
 	useEffect(() => {
-		if (sensors) {
+		if (sensorsQuery.isSuccess) {
 			const urlSensorID = new URLSearchParams(window.location.search).get(
 				"sensor_id",
 			);
 
 			if (urlSensorID) {
-				const sensor = sensors[urlSensorID];
+				const sensor = sensorsQuery.data.sensors[urlSensorID];
 				if (sensor) {
 					console.info("Sensor in URL: " + sensor.id);
 					setActiveSensor(sensor);
@@ -105,44 +107,7 @@ export default function MapApp() {
 				}
 			}
 		}
-	}, [sensors]);
-
-	async function loadSensorLocations() {
-		const snack = enqueueSnackbar("Loading sensor locations...", {
-			variant: "info",
-			persist: true,
-		});
-		try {
-			const res = await fetch(sensorsAPIBase);
-			const data = await res.json();
-			closeSnackbar(snack);
-			if (data?.sensors) {
-				setSensors(data.sensors);
-				enqueueSnackbar("Loaded sensor locations!", {
-					variant: "success",
-				});
-			} else {
-				enqueueSnackbar("Received invalid sensor data from server.", {
-					variant: "warning",
-				});
-			}
-		} catch (e) {
-			closeSnackbar(snack);
-			console.warn("Failed to load sensor locations. Error: ", e);
-			enqueueSnackbar("Failed to load sensor locations!", {
-				variant: "error",
-			});
-		}
-	}
-
-	useEffect(() => {
-		loadSensorLocations();
-
-		() => {
-			setSensors(null);
-			setActiveSensor(null);
-		};
-	}, [enqueueSnackbar, closeSnackbar, setSensors, setActiveSensor]);
+	}, [sensorsQuery]);
 
 	useEffect(() => {
 		function updateDrawerWidth() {
@@ -389,8 +354,8 @@ export default function MapApp() {
 
 	useEffect(() => {
 		let markers: Marker[] = [];
-		if (map && sensors && sensorsVisible) {
-			Object.values(sensors).map((sensor) => {
+		if (map && sensorsQuery.isSuccess && sensorsVisible) {
+			Object.values(sensorsQuery.data.sensors).map((sensor) => {
 				function clickHandler(marker: any, markerEl: any) {
 					const boundingRect = markerEl.getBoundingClientRect();
 					setPopover({
@@ -470,7 +435,7 @@ export default function MapApp() {
 		return () => {
 			markers.map((marker) => marker.remove());
 		};
-	}, [sensors, activeSensor, map, sensorsVisible]);
+	}, [sensorsQuery, activeSensor, map, sensorsVisible]);
 
 	useEffect(() => {
 		const newRelativePathQuery = new URL(window.location.href);
@@ -493,16 +458,6 @@ export default function MapApp() {
 			});
 		}
 	}
-
-	function reloadSensors() {
-		setSensors(null);
-		setActiveSensor(null);
-		loadSensorLocations();
-	}
-	// function reloadMap() {
-	// 	setMap(null);
-	// 	loadMap();
-	// }
 
 	return (
 		<>
@@ -594,9 +549,7 @@ export default function MapApp() {
 						zIndex: (theme) => theme.zIndex.snackbar + 1,
 					}}
 					color="primary"
-					onClick={() => {
-						reloadSensors();
-					}}>
+					onClick={() => queryClient.invalidateQueries("sensors")}>
 					<ReloadIcon />
 				</Fab>
 			</Tooltip>

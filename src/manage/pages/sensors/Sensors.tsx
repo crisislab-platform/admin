@@ -22,7 +22,7 @@ export function Sensors() {
 	const queryClient = useQueryClient();
 
 	if (sensorsQuery.isLoading) {
-		return <LoadingSpinner message="Loading sensors" />;
+		return <LoadingSpinner addPadding message="Loading sensors" />;
 	}
 
 	if (sensorsQuery.isError) {

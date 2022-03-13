@@ -19,7 +19,9 @@ import {
 import { Dispatch, SetStateAction } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import LaunchIcon from "@mui/icons-material/Launch";
 import { LoginButton } from "../components";
+import MapIcon from "@mui/icons-material/Map";
 import { SidebarLink } from "../types";
 import useAuth from "../auth/useAuth";
 
@@ -108,6 +110,17 @@ export default function Sidebar({
 						</ListItemButton>
 					</ListItem>
 				))}
+				<ListItem key="go-to-map-link" disablePadding>
+					<ListItemButton
+						onClick={() => {
+							navigate(`/map`);
+						}}>
+						<ListItemIcon>
+							<LaunchIcon />
+						</ListItemIcon>
+						<ListItemText primary="Go to map" />
+					</ListItemButton>
+				</ListItem>
 			</List>
 		</>
 	);

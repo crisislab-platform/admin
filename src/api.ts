@@ -120,7 +120,7 @@ export function makeDeleteAccount(
 
 export function makeFetchSensors(
 	token: string,
-): () => Promise<Record<SensorID, Sensor>> {
+): () => Promise<{ sensors: Record<SensorID, Sensor>; timestamp: number }> {
 	return async () => {
 		const response = await fetch(sensorsAPIBase, {
 			headers: { Authorization: `Bearer ${token}` },
