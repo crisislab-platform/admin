@@ -28,6 +28,7 @@ import {
 } from "@mui/material";
 import { LoadingSpinner, useNavigateWithQuery } from "../../../components";
 import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
+import { generateAvatar, roles } from "../../../utils";
 import {
 	makeDeleteAccount,
 	makeEditAccount,
@@ -44,7 +45,6 @@ import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from "@mui/icons-material/Send";
 import { TransitionProps } from "@mui/material/transitions";
 import WaveIcon from "@mui/icons-material/EmojiPeople";
-import { roles } from "../../../utils";
 import { sendLink } from "../../../auth/auth";
 import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
@@ -99,7 +99,7 @@ export function AccountPanel() {
 				"accounts",
 				(context as { previousAccounts: Account[] }).previousAccounts,
 			);
-			enqueueSnackbar(`Failed to delete account: ${error}.`, {
+			enqueueSnackbar(`Failed to delete account: ${error}`, {
 				variant: "error",
 			});
 		},
@@ -374,12 +374,23 @@ function EditUserInfo({
 
 			// Optimistically update to the new value
 
-			queryClient.setQueryData("accounts", (oldAccounts: Account[]) => [
-				...oldAccounts.filter(
-					(account) => account.email !== newAccount.email,
-				),
-				newAccount,
-			]);
+			queryClient.setQueryData("accounts", (oldAccounts: Account[]) => {
+				let newAccounts = [
+					...oldAccounts.filter(
+						(account) => account.email !== newAccount.email,
+					),
+					{
+						...newAccount,
+						picture: generateAvatar(newAccount.email),
+					},
+				];
+				newAccounts.sort(function (a, b) {
+					const textA = a.email.toLowerCase();
+					const textB = b.email.toLowerCase();
+					return textA < textB ? -1 : textA > textB ? 1 : 0;
+				});
+				return newAccounts;
+			});
 
 			// Return a context object with the snapshotted value
 			return { previousAccounts };
@@ -389,20 +400,17 @@ function EditUserInfo({
 				"accounts",
 				(context as { previousAccounts: Account[] }).previousAccounts,
 			);
-			enqueueSnackbar(
-				`Failed to modify account (email: ${email}): ${error}.`,
-				{
-					variant: "error",
-				},
-			);
-		},
-		onSuccess: () => {
-			enqueueSnackbar(`Modified account (email: ${email}).`, {
-				variant: "success",
+			enqueueSnackbar(`Failed to modify account: ${error}`, {
+				variant: "error",
 			});
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries("accounts");
+		onSuccess: () => {
+			enqueueSnackbar(
+				`Modified account successfully. Changes may take up to a minute to be reflected everywhere.`,
+				{
+					variant: "success",
+				},
+			);
 		},
 	});
 
@@ -444,7 +452,14 @@ function EditUserInfo({
 	}
 
 	return (
-		<Stack>
+		<Stack gap={1}>
+			<Alert severity="info">
+				<AlertTitle>
+					Changes may take up to a minute to be reflected everywhere.
+				</AlertTitle>
+				If the updated account information disappears, don't worry. The
+				data is stored and will show up soon.
+			</Alert>
 			{errors.length > 0 &&
 				errors.map((error) => (
 					<Alert severity="error">

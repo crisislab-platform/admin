@@ -82,12 +82,12 @@ export function CreateSensorDialog({
 			});
 		},
 		onSuccess: () => {
-			enqueueSnackbar(`Created new sensor.`, {
-				variant: "success",
-			});
-		},
-		onSettled: () => {
-			queryClient.invalidateQueries("sensors");
+			enqueueSnackbar(
+				`Created new sensor. Changes may take up to a minute to be reflected everywhere.`,
+				{
+					variant: "success",
+				},
+			);
 		},
 	});
 
@@ -151,6 +151,14 @@ export function CreateSensorDialog({
 			<DialogTitle>Create new sensor</DialogTitle>
 			<DialogContent>
 				<Stack gap={2}>
+					<Alert severity="info">
+						<AlertTitle>
+							Changes may take up to a minute to be reflected
+							everywhere.
+						</AlertTitle>
+						If the new sensor disappears, don't worry. The data is
+						stored and will show up soon.
+					</Alert>
 					{errors.length > 0 && (
 						<>
 							<Stack gap={1}>

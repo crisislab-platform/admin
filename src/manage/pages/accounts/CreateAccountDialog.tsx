@@ -12,10 +12,10 @@ import {
 	Stack,
 	TextField,
 } from "@mui/material";
+import { generateAvatar, roles } from "../../../utils";
 import { makeCreateAccount, makeFetchAccounts } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-import { roles } from "../../../utils";
 import useAuth from "../../../auth/useAuth";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
@@ -45,10 +45,23 @@ export function CreateAccountDialog({
 
 			// Optimistically update to the new value
 
-			queryClient.setQueryData("accounts", (oldAccounts: Account[]) => [
-				...oldAccounts,
-				newAccount,
-			]);
+			queryClient.setQueryData("accounts", (oldAccounts: Account[]) => {
+				let newAccounts = [
+					...oldAccounts.filter(
+						(account) => account.email !== newAccount.email,
+					),
+					{
+						...newAccount,
+						picture: generateAvatar(newAccount.email),
+					},
+				];
+				newAccounts.sort(function (a, b) {
+					const textA = a.email.toLowerCase();
+					const textB = b.email.toLowerCase();
+					return textA < textB ? -1 : textA > textB ? 1 : 0;
+				});
+				return newAccounts;
+			});
 
 			// Return a context object with the snapshotted value
 			return { previousAccounts };
@@ -63,12 +76,12 @@ export function CreateAccountDialog({
 			});
 		},
 		onSuccess: () => {
-			enqueueSnackbar(`Created new account (email: ${email}).`, {
-				variant: "success",
-			});
-		},
-		onSettled: () => {
-			queryClient.invalidateQueries("accounts");
+			enqueueSnackbar(
+				`Created new account. Changes may take up to a minute to be reflected everywhere.`,
+				{
+					variant: "success",
+				},
+			);
 		},
 	});
 
@@ -104,6 +117,14 @@ export function CreateAccountDialog({
 			<DialogTitle>Create account</DialogTitle>
 			<DialogContent>
 				<Stack gap={2}>
+					<Alert severity="info">
+						<AlertTitle>
+							Changes may take up to a minute to be reflected
+							everywhere.
+						</AlertTitle>
+						If the new account disappears, don't worry. The data is
+						stored and will show up soon.
+					</Alert>
 					{errors.length > 0 && (
 						<>
 							<Stack gap={1}>
