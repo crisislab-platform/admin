@@ -41,7 +41,14 @@ export type SidebarLink = Route & {
 	Icon: typeof SvgIcon;
 	ActiveIcon?: typeof SvgIcon;
 };
-export type SensorType = "android" | "raspberry-shake" | string;
+export type SensorType =
+	| "Android phone"
+	| "Raspberry Shake 4D"
+	| "Raspberry Shake 3D"
+	| "Raspberry Shake 1D"
+	| "Raspberry Boom"
+	| "Raspberry Shake and Boom"
+	| string;
 export type SensorID = number;
 export interface Sensor {
 	online?: boolean;

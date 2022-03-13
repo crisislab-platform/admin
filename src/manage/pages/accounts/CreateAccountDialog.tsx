@@ -8,6 +8,8 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	Divider,
+	Stack,
 	TextField,
 } from "@mui/material";
 import { makeCreateAccount, makeFetchAccounts } from "../../../api";
@@ -86,7 +88,7 @@ export function CreateAccountDialog({
 
 	function onSubmit() {
 		setErrors([]);
-		let newErrors: [string, string][] = [];
+		let newErrors: typeof errors = [];
 		if (!/^\S+@\S+$/.test(email)) {
 			newErrors.push([
 				"Please enter a valid email address.",
@@ -104,76 +106,91 @@ export function CreateAccountDialog({
 		<Dialog fullWidth open={open} onClose={onClose}>
 			<DialogTitle>Create account</DialogTitle>
 			<DialogContent>
-				{errors.length > 0 &&
-					errors.map((error) => (
-						<Alert severity="error">
-							<AlertTitle>{error[0]}</AlertTitle>
-							{error[1]}
-						</Alert>
-					))}
-				<TextField
-					value={name}
-					onChange={(event) => setName(event.target.value)}
-					autoFocus
-					margin="dense"
-					id="name"
-					label="Full name"
-					type="text"
-					fullWidth
-					variant="standard"
-				/>
-				<TextField
-					error={duplicateEmail}
-					value={email}
-					onChange={(event) => setEmail(event.target.value)}
-					required
-					margin="dense"
-					id="email"
-					label="Email address"
-					type="email"
-					fullWidth
-					variant="standard"
-				/>
-				{duplicateEmail && (
-					<Alert severity="error">
-						<AlertTitle>Email address already in use.</AlertTitle>
-						Another account is already using the email address{" "}
-						{email}. Either choose a different email address or
-						remove the account that is currently using this email
-						address.
-					</Alert>
-				)}
-				<Autocomplete
-					value={selectedRoles}
-					onChange={(event, newValue: Role[] | null) => {
-						setSelectedRoles(newValue);
-					}}
-					options={Object.values(roles) as Role[]}
-					multiple
-					id="roles"
-					filterSelectedOptions
-					getOptionLabel={(role: Role) => role.text}
-					renderInput={(params) => (
-						<TextField
-							{...params}
-							label="Roles"
-							margin="dense"
-							fullWidth
-						/>
+				<Stack gap={2}>
+					{errors.length > 0 && (
+						<>
+							<Stack gap={1}>
+								{errors.map((error) => (
+									<Alert severity="error">
+										<AlertTitle>{error[0]}</AlertTitle>
+										{error[1]}
+									</Alert>
+								))}
+							</Stack>
+							<Divider />
+						</>
 					)}
-				/>
-				{(hasUsersWrite || hasSensorsWrite) && (
-					<Alert severity="warning">
-						<AlertTitle>
-							You are granting this account dangerous permissions.
-						</AlertTitle>
-						{hasUsersWrite &&
-							"This account will be able to create, modify, or delete any account, including their own."}
-						<br />
-						{hasSensorsWrite &&
-							"This account will be able to create, modify, or delete any sensor."}
-					</Alert>
-				)}
+					<TextField
+						value={name}
+						onChange={(event) => setName(event.target.value)}
+						autoFocus
+						margin="dense"
+						id="name"
+						label="Full name"
+						type="text"
+						fullWidth
+						variant="standard"
+					/>
+					<Stack gap={1}>
+						<TextField
+							error={duplicateEmail}
+							value={email}
+							onChange={(event) => setEmail(event.target.value)}
+							required
+							margin="dense"
+							id="email"
+							label="Email address"
+							type="email"
+							fullWidth
+							variant="standard"
+						/>
+						{duplicateEmail && (
+							<Alert severity="error">
+								<AlertTitle>
+									Email address already in use.
+								</AlertTitle>
+								Another account is already using the email
+								address {email}. Either choose a different email
+								address or remove the account that is currently
+								using this email address.
+							</Alert>
+						)}
+					</Stack>
+					<Stack gap={1}>
+						<Autocomplete
+							value={selectedRoles}
+							onChange={(event, newValue: Role[] | null) => {
+								setSelectedRoles(newValue);
+							}}
+							options={Object.values(roles) as Role[]}
+							multiple
+							id="roles"
+							filterSelectedOptions
+							getOptionLabel={(role: Role) => role.text}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									label="Roles"
+									margin="dense"
+									fullWidth
+								/>
+							)}
+						/>
+						{(hasUsersWrite || hasSensorsWrite) && (
+							<Alert severity="warning">
+								<AlertTitle>
+									You are granting this account dangerous
+									permissions.
+								</AlertTitle>
+								{hasUsersWrite &&
+									"This account will be able to create, modify, or delete any account, including their own."}
+								<br />
+								{hasSensorsWrite &&
+									"This account will be able to create, modify, or delete any sensor."}
+							</Alert>
+						)}
+					</Stack>
+				</Stack>
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={onClose}>Close</Button>

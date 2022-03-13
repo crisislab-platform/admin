@@ -1,4 +1,6 @@
 import {
+	Alert,
+	AlertTitle,
 	Box,
 	Button,
 	Dialog,
@@ -31,15 +33,17 @@ export function CreateSensorDialog({
 	onClose: () => void;
 }) {
 	const { user } = useAuth();
-	const [name, setName] = useState<string>();
-	const [type, setType] = useState<SensorType>("raspberry-shake");
+	const [name, setName] = useState<string | undefined>();
+	const [menuType, setMenuType] = useState<SensorType>("Raspberry Shake 4D");
+	const [otherType, setOtherType] = useState<string | undefined>();
 	const [location, setLocation] = useState<[number, number]>([
 		174.8, -41.325,
 	]);
-	const [id, setID] = useState<SensorID>(Number.MAX_SAFE_INTEGER);
-	const [elevation, setElevation] = useState<number>();
-	const [totalFloors, setTotalFloors] = useState<number>();
-	const [onFloor, setOnFloor] = useState<number>();
+	const [elevation, setElevation] = useState<number | undefined>();
+	const [totalFloors, setTotalFloors] = useState<number | undefined>();
+	const [onFloor, setOnFloor] = useState<number | undefined>();
+	const [errors, setErrors] = useState<[string, string][]>([]);
+
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
 	const sensorsQuery = useQuery("sensors", makeFetchSensors(user.token));
@@ -69,15 +73,12 @@ export function CreateSensorDialog({
 				"sensors",
 				(context as { previousSensors: Sensor[] }).previousSensors,
 			);
-			enqueueSnackbar(
-				`Failed to create new sensor (id: ${id}): ${error}`,
-				{
-					variant: "error",
-				},
-			);
+			enqueueSnackbar(`Failed to create new sensor: ${error}`, {
+				variant: "error",
+			});
 		},
 		onSuccess: () => {
-			enqueueSnackbar(`Created new sensor (id: ${id}).`, {
+			enqueueSnackbar(`Created new sensor.`, {
 				variant: "success",
 			});
 		},
@@ -87,17 +88,38 @@ export function CreateSensorDialog({
 	});
 
 	function onSubmit() {
-		mutation.mutate({
-			id,
-			name,
-			type,
-			elevation,
-			longitude: location[0],
-			latitude: location[1],
-			total_floors: totalFloors,
-			on_floor: onFloor,
-		});
-		onClose();
+		setErrors([]);
+		let newErrors: typeof errors = [];
+		let type = menuType;
+		if (menuType === "__other") {
+			type = otherType;
+		}
+		if (!type || type.length === 0) {
+			newErrors.push([
+				"Make sure to choose a sensor type.",
+				"If you select 'other', make sure to enter a value in the text box provided.",
+			]);
+		}
+		console.log(type, newErrors);
+		if (newErrors.length > 0) {
+			setErrors(newErrors);
+		} else {
+			let ids = Object.keys(sensorsQuery.data);
+			ids.sort();
+			const id = Number(ids.at(-1)) + 1;
+
+			mutation.mutate({
+				id,
+				name,
+				type,
+				elevation,
+				longitude: location[0],
+				latitude: location[1],
+				total_floors: totalFloors,
+				on_floor: onFloor,
+			});
+			onClose();
+		}
 	}
 
 	function getLocationOfDevice() {
@@ -125,6 +147,19 @@ export function CreateSensorDialog({
 			<DialogTitle>Create new sensor</DialogTitle>
 			<DialogContent>
 				<Stack gap={2}>
+					{errors.length > 0 && (
+						<>
+							<Stack gap={1}>
+								{errors.map((error) => (
+									<Alert severity="error">
+										<AlertTitle>{error[0]}</AlertTitle>
+										{error[1]}
+									</Alert>
+								))}
+							</Stack>
+							<Divider />
+						</>
+					)}
 					<Stack gap={1}>
 						<Typography variant="subtitle1">
 							General information
@@ -134,7 +169,8 @@ export function CreateSensorDialog({
 							onChange={(event) => setName(event.target.value)}
 							autoFocus
 							margin="dense"
-							id="name"
+							id="sensor-name"
+							name="sensor-name"
 							label="Sensor name"
 							type="text"
 							fullWidth
@@ -147,19 +183,50 @@ export function CreateSensorDialog({
 							<Select
 								labelId="sensor-type-select-label"
 								id="sensor-type-select"
-								value={type}
+								value={menuType}
 								label="Age"
 								onChange={(event) =>
-									setType(event.target.value as SensorType)
+									setMenuType(
+										event.target.value as SensorType,
+									)
 								}>
-								<MenuItem value="raspberry-shake">
-									Raspberry shake
+								<MenuItem value="Raspberry Shake 4D">
+									Raspberry Shake 4D
 								</MenuItem>
-								<MenuItem value="android">
+								<MenuItem value="Raspberry Shake 3D">
+									Raspberry Shake 3D
+								</MenuItem>
+								<MenuItem value="Raspberry Shake 1D">
+									Raspberry Shake 1D
+								</MenuItem>
+								<MenuItem value="Raspberry Boom">
+									Raspberry Boom
+								</MenuItem>
+								<MenuItem value="Raspberry Shake And Boom">
+									Raspberry Shake And Boom
+								</MenuItem>
+								<MenuItem value="Android phone">
 									Android phone
 								</MenuItem>
+								<MenuItem value="__other">Other</MenuItem>
 							</Select>
 						</FormControl>
+						{menuType === "__other" && (
+							<TextField
+								value={otherType}
+								onChange={(event) =>
+									setOtherType(event.target.value)
+								}
+								margin="dense"
+								id="other-type-text-field"
+								name="other-type"
+								label="Custom sensor type"
+								type="text"
+								fullWidth
+								variant="standard"
+								required
+							/>
+						)}
 					</Stack>
 					<Divider />
 					<Stack gap={1}>
@@ -184,7 +251,8 @@ export function CreateSensorDialog({
 									])
 								}
 								margin="dense"
-								id="name"
+								id="longitude-textbox"
+								name="longitude-textbox"
 								label="Longitude"
 								type="number"
 								fullWidth
@@ -200,7 +268,8 @@ export function CreateSensorDialog({
 									])
 								}
 								margin="dense"
-								id="name"
+								id="latitude-textbox"
+								name="latitude-textbox"
 								label="Latitude"
 								type="number"
 								fullWidth
@@ -217,10 +286,15 @@ export function CreateSensorDialog({
 						<TextField
 							value={elevation}
 							onChange={(event) =>
-								setElevation(Number(event.target.value))
+								setElevation(
+									event.target.value
+										? Number(event.target.value)
+										: undefined,
+								)
 							}
 							margin="dense"
-							id="name"
+							id="elevation-textbox"
+							name="elevation"
 							label="Elevation (meters above sea level)"
 							type="number"
 							fullWidth
@@ -229,10 +303,15 @@ export function CreateSensorDialog({
 						<TextField
 							value={onFloor}
 							onChange={(event) =>
-								setOnFloor(Number(event.target.value))
+								setOnFloor(
+									event.target.value
+										? Number(event.target.value)
+										: undefined,
+								)
 							}
 							margin="dense"
-							id="name"
+							id="on-floor-textbox"
+							name="on-floor"
 							label="Floor of building that sensor is on (basement is level 0)"
 							type="number"
 							fullWidth
@@ -241,10 +320,15 @@ export function CreateSensorDialog({
 						<TextField
 							value={totalFloors}
 							onChange={(event) =>
-								setTotalFloors(Number(event.target.value))
+								setTotalFloors(
+									event.target.value
+										? Number(event.target.value)
+										: undefined,
+								)
 							}
 							margin="dense"
-							id="name"
+							id="total-floors-textbox"
+							name="total-floors"
 							label="Total number of floors in building (excluding basement)"
 							type="number"
 							fullWidth
