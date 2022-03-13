@@ -17,47 +17,57 @@ export function SensorCard({
 	return (
 		<Paper
 			variant="outlined"
-			sx={{ width: "310px", p: 1, borderColor: "rgba(0,0,0,0.25)" }}>
-			<Stack gap={0.5}>
-				<Stack direction="row" alignItems="center" gap={0.5}>
-					{sensor.type === "android" ? <AndroidIcon /> : <PiIcon />}
-					<Typography variant="h6">
-						{generateSensorCardTitle(sensor)}
-					</Typography>
-				</Stack>
-				{sensor.name && (
-					<Typography variant="body1">{sensor.name}</Typography>
-				)}
-				{sensor.type && (
-					<Typography variant="body2">{sensor.type}</Typography>
-				)}
-				<Stack direction="row" gap={1} alignItems="center">
-					<SensorStatusIcon online={sensor.online} />
-					<Typography
-						variant="button"
-						sx={{
-							color: (theme) =>
-								sensor.online
-									? theme.palette.success.main
-									: theme.palette.error.main,
-						}}>
-						{" "}
-						{sensor.online ? "Online" : "Offline"}
-					</Typography>
-				</Stack>
-				<Stack direction="row" gap={1} sx={{ width: "100%" }}>
-					<Box>
-						<Button
-							color="primary"
-							variant="contained"
-							onClick={onDetailsClick}>
-							View details
-						</Button>
-					</Box>
-					<Box>
-						<OpenInMapButton sensor={sensor} />
-					</Box>
-				</Stack>
+			sx={{
+				width: "310px",
+				p: 1,
+				borderColor: "rgba(0,0,0,0.25)",
+				height: "100%",
+				display: "flex",
+				flexDirection: "column",
+				gap: 0.5,
+			}}>
+			<Stack direction="row" alignItems="center" gap={0.5}>
+				{sensor.type === "android" ? <AndroidIcon /> : <PiIcon />}
+				<Typography variant="h6">
+					{generateSensorCardTitle(sensor)}
+				</Typography>
+			</Stack>
+			{sensor.name && (
+				<Typography variant="body1">{sensor.name}</Typography>
+			)}
+			{sensor.type && (
+				<Typography variant="body2">{sensor.type}</Typography>
+			)}
+			<Stack
+				direction="row"
+				gap={1}
+				alignItems="center"
+				sx={{ marginTop: "auto" }}>
+				<SensorStatusIcon online={sensor.online} />
+				<Typography
+					variant="button"
+					sx={{
+						color: (theme) =>
+							sensor.online
+								? theme.palette.success.main
+								: theme.palette.error.main,
+					}}>
+					{" "}
+					{sensor.online ? "Online" : "Offline"}
+				</Typography>
+			</Stack>
+			<Stack direction="row" gap={1} sx={{ width: "100%" }}>
+				<Box>
+					<Button
+						color="primary"
+						variant="contained"
+						onClick={onDetailsClick}>
+						View details
+					</Button>
+				</Box>
+				<Box>
+					<OpenInMapButton sensor={sensor} />
+				</Box>
 			</Stack>
 		</Paper>
 	);
