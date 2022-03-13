@@ -28,7 +28,11 @@ import {
 } from "@mui/material";
 import { LoadingSpinner, useNavigateWithQuery } from "../../../components";
 import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
-import { makeDeleteAccount, makeEditAccount, makeFetchAccounts } from "./api";
+import {
+	makeDeleteAccount,
+	makeEditAccount,
+	makeFetchAccounts,
+} from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import CloseIcon from "@mui/icons-material/Close";

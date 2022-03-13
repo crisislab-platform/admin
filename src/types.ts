@@ -42,11 +42,12 @@ export type SidebarLink = Route & {
 	ActiveIcon?: typeof SvgIcon;
 };
 
+export type SensorID = number | string;
 export interface Sensor {
 	online?: boolean;
 	longitude: number;
 	latitude: number;
-	id: number | string;
+	id: SensorID;
 	type?: "android" | "raspberry-pi";
 	name?: string;
 }

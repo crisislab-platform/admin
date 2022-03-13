@@ -1,5 +1,5 @@
-import { Account, Role } from "../../../types";
-import { generateAvatar, roles, usersAPIBase } from "../../../utils";
+import { Account, Role, Sensor, SensorID } from "./types";
+import { generateAvatar, roles, sensorsAPIBase, usersAPIBase } from "./utils";
 
 export function makeFetchAccounts(token: string): () => Promise<Account[]> {
 	return async () => {
@@ -115,5 +115,24 @@ export function makeDeleteAccount(
 				})${data ? ` ${data}` : ""}`,
 			);
 		}
+	};
+}
+
+export function makeFetchSensors(
+	token: string,
+): () => Promise<Record<SensorID, Sensor>> {
+	return async () => {
+		const response = await fetch(sensorsAPIBase, {
+			headers: { Authorization: `Bearer ${token}` },
+		});
+		if (!response.ok) {
+			const data = await response.text();
+			throw new Error(
+				`Network response was not ok (${response.status}: ${
+					response.statusText
+				})${data ? ` ${data}` : ""}`,
+			);
+		}
+		return await response.json();
 	};
 }

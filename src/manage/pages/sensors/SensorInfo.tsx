@@ -1,7 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
-import { LiveDataGraphs } from "../../components";
+import { LiveDataGraphs } from "../../../components";
 import { useParams } from "react-router-dom";
 
 export function SensorInfo() {

@@ -14,7 +14,7 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { makeCreateAccount, makeFetchAccounts } from "./api";
+import { makeCreateAccount, makeFetchAccounts } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { AccountsList } from "./AccountsList";

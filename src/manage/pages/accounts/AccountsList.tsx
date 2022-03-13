@@ -12,7 +12,7 @@ import {
 import { Link as RouterLink, useParams } from "react-router-dom";
 
 import { LoadingSpinner } from "../../../components";
-import { makeFetchAccounts } from "./api";
+import { makeFetchAccounts } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 import { useQuery } from "react-query";
 

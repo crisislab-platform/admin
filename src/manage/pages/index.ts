@@ -1,3 +1,2 @@
-export * from "./Sensors";
-export * from "./SensorInfo";
+export * from "./sensors/index";
 export * from "./accounts/index";
