@@ -6,7 +6,6 @@ import { BasicSensorInfo, LoadingSpinner } from "../components";
 import {
 	Box,
 	Button,
-	Fab,
 	IconButton,
 	Menu,
 	MenuItem,
@@ -37,7 +36,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import CopyIcon from "@mui/icons-material/FileCopy";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "../types";
 import SettingsPanel from "./SettingsPanel";
 import SunCalc from "suncalc";
@@ -552,20 +550,6 @@ export default function MapApp() {
 					</Stack>
 				</Popover>
 			)}
-
-			<Tooltip title="Reload sensor locations" placement="left">
-				<Fab
-					sx={{
-						position: "absolute",
-						right: (theme) => theme.spacing(2),
-						bottom: (theme) => theme.spacing(2),
-						zIndex: (theme) => theme.zIndex.snackbar + 1,
-					}}
-					color="primary"
-					onClick={() => queryClient.invalidateQueries("sensors")}>
-					<ReloadIcon />
-				</Fab>
-			</Tooltip>
 
 			<SettingsPanel
 				sensorsVisible={sensorsVisible}
