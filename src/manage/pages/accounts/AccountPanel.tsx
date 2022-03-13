@@ -268,7 +268,7 @@ export function AccountPanel() {
 								Delete
 							</Button>
 							<Button onClick={onDeletionConfirmModalClose}>
-								Cancel
+								Close
 							</Button>
 						</DialogActions>
 					</Dialog>
