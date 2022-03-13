@@ -105,6 +105,7 @@ export default function MapApp() {
 								sensor.longitude || defaultPosition[0],
 								sensor.latitude || defaultPosition[1],
 								15,
+								5000,
 							),
 						3000,
 					);
@@ -463,8 +464,8 @@ export default function MapApp() {
 		longatude: number,
 		latitude: number,
 		zoom: number,
+		flyTime: number = 2500,
 	): void {
-		const flyTime = 1500;
 		if (map) {
 			map.easeTo({
 				center: [longatude, latitude],
@@ -551,7 +552,7 @@ export default function MapApp() {
 								setActiveSensor(popover.sensor);
 								setPopover(null);
 							}}>
-							Show mroe details
+							Show more details
 						</Button>
 					</Stack>
 				</Popover>
