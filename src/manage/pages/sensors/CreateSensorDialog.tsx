@@ -366,8 +366,8 @@ export function CreateSensorDialog({
 				</Stack>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={onClose}>Cancel</Button>
 				<Button onClick={onSubmit}>Create</Button>
+				<Button onClick={onClose}>Close</Button>
 			</DialogActions>
 		</Dialog>
 	);

@@ -193,8 +193,8 @@ export function CreateAccountDialog({
 				</Stack>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={onClose}>Close</Button>
 				<Button onClick={onSubmit}>Create</Button>
+				<Button onClick={onClose}>Close</Button>
 			</DialogActions>
 		</Dialog>
 	);
