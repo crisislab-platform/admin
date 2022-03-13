@@ -26,15 +26,6 @@ let theme = createTheme({
 const shadowColour = theme.palette.primary.main;
 theme = {
 	...theme,
-	components: {
-		MuiFab: {
-			styleOverrides: {
-				root: {
-					zIndex: theme.zIndex.snackbar + 1,
-				},
-			},
-		},
-	},
 	shadows: createShadows(shadowColour) as any,
 };
 

@@ -1,4 +1,4 @@
-import { Account, Role, Sensor, SensorID } from "./types";
+import { Account, Role, Sensor, SensorID, SensorType } from "./types";
 import { generateAvatar, roles, sensorsAPIBase, usersAPIBase } from "./utils";
 
 export function makeFetchAccounts(token: string): () => Promise<Account[]> {
@@ -25,11 +25,7 @@ export function makeFetchAccounts(token: string): () => Promise<Account[]> {
 
 export function makeCreateAccount(
 	token: string,
-): ({
-	name,
-	email,
-	roles,
-}: {
+): (props: {
 	name?: string;
 	email: string;
 	roles: Role[];
@@ -63,11 +59,7 @@ export function makeCreateAccount(
 
 export function makeEditAccount(
 	token: string,
-): ({
-	name,
-	email,
-	roles,
-}: {
+): (props: {
 	name?: string;
 	email: string;
 	roles: Role[];
@@ -134,5 +126,36 @@ export function makeFetchSensors(
 			);
 		}
 		return await response.json();
+	};
+}
+
+export function makeCreateSensor(
+	token: string,
+): (props: Sensor) => Promise<Sensor> {
+	return async ({ name, id, longitude, latitude, type }) => {
+		const response = await fetch(`${sensorsAPIBase}/${id}`, {
+			headers: { Authorization: `Bearer ${token}` },
+			method: "POST",
+			body: JSON.stringify({
+				name,
+				longitude,
+				latitude,
+				type,
+			}),
+		});
+		if (!response.ok) {
+			const data = await response.text();
+			throw new Error(
+				`Network response was not ok (${response.status}: ${
+					response.statusText
+				})${data ? ` ${data}` : ""}`,
+			);
+		}
+		return {
+			name,
+			longitude,
+			latitude,
+			id,
+		};
 	};
 }

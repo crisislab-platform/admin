@@ -41,15 +41,18 @@ export type SidebarLink = Route & {
 	Icon: typeof SvgIcon;
 	ActiveIcon?: typeof SvgIcon;
 };
-
-export type SensorID = number | string;
+export type SensorType = "android" | "raspberry-shake" | string;
+export type SensorID = number;
 export interface Sensor {
 	online?: boolean;
 	longitude: number;
 	latitude: number;
 	id: SensorID;
-	type?: "android" | "raspberry-pi";
+	type?: SensorType;
 	name?: string;
+	elevation?: number;
+	total_floors?: number;
+	on_floor?: number;
 }
 
 export type ShakingDataChannel = "EHZ" | "ENE" | "ENZ" | "ENN";

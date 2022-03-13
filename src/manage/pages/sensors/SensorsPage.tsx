@@ -1,25 +1,30 @@
 import {
 	Alert,
 	AlertTitle,
-	Box,
+	Button,
 	Fab,
 	List,
 	ListItem,
+	Stack,
 	Tooltip,
 } from "@mui/material";
 import { LoadingSpinner, SensorCard } from "../../../components";
 import { useQuery, useQueryClient } from "react-query";
 
+import AddIcon from "@mui/icons-material/Add";
+import { CreateSensorDialog } from "./CreateSensorDialog";
 import ReloadIcon from "@mui/icons-material/Refresh";
 import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-export function Sensors() {
+export function SensorsPage() {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const sensorsQuery = useQuery("sensors", makeFetchSensors(user.token));
 	const queryClient = useQueryClient();
+	const [createSensorDialogOpen, setCreateSensorDialogOpen] = useState(false);
 
 	if (sensorsQuery.isLoading) {
 		return <LoadingSpinner addPadding message="Loading sensors" />;
@@ -27,15 +32,31 @@ export function Sensors() {
 
 	if (sensorsQuery.isError) {
 		return (
-			<Alert severity="error">
+			<Alert severity="error" sx={{ m: 2 }}>
 				<AlertTitle>An error occured while loading sensors.</AlertTitle>
 				{sensorsQuery.error + ""}
 			</Alert>
 		);
 	}
 
+	function onCreateSensorDialogClose() {
+		setCreateSensorDialogOpen(false);
+	}
+
 	return (
-		<Box p={2}>
+		<Stack sx={{ p: 1 }}>
+			<Stack direction="row" sx={{ mb: 1 }}>
+				<Button
+					startIcon={<AddIcon />}
+					variant="contained"
+					onClick={() => setCreateSensorDialogOpen(true)}>
+					Create sensor
+				</Button>
+				<CreateSensorDialog
+					open={createSensorDialogOpen}
+					onClose={onCreateSensorDialogClose}
+				/>
+			</Stack>
 			<List
 				disablePadding
 				sx={{
@@ -66,6 +87,6 @@ export function Sensors() {
 					<ReloadIcon />
 				</Fab>
 			</Tooltip>
-		</Box>
+		</Stack>
 	);
 }
