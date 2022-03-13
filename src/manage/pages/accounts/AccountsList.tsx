@@ -32,7 +32,7 @@ export function AccountsList({
 		: null;
 
 	if (accountsQuery.isLoading) {
-		return <LoadingSpinner addPadding message="Loading users" />;
+		return <LoadingSpinner addPadding message="Loading accounts" />;
 	}
 
 	if (accountsQuery.isError) {
