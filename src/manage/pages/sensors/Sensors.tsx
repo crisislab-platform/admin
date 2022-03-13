@@ -21,31 +21,6 @@ export function Sensors() {
 	const sensorsQuery = useQuery("sensors", makeFetchSensors(user.token));
 	const queryClient = useQueryClient();
 
-	// async function loadSensorLocations() {
-	// 	const snack = enqueueSnackbar("Loading sensor locations...", {
-	// 		variant: "info",
-	// 		persist: true,
-	// 	});
-	// 	try {
-	// 		const res = await fetch(sensorsAPIBase);
-	// 		const data = await res.json();
-	// 		closeSnackbar(snack);
-	// 		enqueueSnackbar("Loaded sensor locations!", {
-	// 			variant: "success",
-	// 		});
-	// 		setSensors(data.sensors);
-	// 	} catch (e) {
-	// 		closeSnackbar(snack);
-	// 		console.info("Failed to load sensor locations. Error: ", e);
-	// 		enqueueSnackbar("Failed to load sensor locations!", {
-	// 			variant: "error",
-	// 		});
-	// 	}
-	// }
-	// useEffect(() => {
-	// 	loadSensorLocations();
-	// }, [enqueueSnackbar, closeSnackbar, setSensors]);
-
 	if (sensorsQuery.isLoading) {
 		return <LoadingSpinner message="Loading sensors" />;
 	}
