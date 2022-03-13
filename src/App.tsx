@@ -103,7 +103,10 @@ function App() {
 					element={
 						<Suspense
 							fallback={
-								<LoadingSpinner message="Loading login page(s)..." />
+								<LoadingSpinner
+									message="Loading login page(s)"
+									addPadding
+								/>
 							}>
 							<AuthWrapper />
 						</Suspense>
@@ -118,6 +121,7 @@ function App() {
 									fallback={
 										<LoadingSpinner
 											message={`Loading ${route.path}`}
+											addPadding
 										/>
 									}>
 									{route.component}
@@ -132,7 +136,10 @@ function App() {
 					element={
 						<Suspense
 							fallback={
-								<LoadingSpinner message="Loading map..." />
+								<LoadingSpinner
+									message="Loading map"
+									addPadding
+								/>
 							}>
 							<MapApp />
 						</Suspense>
@@ -144,7 +151,10 @@ function App() {
 					element={
 						<Suspense
 							fallback={
-								<LoadingSpinner message="Loading dashboard..." />
+								<LoadingSpinner
+									message="Loading dashboard"
+									addPadding
+								/>
 							}>
 							<ManageApp />
 						</Suspense>
