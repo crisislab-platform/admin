@@ -22,3 +22,6 @@ export const roles: Record<RawRole, Role> = {
 		text: "Create, modify, or delete sensors",
 	},
 };
+
+// ~Center of New Zealand
+export const defaultPosition = [174.8, -41.325];

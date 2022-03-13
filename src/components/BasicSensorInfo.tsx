@@ -16,10 +16,10 @@ export function BasicSensorInfo({ sensor }: { sensor: Sensor }) {
 				<SensorStatusText online={sensor.online} />
 			</Stack>
 			<Typography>
-				Longitude: <strong>{sensor.longitude}</strong>
+				Longitude: <strong>{sensor.longitude || "Unknown"}</strong>
 			</Typography>
 			<Typography>
-				Latitude: <strong>{sensor.latitude}</strong>
+				Latitude: <strong>{sensor.latitude || "Unknown"}</strong>
 			</Typography>
 		</Stack>
 	);

@@ -52,8 +52,8 @@ export type SensorType =
 export type SensorID = number;
 export interface Sensor {
 	online?: boolean;
-	longitude: number;
-	latitude: number;
+	longitude?: number;
+	latitude?: number;
 	id: SensorID;
 	type?: SensorType;
 	name?: string;

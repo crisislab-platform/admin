@@ -9,10 +9,13 @@ import {
 	DialogTitle,
 	Divider,
 	FormControl,
+	FormControlLabel,
 	InputLabel,
+	Link,
 	MenuItem,
 	Select,
 	Stack,
+	Switch,
 	TextField,
 	Typography,
 } from "@mui/material";
@@ -36,6 +39,7 @@ export function CreateSensorDialog({
 	const [name, setName] = useState<string | undefined>();
 	const [menuType, setMenuType] = useState<SensorType>("Raspberry Shake 4D");
 	const [otherType, setOtherType] = useState<string | undefined>();
+	const [enableLocation, setEnableLocation] = useState(false);
 	const [location, setLocation] = useState<[number, number]>([
 		174.8, -41.325,
 	]);
@@ -113,8 +117,8 @@ export function CreateSensorDialog({
 				name,
 				type,
 				elevation,
-				longitude: location[0],
-				latitude: location[1],
+				longitude: enableLocation ? location[0] : undefined,
+				latitude: enableLocation ? location[1] : undefined,
 				total_floors: totalFloors,
 				on_floor: onFloor,
 			});
@@ -231,52 +235,79 @@ export function CreateSensorDialog({
 					<Divider />
 					<Stack gap={1}>
 						<Typography variant="subtitle1">Position</Typography>
-						{navigator.geolocation && (
-							<Box>
-								<Button
-									startIcon={<MyLocationIcon />}
-									variant="outlined"
-									onClick={getLocationOfDevice}>
-									Use my location
-								</Button>
-							</Box>
+						<Typography variant="body1">
+							The position of the sensor will be automatically
+							determined using the{" "}
+							<Link href="https://en.wikipedia.org/wiki/Wi-Fi_positioning_system">
+								Wi-Fi positioning system
+							</Link>{" "}
+							which is usually more accurate than the location
+							that your brower can work out. If the sensor will be
+							in a location without many nearby Wi-Fi networks, or
+							only a few very new networks (which may not have
+							been mapped yet), you can manually set the position.
+						</Typography>
+						<FormControlLabel
+							control={
+								<Switch
+									checked={enableLocation}
+									onChange={(event) =>
+										setEnableLocation(event.target.checked)
+									}
+								/>
+							}
+							label="Enable manual position"
+						/>
+						{enableLocation && (
+							<>
+								{navigator.geolocation && (
+									<Box>
+										<Button
+											startIcon={<MyLocationIcon />}
+											variant="outlined"
+											onClick={getLocationOfDevice}>
+											Use my location
+										</Button>
+									</Box>
+								)}
+								<Stack direction="row" gap={1}>
+									<TextField
+										value={location[0]}
+										onChange={(event) =>
+											setLocation((oldLocation) => [
+												Number(event.target.value),
+												oldLocation[1],
+											])
+										}
+										margin="dense"
+										id="longitude-textbox"
+										name="longitude-textbox"
+										label="Longitude"
+										type="number"
+										fullWidth
+										variant="outlined"
+										required
+									/>
+									<TextField
+										value={location[1]}
+										onChange={(event) =>
+											setLocation((oldLocation) => [
+												oldLocation[0],
+												Number(event.target.value),
+											])
+										}
+										margin="dense"
+										id="latitude-textbox"
+										name="latitude-textbox"
+										label="Latitude"
+										type="number"
+										fullWidth
+										variant="outlined"
+										required
+									/>
+								</Stack>
+							</>
 						)}
-						<Stack direction="row" gap={1}>
-							<TextField
-								value={location[0]}
-								onChange={(event) =>
-									setLocation((oldLocation) => [
-										Number(event.target.value),
-										oldLocation[1],
-									])
-								}
-								margin="dense"
-								id="longitude-textbox"
-								name="longitude-textbox"
-								label="Longitude"
-								type="number"
-								fullWidth
-								variant="outlined"
-								required
-							/>
-							<TextField
-								value={location[1]}
-								onChange={(event) =>
-									setLocation((oldLocation) => [
-										oldLocation[0],
-										Number(event.target.value),
-									])
-								}
-								margin="dense"
-								id="latitude-textbox"
-								name="latitude-textbox"
-								label="Latitude"
-								type="number"
-								fullWidth
-								variant="outlined"
-								required
-							/>
-						</Stack>
 					</Stack>
 					<Divider />
 					<Stack gap={1}>

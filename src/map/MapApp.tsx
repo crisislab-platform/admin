@@ -41,6 +41,7 @@ import ReloadIcon from "@mui/icons-material/Replay";
 import { Sensor } from "../types";
 import SettingsPanel from "./SettingsPanel";
 import SunCalc from "suncalc";
+import { defaultPosition } from "../utils";
 import { makeFetchSensors } from "../api";
 import useAuth from "../auth/useAuth";
 import { useSnackbar } from "notistack";
@@ -101,7 +102,11 @@ export default function MapApp() {
 
 					// Timeout to give the map time to load
 					setTimeout(
-						() => flyToCoords(sensor.longitude, sensor.latitude),
+						() =>
+							flyToCoords(
+								sensor.longitude || defaultPosition[0],
+								sensor.latitude || defaultPosition[1],
+							),
 						3000,
 					);
 				}
@@ -131,7 +136,7 @@ export default function MapApp() {
 			const newMap = new MapboxMap({
 				container: mapContainerRef.current,
 				style: sateliteMode ? mapStyles.satelite : mapStyles.normal,
-				center: [174.8, -41.325],
+				center: defaultPosition,
 				zoom: 4.8,
 			});
 
@@ -364,7 +369,10 @@ export default function MapApp() {
 						sensor,
 						marker,
 					});
-					flyToCoords(sensor.longitude, sensor.latitude);
+					flyToCoords(
+						sensor.longitude || defaultPosition[0],
+						sensor.latitude || defaultPosition[1],
+					);
 				}
 				if (map) {
 					const markerElement = document.createElement("div");
@@ -392,7 +400,10 @@ export default function MapApp() {
 					}
 
 					const marker = new Marker(markerElement)
-						.setLngLat([sensor.longitude, sensor.latitude])
+						.setLngLat([
+							sensor.longitude || defaultPosition[0],
+							sensor.latitude || defaultPosition[1],
+						])
 						.addTo(map);
 
 					markerElement.addEventListener("click", (e) =>
@@ -496,7 +507,9 @@ export default function MapApp() {
 					onClick={() => {
 						if (contextMenu) {
 							navigator.clipboard.writeText(
-								`${contextMenu.sensor.longitude}, ${contextMenu.sensor.latitude}`,
+								`${
+									contextMenu.sensor.longitude || "Unknown"
+								}, ${contextMenu.sensor.latitude || "Unknown"}`,
 							);
 							setContextMenu(null);
 						}
