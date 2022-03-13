@@ -4,7 +4,7 @@ import AndroidIcon from "@mui/icons-material/PhoneAndroid";
 import MapIcon from "@mui/icons-material/Map";
 import PiIcon from "@mui/icons-material/RouterOutlined";
 import { Sensor } from "../types";
-import { SensorStatusIcon } from "./BasicSensorInfo";
+import { SensorStatusText } from "./BasicSensorInfo";
 import { useNavigate } from "react-router-dom";
 
 export function SensorCard({
@@ -38,24 +38,7 @@ export function SensorCard({
 			{sensor.type && (
 				<Typography variant="body2">{sensor.type}</Typography>
 			)}
-			<Stack
-				direction="row"
-				gap={1}
-				alignItems="center"
-				sx={{ marginTop: "auto" }}>
-				<SensorStatusIcon online={sensor.online} />
-				<Typography
-					variant="button"
-					sx={{
-						color: (theme) =>
-							sensor.online
-								? theme.palette.success.main
-								: theme.palette.error.main,
-					}}>
-					{" "}
-					{sensor.online ? "Online" : "Offline"}
-				</Typography>
-			</Stack>
+			<SensorStatusText online={sensor.online} />
 			<Stack direction="row" gap={1} sx={{ width: "100%" }}>
 				<Box>
 					<Button
