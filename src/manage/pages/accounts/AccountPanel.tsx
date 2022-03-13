@@ -104,12 +104,12 @@ export function AccountPanel() {
 			});
 		},
 		onSuccess: () => {
-			enqueueSnackbar(`Deleted account.`, {
-				variant: "success",
-			});
-		},
-		onSettled: () => {
-			queryClient.invalidateQueries("accounts");
+			enqueueSnackbar(
+				`Deleted account. Changes may take up to a minute to be reflected everywhere.`,
+				{
+					variant: "success",
+				},
+			);
 		},
 	});
 
