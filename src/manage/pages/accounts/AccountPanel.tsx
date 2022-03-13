@@ -275,13 +275,10 @@ export function AccountPanel() {
 					alt={account.name || account.picture}
 					sx={{ width: 160, height: 160 }}
 				/>
-
-				<Typography variant="h2">
-					{account.name || account.email}
-				</Typography>
 				{account.name && (
-					<Typography variant="subtitle1">{account.email}</Typography>
+					<Typography variant="h2">{account.name}</Typography>
 				)}
+				<Typography variant="subtitle1">{account.email}</Typography>
 			</Stack>
 			<Typography variant="h6">Roles:</Typography>
 			<List>

@@ -31,15 +31,17 @@ export function makeCreateAccount(
 	roles: Role[];
 }) => Promise<Account> {
 	return async ({ name, email, roles }) => {
+		const body = JSON.stringify({
+			name,
+			email,
+			roles: roles.map((role) => role.raw),
+		});
 		const response = await fetch(`${usersAPIBase}/${email}`, {
 			headers: { Authorization: `Bearer ${token}` },
 			method: "PUT",
-			body: JSON.stringify({
-				name,
-				email,
-				roles: roles.map((role) => role.raw),
-			}),
+			body,
 		});
+
 		if (!response.ok) {
 			const data = await response.text();
 			throw new Error(
