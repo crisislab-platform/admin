@@ -25,7 +25,6 @@ export function WrappedApp() {
 			<CssBaseline enableColorScheme />
 			<SnackbarProvider
 				classes={{
-					containerRoot: "Snackbar-Bottom-Spacing",
 					variantSuccess: "Snackbar-Success",
 					variantError: "Snackbar-Error",
 					variantWarning: "Snackbar-Warning",
