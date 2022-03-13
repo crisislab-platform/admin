@@ -24,4 +24,4 @@ export const roles: Record<RawRole, Role> = {
 };
 
 // ~Center of New Zealand
-export const defaultPosition = [174.8, -41.325];
+export const defaultPosition: [number, number] = [174.8, -41.325];
