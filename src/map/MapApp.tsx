@@ -104,6 +104,7 @@ export default function MapApp() {
 							flyToCoords(
 								sensor.longitude || defaultPosition[0],
 								sensor.latitude || defaultPosition[1],
+								15,
 							),
 						3000,
 					);
@@ -370,6 +371,7 @@ export default function MapApp() {
 					flyToCoords(
 						sensor.longitude || defaultPosition[0],
 						sensor.latitude || defaultPosition[1],
+						13,
 					);
 				}
 				if (map) {
@@ -457,12 +459,16 @@ export default function MapApp() {
 		window.history.pushState(null, "", newRelativePathQuery.href);
 	}, [activeSensor]);
 
-	function flyToCoords(longatude: number, latitude: number): void {
+	function flyToCoords(
+		longatude: number,
+		latitude: number,
+		zoom: number,
+	): void {
 		const flyTime = 1500;
 		if (map) {
 			map.easeTo({
 				center: [longatude, latitude],
-				zoom: 10,
+				zoom,
 				duration: flyTime,
 			});
 		}
@@ -545,7 +551,7 @@ export default function MapApp() {
 								setActiveSensor(popover.sensor);
 								setPopover(null);
 							}}>
-							Show in sidebar
+							Show mroe details
 						</Button>
 					</Stack>
 				</Popover>

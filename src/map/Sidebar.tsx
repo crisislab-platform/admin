@@ -34,7 +34,7 @@ export default function Sidebar({
 	activeSensor: Sensor | null;
 	setActiveSensor: (toSet: Sensor | null) => void;
 	width: number;
-	flyToCoords: (longatude: number, latitude: number) => void;
+	flyToCoords: (longatude: number, latitude: number, zoom: number) => void;
 }) {
 	const { enqueueSnackbar } = useSnackbar();
 	const theme = useTheme();
@@ -75,6 +75,7 @@ export default function Sidebar({
 									flyToCoords(
 										activeSensor.longitude,
 										activeSensor.latitude,
+										16,
 									);
 									if (onMobile) handleClose();
 								}}>
