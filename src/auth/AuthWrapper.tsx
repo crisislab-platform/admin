@@ -1,27 +1,11 @@
-import {
-	Box,
-	Fab,
-	Paper,
-	Stack,
-	Tooltip,
-	useMediaQuery,
-	useTheme,
-} from "@mui/material";
+import { Box, Paper, Stack, useMediaQuery, useTheme } from "@mui/material";
 import { Outlet, useNavigate } from "react-router-dom";
 
-import BackIcon from "@mui/icons-material/ArrowBack";
 import { useGetQueryParam } from "./utils";
 
-export default function AuthPagesWrapper({
-	popupMode,
-}: {
-	popupMode?: boolean;
-}) {
+export default function AuthPagesWrapper() {
 	const theme = useTheme();
 	const smallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-	const navigate = useNavigate();
-	const returnTo = useGetQueryParam("return_to");
-	const inPopupWindow = useGetQueryParam("in_popup_window");
 
 	return (
 		<Box
@@ -34,26 +18,6 @@ export default function AuthPagesWrapper({
 				alignItems: "center",
 				justifyContent: "center",
 			}}>
-			{!inPopupWindow && (
-				<Tooltip title="Return to main app" placement="right">
-					<Fab
-						sx={{
-							position: "fixed",
-							top: (theme) => theme.spacing(2),
-							left: (theme) => theme.spacing(2),
-							zIndex: (theme) => theme.zIndex.snackbar + 1,
-						}}
-						onClick={() => {
-							if (returnTo) {
-								navigate(returnTo);
-							} else {
-								navigate("/");
-							}
-						}}>
-						<BackIcon color="primary" />
-					</Fab>
-				</Tooltip>
-			)}
 			<Paper
 				elevation={16}
 				sx={{

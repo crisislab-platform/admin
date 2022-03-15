@@ -1,7 +1,7 @@
 import {
 	AccountPanel,
 	AccountsPage,
-	SensorInfoPage,
+	SensorPanel,
 	SensorsPage,
 } from "./pages/index";
 import { Route, SidebarLink } from "../types";
@@ -34,7 +34,7 @@ export const routes: (Route | SidebarLink)[] = [
 			{
 				slug: ":sensorID",
 				text: "Sensor info",
-				Element: <SensorInfoPage />,
+				Element: <SensorPanel />,
 				requiredRole: roles["sensors:read"],
 			},
 		],

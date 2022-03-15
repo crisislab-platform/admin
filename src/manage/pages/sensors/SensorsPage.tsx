@@ -1,16 +1,10 @@
-import {
-	Alert,
-	AlertTitle,
-	Button,
-	List,
-	ListItem,
-	Stack,
-} from "@mui/material";
+import { AlertTitle, Button, Grid, List, ListItem, Stack } from "@mui/material";
 import { LoadingSpinner, SensorCard } from "../../../components";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import AddIcon from "@mui/icons-material/Add";
 import { CreateSensorDialog } from "./CreateSensorDialog";
+import { SensorsList } from "./SensorsList";
 import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 import { useQuery } from "react-query";
@@ -25,62 +19,45 @@ export function SensorsPage() {
 	);
 	const [createSensorDialogOpen, setCreateSensorDialogOpen] = useState(false);
 
-	if (sensorsQuery.isError) {
-		return (
-			<Alert severity="error" sx={{ m: 2 }}>
-				<AlertTitle>An error occured while loading sensors.</AlertTitle>
-				{sensorsQuery.error + ""}
-			</Alert>
-		);
-	}
-
 	function onCreateSensorDialogClose() {
 		setCreateSensorDialogOpen(false);
 	}
 
 	return (
-		<Stack sx={{ p: 1 }}>
-			{!!user && user.roles.find((role) => role.raw === "sensors:write") && (
-				<Stack direction="row" sx={{ mb: 1 }}>
-					<Button
-						startIcon={<AddIcon />}
-						variant="contained"
-						onClick={() => setCreateSensorDialogOpen(true)}>
-						Create sensor
-					</Button>
-					<CreateSensorDialog
-						open={createSensorDialogOpen}
-						onClose={onCreateSensorDialogClose}
-					/>
+		<Grid container sx={{ w: "100%", h: "100%", flex: "1" }}>
+			<Grid item xs={12} md={6}>
+				<Stack>
+					{!!user &&
+						user.roles.find(
+							(role) => role.raw === "sensors:write",
+						) && (
+							<Stack direction="row" sx={{ p: 1 }}>
+								<Button
+									startIcon={<AddIcon />}
+									variant="contained"
+									onClick={() =>
+										setCreateSensorDialogOpen(true)
+									}>
+									Create sensor
+								</Button>
+								<CreateSensorDialog
+									open={createSensorDialogOpen}
+									onClose={onCreateSensorDialogClose}
+								/>
+							</Stack>
+						)}
+
+					<SensorsList />
 				</Stack>
-			)}
-			{sensorsQuery.isLoading ? (
-				<LoadingSpinner addPadding message="Loading sensors" />
-			) : (
-				<List
-					disablePadding
-					sx={{
-						display: "flex",
-						flexDirection: "row",
-						flexWrap: "wrap",
-						gap: 2,
-					}}>
-					{Object.values(sensorsQuery.data.sensors).map((sensor) => (
-						<ListItem
-							key={sensor.id}
-							disablePadding
-							sx={{ flex: "0" }}>
-							<SensorCard
-								sensor={sensor}
-								onDetailsClick={() =>
-									navigate(`./${sensor.id}`)
-								}
-							/>
-						</ListItem>
-					))}
-				</List>
-			)}
-			<Outlet />
-		</Stack>
+			</Grid>
+			<Grid
+				item
+				xs={12}
+				md={6}
+				p={1}
+				sx={{ maxHeight: "100%", overflow: "auto" }}>
+				<Outlet />
+			</Grid>
+		</Grid>
 	);
 }

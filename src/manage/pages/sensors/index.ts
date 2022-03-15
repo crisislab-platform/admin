@@ -1,2 +1,2 @@
 export * from "./SensorsPage";
-export * from "./SensorInfoPage";
+export * from "./SensorPanel";

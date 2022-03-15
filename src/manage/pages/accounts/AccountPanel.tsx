@@ -186,7 +186,7 @@ export function AccountPanel() {
 
 	let layout = (
 		<Stack sx={{ p: onMobile ? 2 : 0 }}>
-			{!!user.roles.find((role) => role.raw === "users:write") && (
+			{user && !!user.roles.find((role) => role.raw === "users:write") && (
 				<Stack direction="row" gap={1} flexWrap="wrap" sx={{ mb: 2 }}>
 					<Button
 						variant="outlined"
