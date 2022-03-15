@@ -64,7 +64,7 @@ export default function MapApp() {
 	const mapContainerRef = useRef<null | HTMLDivElement>(null);
 	const [drawerWidth, setDrawerWidth] = useState(window.innerWidth / 3);
 	const queryClient = useQueryClient();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user.token));
+	const sensorsQuery = useQuery("sensors", makeFetchSensors(user && user.token));
 	const [activeSensor, setActiveSensor] = useState<null | Sensor>(null);
 	const [popover, setPopover] = useState<null | {
 		x: number;
