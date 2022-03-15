@@ -22,7 +22,7 @@ import { useState } from "react";
 export function SensorsPage() {
 	const { user } = useAuth();
 	const navigate = useNavigate();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user.token));
+	const sensorsQuery = useQuery("sensors", makeFetchSensors(user && user.token));
 	const queryClient = useQueryClient();
 	const [createSensorDialogOpen, setCreateSensorDialogOpen] = useState(false);
 
