@@ -6,8 +6,6 @@ import {
 	ListItemAvatar,
 	ListItemButton,
 	ListItemText,
-	useMediaQuery,
-	useTheme,
 } from "@mui/material";
 import { Link as RouterLink, useParams } from "react-router-dom";
 
@@ -16,16 +14,10 @@ import { makeFetchAccounts } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 import { useQuery } from "react-query";
 
-export function AccountsList({
-	onMobileSelect,
-}: {
-	onMobileSelect?: (email: string) => void;
-}) {
+export function AccountsList() {
 	const { user } = useAuth();
 	const { accountID: encodedSelectedAccountID } = useParams();
 	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
-	const theme = useTheme();
-	const onMobile = useMediaQuery(theme.breakpoints.down("md"));
 
 	const selectedAccountID = encodedSelectedAccountID
 		? decodeURIComponent(encodedSelectedAccountID)

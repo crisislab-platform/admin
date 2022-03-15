@@ -7,12 +7,12 @@ import {
 	Stack,
 } from "@mui/material";
 import { LoadingSpinner, SensorCard } from "../../../components";
+import { Outlet, useNavigate } from "react-router-dom";
 
 import AddIcon from "@mui/icons-material/Add";
 import { CreateSensorDialog } from "./CreateSensorDialog";
 import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useState } from "react";
 
@@ -80,6 +80,7 @@ export function SensorsPage() {
 					))}
 				</List>
 			)}
+			<Outlet />
 		</Stack>
 	);
 }
