@@ -5,7 +5,8 @@ import { LiveDataGraphs } from "../../../components";
 import { useParams } from "react-router-dom";
 
 export function SensorInfoPage() {
-	const { sensorID } = useParams();
+	const { sensorID: rawSensorID } = useParams();
+	const sensorID = Number(rawSensorID);
 	return (
 		<Stack>
 			<Typography variant="h5">Sensor #{sensorID}</Typography>
