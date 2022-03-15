@@ -76,8 +76,6 @@ export default function ManageApp() {
 			<Stack
 				sx={{
 					minHeight: "100vh",
-					maxHeight: "100vh",
-					overflow: "hidden",
 				}}>
 				<Toolbar variant={onMobile ? undefined : "dense"} />
 				<Outlet />
