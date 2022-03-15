@@ -2,28 +2,24 @@ import {
 	Alert,
 	AlertTitle,
 	Button,
-	Fab,
 	List,
 	ListItem,
 	Stack,
-	Tooltip,
 } from "@mui/material";
 import { LoadingSpinner, SensorCard } from "../../../components";
-import { useQuery, useQueryClient } from "react-query";
 
 import AddIcon from "@mui/icons-material/Add";
 import { CreateSensorDialog } from "./CreateSensorDialog";
-import ReloadIcon from "@mui/icons-material/Refresh";
 import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
 import { useState } from "react";
 
 export function SensorsPage() {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const sensorsQuery = useQuery("sensors", makeFetchSensors(user.token));
-	const queryClient = useQueryClient();
 	const [createSensorDialogOpen, setCreateSensorDialogOpen] = useState(false);
 
 	if (sensorsQuery.isError) {

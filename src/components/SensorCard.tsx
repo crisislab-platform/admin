@@ -1,10 +1,11 @@
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 
 import AndroidIcon from "@mui/icons-material/PhoneAndroid";
-import MapIcon from "@mui/icons-material/Map";
+import LaunchIcon from "@mui/icons-material/Launch";
 import PiIcon from "@mui/icons-material/RouterOutlined";
 import { Sensor } from "../types";
 import { SensorStatusText } from "./BasicSensorInfo";
+import { mapURL } from "../utils";
 import { useNavigate } from "react-router-dom";
 
 export function SensorCard({
@@ -54,29 +55,17 @@ export function SensorCard({
 						</Button>
 					</Box>
 					<Box>
-						<OpenInMapButton sensor={sensor} />
+						<Button
+							endIcon={<LaunchIcon />}
+							href={`${mapURL}/sensor/${sensor.id}`}
+							target="_blank"
+							color="primary"
+							variant="outlined">
+							Open in map
+						</Button>
 					</Box>
 				</Stack>
 			</Stack>
 		</Paper>
-	);
-}
-
-export function OpenInMapButton({ sensor }: { sensor: Sensor }) {
-	const navigate = useNavigate();
-	const href = `/map?sensor_id=${sensor.id}`;
-	return (
-		<Button
-			startIcon={<MapIcon />}
-			href={href}
-			onClick={(event) => {
-				event.preventDefault();
-				navigate(href);
-			}}
-			// target="_blank"
-			color="primary"
-			variant="outlined">
-			Open in map
-		</Button>
 	);
 }

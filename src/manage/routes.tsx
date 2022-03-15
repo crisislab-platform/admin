@@ -39,7 +39,6 @@ export const routes: (Route | SidebarLink)[] = [
 			},
 		],
 	},
-
 	{
 		slug: "accounts",
 		text: "Accounts",

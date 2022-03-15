@@ -1,15 +1,11 @@
+import LoginLinkFinishPage from "./LoginLinkFinish";
+import LoginLinkPage from "./LoginLink";
+import LoginPage from "./Login";
 import { NavigateWithQuery } from "../components";
-import React from "react";
+import PasswordResetFinishPage from "./PasswordResetFinish";
+import PasswordResetStartPage from "./PasswordResetStart";
+import RegisterPage from "./Register";
 import { useGetQueryParam } from "./utils";
-
-const PasswordResetStartPage = React.lazy(() => import("./PasswordResetStart"));
-const PasswordResetFinishPage = React.lazy(
-	() => import("./PasswordResetFinish"),
-);
-const LoginLinkPage = React.lazy(() => import("./LoginLink"));
-const LoginLinkFinishPage = React.lazy(() => import("./LoginLinkFinish"));
-const LoginPage = React.lazy(() => import("./Login"));
-const RegisterPage = React.lazy(() => import("./Register"));
 
 export interface AuthRoute {
 	path: string;

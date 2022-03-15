@@ -18,11 +18,12 @@ import {
 } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { LoginButton, useNavigateWithQuery } from "../components";
-import { useLocation, useNavigate } from "react-router-dom";
 
-import MapIcon from "@mui/icons-material/Map";
+import LaunchIcon from "@mui/icons-material/Launch";
 import { SidebarLink } from "../types";
+import { mapURL } from "../utils";
 import useAuth from "../auth/useAuth";
+import { useLocation } from "react-router-dom";
 
 const longTextMixin = {
 	textOverflow: "ellipsis",
@@ -45,7 +46,6 @@ export default function Sidebar({
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 	const { user } = useAuth();
 	const navigateWithQuery = useNavigateWithQuery();
-	const navigate = useNavigate();
 
 	const location = useLocation();
 	const onIOS =
@@ -112,16 +112,11 @@ export default function Sidebar({
 					</ListItem>
 				))}
 				<ListItem key="go-to-map-link" disablePadding>
-					<ListItemButton
-						href="/map"
-						onClick={(event) => {
-							event.preventDefault();
-							navigate("/map");
-						}}>
+					<ListItemButton href={mapURL} target="_blank">
 						<ListItemIcon>
-							<MapIcon />
+							<LaunchIcon />
 						</ListItemIcon>
-						<ListItemText primary="Launch map" />
+						<ListItemText primary="Launch shakemap" />
 					</ListItemButton>
 				</ListItem>
 			</List>

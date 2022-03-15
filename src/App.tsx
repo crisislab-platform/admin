@@ -1,21 +1,17 @@
 import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { MissingRole, NavigateWithQuery } from "./components";
-import { Navigate, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-import React, { Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
 import useAuth, { AuthProvider } from "./auth/useAuth";
 
-import { LoadingSpinner } from "./components";
-import MapApp from "./map/MapApp";
+import AuthWrapper from "./auth/AuthWrapper";
+import ManageApp from "./manage/ManageApp";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Route as RouteType } from "./types";
 import { SnackbarProvider } from "notistack";
 import { authRoutes } from "./auth/authRoutes";
 import { routes as manageRoutes } from "./manage/routes";
 import { theme } from "./theme";
-
-const ManageApp = React.lazy(() => import("./manage/ManageApp"));
-const AuthWrapper = React.lazy(() => import("./auth/AuthWrapper"));
 
 const queryClient = new QueryClient();
 
@@ -79,7 +75,7 @@ function App() {
 	const redirectElement = !!user ? (
 		<NavigateWithQuery to="/manage" replace />
 	) : (
-		<NavigateWithQuery to="/map" replace />
+		<NavigateWithQuery to="/auth" replace />
 	);
 
 	return (
@@ -96,68 +92,17 @@ function App() {
 					path="token-sign-in"
 					element={<NavigateWithQuery to="../auth/token-sign-in" />}
 				/>
-				<Route
-					key="auth"
-					path="auth"
-					element={
-						<Suspense
-							fallback={
-								<LoadingSpinner
-									message="Loading login page(s)"
-									addPadding
-								/>
-							}>
-							<AuthWrapper />
-						</Suspense>
-					}>
+				<Route key="auth" path="auth" element={<AuthWrapper />}>
 					<Route index element={<NavigateWithQuery to="./login" />} />
 					{authRoutes.map((route) => (
 						<Route
 							key={route.path}
 							path={route.path}
-							element={
-								<Suspense
-									fallback={
-										<LoadingSpinner
-											message={`Loading ${route.path}`}
-											addPadding
-										/>
-									}>
-									{route.component}
-								</Suspense>
-							}
+							element={route.component}
 						/>
 					))}
 				</Route>
-				<Route
-					key="map"
-					path="map"
-					element={
-						<Suspense
-							fallback={
-								<LoadingSpinner
-									message="Loading map"
-									addPadding
-								/>
-							}>
-							<MapApp />
-						</Suspense>
-					}
-				/>
-				<Route
-					key="manage"
-					path="manage"
-					element={
-						<Suspense
-							fallback={
-								<LoadingSpinner
-									message="Loading dashboard"
-									addPadding
-								/>
-							}>
-							<ManageApp />
-						</Suspense>
-					}>
+				<Route key="manage" path="manage" element={<ManageApp />}>
 					<Route
 						index
 						element={<NavigateWithQuery to="./sensors" />}
