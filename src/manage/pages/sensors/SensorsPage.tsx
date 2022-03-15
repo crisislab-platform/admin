@@ -19,7 +19,10 @@ import { useState } from "react";
 export function SensorsPage() {
 	const { user } = useAuth();
 	const navigate = useNavigate();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user.token));
+	const sensorsQuery = useQuery(
+		"sensors",
+		makeFetchSensors(user && user.token),
+	);
 	const [createSensorDialogOpen, setCreateSensorDialogOpen] = useState(false);
 
 	if (sensorsQuery.isError) {
@@ -37,18 +40,20 @@ export function SensorsPage() {
 
 	return (
 		<Stack sx={{ p: 1 }}>
-			<Stack direction="row" sx={{ mb: 1 }}>
-				<Button
-					startIcon={<AddIcon />}
-					variant="contained"
-					onClick={() => setCreateSensorDialogOpen(true)}>
-					Create sensor
-				</Button>
-				<CreateSensorDialog
-					open={createSensorDialogOpen}
-					onClose={onCreateSensorDialogClose}
-				/>
-			</Stack>
+			{!!user && user.roles.find((role) => role.raw === "sensors:write") && (
+				<Stack direction="row" sx={{ mb: 1 }}>
+					<Button
+						startIcon={<AddIcon />}
+						variant="contained"
+						onClick={() => setCreateSensorDialogOpen(true)}>
+						Create sensor
+					</Button>
+					<CreateSensorDialog
+						open={createSensorDialogOpen}
+						onClose={onCreateSensorDialogClose}
+					/>
+				</Stack>
+			)}
 			{sensorsQuery.isLoading ? (
 				<LoadingSpinner addPadding message="Loading sensors" />
 			) : (
