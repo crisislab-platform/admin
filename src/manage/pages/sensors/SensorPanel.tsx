@@ -3,6 +3,7 @@ import {
 	Alert,
 	AlertTitle,
 	AppBar,
+	Avatar,
 	Box,
 	Button,
 	Dialog,
@@ -30,6 +31,7 @@ import {
 import {
 	BasicSensorInfo,
 	LoadingSpinner,
+	SensorImage,
 	useNavigateWithQuery,
 } from "../../../components";
 import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
@@ -222,6 +224,9 @@ export function SensorPanel() {
 				</Stack>
 			)}
 			<Stack alignItems="center" gap={2}>
+				<Avatar sx={{ width: 160, height: 160 }}>
+					<SensorImage size={120} sensor={activeSensor} />
+				</Avatar>
 				<Typography variant="h2">#{activeSensor.id}</Typography>
 				{activeSensor.name && (
 					<Typography variant="subtitle1">

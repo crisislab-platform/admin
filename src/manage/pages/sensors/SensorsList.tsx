@@ -3,11 +3,12 @@ import {
 	AlertTitle,
 	List,
 	ListItemButton,
+	ListItemIcon,
 	ListItemText,
 } from "@mui/material";
+import { LoadingSpinner, SensorImage } from "../../../components";
 import { Link as RouterLink, useParams } from "react-router-dom";
 
-import { LoadingSpinner } from "../../../components";
 import { SensorID } from "../../../types";
 import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";
@@ -50,6 +51,9 @@ export function SensorsList() {
 						component={RouterLink}
 						to={`./${sensor.id}`}
 						selected={sensorID === sensor.id}>
+						<ListItemIcon>
+							<SensorImage sensor={sensor} />
+						</ListItemIcon>
 						<ListItemText
 							primary={
 								sensor.name ? `"${sensor.name}"` : sensorIDText

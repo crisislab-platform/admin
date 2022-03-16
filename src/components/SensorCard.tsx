@@ -2,8 +2,8 @@ import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 
 import AndroidIcon from "@mui/icons-material/PhoneAndroid";
 import LaunchIcon from "@mui/icons-material/Launch";
-import PiIcon from "@mui/icons-material/RouterOutlined";
 import { Sensor } from "../types";
+import SensorIcon from "@mui/icons-material/RouterOutlined";
 import { SensorStatusText } from "./BasicSensorInfo";
 import { mapURL } from "../utils";
 import { useNavigate } from "react-router-dom";
@@ -28,12 +28,7 @@ export function SensorCard({
 				gap: 0.5,
 			}}>
 			<Stack direction="row" alignItems="center" gap={0.5}>
-				{sensor.type &&
-				sensor.type.toLowerCase().includes("android") ? (
-					<AndroidIcon />
-				) : (
-					<PiIcon />
-				)}
+				<SensorImage sensor={sensor} />
 				<Typography variant="h6">{sensor.type || "Sensor"}</Typography>
 			</Stack>
 			{sensor.name && (
@@ -67,5 +62,19 @@ export function SensorCard({
 				</Stack>
 			</Stack>
 		</Paper>
+	);
+}
+
+export function SensorImage({
+	sensor,
+	size,
+}: {
+	sensor: Sensor;
+	size?: number;
+}) {
+	return sensor.type && sensor.type.toLowerCase().includes("android") ? (
+		<AndroidIcon sx={{ width: size, height: size }} />
+	) : (
+		<SensorIcon sx={{ width: size, height: size }} />
 	);
 }
