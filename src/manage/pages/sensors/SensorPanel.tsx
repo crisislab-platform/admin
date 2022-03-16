@@ -24,6 +24,7 @@ import {
 	useNavigateWithQuery,
 } from "../../../components";
 import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
+import { makeDeleteSensor, makeFetchSensors } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -33,7 +34,6 @@ import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import { LiveDataGraphs } from "../../../components";
 import SaveIcon from "@mui/icons-material/Save";
 import { TransitionProps } from "@mui/material/transitions";
-import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -64,45 +64,45 @@ export function SensorPanel() {
 	const navigateWithQuery = useNavigateWithQuery();
 
 	const queryClient = useQueryClient();
-	// const mutation = useMutation(makeDeleteSensor(user && user.token), {
-	// 	onMutate: async (sensorToDelete: Sensor) => {
-	// 		// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-	// 		await queryClient.cancelQueries("sensors");
+	const mutation = useMutation(makeDeleteSensor(user && user.token), {
+		onMutate: async (sensorToDelete: Sensor) => {
+			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+			await queryClient.cancelQueries("sensors");
 
-	// 		// Snapshot the previous value
-	// 		const previousSensors = queryClient.getQueryData("sensors");
+			// Snapshot the previous value
+			const previousSensors = queryClient.getQueryData("sensors");
 
-	// 		// Optimistically update to the new value
+			// Optimistically update to the new value
 
-	// 		queryClient.setQueryData(
-	// 			"sensors",
-	// 			(oldSensors: Record<SensorID, Sensor>) =>
-	// 				Object.values(oldSensors).filter(
-	// 					(sensor) => sensor.id !== sensorToDelete.id,
-	// 				),
-	// 		);
+			queryClient.setQueryData(
+				"sensors",
+				(oldSensors: Record<SensorID, Sensor>) => {
+					delete oldSensors[sensorToDelete.id];
+					return oldSensors;
+				},
+			);
 
-	// 		// Return a context object with the snapshotted value
-	// 		return { previousSensors };
-	// 	},
-	// 	onError: (error, newSensor, context) => {
-	// 		queryClient.setQueryData(
-	// 			"sensors",
-	// 			(context as { previousSensors: Sensor[] }).previousSensors,
-	// 		);
-	// 		enqueueSnackbar(`Failed to delete sensor: ${error}`, {
-	// 			variant: "error",
-	// 		});
-	// 	},
-	// 	onSuccess: () => {
-	// 		enqueueSnackbar(
-	// 			`Deleted sensor. Changes may take up to a minute to be reflected everywhere.`,
-	// 			{
-	// 				variant: "success",
-	// 			},
-	// 		);
-	// 	},
-	// });
+			// Return a context object with the snapshotted value
+			return { previousSensors };
+		},
+		onError: (error, newSensor, context) => {
+			queryClient.setQueryData(
+				"sensors",
+				(context as { previousSensors: Sensor[] }).previousSensors,
+			);
+			enqueueSnackbar(`Failed to delete sensor: ${error}`, {
+				variant: "error",
+			});
+		},
+		onSuccess: () => {
+			enqueueSnackbar(
+				`Deleted sensor. Changes may take up to a minute to be reflected everywhere.`,
+				{
+					variant: "success",
+				},
+			);
+		},
+	});
 
 	if (sensorsQuery.isLoading) {
 		return <LoadingSpinner message="Loading sensor details" />;
@@ -120,7 +120,6 @@ export function SensorPanel() {
 	try {
 		sensorID = Number(rawSensorID);
 		activeSensor = sensorsQuery.data.sensors[sensorID];
-		console.log(sensorsQuery.data);
 	} catch (error) {}
 
 	if (!activeSensor) {
@@ -142,7 +141,7 @@ export function SensorPanel() {
 	}
 
 	function deleteSensor() {
-		// mutation.mutate(activeSensor);
+		mutation.mutate(activeSensor);
 		onDeletionConfirmModalClose();
 	}
 

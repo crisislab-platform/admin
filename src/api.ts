@@ -1,10 +1,10 @@
 import { Account, Role, Sensor, SensorID } from "./types";
 import { generateAvatar, roles, sensorsAPIBase, usersAPIBase } from "./utils";
 
-export function makeFetchAccounts(token: string): () => Promise<Account[]> {
+export function makeFetchAccounts(token?: string): () => Promise<Account[]> {
 	return async () => {
 		const response = await fetch(usersAPIBase, {
-			headers: { Authorization: `Bearer ${token}` },
+			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 		});
 		if (!response.ok) {
 			const data = await response.text();
@@ -24,7 +24,7 @@ export function makeFetchAccounts(token: string): () => Promise<Account[]> {
 }
 
 export function makeCreateAccount(
-	token: string,
+	token?: string,
 ): (props: {
 	name?: string;
 	email: string;
@@ -37,7 +37,7 @@ export function makeCreateAccount(
 			roles: roles.map((role) => role.raw),
 		});
 		const response = await fetch(`${usersAPIBase}/${email}`, {
-			headers: { Authorization: `Bearer ${token}` },
+			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "PUT",
 			body,
 		});
@@ -60,7 +60,7 @@ export function makeCreateAccount(
 }
 
 export function makeEditAccount(
-	token: string,
+	token?: string,
 ): (props: {
 	name?: string;
 	email: string;
@@ -68,7 +68,7 @@ export function makeEditAccount(
 }) => Promise<Account> {
 	return async ({ name, email, roles }) => {
 		const response = await fetch(`${usersAPIBase}/${email}`, {
-			headers: { Authorization: `Bearer ${token}` },
+			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "PUT",
 			body: JSON.stringify({
 				name,
@@ -94,11 +94,11 @@ export function makeEditAccount(
 }
 
 export function makeDeleteAccount(
-	token: string,
+	token?: string,
 ): ({ email }: { email: string }) => Promise<void> {
 	return async ({ email }) => {
 		const response = await fetch(`${usersAPIBase}/${email}`, {
-			headers: { Authorization: `Bearer ${token}` },
+			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "DELETE",
 		});
 		if (!response.ok) {
@@ -132,19 +132,13 @@ export function makeFetchSensors(
 }
 
 export function makeCreateSensor(
-	token: string,
+	token?: string,
 ): (props: Sensor) => Promise<Sensor> {
-	return async ({ name, id, longitude, latitude, type }) => {
-		const response = await fetch(`${sensorsAPIBase}/${id}`, {
-			headers: { Authorization: `Bearer ${token}` },
+	return async (sensor) => {
+		const response = await fetch(`${sensorsAPIBase}/${sensor.id}`, {
+			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "POST",
-			body: JSON.stringify({
-				name,
-				longitude,
-				latitude,
-				type,
-				id,
-			}),
+			body: JSON.stringify(sensor),
 		});
 		if (!response.ok) {
 			const data = await response.text();
@@ -154,11 +148,46 @@ export function makeCreateSensor(
 				})${data ? ` ${data}` : ""}`,
 			);
 		}
-		return {
-			name,
-			longitude,
-			latitude,
-			id,
-		};
+		return sensor;
+	};
+}
+
+export function makeEditSensor(
+	token?: string,
+): (props: Sensor) => Promise<Sensor> {
+	return async (sensor) => {
+		const response = await fetch(`${usersAPIBase}/${sensor.id}`, {
+			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+			method: "PATCH",
+			body: JSON.stringify(sensor),
+		});
+		if (!response.ok) {
+			const data = await response.text();
+			throw new Error(
+				`Network response was not ok (${response.status}: ${
+					response.statusText
+				})${data ? ` ${data}` : ""}`,
+			);
+		}
+		return sensor;
+	};
+}
+
+export function makeDeleteSensor(
+	token?: string,
+): ({ id }: { id: SensorID }) => Promise<void> {
+	return async ({ id }) => {
+		const response = await fetch(`${sensorsAPIBase}/${id}`, {
+			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+			method: "DELETE",
+		});
+		if (!response.ok) {
+			const data = await response.text();
+			throw new Error(
+				`Network response was not ok (${response.status}: ${
+					response.statusText
+				})${data ? ` ${data}` : ""}`,
+			);
+		}
 	};
 }
