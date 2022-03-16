@@ -24,6 +24,7 @@ import { makeCreateSensor, makeFetchSensors } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import MyLocationIcon from "@mui/icons-material/MyLocation";
+import { defaultPosition } from "../../../utils";
 import useAuth from "../../../auth/useAuth";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
@@ -40,9 +41,7 @@ export function CreateSensorDialog({
 	const [menuType, setMenuType] = useState<SensorType>("Raspberry Shake 4D");
 	const [otherType, setOtherType] = useState<string | undefined>();
 	const [enableLocation, setEnableLocation] = useState(false);
-	const [location, setLocation] = useState<[number, number]>([
-		174.8, -41.325,
-	]);
+	const [location, setLocation] = useState<[number, number]>(defaultPosition);
 	const [elevation, setElevation] = useState<number | undefined>();
 	const [totalFloors, setTotalFloors] = useState<number | undefined>();
 	const [onFloor, setOnFloor] = useState<number | undefined>();
@@ -50,7 +49,10 @@ export function CreateSensorDialog({
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user && user.token));
+	const sensorsQuery = useQuery(
+		"sensors",
+		makeFetchSensors(user && user.token),
+	);
 	const mutation = useMutation(makeCreateSensor(user.token), {
 		onMutate: async (newSensor) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)

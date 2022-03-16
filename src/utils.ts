@@ -1,4 +1,4 @@
-import { RawRole, Role } from "./types";
+import { RawRole, Role, SensorType } from "./types";
 
 import { generateFromString } from "generate-avatar";
 
@@ -27,3 +27,12 @@ export const roles: Record<RawRole, Role> = {
 export const defaultPosition: [number, number] = [174.8, -41.325];
 
 export const mapURL = "https://shakemap.crisislab.org.nz";
+
+export const sensorMenuTypes: SensorType[] = [
+	"Android phone",
+	"Raspberry Shake 4D",
+	"Raspberry Shake 3D",
+	"Raspberry Shake 1D",
+	"Raspberry Boom",
+	"Raspberry Shake and Boom",
+];

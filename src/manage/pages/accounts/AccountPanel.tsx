@@ -61,7 +61,10 @@ const SlideUpTransition = forwardRef(function Transition(
 
 export function AccountPanel() {
 	const { user } = useAuth();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
+	const accountsQuery = useQuery(
+		"accounts",
+		makeFetchAccounts(user && user.token),
+	);
 	const { accountID: encodedAccountID } = useParams();
 	const [editMode, setEditMode] = useState(false);
 	const [sendLinkMenuAnchorEl, setSendLinkMenuAnchorEl] =
@@ -75,7 +78,7 @@ export function AccountPanel() {
 	const navigateWithQuery = useNavigateWithQuery();
 
 	const queryClient = useQueryClient();
-	const mutation = useMutation(makeDeleteAccount(user.token), {
+	const mutation = useMutation(makeDeleteAccount(user && user.token), {
 		onMutate: async (accountToDelete: Account) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("accounts");
@@ -187,7 +190,12 @@ export function AccountPanel() {
 	let layout = (
 		<Stack sx={{ p: onMobile ? 2 : 0 }}>
 			{user && !!user.roles.find((role) => role.raw === "users:write") && (
-				<Stack direction="row" gap={1} flexWrap="wrap" sx={{ mb: 2 }}>
+				<Stack
+					justifyContent="flex-end"
+					direction="row"
+					gap={1}
+					flexWrap="wrap"
+					sx={{ mb: 2 }}>
 					<Button
 						variant="outlined"
 						startIcon={<SendIcon />}
@@ -375,7 +383,7 @@ function EditUserInfo({
 	const [selectedRoles, setSelectedRoles] = useState<Role[]>(
 		account.roles ? account.roles : [],
 	);
-	const mutation = useMutation(makeEditAccount(user.token), {
+	const mutation = useMutation(makeEditAccount(user && user.token), {
 		onMutate: async (newAccount) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("accounts");
