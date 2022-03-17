@@ -191,3 +191,25 @@ export function makeDeleteSensor(
 		}
 	};
 }
+
+export function makeGetSensorToken(
+	id: SensorID,
+	token?: string,
+): () => Promise<{ token }> {
+	return async () => {
+		const response = await fetch(`${sensorsAPIBase}/${id}/token`, {
+			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+		});
+		if (!response.ok) {
+			const data = await response.text();
+			throw new Error(
+				`Network response was not ok (${response.status}: ${
+					response.statusText
+				})${data ? ` ${data}` : ""}`,
+			);
+		}
+		const jsonPayload = await response.json();
+		console.log(jsonPayload);
+		return jsonPayload;
+	};
+}

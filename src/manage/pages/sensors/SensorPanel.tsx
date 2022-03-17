@@ -32,6 +32,7 @@ import {
 	BasicSensorInfo,
 	LoadingSpinner,
 	SensorImage,
+	SensorSetupCommand,
 	useNavigateWithQuery,
 } from "../../../components";
 import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
@@ -40,6 +41,7 @@ import {
 	makeDeleteSensor,
 	makeEditSensor,
 	makeFetchSensors,
+	makeGetSensorToken,
 } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
@@ -234,6 +236,7 @@ export function SensorPanel() {
 					</Typography>
 				)}
 				<BasicSensorInfo sensor={activeSensor} />
+				<SensorSetupCommand sensor={activeSensor} />
 				<LiveDataGraphs sensorID={sensorID} height={600} />
 			</Stack>
 		</Stack>

@@ -36,3 +36,7 @@ export const sensorMenuTypes: SensorType[] = [
 	"Raspberry Boom",
 	"Raspberry Shake and Boom",
 ];
+
+export function generateSensorSetupCommand(sensorToken: string) {
+	return `curl -s https://raw.githubusercontent.com/rs-Web-Interface-CRISiSLab/pishake-client/main/setup.sh | sudo bash /dev/stdin ${sensorToken}`;
+}
