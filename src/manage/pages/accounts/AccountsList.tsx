@@ -6,13 +6,16 @@ import {
 	ListItemAvatar,
 	ListItemButton,
 	ListItemText,
+	Tooltip,
 } from "@mui/material";
 import { Link as RouterLink, useParams } from "react-router-dom";
 
 import { LoadingSpinner } from "../../../components";
+import TickIcon from "@mui/icons-material/VerifiedUser";
 import { makeFetchAccounts } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 import { useQuery } from "react-query";
+import { verifiedEmails } from "../../../utils";
 
 export function AccountsList() {
 	const { user } = useAuth();
@@ -55,6 +58,12 @@ export function AccountsList() {
 						primary={account.name || account.email}
 						secondary={account.name ? account.email : undefined}
 					/>
+					{verifiedEmails.includes(user.email) &&
+						verifiedEmails.includes(account.email) && (
+							<Tooltip title="Verified user">
+								<TickIcon />
+							</Tooltip>
+						)}
 				</ListItemButton>
 			))}
 		</List>

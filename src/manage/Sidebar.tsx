@@ -12,6 +12,7 @@ import {
 	SwipeableDrawer,
 	Theme,
 	Toolbar,
+	Tooltip,
 	Typography,
 	useMediaQuery,
 	useTheme,
@@ -21,6 +22,7 @@ import { LoginButton, useNavigateWithQuery } from "../components";
 
 import LaunchIcon from "@mui/icons-material/Launch";
 import { SidebarLink } from "../types";
+import StarIcon from "@mui/icons-material/LocalPolice";
 import { mapURL } from "../utils";
 import useAuth from "../auth/useAuth";
 import { useLocation } from "react-router-dom";
@@ -66,12 +68,20 @@ export default function Sidebar({
 							/>
 						)}
 						<Stack>
-							{user.name && (
-								<Typography sx={{ ...longTextMixin }}>
-									{user.name}
-								</Typography>
-							)}
-
+							<Stack direction="row" alignItems="center" gap={1}>
+								{user.name && (
+									<Typography sx={{ ...longTextMixin }}>
+										{user.name}
+									</Typography>
+								)}
+								{user.email === "zade@viggers.net" && (
+									<Tooltip
+										title="Super User"
+										placement="right">
+										<StarIcon />
+									</Tooltip>
+								)}
+							</Stack>
 							<Typography
 								sx={{
 									color: (theme) =>
