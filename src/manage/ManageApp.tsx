@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
+import { ErrorBoundary } from "../components";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
@@ -65,20 +66,26 @@ export default function ManageApp() {
 					</Typography>
 				</Toolbar>
 			</AppBar>
-			<Sidebar
-				links={routes.filter(
-					(route): route is SidebarLink => "Icon" in route,
-				)}
-				width={drawerWidth}
-				setMobileDrawerOpen={setMobileDrawerOpen}
-				mobileDrawerOpen={mobileDrawerOpen}
-			/>
+
 			<Stack
 				sx={{
 					minHeight: "100vh",
 				}}>
 				<Toolbar variant={onMobile ? undefined : "dense"} />
-				<Outlet />
+				{/* The sidebar is here (under the toolbar) so that if it throws, the error message is still visible under the app bar. */}
+				<ErrorBoundary>
+					<Sidebar
+						links={routes.filter(
+							(route): route is SidebarLink => "Icon" in route,
+						)}
+						width={drawerWidth}
+						setMobileDrawerOpen={setMobileDrawerOpen}
+						mobileDrawerOpen={mobileDrawerOpen}
+					/>
+				</ErrorBoundary>
+				<ErrorBoundary>
+					<Outlet />
+				</ErrorBoundary>
 			</Stack>
 		</Box>
 	);

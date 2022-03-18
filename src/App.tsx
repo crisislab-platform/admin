@@ -1,5 +1,5 @@
 import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
-import { MissingRole, NavigateWithQuery } from "./components";
+import { ErrorBoundary, MissingRole, NavigateWithQuery } from "./components";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Route, Routes } from "react-router-dom";
 import useAuth, { AuthProvider } from "./auth/useAuth";
@@ -18,25 +18,29 @@ const queryClient = new QueryClient();
 export function WrappedApp() {
 	return (
 		<ThemeProvider theme={theme}>
-			<CssBaseline enableColorScheme />
-			<SnackbarProvider
-				classes={{
-					variantSuccess: "Snackbar-Success",
-					variantError: "Snackbar-Error",
-					variantWarning: "Snackbar-Warning",
-					variantInfo: "Snackbar-Info",
-				}}
-				anchorOrigin={{
-					horizontal: "right",
-					vertical: "bottom",
-				}}>
-				<QueryClientProvider client={queryClient}>
-					<AuthProvider>
-						<App />
-					</AuthProvider>
-					<ReactQueryDevtools />
-				</QueryClientProvider>
-			</SnackbarProvider>
+			<ErrorBoundary>
+				<CssBaseline enableColorScheme />
+				<SnackbarProvider
+					classes={{
+						variantSuccess: "Snackbar-Success",
+						variantError: "Snackbar-Error",
+						variantWarning: "Snackbar-Warning",
+						variantInfo: "Snackbar-Info",
+					}}
+					anchorOrigin={{
+						horizontal: "right",
+						vertical: "bottom",
+					}}>
+					<QueryClientProvider client={queryClient}>
+						<AuthProvider>
+							<ErrorBoundary>
+								<App />
+							</ErrorBoundary>
+						</AuthProvider>
+						<ReactQueryDevtools />
+					</QueryClientProvider>
+				</SnackbarProvider>
+			</ErrorBoundary>
 		</ThemeProvider>
 	);
 }
