@@ -18,12 +18,14 @@ import {
 	InputLabel,
 	Link,
 	MenuItem,
+	Paper,
 	Select,
 	Slide,
 	Stack,
 	Switch,
 	TextField,
 	Toolbar,
+	Tooltip,
 	Typography,
 	useMediaQuery,
 	useTheme,
@@ -46,6 +48,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import CloseIcon from "@mui/icons-material/Close";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
@@ -226,16 +229,89 @@ export function SensorPanel() {
 				</Stack>
 			)}
 			<Stack alignItems="center" gap={2}>
-				<Avatar sx={{ width: 160, height: 160 }}>
-					<SensorImage size={120} sensor={activeSensor} />
+				<Avatar sx={{ width: 120, height: 120 }}>
+					<SensorImage size={80} sensor={activeSensor} />
 				</Avatar>
-				<Typography variant="h2">#{activeSensor.id}</Typography>
-				{activeSensor.name && (
-					<Typography variant="subtitle1">
-						"{activeSensor.name}"
+				<Paper
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						gap: 0.1,
+						p: 2,
+						width: "80%",
+					}}
+					variant="outlined">
+					<Typography>
+						ID: <strong>{activeSensor.id}</strong>
+						{activeSensor.name && ` "${activeSensor.name}"`}
 					</Typography>
-				)}
-				<SensorStatusText online={activeSensor.online} />
+					<SensorStatusText online={activeSensor.online} addLabel />
+					{activeSensor.type && (
+						<Stack direction="row" gap={1} alignItems="center">
+							<SensorImage sensor={activeSensor} />
+							<Typography>{activeSensor.type}</Typography>
+						</Stack>
+					)}
+
+					<Stack direction="row" gap={1} alignItems="center">
+						<Typography>
+							Longitude:{" "}
+							<strong>
+								{activeSensor.longitude || "Unknown"}
+							</strong>
+						</Typography>
+						<Typography>
+							Latitude:{" "}
+							<strong>
+								{activeSensor.latitude || "Unknown"}
+							</strong>
+						</Typography>
+						<Tooltip title="Copy coordinates">
+							<IconButton
+								onClick={() => {
+									try {
+										navigator.clipboard.writeText(
+											`${
+												activeSensor.longitude ||
+												"Unknown"
+											}, ${
+												activeSensor.latitude ||
+												"Unknown"
+											}`,
+										);
+									} catch {}
+								}}>
+								<ContentCopyIcon
+									sx={{
+										width: (theme) => theme.spacing(2.5),
+										height: (theme) => theme.spacing(2.5),
+									}}
+								/>
+							</IconButton>
+						</Tooltip>
+					</Stack>
+					{activeSensor.elevation && (
+						<Typography>
+							Elevation: <strong>{activeSensor.elevation}</strong>
+						</Typography>
+					)}
+					{(activeSensor.total_floors || activeSensor.on_floor) && (
+						<Stack direction="row" gap={1} alignItems="center">
+							<Typography>
+								Building floors:{" "}
+								<strong>
+									{activeSensor.total_floors || "Unknown"}
+								</strong>
+							</Typography>
+							<Typography>
+								Sensor's floor:{" "}
+								<strong>
+									{activeSensor.on_floor || "Unknown"}
+								</strong>
+							</Typography>
+						</Stack>
+					)}
+				</Paper>
 				<SensorSetupCommand sensor={activeSensor} />
 				<LiveDataGraphs sensorID={sensorID} height={600} />
 			</Stack>

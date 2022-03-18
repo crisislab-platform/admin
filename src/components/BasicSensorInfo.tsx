@@ -1,8 +1,11 @@
 import { Stack, Theme, Typography } from "@mui/material";
 
+import AndroidIcon from "@mui/icons-material/PhoneAndroid";
 import ConnectedIcon from "@mui/icons-material/Sensors";
 import NotConnectedIcon from "@mui/icons-material/SensorsOff";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
+import { Sensor } from "../types";
+import SensorIcon from "@mui/icons-material/RouterOutlined";
 
 export function statusColour(theme: Theme, online?: boolean) {
 	return online === true
@@ -33,9 +36,16 @@ export function SensorStatusIcon({ online }: { online?: boolean }) {
 		/>
 	);
 }
-export function SensorStatusText({ online }: { online?: boolean }) {
+export function SensorStatusText({
+	online,
+	addLabel,
+}: {
+	online?: boolean;
+	addLabel?: boolean;
+}) {
 	return (
 		<Stack direction="row" gap={0.5} alignItems="center">
+			{addLabel && <Typography>Connection status: </Typography>}
 			<SensorStatusIcon online={online} />
 			<Typography
 				variant="button"
@@ -55,5 +65,37 @@ export function SensorStatusText({ online }: { online?: boolean }) {
 					: "Unknown"}
 			</Typography>
 		</Stack>
+	);
+}
+
+export function SensorImage({
+	sensor,
+	size,
+	showStatusColour,
+}: {
+	sensor: Sensor;
+	size?: number;
+	showStatusColour?: boolean;
+}) {
+	return sensor.type && sensor.type.toLowerCase().includes("android") ? (
+		<AndroidIcon
+			sx={{
+				width: size,
+				height: size,
+				color: showStatusColour
+					? (theme) => statusColour(theme, sensor.online)
+					: undefined,
+			}}
+		/>
+	) : (
+		<SensorIcon
+			sx={{
+				width: size,
+				height: size,
+				color: showStatusColour
+					? (theme) => statusColour(theme, sensor.online)
+					: undefined,
+			}}
+		/>
 	);
 }

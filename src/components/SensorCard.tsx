@@ -1,12 +1,9 @@
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
-import { SensorStatusText, statusColour } from "./BasicSensorInfo";
+import { SensorImage, SensorStatusText, statusColour } from "./BasicSensorInfo";
 
-import AndroidIcon from "@mui/icons-material/PhoneAndroid";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { Sensor } from "../types";
-import SensorIcon from "@mui/icons-material/RouterOutlined";
 import { mapURL } from "../utils";
-import { useNavigate } from "react-router-dom";
 
 export function SensorCard({
 	sensor,
@@ -62,37 +59,5 @@ export function SensorCard({
 				</Stack>
 			</Stack>
 		</Paper>
-	);
-}
-
-export function SensorImage({
-	sensor,
-	size,
-	showStatusColour,
-}: {
-	sensor: Sensor;
-	size?: number;
-	showStatusColour?: boolean;
-}) {
-	return sensor.type && sensor.type.toLowerCase().includes("android") ? (
-		<AndroidIcon
-			sx={{
-				width: size,
-				height: size,
-				color: showStatusColour
-					? (theme) => statusColour(theme, sensor.online)
-					: undefined,
-			}}
-		/>
-	) : (
-		<SensorIcon
-			sx={{
-				width: size,
-				height: size,
-				color: showStatusColour
-					? (theme) => statusColour(theme, sensor.online)
-					: undefined,
-			}}
-		/>
 	);
 }
