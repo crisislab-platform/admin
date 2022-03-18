@@ -29,10 +29,10 @@ import {
 	useTheme,
 } from "@mui/material";
 import {
-	BasicSensorInfo,
 	LoadingSpinner,
 	SensorImage,
 	SensorSetupCommand,
+	SensorStatusText,
 	useNavigateWithQuery,
 } from "../../../components";
 import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
@@ -235,7 +235,7 @@ export function SensorPanel() {
 						"{activeSensor.name}"
 					</Typography>
 				)}
-				<BasicSensorInfo sensor={activeSensor} />
+				<SensorStatusText online={activeSensor.online} />
 				<SensorSetupCommand sensor={activeSensor} />
 				<LiveDataGraphs sensorID={sensorID} height={600} />
 			</Stack>

@@ -52,7 +52,7 @@ export function SensorsList() {
 						to={`./${sensor.id}`}
 						selected={sensorID === sensor.id}>
 						<ListItemIcon>
-							<SensorImage sensor={sensor} />
+							<SensorImage sensor={sensor} showStatusColour />
 						</ListItemIcon>
 						<ListItemText
 							primary={
