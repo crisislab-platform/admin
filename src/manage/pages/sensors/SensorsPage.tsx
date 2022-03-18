@@ -1,22 +1,14 @@
-import { AlertTitle, Button, Grid, List, ListItem, Stack } from "@mui/material";
-import { LoadingSpinner, SensorCard } from "../../../components";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Button, Grid, Stack } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import { CreateSensorDialog } from "./CreateSensorDialog";
+import { Outlet } from "react-router-dom";
 import { SensorsList } from "./SensorsList";
-import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";
-import { useQuery } from "react-query";
 import { useState } from "react";
 
 export function SensorsPage() {
 	const { user } = useAuth();
-	const navigate = useNavigate();
-	const sensorsQuery = useQuery(
-		"sensors",
-		makeFetchSensors(user && user.token),
-	);
 	const [createSensorDialogOpen, setCreateSensorDialogOpen] = useState(false);
 
 	function onCreateSensorDialogClose() {
