@@ -265,6 +265,8 @@ function EditFilterRues({
 					setFilterPopupAnchorEl(event.currentTarget)
 				}>
 				Filter
+				{inProgressFilterRules.length !== 0 &&
+					`: ${filterRules.length} applied`}
 			</Button>
 			<Popover
 				open={filterPopupOpen}
