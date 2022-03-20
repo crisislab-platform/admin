@@ -264,7 +264,7 @@ function EditFilterRues({
 				onClick={(event) =>
 					setFilterPopupAnchorEl(event.currentTarget)
 				}>
-				Filter
+				Filters
 				{inProgressFilterRules.length !== 0 &&
 					`: ${filterRules.length} applied`}
 			</Button>
