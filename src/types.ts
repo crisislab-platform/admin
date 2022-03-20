@@ -64,3 +64,16 @@ export interface Sensor {
 export type SensorSortKey = "id" | "type" | "online";
 
 export type ShakingDataChannel = "EHZ" | "ENE" | "ENZ" | "ENN";
+
+export type FilterRuleOperation =
+	| "equals"
+	| "less-than"
+	| "greater-than"
+	| "includes";
+export type FilterRule<T> = {
+	property: keyof T;
+	operation: FilterRuleOperation;
+	reversed: boolean;
+	value: number | string;
+	id: string;
+};

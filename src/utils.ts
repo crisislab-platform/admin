@@ -1,4 +1,10 @@
-import { RawRole, Role, SensorType } from "./types";
+import {
+	FilterRuleOperation,
+	RawRole,
+	Role,
+	Sensor,
+	SensorType,
+} from "./types";
 
 import { generateFromString } from "generate-avatar";
 
@@ -44,4 +50,22 @@ export function generateSensorSetupCommand(sensorToken: string) {
 export const verifiedEmails = [
 	"zade@viggers.net",
 	"benjamin.hong476@gmail.com",
+];
+
+export const filterRuleOperations: FilterRuleOperation[] = [
+	"equals",
+	"greater-than",
+	"less-than",
+	"includes",
+];
+
+export const filterRuleSensorProperties: (keyof Sensor)[] = [
+	"online",
+	"latitude",
+	"id",
+	"type",
+	"name",
+	"elevation",
+	"total_floors",
+	"on_floor",
 ];
