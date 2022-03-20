@@ -6,9 +6,9 @@ import {
 	ListItemIcon,
 	ListItemText,
 } from "@mui/material";
+import { FilterRule, Sensor, SensorID, SensorSortKey } from "../../../types";
 import { LoadingSpinner, SensorImage } from "../../../components";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { Sensor, SensorID, SensorSortKey } from "../../../types";
 
 import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";
@@ -18,9 +18,11 @@ import { useQuery } from "react-query";
 export function SensorsList({
 	sortKey,
 	sortAscending,
+	filterRules,
 }: {
 	sortKey: SensorSortKey;
 	sortAscending: boolean;
+	filterRules: FilterRule<Sensor>[];
 }) {
 	const { user } = useAuth();
 	const { sensorID: rawSensorID } = useParams();
@@ -28,11 +30,62 @@ export function SensorsList({
 		"sensors",
 		makeFetchSensors(user && user.token),
 	);
-	const sortedSensors = useMemo<null | Sensor[]>(() => {
+	const filteredSensors = useMemo<null | Sensor[]>(() => {
+		// Make sure that the data is loaded
 		if (!sensorsQuery.isSuccess) return null;
 
 		let sensors = Object.values(sensorsQuery.data.sensors);
 
+		// Only filter if there are things to filter by
+		if (filterRules.length === 0) return sensors;
+
+		// Apply all filter rules
+		for (const filterRule of filterRules) {
+			sensors = sensors.filter((sensor) => {
+				let keep;
+
+				switch (filterRule.operation) {
+					case "equals":
+						// Non-strict equality is intentional, because there could easily be a type mis-match
+						keep = sensor[filterRule.property] == filterRule.value;
+						break;
+					case "includes":
+						// Make sure to cast property & value to strings
+						keep = (sensor[filterRule.property] + "").includes(
+							filterRule.value + "",
+						);
+						break;
+					case "greater-than":
+						keep = sensor[filterRule.property] > filterRule.value;
+						break;
+					case "less-than":
+						keep = sensor[filterRule.property] > filterRule.value;
+						break;
+					default:
+						// If for some reason there isn't an operation, keep the sensor
+						keep = true;
+						break;
+				}
+
+				// Apply negative rules
+				if (filterRule.reversed) {
+					keep = !keep;
+				}
+
+				return keep;
+			});
+		}
+
+		return sensors;
+	}, [sensorsQuery.data, filterRules]);
+	const sortedSensors = useMemo<null | Sensor[]>(() => {
+		// Make sure that the data is loaded
+		if (!filteredSensors) return null;
+
+		// Create copy of filtered sensors
+		let sensors = [...filteredSensors];
+
+		// Sort
 		sensors.sort((a, b) => {
 			// Noramalise the sort values
 			let aSortValue = a[sortKey];
@@ -73,7 +126,7 @@ export function SensorsList({
 		});
 
 		return sensors;
-	}, [sensorsQuery.data, sortKey, sortAscending]);
+	}, [filteredSensors, sortKey, sortAscending]);
 
 	let sensorID: SensorID | null = null;
 	try {

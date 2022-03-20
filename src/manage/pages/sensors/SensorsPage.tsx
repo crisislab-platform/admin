@@ -156,6 +156,7 @@ export function SensorsPage() {
 					<SensorsList
 						sortKey={sortBy.value}
 						sortAscending={sortAscending}
+						filterRules={filterRules}
 					/>
 				</Stack>
 			</Grid>
@@ -279,7 +280,7 @@ function EditFilterRues({
 					horizontal: "left",
 				}}>
 				<Stack sx={{ p: 1 }} gap={1}>
-					<Stack gap={0.5}>
+					<Stack gap={1}>
 						{inProgressFilterRules.length === 0 && (
 							<Typography>No filter rules yet.</Typography>
 						)}
