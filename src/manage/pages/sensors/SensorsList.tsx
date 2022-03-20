@@ -46,8 +46,10 @@ export function SensorsList({
 
 				switch (filterRule.operation) {
 					case "equals":
-						// Non-strict equality is intentional, because there could easily be a type mis-match
-						keep = sensor[filterRule.property] == filterRule.value;
+						// Make sure to cast property & value to strings
+						keep =
+							sensor[filterRule.property] + "" ==
+							filterRule.value + "";
 						break;
 					case "includes":
 						// Make sure to cast property & value to strings
@@ -59,7 +61,7 @@ export function SensorsList({
 						keep = sensor[filterRule.property] > filterRule.value;
 						break;
 					case "less-than":
-						keep = sensor[filterRule.property] > filterRule.value;
+						keep = sensor[filterRule.property] < filterRule.value;
 						break;
 					default:
 						// If for some reason there isn't an operation, keep the sensor

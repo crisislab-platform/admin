@@ -25,8 +25,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { CreateSensorDialog } from "./CreateSensorDialog";
 import DoneIcon from "@mui/icons-material/Done";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import NotIcon from "@mui/icons-material/PriorityHigh";
 import { Outlet } from "react-router-dom";
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { SensorsList } from "./SensorsList";
 import SortIcon from "@mui/icons-material/Sort";
 import useAuth from "../../../auth/useAuth";
@@ -200,9 +200,9 @@ function EditFilterRues({
 			...oldFilterRules,
 			{
 				property: "id",
-				operation: "equals",
+				operation: "greater-than",
 				reversed: false,
-				value: "",
+				value: "0",
 				id:
 					Math.random() * 10000 +
 					"-" +
@@ -301,7 +301,7 @@ function EditFilterRues({
 											onChange={makeToggleFilterRuleReversed(
 												index,
 											)}>
-											<RemoveCircleIcon />
+											<NotIcon />
 										</ToggleButton>
 									</span>
 								</Tooltip>
