@@ -38,9 +38,13 @@ export type Route = {
 };
 
 export type SidebarLink = Route & {
+	showInSidebar?: boolean;
+	position?: number;
 	Icon: typeof SvgIcon;
 	ActiveIcon?: typeof SvgIcon;
+	subRoutes?: (SidebarLink | Route)[];
 };
+
 export type SensorType =
 	| "Android phone"
 	| "Raspberry Shake 4D"

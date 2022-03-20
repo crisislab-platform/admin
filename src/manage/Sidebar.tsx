@@ -17,7 +17,7 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { LoginButton, useNavigateWithQuery } from "../components";
 
 import LaunchIcon from "@mui/icons-material/Launch";
@@ -48,6 +48,31 @@ export default function Sidebar({
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 	const { user } = useAuth();
 	const navigateWithQuery = useNavigateWithQuery();
+
+	const sortedLinks = useMemo(() => {
+		let linksCopy = [...links];
+		links.sort((a, b) => {
+			if (b.position === undefined && a.position === undefined) {
+				return 0;
+			}
+			if (a.position && b.position === undefined) {
+				return -1;
+			}
+			if (b.position && a.position === undefined) {
+				return 1;
+			}
+
+			// Smaller position = higher in list
+			if (a.position < b.position) {
+				return -1;
+			}
+			if (b.position < a.position) {
+				return 1;
+			}
+			return 0;
+		});
+		return links;
+	}, [links]);
 
 	const location = useLocation();
 	const onIOS =
@@ -99,28 +124,34 @@ export default function Sidebar({
 				<Divider />
 			</Stack>
 			<List>
-				{links.map((link) => (
-					<ListItem
-						key={link.slug}
-						selected={location.pathname.split("/")[2] === link.slug}
-						disablePadding>
-						<ListItemButton
-							onClick={() => {
-								navigateWithQuery(`./${link.slug}`);
-								setMobileDrawerOpen(false);
-							}}>
-							<ListItemIcon>
-								{location.pathname.split("/")[2] ===
-								link.slug ? (
-									<link.ActiveIcon />
-								) : (
-									<link.Icon />
-								)}
-							</ListItemIcon>
-							<ListItemText primary={link.text} />
-						</ListItemButton>
-					</ListItem>
-				))}
+				{sortedLinks.map(
+					(link) =>
+						link.showInSidebar !== false && (
+							<ListItem
+								key={link.slug}
+								selected={
+									location.pathname.split("/")[2] ===
+									link.slug
+								}
+								disablePadding>
+								<ListItemButton
+									onClick={() => {
+										navigateWithQuery(`./${link.slug}`);
+										setMobileDrawerOpen(false);
+									}}>
+									<ListItemIcon>
+										{location.pathname.split("/")[2] ===
+										link.slug ? (
+											<link.ActiveIcon />
+										) : (
+											<link.Icon />
+										)}
+									</ListItemIcon>
+									<ListItemText primary={link.text} />
+								</ListItemButton>
+							</ListItem>
+						),
+				)}
 				<ListItem key="go-to-map-link" disablePadding>
 					<ListItemButton href={mapURL} target="_blank">
 						<ListItemIcon>

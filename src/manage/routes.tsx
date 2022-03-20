@@ -3,9 +3,12 @@ import {
 	AccountsPage,
 	SensorPanel,
 	SensorsPage,
+	SensorsSideBySide,
 } from "./pages/index";
 import { Route, SidebarLink } from "../types";
 
+import CompareIcon from "@mui/icons-material/Compare";
+import CompareOutlinedIcon from "@mui/icons-material/CompareOutlined";
 import PersonIcon from "@mui/icons-material/Person";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import SensorsIcon from "@mui/icons-material/Sensors";
@@ -16,14 +19,7 @@ import { roles } from "../utils";
 
 export const routes: (Route | SidebarLink)[] = [
 	{
-		slug: "global-config",
-		text: "Global configuration",
-		ActiveIcon: SettingsIcon,
-		Icon: SettingsOutlinedIcon,
-		Element: <div>Global sensor configuration</div>,
-		requiredRole: roles["sensors:write"],
-	},
-	{
+		position: 0,
 		slug: "sensors",
 		text: "Sensors",
 		ActiveIcon: SensorsIcon,
@@ -32,6 +28,7 @@ export const routes: (Route | SidebarLink)[] = [
 		requiredRole: roles["sensors:read"],
 		subRoutes: [
 			{
+				showInSidebar: false,
 				slug: ":sensorID",
 				text: "Sensor info",
 				Element: <SensorPanel />,
@@ -40,6 +37,25 @@ export const routes: (Route | SidebarLink)[] = [
 		],
 	},
 	{
+		position: 1,
+		slug: "global-config",
+		text: "Global configuration",
+		ActiveIcon: SettingsIcon,
+		Icon: SettingsOutlinedIcon,
+		Element: <div>Global sensor configuration</div>,
+		requiredRole: roles["sensors:write"],
+	},
+	{
+		position: 2,
+		slug: "sensors-side-by-side",
+		text: "Sensors: side-by-side",
+		Element: <SensorsSideBySide />,
+		requiredRole: roles["sensors:read"],
+		Icon: CompareOutlinedIcon,
+		ActiveIcon: CompareIcon,
+	},
+	{
+		position: 3,
 		slug: "accounts",
 		text: "Accounts",
 		Icon: PersonOutlineOutlinedIcon,
@@ -48,6 +64,7 @@ export const routes: (Route | SidebarLink)[] = [
 		requiredRole: roles["users:read"],
 		subRoutes: [
 			{
+				showInSidebar: false,
 				slug: ":accountID",
 				text: "Account information",
 				Element: <AccountPanel />,
