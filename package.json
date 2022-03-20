@@ -8,32 +8,33 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@emotion/react": "^11.8.1",
+		"@babel/core": "^7.17.8",
+		"@emotion/react": "^11.8.2",
 		"@emotion/styled": "^11.8.1",
 		"@fontsource/roboto": "^4.5.3",
 		"@fontsource/roboto-mono": "^4.5.3",
-		"@mui/icons-material": "^5.4.2",
-		"@mui/lab": "^5.0.0-alpha.70",
-		"@mui/material": "^5.4.3",
+		"@mui/icons-material": "^5.5.1",
+		"@mui/lab": "^5.0.0-alpha.73",
+		"@mui/material": "^5.5.1",
 		"events": "^3.3.0",
 		"generate-avatar": "^1.4.10",
 		"notistack": "^2.0.3",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-query": "^3.34.16",
-		"react-router-dom": "^6.2.1",
-		"typescript": "^4.5.5"
+		"react-router-dom": "^6.2.2",
+		"typescript": "^4.6.2"
 	},
 	"devDependencies": {
 		"@types/events": "^3.0.0",
-		"@types/mapbox-gl": "^2.6.1",
+		"@types/mapbox-gl": "^2.6.3",
 		"@types/mapbox__mapbox-gl-geocoder": "^4.7.2",
-		"@types/react": "^17.0.39",
-		"@types/react-dom": "^17.0.11",
+		"@types/react": "^17.0.41",
+		"@types/react-dom": "^17.0.14",
 		"@types/suncalc": "^1.8.1",
 		"@vitejs/plugin-react": "^1.2.0",
 		"typescript": "^4.5.4",
-		"vite": "^2.8.4",
+		"vite": "^2.8.6",
 		"vite-plugin-rewrite-all": "^0.1.2"
 	},
 	"browserslist": {
