@@ -23,9 +23,14 @@ export function AccountsPage() {
 						user.roles.find(
 							(role) => role.raw === "users:write",
 						) && (
-							<Stack direction="row" sx={{ pt: 1 }}>
+							<Stack
+								direction="row"
+								padding={1}
+								gap={1}
+								alignItems="center"
+								flexWrap="wrap">
 								<Button
-									sx={{ mx: 1 }}
+									sx={{ ml: "auto" }}
 									variant="contained"
 									size="small"
 									startIcon={<PersonAddIcon />}

@@ -55,29 +55,10 @@ export function SensorsPage() {
 				<Stack>
 					<Stack
 						direction="row"
-						sx={{ p: 1 }}
+						padding={1}
 						gap={1}
-						alignItems="center">
-						{!!user &&
-							user.roles.find(
-								(role) => role.raw === "sensors:write",
-							) && (
-								<>
-									<Button
-										startIcon={<AddIcon />}
-										variant="contained"
-										size="small"
-										onClick={() =>
-											setCreateSensorDialogOpen(true)
-										}>
-										Create sensor
-									</Button>
-									<CreateSensorDialog
-										open={createSensorDialogOpen}
-										onClose={onCreateSensorDialogClose}
-									/>
-								</>
-							)}
+						alignItems="center"
+						flexWrap="wrap">
 						<Button
 							startIcon={<SortIcon />}
 							size="small"
@@ -128,6 +109,28 @@ export function SensorsPage() {
 						<Button startIcon={<FilterListIcon />} size="small">
 							Filter
 						</Button>
+
+						{!!user &&
+							user.roles.find(
+								(role) => role.raw === "sensors:write",
+							) && (
+								<>
+									<Button
+										sx={{ ml: "auto" }}
+										startIcon={<AddIcon />}
+										variant="contained"
+										size="small"
+										onClick={() =>
+											setCreateSensorDialogOpen(true)
+										}>
+										Create sensor
+									</Button>
+									<CreateSensorDialog
+										open={createSensorDialogOpen}
+										onClose={onCreateSensorDialogClose}
+									/>
+								</>
+							)}
 					</Stack>
 
 					<SensorsList
