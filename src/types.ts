@@ -61,5 +61,6 @@ export interface Sensor {
 	total_floors?: number;
 	on_floor?: number;
 }
+export type SensorSortKey = "id" | "type" | "online";
 
 export type ShakingDataChannel = "EHZ" | "ENE" | "ENZ" | "ENN";
