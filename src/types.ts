@@ -78,6 +78,6 @@ export type FilterRule<T> = {
 	property: keyof T;
 	operation: FilterRuleOperation;
 	reversed: boolean;
-	value: number | string;
+	value: string;
 	id: string;
 };

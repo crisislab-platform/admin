@@ -245,7 +245,7 @@ function EditFilterRues({
 				let updatedFilterRules = [...oldFilterRules];
 				updatedFilterRules[index] = {
 					...updatedFilterRules[index],
-					[key]: event.target.value,
+					[key]: event.target.value.toLowerCase(),
 				};
 				return updatedFilterRules;
 			});

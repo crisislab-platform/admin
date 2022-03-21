@@ -48,14 +48,14 @@ export function SensorsList({
 					case "equals":
 						// Make sure to cast property & value to strings
 						keep =
-							sensor[filterRule.property] + "" ==
-							filterRule.value + "";
+							(sensor[filterRule.property] + "").toLowerCase() ===
+							filterRule.value;
 						break;
 					case "includes":
 						// Make sure to cast property & value to strings
-						keep = (sensor[filterRule.property] + "").includes(
-							filterRule.value + "",
-						);
+						keep = (sensor[filterRule.property] + "")
+							.toLowerCase()
+							.includes(filterRule.value);
 						break;
 					case "greater-than":
 						keep = sensor[filterRule.property] > filterRule.value;
