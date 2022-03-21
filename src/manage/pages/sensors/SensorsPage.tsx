@@ -23,6 +23,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import CloseIcon from "@mui/icons-material/Close";
 import { CreateSensorDialog } from "./CreateSensorDialog";
+import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import NotIcon from "@mui/icons-material/PriorityHigh";
@@ -283,6 +284,19 @@ function EditFilterRues({
 				}}>
 				<Stack sx={{ p: 1 }} gap={1}>
 					<Stack gap={1}>
+						<Stack direction="row" alignItems="center">
+							<Typography variant="h6">Filter rules</Typography>
+							<Button
+								variant="outlined"
+								color="error"
+								sx={{ ml: "auto" }}
+								size="small"
+								startIcon={<DeleteIcon />}
+								disabled={inProgressFilterRules.length === 0}
+								onClick={() => setInProgressFilterRules([])}>
+								Clear all rules
+							</Button>
+						</Stack>
 						{inProgressFilterRules.length === 0 && (
 							<Typography>No filter rules.</Typography>
 						)}
@@ -366,10 +380,19 @@ function EditFilterRues({
 								<Tooltip title="Delete rule" placement="right">
 									<span>
 										<IconButton
+											sx={{
+												"&:hover": {
+													"& .MuiSvgIcon-root": {
+														color: (theme) =>
+															theme.palette.error
+																.main,
+													},
+												},
+											}}
 											onClick={makeDeleteFilterRule(
 												index,
 											)}>
-											<CloseIcon />
+											<DeleteIcon />
 										</IconButton>
 									</span>
 								</Tooltip>
@@ -385,9 +408,21 @@ function EditFilterRues({
 						</Button>
 						<Button
 							variant="outlined"
+							color="error"
 							sx={{ ml: "auto" }}
 							size="small"
+							startIcon={<CloseIcon />}
+							disabled={filterRules === inProgressFilterRules}
+							onClick={() =>
+								setInProgressFilterRules(filterRules)
+							}>
+							Discard changes
+						</Button>
+						<Button
+							variant="outlined"
+							size="small"
 							startIcon={<DoneIcon />}
+							disabled={filterRules === inProgressFilterRules}
 							onClick={() => applyFilterRuleChanges()}>
 							Apply changes
 						</Button>
