@@ -192,7 +192,7 @@ function EditFilterRues({
 
 	function applyFilterRuleChanges() {
 		setFilterRules(inProgressFilterRules);
-		onFilterPopupClose();
+		// onFilterPopupClose();
 	}
 
 	function createNewEmptyFilterRule() {
@@ -284,7 +284,7 @@ function EditFilterRues({
 				<Stack sx={{ p: 1 }} gap={1}>
 					<Stack gap={1}>
 						{inProgressFilterRules.length === 0 && (
-							<Typography>No filter rules yet.</Typography>
+							<Typography>No filter rules.</Typography>
 						)}
 						{inProgressFilterRules.map((filterRule, index) => (
 							<Stack
@@ -308,6 +308,11 @@ function EditFilterRues({
 									</span>
 								</Tooltip>
 								<TextField
+									sx={{
+										"& .MuiSelect-select": {
+											width: "90px",
+										},
+									}}
 									select
 									size="small"
 									label="Attribute"
@@ -327,6 +332,11 @@ function EditFilterRues({
 									)}
 								</TextField>
 								<TextField
+									sx={{
+										"& .MuiSelect-select": {
+											width: "90px",
+										},
+									}}
 									select
 									size="small"
 									label="Operation"
