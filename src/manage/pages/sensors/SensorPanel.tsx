@@ -312,7 +312,9 @@ export function SensorPanel() {
 						</Stack>
 					)}
 				</Paper>
-				<SensorSetupCommand sensor={activeSensor} />
+				{!activeSensor.online && (
+					<SensorSetupCommand sensor={activeSensor} />
+				)}
 				<LiveDataGraphs sensorID={sensorID} height={600} />
 			</Stack>
 		</Stack>

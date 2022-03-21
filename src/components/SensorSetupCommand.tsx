@@ -1,4 +1,11 @@
-import { Alert, AlertTitle, Button, Stack, TextField } from "@mui/material";
+import {
+	Alert,
+	AlertTitle,
+	IconButton,
+	Stack,
+	TextField,
+	Tooltip,
+} from "@mui/material";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { LoadingSpinner } from "../components/index";
@@ -35,26 +42,35 @@ export function SensorSetupCommand({ sensor }: { sensor: Sensor }) {
 		);
 	}
 	return (
-		<Stack>
+		<Stack
+			direction="row"
+			gap={1}
+			alignItems="center"
+			sx={{ width: "100%" }}>
 			<TextField
+				onClick={(event) => event.target.select()}
 				id="setup-command-read-only-input"
 				label="Setup command"
 				value={setupCommand}
 				InputProps={{
 					readOnly: true,
 				}}
-				variant="standard"
+				variant="filled"
+				fullWidth
 			/>
 			{"clipboard" in navigator && (
-				<Button
-					onClick={() => {
-						try {
-							navigator.clipboard.writeText(setupCommand);
-						} catch {}
-					}}
-					startIcon={<ContentCopyIcon />}>
-					Copy setup command
-				</Button>
+				<span>
+					<Tooltip title="Copy setup command">
+						<IconButton
+							onClick={() => {
+								try {
+									navigator.clipboard.writeText(setupCommand);
+								} catch {}
+							}}>
+							<ContentCopyIcon />
+						</IconButton>
+					</Tooltip>
+				</span>
 			)}
 		</Stack>
 	);
