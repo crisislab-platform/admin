@@ -238,7 +238,7 @@ export function SensorPanel() {
 						flexDirection: "column",
 						gap: 0.1,
 						p: 2,
-						width: "80%",
+						width: "100%",
 					}}
 					variant="outlined">
 					<Typography>
@@ -268,9 +268,9 @@ export function SensorPanel() {
 						</Typography>
 						<Tooltip title="Copy coordinates">
 							<IconButton
-								onClick={() => {
+								onClick={async () => {
 									try {
-										navigator.clipboard.writeText(
+										await navigator.clipboard.writeText(
 											`${
 												activeSensor.longitude ||
 												"Unknown"
@@ -279,7 +279,16 @@ export function SensorPanel() {
 												"Unknown"
 											}`,
 										);
-									} catch {}
+										enqueueSnackbar(
+											"Copied sensor coordinates.",
+											{ variant: "success" },
+										);
+									} catch {
+										enqueueSnackbar(
+											"Failed to copy sensor coordinates.",
+											{ variant: "error" },
+										);
+									}
 								}}>
 								<ContentCopyIcon
 									sx={{
@@ -311,10 +320,12 @@ export function SensorPanel() {
 							</Typography>
 						</Stack>
 					)}
+
+					{!activeSensor.online && (
+						<SensorSetupCommand sensor={activeSensor} />
+					)}
 				</Paper>
-				{!activeSensor.online && (
-					<SensorSetupCommand sensor={activeSensor} />
-				)}
+
 				<LiveDataGraphs sensorID={sensorID} height={600} />
 			</Stack>
 		</Stack>
