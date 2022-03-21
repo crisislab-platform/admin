@@ -132,7 +132,7 @@ export function SensorPanel() {
 	}
 	if (sensorsQuery.isError) {
 		return (
-			<Alert severity="error">
+			<Alert severity="error" sx={{ width: "100%" }}>
 				<AlertTitle>Error loading sensor details.</AlertTitle>
 				{sensorsQuery.error}
 			</Alert>
@@ -147,7 +147,7 @@ export function SensorPanel() {
 
 	if (!activeSensor) {
 		return (
-			<Alert severity="warning">
+			<Alert severity="warning" sx={{ width: "100%" }}>
 				<AlertTitle>No matching sensor found.</AlertTitle>
 				If you copied the URL from somewhere, make sure that you didin't
 				miss any characters.
@@ -229,9 +229,6 @@ export function SensorPanel() {
 				</Stack>
 			)}
 			<Stack alignItems="center" gap={2}>
-				<Avatar sx={{ width: 120, height: 120 }}>
-					<SensorImage size={80} sensor={activeSensor} />
-				</Avatar>
 				<Paper
 					sx={{
 						display: "flex",
