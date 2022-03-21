@@ -464,7 +464,7 @@ function EditSensorInfo({
 	});
 
 	useEffect(() => {
-		setName(activeSensor.name);
+		setName(activeSensor.name ? activeSensor.name : "");
 		setMenuType(
 			sensorMenuTypes.includes(activeSensor.type)
 				? activeSensor.type
@@ -472,16 +472,18 @@ function EditSensorInfo({
 		);
 		setOtherType(
 			sensorMenuTypes.includes(activeSensor.type)
-				? undefined
+				? ""
 				: activeSensor.type,
 		);
 		setLocation([
 			activeSensor.longitude || defaultPosition[0],
 			activeSensor.latitude || defaultPosition[1],
 		]);
-		setElevation(activeSensor.elevation);
-		setTotalFloors(activeSensor.total_floors);
-		setOnFloor(activeSensor.on_floor);
+		setElevation(activeSensor.elevation ? activeSensor.elevation : 0);
+		setTotalFloors(
+			activeSensor.total_floors ? activeSensor.total_floors : 0,
+		);
+		setOnFloor(activeSensor.on_floor ? activeSensor.on_floor : 0);
 	}, [activeSensor]);
 
 	function onSubmit() {
@@ -541,6 +543,9 @@ function EditSensorInfo({
 
 	return (
 		<Stack gap={1}>
+			<Typography>
+				Sensor ID: <strong>{activeSensor.id}</strong>
+			</Typography>
 			<Alert severity="info">
 				<AlertTitle>
 					Changes may take up to a minute to be reflected everywhere.
@@ -549,21 +554,19 @@ function EditSensorInfo({
 				data is stored and will show up soon.
 			</Alert>
 			{errors.length > 0 && (
-				<>
-					<Stack gap={1}>
-						{errors.map((error) => (
-							<Alert severity="error">
-								<AlertTitle>{error[0]}</AlertTitle>
-								{error[1]}
-							</Alert>
-						))}
-					</Stack>
-					<Divider />
-				</>
+				<Stack gap={1}>
+					{errors.map((error) => (
+						<Alert severity="error">
+							<AlertTitle>{error[0]}</AlertTitle>
+							{error[1]}
+						</Alert>
+					))}
+				</Stack>
 			)}
 			<Stack gap={1}>
 				<Typography variant="subtitle1">General information</Typography>
 				<TextField
+					InputLabelProps={{ shrink: true }}
 					value={name}
 					onChange={(event) => setName(event.target.value)}
 					autoFocus
@@ -576,7 +579,7 @@ function EditSensorInfo({
 					variant="standard"
 				/>
 				<FormControl fullWidth variant="standard" required>
-					<InputLabel id="sensor-type-select-label">
+					<InputLabel id="sensor-type-select-label" shrink>
 						Sensor type
 					</InputLabel>
 					<Select
@@ -597,6 +600,7 @@ function EditSensorInfo({
 				</FormControl>
 				{menuType === "__other" && (
 					<TextField
+						InputLabelProps={{ shrink: true }}
 						value={otherType}
 						onChange={(event) => setOtherType(event.target.value)}
 						margin="dense"
@@ -610,11 +614,10 @@ function EditSensorInfo({
 					/>
 				)}
 			</Stack>
-
-			<Divider />
 			<Stack gap={1}>
 				<Typography variant="subtitle1">Location</Typography>
 				<TextField
+					InputLabelProps={{ shrink: true }}
 					value={elevation}
 					onChange={(event) =>
 						setElevation(
@@ -627,11 +630,13 @@ function EditSensorInfo({
 					id="elevation-textbox"
 					name="elevation"
 					label="Elevation (meters above sea level)"
-					type="number"
+					type="text"
+					inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
 					fullWidth
 					variant="outlined"
 				/>
 				<TextField
+					InputLabelProps={{ shrink: true }}
 					value={onFloor}
 					onChange={(event) =>
 						setOnFloor(
@@ -644,11 +649,13 @@ function EditSensorInfo({
 					id="on-floor-textbox"
 					name="on-floor"
 					label="Floor of building that sensor is on (basement is level 0)"
-					type="number"
+					type="text"
+					inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
 					fullWidth
 					variant="outlined"
 				/>
 				<TextField
+					InputLabelProps={{ shrink: true }}
 					value={totalFloors}
 					onChange={(event) =>
 						setTotalFloors(
@@ -661,7 +668,8 @@ function EditSensorInfo({
 					id="total-floors-textbox"
 					name="total-floors"
 					label="Total number of floors in building (excluding basement)"
-					type="number"
+					type="text"
+					inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
 					fullWidth
 					variant="outlined"
 				/>
@@ -713,7 +721,11 @@ function EditSensorInfo({
 								id="longitude-textbox"
 								name="longitude-textbox"
 								label="Longitude"
-								type="number"
+								type="text"
+								inputProps={{
+									inputMode: "numeric",
+									pattern: "[0-9]*",
+								}}
 								fullWidth
 								variant="outlined"
 								required
@@ -730,7 +742,11 @@ function EditSensorInfo({
 								id="latitude-textbox"
 								name="latitude-textbox"
 								label="Latitude"
-								type="number"
+								type="text"
+								inputProps={{
+									inputMode: "numeric",
+									pattern: "[0-9]*",
+								}}
 								fullWidth
 								variant="outlined"
 								required

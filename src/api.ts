@@ -156,9 +156,9 @@ export function makeEditSensor(
 	token?: string,
 ): (props: Sensor) => Promise<Sensor> {
 	return async (sensor) => {
-		const response = await fetch(`${usersAPIBase}/${sensor.id}`, {
+		const response = await fetch(`${sensorsAPIBase}/${sensor.id}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-			method: "PATCH",
+			method: "POST", // Ben, why you do dis to me
 			body: JSON.stringify(sensor),
 		});
 		if (!response.ok) {
