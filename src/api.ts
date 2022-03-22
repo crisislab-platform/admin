@@ -132,7 +132,8 @@ export function makeFetchSensors(
 		// Make sure there are no missing IDs
 		let newData: { sensors: Record<SensorID, Sensor>; timestamp: number } =
 			{ timestamp: data.timestamp, sensors: {} };
-		Object.entries(data.sensors).map(([id, (sensor as Sensor)]) => {
+		Object.entries(data.sensors).map((value) => {
+			const [id, sensor] = value as unknown as [SensorID, Sensor];
 			newData.sensors[id] = {
 				...sensor,
 				id,
@@ -169,7 +170,7 @@ export function makeEditSensor(
 	return async (sensor) => {
 		const response = await fetch(`${sensorsAPIBase}/${sensor.id}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-			method: "PATCH", 
+			method: "PATCH",
 			body: JSON.stringify(sensor),
 		});
 		if (!response.ok) {

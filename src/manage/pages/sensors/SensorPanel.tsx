@@ -38,7 +38,11 @@ import {
 	useNavigateWithQuery,
 } from "../../../components";
 import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
-import { defaultPosition, sensorMenuTypes } from "../../../utils";
+import {
+	defaultPosition,
+	getNextSensorID,
+	sensorMenuTypes,
+} from "../../../utils";
 import {
 	makeDeleteSensor,
 	makeEditSensor,
@@ -503,10 +507,7 @@ function EditSensorInfo({
 		if (newErrors.length > 0) {
 			setErrors(newErrors);
 		} else {
-			let ids = Object.keys(sensorsQuery.data.sensors);
-			ids.sort();
-			const id = Number(ids[ids.length - 1]) + 1;
-			console.log(id);
+			const id = getNextSensorID(sensorsQuery.data.sensors);
 			mutation.mutate({
 				id,
 				name,

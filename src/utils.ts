@@ -3,6 +3,7 @@ import {
 	RawRole,
 	Role,
 	Sensor,
+	SensorID,
 	SensorType,
 } from "./types";
 
@@ -69,3 +70,10 @@ export const filterRuleSensorProperties: (keyof Sensor)[] = [
 	"total_floors",
 	"on_floor",
 ];
+
+export function getNextSensorID(sensors: Record<SensorID, Sensor>): SensorID {
+	let ids = Object.keys(sensors);
+	ids.sort();
+	const id = Number(ids[ids.length - 1]) + 1;
+	return id;
+}
