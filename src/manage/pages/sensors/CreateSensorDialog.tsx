@@ -65,9 +65,15 @@ export function CreateSensorDialog({
 
 			queryClient.setQueryData(
 				"sensors",
-				(oldSensors: Record<SensorID, Sensor>) => ({
+				(oldSensors: {
+					sensors: Record<SensorID, Sensor>;
+					timestamp: number;
+				}) => ({
 					...oldSensors,
-					[newSensor.id]: newSensor,
+					sensors: {
+						...oldSensors.sensors,
+						[newSensor.id]: newSensor,
+					},
 				}),
 			);
 
@@ -77,7 +83,14 @@ export function CreateSensorDialog({
 		onError: (error, newSensor, context) => {
 			queryClient.setQueryData(
 				"sensors",
-				(context as { previousSensors: Sensor[] }).previousSensors,
+				(
+					context as {
+						previousSensors: {
+							sensors: Record<SensorID, Sensor>;
+							timestamp: number;
+						};
+					}
+				).previousSensors,
 			);
 			enqueueSnackbar(`Failed to create new sensor: ${error}`, {
 				variant: "error",

@@ -17,7 +17,7 @@ import { useRef } from "react";
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
-			staleTime: Infinity,
+			staleTime: 10 * 60 * 1000,
 		},
 	},
 });

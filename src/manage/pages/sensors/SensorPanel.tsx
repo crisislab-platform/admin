@@ -102,8 +102,11 @@ export function SensorPanel() {
 
 			queryClient.setQueryData(
 				"sensors",
-				(oldSensors: Record<SensorID, Sensor>) => {
-					delete oldSensors[sensorToDelete.id];
+				(oldSensors: {
+					sensors: Record<SensorID, Sensor>;
+					timestamp: number;
+				}) => {
+					delete oldSensors.sensors[sensorToDelete.id];
 					return oldSensors;
 				},
 			);
@@ -114,7 +117,14 @@ export function SensorPanel() {
 		onError: (error, newSensor, context) => {
 			queryClient.setQueryData(
 				"sensors",
-				(context as { previousSensors: Sensor[] }).previousSensors,
+				(
+					context as {
+						previousSensors: {
+							sensors: Record<SensorID, Sensor>;
+							timestamp: number;
+						};
+					}
+				).previousSensors,
 			);
 			enqueueSnackbar(`Failed to delete sensor: ${error}`, {
 				variant: "error",
@@ -435,9 +445,15 @@ function EditSensorInfo({
 
 			queryClient.setQueryData(
 				"sensors",
-				(oldSensors: Record<SensorID, Sensor>) => ({
+				(oldSensors: {
+					sensors: Record<SensorID, Sensor>;
+					timestamp: number;
+				}) => ({
 					...oldSensors,
-					[newSensor.id]: newSensor,
+					sensors: {
+						...oldSensors.sensors,
+						[newSensor.id]: newSensor,
+					},
 				}),
 			);
 
@@ -447,7 +463,14 @@ function EditSensorInfo({
 		onError: (error, newSensor, context) => {
 			queryClient.setQueryData(
 				"sensors",
-				(context as { previousSensors: Sensor[] }).previousSensors,
+				(
+					context as {
+						previousSensors: {
+							sensors: Record<SensorID, Sensor>;
+							timestamp: number;
+						};
+					}
+				).previousSensors,
 			);
 			enqueueSnackbar(`Failed to modify sensor: ${error}`, {
 				variant: "error",
