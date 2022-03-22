@@ -99,15 +99,15 @@ export function SensorPanel() {
 			const previousSensors = queryClient.getQueryData("sensors");
 
 			// Optimistically update to the new value
-
 			queryClient.setQueryData(
 				"sensors",
 				(oldSensors: {
 					sensors: Record<SensorID, Sensor>;
 					timestamp: number;
 				}) => {
-					delete oldSensors.sensors[sensorToDelete.id];
-					return oldSensors;
+					let newSensors = oldSensors;
+					newSensors.sensors[sensorToDelete.id] = undefined;
+					return newSensors;
 				},
 			);
 
@@ -526,9 +526,8 @@ function EditSensorInfo({
 		if (newErrors.length > 0) {
 			setErrors(newErrors);
 		} else {
-			const id = getNextSensorID(sensorsQuery.data.sensors);
 			mutation.mutate({
-				id,
+				id: activeSensor.id,
 				name,
 				type,
 				elevation,

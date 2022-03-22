@@ -20,11 +20,11 @@ import {
 	Typography,
 } from "@mui/material";
 import { Sensor, SensorID, SensorType } from "../../../types";
+import { defaultPosition, getNextSensorID } from "../../../utils";
 import { makeCreateSensor, makeFetchSensors } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import { defaultPosition } from "../../../utils";
 import useAuth from "../../../auth/useAuth";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
@@ -123,9 +123,7 @@ export function CreateSensorDialog({
 		if (newErrors.length > 0) {
 			setErrors(newErrors);
 		} else {
-			let ids = Object.keys(sensorsQuery.data.sensors);
-			ids.sort();
-			const id = Number(ids[ids.length - 1]) + 1;
+			const id = getNextSensorID(sensorsQuery.data.sensors);
 			mutation.mutate({
 				id,
 				name,
