@@ -1,4 +1,4 @@
-import { CssBaseline, ThemeProvider, Typography } from "@mui/material";
+import { Button, CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { ErrorBoundary, MissingRole, NavigateWithQuery } from "./components";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Route, Routes } from "react-router-dom";
@@ -12,6 +12,7 @@ import { SnackbarProvider } from "notistack";
 import { authRoutes } from "./auth/authRoutes";
 import { routes as manageRoutes } from "./manage/routes";
 import { theme } from "./theme";
+import { useRef } from "react";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -22,11 +23,22 @@ const queryClient = new QueryClient({
 });
 
 export function WrappedApp() {
+	const notistackRef = useRef(null);
 	return (
 		<ThemeProvider theme={theme}>
 			<ErrorBoundary>
 				<CssBaseline enableColorScheme />
 				<SnackbarProvider
+					ref={notistackRef}
+					action={(key) => (
+						<Button
+							sx={{ color: "white" }}
+							onClick={() => {
+								notistackRef?.current?.closeSnackbar(key);
+							}}>
+							Dismiss
+						</Button>
+					)}
 					classes={{
 						variantSuccess: "Snackbar-Success",
 						variantError: "Snackbar-Error",
@@ -36,7 +48,8 @@ export function WrappedApp() {
 					anchorOrigin={{
 						horizontal: "right",
 						vertical: "bottom",
-					}}>
+					}}
+					dense>
 					<QueryClientProvider client={queryClient}>
 						<AuthProvider>
 							<ErrorBoundary>
