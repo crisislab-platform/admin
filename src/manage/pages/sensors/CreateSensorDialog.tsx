@@ -37,14 +37,14 @@ export function CreateSensorDialog({
 	onClose: () => void;
 }) {
 	const { user } = useAuth();
-	const [name, setName] = useState<string | undefined>();
+	const [name, setName] = useState<string>("");
 	const [menuType, setMenuType] = useState<SensorType>("Raspberry Shake 4D");
-	const [otherType, setOtherType] = useState<string | undefined>();
+	const [otherType, setOtherType] = useState<string>("");
 	const [enableLocation, setEnableLocation] = useState(false);
 	const [location, setLocation] = useState<[number, number]>(defaultPosition);
-	const [elevation, setElevation] = useState<number | undefined>();
-	const [totalFloors, setTotalFloors] = useState<number | undefined>();
-	const [onFloor, setOnFloor] = useState<number | undefined>();
+	const [elevation, setElevation] = useState<number | 0>();
+	const [totalFloors, setTotalFloors] = useState<number | 0>();
+	const [onFloor, setOnFloor] = useState<number | 0>();
 	const [errors, setErrors] = useState<[string, string][]>([]);
 
 	const { enqueueSnackbar } = useSnackbar();
