@@ -127,7 +127,18 @@ export function makeFetchSensors(
 				})${data ? ` ${data}` : ""}`,
 			);
 		}
-		return await response.json();
+		const data = await response.json();
+
+		// Make sure there are no missing IDs
+		let newData: { sensors: Record<SensorID, Sensor>; timestamp: number } =
+			{ timestamp: data.timestamp, sensors: {} };
+		Object.entries(data.sensors).map(([id, (sensor as Sensor)]) => {
+			newData.sensors[id] = {
+				...sensor,
+				id,
+			};
+		});
+		return newData;
 	};
 }
 
@@ -158,7 +169,7 @@ export function makeEditSensor(
 	return async (sensor) => {
 		const response = await fetch(`${sensorsAPIBase}/${sensor.id}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-			method: "POST", // Ben, why you do dis to me
+			method: "PATCH", 
 			body: JSON.stringify(sensor),
 		});
 		if (!response.ok) {

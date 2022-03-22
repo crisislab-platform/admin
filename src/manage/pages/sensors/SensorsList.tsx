@@ -152,7 +152,9 @@ export function SensorsList({
 	return (
 		<List sx={{ maxHeight: "100%", overflow: "auto" }}>
 			{sortedSensors.map((sensor) => {
-				const sensorIDText = `Sensor #${sensor.id}`;
+				const sensorIDText = `#${sensor.id}${
+					sensor.type ? ` - ${sensor.type}` : ""
+				}`;
 				return (
 					<ListItemButton
 						key={sensor.id}
