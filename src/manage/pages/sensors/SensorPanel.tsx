@@ -104,7 +104,6 @@ export function SensorPanel() {
 				"sensors",
 				(oldSensors: Record<SensorID, Sensor>) => {
 					delete oldSensors[sensorToDelete.id];
-					console.log(sensorToDelete.id in oldSensors);
 					return oldSensors;
 				},
 			);
@@ -394,31 +393,27 @@ function EditSensorInfo({
 	activeSensor: Sensor;
 }) {
 	const { user } = useAuth();
-	const [name, setName] = useState<string | undefined>(activeSensor.name);
+	const [name, setName] = useState<string | "">(activeSensor.name);
 	const [menuType, setMenuType] = useState<SensorType>(
 		sensorMenuTypes.includes(activeSensor.type)
 			? activeSensor.type
 			: "__other",
 	);
-	const [otherType, setOtherType] = useState<string | undefined>(
-		sensorMenuTypes.includes(activeSensor.type)
-			? undefined
-			: activeSensor.type,
+	const [otherType, setOtherType] = useState<string | "">(
+		sensorMenuTypes.includes(activeSensor.type) ? "" : activeSensor.type,
 	);
 	const [enableLocation, setEnableLocation] = useState(false);
 	const [location, setLocation] = useState<[number, number]>([
 		activeSensor.longitude || defaultPosition[0],
 		activeSensor.latitude || defaultPosition[1],
 	]);
-	const [elevation, setElevation] = useState<number | undefined>(
+	const [elevation, setElevation] = useState<number | 0>(
 		activeSensor.elevation,
 	);
-	const [totalFloors, setTotalFloors] = useState<number | undefined>(
+	const [totalFloors, setTotalFloors] = useState<number | 0>(
 		activeSensor.total_floors,
 	);
-	const [onFloor, setOnFloor] = useState<number | undefined>(
-		activeSensor.on_floor,
-	);
+	const [onFloor, setOnFloor] = useState<number | 0>(activeSensor.on_floor);
 	const [errors, setErrors] = useState<[string, string][]>([]);
 
 	const { enqueueSnackbar } = useSnackbar();
@@ -427,6 +422,8 @@ function EditSensorInfo({
 		"sensors",
 		makeFetchSensors(user && user.token),
 	);
+	if (sensorsQuery.isSuccess)
+		console.log(getNextSensorID(sensorsQuery.data.sensors));
 	const mutation = useMutation(makeEditSensor(user && user.token), {
 		onMutate: async (newSensor) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)

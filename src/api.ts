@@ -220,8 +220,6 @@ export function makeGetSensorToken(
 				})${data ? ` ${data}` : ""}`,
 			);
 		}
-		const jsonPayload = await response.json();
-		console.log(jsonPayload);
-		return jsonPayload;
+		return await response.json();
 	};
 }

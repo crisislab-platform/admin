@@ -72,8 +72,14 @@ export const filterRuleSensorProperties: (keyof Sensor)[] = [
 ];
 
 export function getNextSensorID(sensors: Record<SensorID, Sensor>): SensorID {
-	let ids = Object.keys(sensors);
-	ids.sort();
-	const id = Number(ids[ids.length - 1]) + 1;
-	return id;
+	const sensordIDs = Object.keys(sensors);
+	let unusedIDs = [];
+	for (const sensorId of sensordIDs) {
+		const prevID = Number(sensorId) - 1 + "";
+		if (prevID !== "0" && !sensordIDs.includes(prevID)) {
+			unusedIDs.push(prevID);
+		}
+	}
+	unusedIDs.push(Number(sensordIDs[sensordIDs.length - 1]) + 1 + "");
+	return unusedIDs[0];
 }
