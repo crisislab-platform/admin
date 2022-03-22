@@ -113,7 +113,6 @@ export function CreateSensorDialog({
 			let ids = Object.keys(sensorsQuery.data.sensors);
 			ids.sort();
 			const id = Number(ids[ids.length - 1]) + 1;
-			console.log(id);
 			mutation.mutate({
 				id,
 				name,

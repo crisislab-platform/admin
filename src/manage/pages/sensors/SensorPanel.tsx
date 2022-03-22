@@ -422,8 +422,7 @@ function EditSensorInfo({
 		"sensors",
 		makeFetchSensors(user && user.token),
 	);
-	if (sensorsQuery.isSuccess)
-		console.log(getNextSensorID(sensorsQuery.data.sensors));
+
 	const mutation = useMutation(makeEditSensor(user && user.token), {
 		onMutate: async (newSensor) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
