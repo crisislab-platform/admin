@@ -1,5 +1,11 @@
 import { Account, Role, Sensor, SensorID } from "./types";
-import { generateAvatar, roles, sensorsAPIBase, usersAPIBase } from "./utils";
+import {
+	generateAvatar,
+	getObjectWithOnlyChangedProperties,
+	roles,
+	sensorsAPIBase,
+	usersAPIBase,
+} from "./utils";
 
 export function makeFetchAccounts(token?: string): () => Promise<Account[]> {
 	return async () => {
@@ -169,13 +175,11 @@ export function makeEditSensor(
 ): (props: [Sensor, Sensor]) => Promise<Sensor> {
 	return async ([oldSensor, newSensor]) => {
 		// Get an object with the properties that have changed
-		let sensor = { id: oldSensor.id };
-		for (const [key, value] of Object.entries(oldSensor)) {
-			if (newSensor[key] !== value) {
-				sensor[key] = newSensor[key];
-			}
-		}
-		console.log(sensor);
+		const sensor = {
+			...getObjectWithOnlyChangedProperties(oldSensor, newSensor),
+			id: oldSensor.id,
+		};
+
 		const response = await fetch(`${sensorsAPIBase}/${sensor.id}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "PATCH",

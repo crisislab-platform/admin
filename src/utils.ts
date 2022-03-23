@@ -85,3 +85,16 @@ export function getNextSensorID(sensors: Record<SensorID, Sensor>): SensorID {
 }
 
 export const accountsQueryStaleTime = 10 * 60 * 1000; // 10 minutes
+
+export function getObjectWithOnlyChangedProperties<T>(
+	oldThing: T,
+	newThing: T,
+): object {
+	let thing = {};
+	for (const [key, value] of Object.entries(oldThing)) {
+		if (newThing[key] !== value) {
+			thing[key] = newThing[key];
+		}
+	}
+	return thing;
+}
