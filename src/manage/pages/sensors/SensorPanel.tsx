@@ -403,13 +403,15 @@ function EditSensorInfo({
 	activeSensor: Sensor;
 }) {
 	const { user } = useAuth();
-	const [name, setName] = useState<string | "">(activeSensor.name);
+	const [name, setName] = useState<string>(
+		activeSensor.name ? activeSensor.name : "",
+	);
 	const [menuType, setMenuType] = useState<SensorType>(
 		sensorMenuTypes.includes(activeSensor.type)
 			? activeSensor.type
 			: "__other",
 	);
-	const [otherType, setOtherType] = useState<string | "">(
+	const [otherType, setOtherType] = useState<string>(
 		sensorMenuTypes.includes(activeSensor.type) ? "" : activeSensor.type,
 	);
 	const [enableLocation, setEnableLocation] = useState(false);
@@ -417,13 +419,15 @@ function EditSensorInfo({
 		activeSensor.longitude || defaultPosition[0],
 		activeSensor.latitude || defaultPosition[1],
 	]);
-	const [elevation, setElevation] = useState<number | 0>(
-		activeSensor.elevation,
+	const [elevation, setElevation] = useState<number>(
+		activeSensor.elevation ? activeSensor.elevation : 0,
 	);
-	const [totalFloors, setTotalFloors] = useState<number | 0>(
-		activeSensor.total_floors,
+	const [totalFloors, setTotalFloors] = useState<number>(
+		activeSensor.total_floors ? activeSensor.total_floors : 0,
 	);
-	const [onFloor, setOnFloor] = useState<number | 0>(activeSensor.on_floor);
+	const [onFloor, setOnFloor] = useState<number>(
+		activeSensor.on_floor ? activeSensor.on_floor : 0,
+	);
 	const [errors, setErrors] = useState<[string, string][]>([]);
 
 	const { enqueueSnackbar } = useSnackbar();
