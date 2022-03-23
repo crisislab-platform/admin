@@ -391,7 +391,7 @@ function EditUserInfo({
 		account.roles ? account.roles : [],
 	);
 	const mutation = useMutation(makeEditAccount(user && user.token), {
-		onMutate: async (newAccount) => {
+		onMutate: async ([oldAccout, newAccount]) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("accounts");
 
@@ -421,7 +421,7 @@ function EditUserInfo({
 			// Return a context object with the snapshotted value
 			return { previousAccounts };
 		},
-		onError: (error, newAccount, context) => {
+		onError: (error, [oldAccout, newAccount], context) => {
 			queryClient.setQueryData(
 				"accounts",
 				(context as { previousAccounts: Account[] }).previousAccounts,
@@ -472,7 +472,7 @@ function EditUserInfo({
 		}
 		setErrors(newErrors);
 		if (newErrors.length === 0 && !duplicateEmail) {
-			mutation.mutate({ name, email, roles: selectedRoles });
+			mutation.mutate([account, { name, email, roles: selectedRoles }]);
 			exitEditMode();
 		}
 	}

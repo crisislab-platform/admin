@@ -64,23 +64,25 @@ export function makeCreateAccount(
 		};
 	};
 }
-
-export function makeEditAccount(
-	token?: string,
-): (props: {
+type EditAccount = {
 	name?: string;
 	email: string;
 	roles: Role[];
-}) => Promise<Account> {
-	return async ({ name, email, roles }) => {
-		const response = await fetch(`${usersAPIBase}/${email}`, {
+};
+export function makeEditAccount(
+	token?: string,
+): (props: [EditAccount, EditAccount]) => Promise<Account> {
+	return async ([oldAccount, newAccount]) => {
+		// Get an object with the properties that have changed
+		const account = {
+			...getObjectWithOnlyChangedProperties(oldAccount, newAccount),
+			email: oldAccount.email,
+		};
+
+		const response = await fetch(`${usersAPIBase}/${oldAccount.email}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "PUT",
-			body: JSON.stringify({
-				name,
-				email,
-				roles: roles.map((role) => role.raw),
-			}),
+			body: JSON.stringify(account),
 		});
 		if (!response.ok) {
 			const data = await response.text();
@@ -91,10 +93,8 @@ export function makeEditAccount(
 			);
 		}
 		return {
-			email,
-			name,
-			roles,
-			picture: generateAvatar(email),
+			...newAccount,
+			picture: generateAvatar(newAccount.email),
 		};
 	};
 }
