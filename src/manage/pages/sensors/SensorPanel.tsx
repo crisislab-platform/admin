@@ -434,7 +434,7 @@ function EditSensorInfo({
 	);
 
 	const mutation = useMutation(makeEditSensor(user && user.token), {
-		onMutate: async (newSensor) => {
+		onMutate: async ([oldSensor, newSensor]) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("sensors");
 
@@ -460,7 +460,7 @@ function EditSensorInfo({
 			// Return a context object with the snapshotted value
 			return { previousSensors };
 		},
-		onError: (error, newSensor, context) => {
+		onError: (error, [oldSensor, newSensor], context) => {
 			queryClient.setQueryData(
 				"sensors",
 				(
@@ -526,16 +526,19 @@ function EditSensorInfo({
 		if (newErrors.length > 0) {
 			setErrors(newErrors);
 		} else {
-			mutation.mutate({
-				id: activeSensor.id,
-				name,
-				type,
-				elevation,
-				longitude: enableLocation ? location[0] : undefined,
-				latitude: enableLocation ? location[1] : undefined,
-				total_floors: totalFloors,
-				on_floor: onFloor,
-			});
+			mutation.mutate([
+				activeSensor,
+				{
+					id: activeSensor.id,
+					name,
+					type,
+					elevation,
+					longitude: enableLocation ? location[0] : undefined,
+					latitude: enableLocation ? location[1] : undefined,
+					total_floors: totalFloors,
+					on_floor: onFloor,
+				},
+			]);
 			exitEditMode();
 		}
 	}

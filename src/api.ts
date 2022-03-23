@@ -136,7 +136,7 @@ export function makeFetchSensors(
 			const [id, sensor] = value as unknown as [SensorID, Sensor];
 			newData.sensors[id] = {
 				...sensor,
-				id,
+				id: Number(id),
 			};
 		});
 		return newData;
@@ -166,8 +166,16 @@ export function makeCreateSensor(
 
 export function makeEditSensor(
 	token?: string,
-): (props: Sensor) => Promise<Sensor> {
-	return async (sensor) => {
+): (props: [Sensor, Sensor]) => Promise<Sensor> {
+	return async ([oldSensor, newSensor]) => {
+		// Get an object with the properties that have changed
+		let sensor = { id: oldSensor.id };
+		for (const [key, value] of Object.entries(oldSensor)) {
+			if (newSensor[key] !== value) {
+				sensor[key] = newSensor[key];
+			}
+		}
+		console.log(sensor);
 		const response = await fetch(`${sensorsAPIBase}/${sensor.id}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "PATCH",
@@ -181,7 +189,7 @@ export function makeEditSensor(
 				})${data ? ` ${data}` : ""}`,
 			);
 		}
-		return sensor;
+		return newSensor;
 	};
 }
 

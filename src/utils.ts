@@ -83,3 +83,5 @@ export function getNextSensorID(sensors: Record<SensorID, Sensor>): SensorID {
 	unusedIDs.push(Number(sensordIDs[sensordIDs.length - 1]) + 1 + "");
 	return unusedIDs[0];
 }
+
+export const accountsQueryStaleTime = 10 * 60 * 1000; // 10 minutes

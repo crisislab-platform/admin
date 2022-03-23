@@ -9,18 +9,20 @@ import {
 	Tooltip,
 } from "@mui/material";
 import { Link as RouterLink, useParams } from "react-router-dom";
+import { accountsQueryStaleTime, verifiedEmails } from "../../../utils";
 
 import { LoadingSpinner } from "../../../components";
 import TickIcon from "@mui/icons-material/VerifiedUser";
 import { makeFetchAccounts } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 import { useQuery } from "react-query";
-import { verifiedEmails } from "../../../utils";
 
 export function AccountsList() {
 	const { user } = useAuth();
 	const { accountID: encodedSelectedAccountID } = useParams();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
+	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token), {
+		staleTime: accountsQueryStaleTime,
+	});
 
 	const selectedAccountID = encodedSelectedAccountID
 		? decodeURIComponent(encodedSelectedAccountID)

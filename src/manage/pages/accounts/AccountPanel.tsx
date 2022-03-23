@@ -28,7 +28,7 @@ import {
 } from "@mui/material";
 import { LoadingSpinner, useNavigateWithQuery } from "../../../components";
 import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
-import { generateAvatar, roles } from "../../../utils";
+import { accountsQueryStaleTime, generateAvatar, roles } from "../../../utils";
 import {
 	makeDeleteAccount,
 	makeEditAccount,
@@ -64,6 +64,7 @@ export function AccountPanel() {
 	const accountsQuery = useQuery(
 		"accounts",
 		makeFetchAccounts(user && user.token),
+		{ staleTime: accountsQueryStaleTime },
 	);
 	const { accountID: encodedAccountID } = useParams();
 	const [editMode, setEditMode] = useState(false);
@@ -379,7 +380,9 @@ function EditUserInfo({
 
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const { enqueueSnackbar } = useSnackbar();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
+	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token), {
+		staleTime: accountsQueryStaleTime,
+	});
 	const queryClient = useQueryClient();
 
 	const [name, setName] = useState(account.name ? account.name : "");

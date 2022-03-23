@@ -12,7 +12,7 @@ import {
 	Stack,
 	TextField,
 } from "@mui/material";
-import { generateAvatar, roles } from "../../../utils";
+import { accountsQueryStaleTime, generateAvatar, roles } from "../../../utils";
 import { makeCreateAccount, makeFetchAccounts } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
@@ -33,7 +33,9 @@ export function CreateAccountDialog({
 	const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const { enqueueSnackbar } = useSnackbar();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token));
+	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token), {
+		staleTime: accountsQueryStaleTime,
+	});
 	const queryClient = useQueryClient();
 	const mutation = useMutation(makeCreateAccount(user.token), {
 		onMutate: async (newAccount) => {
