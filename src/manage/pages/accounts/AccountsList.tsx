@@ -9,7 +9,7 @@ import {
 	Tooltip,
 } from "@mui/material";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { accountsQueryStaleTime, verifiedEmails } from "../../../utils";
+import { accountsQueryStaleTime } from "../../../utils";
 
 import { LoadingSpinner } from "../../../components";
 import TickIcon from "@mui/icons-material/VerifiedUser";
@@ -60,12 +60,11 @@ export function AccountsList() {
 						primary={account.name || account.email}
 						secondary={account.name ? account.email : undefined}
 					/>
-					{verifiedEmails.includes(user.email) &&
-						verifiedEmails.includes(account.email) && (
-							<Tooltip title="Verified user">
-								<TickIcon />
-							</Tooltip>
-						)}
+					{"verified" in user && "verified" in account && (
+						<Tooltip title="Verified user">
+							<TickIcon />
+						</Tooltip>
+					)}
 				</ListItemButton>
 			))}
 		</List>

@@ -99,7 +99,7 @@ export default function Sidebar({
 										{user.name}
 									</Typography>
 								)}
-								{user.email === "zade@viggers.net" && (
+								{"super" in user && (
 									<Tooltip
 										title="Super User"
 										placement="right">

@@ -23,7 +23,14 @@ export function makeFetchAccounts(token?: string): () => Promise<Account[]> {
 		const data = await response.json();
 		return data.map((account) => ({
 			...account,
-			roles: account.roles.map((role) => roles[role]),
+			roles: account.roles
+				.map((role) => roles[role])
+				.filter(
+					(role) =>
+						!!role &&
+						"raw" in role &&
+						Object.keys(roles).includes(role.raw),
+				),
 			picture: generateAvatar(account.email),
 		}));
 	};
@@ -74,10 +81,16 @@ export function makeEditAccount(
 ): (props: [EditAccount, EditAccount]) => Promise<Account> {
 	return async ([oldAccount, newAccount]) => {
 		// Get an object with the properties that have changed
-		const account = {
+		let account: any = {
 			...getObjectWithOnlyChangedProperties(oldAccount, newAccount),
 			email: oldAccount.email,
 		};
+		if ("roles" in account) {
+			account = {
+				...account,
+				roles: account.roles.map((role) => role.raw),
+			};
+		}
 
 		const response = await fetch(`${usersAPIBase}/${oldAccount.email}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
