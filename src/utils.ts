@@ -9,7 +9,7 @@ import {
 
 import { generateFromString } from "generate-avatar";
 
-export const APIBase = "https://shakemap.benhong.me/api/v1";
+export const APIBase = "https://shakemap.benhong.me/api/v0";
 export const usersAPIBase = `${APIBase}/users`;
 export const sensorsAPIBase = `${APIBase}/sensors`;
 

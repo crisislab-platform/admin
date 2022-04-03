@@ -5,7 +5,7 @@ import { roles } from "../utils";
 
 // This file just handles the API calls, all of the other logic (such as popups) is in useAuth.tsx
 
-const APIBase = `https://shakemap.benhong.me/api/v1/auth`;
+const APIBase = `https://shakemap.benhong.me/api/v0/auth`;
 
 export async function login(token: string): Promise<User>;
 export async function login(username: string, password: string): Promise<User>;

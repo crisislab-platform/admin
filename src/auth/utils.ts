@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 
 export const titleSuffix = " | CRISiSLab Shakemap auth";
 
-export const apiBase = `https://shakemap.benhong.me/api/v1/auth`;
+export const apiBase = `https://shakemap.benhong.me/api/v0/auth`;
 
 export function getQueryParam(paramName: string): null | string {
 	const searchParams = new URL(window.location.href).searchParams;
