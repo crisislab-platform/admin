@@ -4,8 +4,7 @@ specifiers:
   '@babel/core': ^7.17.8
   '@emotion/react': ^11.8.2
   '@emotion/styled': ^11.8.1
-  '@fontsource/roboto': ^4.5.3
-  '@fontsource/roboto-mono': ^4.5.3
+  '@fontsource/nunito': ^4.5.3
   '@mui/icons-material': ^5.5.1
   '@mui/lab': ^5.0.0-alpha.73
   '@mui/material': ^5.5.1
@@ -14,8 +13,8 @@ specifiers:
   '@types/mapbox__mapbox-gl-geocoder': ^4.7.2
   '@types/react': ^17.0.41
   '@types/react-dom': ^17.0.14
-  '@types/suncalc': ^1.8.1
   '@vitejs/plugin-react': ^1.2.0
+  beryllium: ^1.0.2
   events: ^3.3.0
   generate-avatar: ^1.4.10
   notistack: ^2.0.3
@@ -31,11 +30,11 @@ dependencies:
   '@babel/core': 7.17.8
   '@emotion/react': 11.8.2_ac8e640ee2ebe4fcb4080b2762e3254a
   '@emotion/styled': 11.8.1_0bd19656468de1d4aa39379bbff84910
-  '@fontsource/roboto': 4.5.3
-  '@fontsource/roboto-mono': 4.5.3
+  '@fontsource/nunito': 4.5.8
   '@mui/icons-material': 5.5.1_3898148d0d9b82b9af7ddb4a8e17178b
   '@mui/lab': 5.0.0-alpha.73_8d049389aa430511e907e6128a8fcfcb
   '@mui/material': 5.5.1_7e1331b1b228efabfef6463d5fbc30b1
+  beryllium: 1.0.2_@mui+material@5.5.1
   events: 3.3.0
   generate-avatar: 1.4.10
   notistack: 2.0.3_63011001f7e0af16b06ddd93c62e2262
@@ -51,7 +50,6 @@ devDependencies:
   '@types/mapbox__mapbox-gl-geocoder': 4.7.2
   '@types/react': 17.0.41
   '@types/react-dom': 17.0.14
-  '@types/suncalc': 1.8.1
   '@vitejs/plugin-react': 1.2.0
   vite: 2.8.6
   vite-plugin-rewrite-all: 0.1.2_vite@2.8.6
@@ -475,12 +473,8 @@ packages:
     resolution: {integrity: sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==}
     dev: false
 
-  /@fontsource/roboto-mono/4.5.3:
-    resolution: {integrity: sha512-ELuIIUBo1kq2hFmOXjWv9o2VbM22Pct2F0T+D8f5T0MxDKIqkh0m1JMs9bbTzMjc+wVvyJ6LU5EiNkO26kLlKA==}
-    dev: false
-
-  /@fontsource/roboto/4.5.3:
-    resolution: {integrity: sha512-NUvBTj332dFRdiVkLlavXbDGoD2zyyeGYmMyrXOnctg/3e4pq95+rJgNfUP+k4v8UBk2L1aomGw9dDjbRdAmTg==}
+  /@fontsource/nunito/4.5.8:
+    resolution: {integrity: sha512-JrXmYKyrhM+80808hk85+ieuXOvZqVdAyAA9Xsqz4L+dwGpfJ08e+4vjVNcfVn4YLkgpC57WW2GTn3Xwkv3NIQ==}
     dev: false
 
   /@jridgewell/resolve-uri/3.0.5:
@@ -783,10 +777,6 @@ packages:
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
 
-  /@types/suncalc/1.8.1:
-    resolution: {integrity: sha512-PNtzFQhdAIw3x5HEjVMxbyBwciX42C/Cg6J1foq2z/t9rucLGGu9nqQxOl005wGZR/fOxw49exwZUCmbnT/vGw==}
-    dev: true
-
   /@vitejs/plugin-react/1.2.0:
     resolution: {integrity: sha512-Rywwt0IXXg6yQ0hv3cMT3mtdDcGIw31mGaa+MMMAT651LhoXLF2yFy4LrakiTs7UKs7RPBo9eNgaS8pgl2A6Qw==}
     engines: {node: '>=12.0.0'}
@@ -819,6 +809,14 @@ packages:
 
   /balanced-match/1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
+    dev: false
+
+  /beryllium/1.0.2_@mui+material@5.5.1:
+    resolution: {integrity: sha512-4t0FdglVW5F5FCoRausYEI04RnkGhYSoEJ8XnpZP2P0DL8GfhGVKleSUSA4SIf9zZ4mGXAbwgAHcX6Bc/wQLtw==}
+    peerDependencies:
+      '@mui/material': '5'
+    dependencies:
+      '@mui/material': 5.5.1_7e1331b1b228efabfef6463d5fbc30b1
     dev: false
 
   /big-integer/1.6.51:

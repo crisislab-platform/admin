@@ -11,7 +11,7 @@ import { Route as RouteType } from "./types";
 import { SnackbarProvider } from "notistack";
 import { authRoutes } from "./auth/authRoutes";
 import { routes as manageRoutes } from "./manage/routes";
-import { theme } from "./theme";
+import { theme } from "beryllium";
 import { useRef } from "react";
 
 const queryClient = new QueryClient({
