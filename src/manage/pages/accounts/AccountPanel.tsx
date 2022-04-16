@@ -185,7 +185,7 @@ export function AccountPanel() {
 	}
 
 	function onDialogCLose() {
-		navigateWithQuery("..");
+		navigateWithQuery("/manage/accounts");
 	}
 
 	let layout = (

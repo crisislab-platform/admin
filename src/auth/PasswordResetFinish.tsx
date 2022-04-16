@@ -5,7 +5,6 @@ import { showErrorSnackbar, titleSuffix, useGetQueryParam } from "./utils";
 import { LinkWithQuery } from "../components";
 import { LoadingButton } from "@mui/lab";
 import useAuth from "./useAuth";
-import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
 export default function PasswordResetFinishPage() {
@@ -13,8 +12,7 @@ export default function PasswordResetFinishPage() {
 		document.title = `Choose a new password${titleSuffix}`;
 	}, []);
 
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-	const navigate = useNavigate();
+	const { enqueueSnackbar } = useSnackbar();
 	const token = useGetQueryParam("token");
 	const { loading, resetPassword } = useAuth();
 
@@ -63,7 +61,7 @@ export default function PasswordResetFinishPage() {
 					</LoadingButton>
 				</Stack>
 			</form>
-			<LinkWithQuery to="../login">← Back to login</LinkWithQuery>
+			<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
 		</Stack>
 	);
 }

@@ -15,7 +15,7 @@
 		"@mui/icons-material": "^5.5.1",
 		"@mui/lab": "^5.0.0-alpha.73",
 		"@mui/material": "^5.5.1",
-		"beryllium": "^1.0.2",
+		"beryllium": "^1.0.3",
 		"events": "^3.3.0",
 		"generate-avatar": "^1.4.10",
 		"notistack": "^2.0.3",

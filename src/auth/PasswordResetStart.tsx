@@ -42,7 +42,7 @@ export default function PasswordResetStartPage() {
 					If you don't see it, make sure to check your junk/spam
 					folder.
 				</Typography>
-				<LinkWithQuery to="../login">← Back to login</LinkWithQuery>
+				<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
 			</Stack>
 		);
 	}
@@ -76,7 +76,7 @@ export default function PasswordResetStartPage() {
 					</LoadingButton>
 				</Stack>
 			</form>
-			<LinkWithQuery to="../login">← Back to login</LinkWithQuery>
+			<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
 		</Stack>
 	);
 }

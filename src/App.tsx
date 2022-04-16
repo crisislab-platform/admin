@@ -96,9 +96,9 @@ function App() {
 	const { user } = useAuth();
 
 	const redirectElement = !!user ? (
-		<NavigateWithQuery to="/manage" replace />
+		<NavigateWithQuery to="/manage" />
 	) : (
-		<NavigateWithQuery to="/auth" replace />
+		<NavigateWithQuery to="/auth" />
 	);
 
 	return (
@@ -113,10 +113,13 @@ function App() {
 				<Route
 					key="token-sign-in"
 					path="token-sign-in"
-					element={<NavigateWithQuery to="../auth/token-sign-in" />}
+					element={<NavigateWithQuery to="/auth/token-sign-in" />}
 				/>
 				<Route key="auth" path="auth" element={<AuthWrapper />}>
-					<Route index element={<NavigateWithQuery to="./login" />} />
+					<Route
+						index
+						element={<NavigateWithQuery to="/auth/login" />}
+					/>
 					{authRoutes.map((route) => (
 						<Route
 							key={route.path}
@@ -128,7 +131,7 @@ function App() {
 				<Route key="manage" path="manage" element={<ManageApp />}>
 					<Route
 						index
-						element={<NavigateWithQuery to="./sensors" />}
+						element={<NavigateWithQuery to="/manage/sensors" />}
 					/>
 					{renderRoutes(manageRoutes)}
 					<Route

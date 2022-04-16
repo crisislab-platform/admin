@@ -13,6 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { User } from "../types";
 import { generateAvatar } from "../utils";
+import { useNavigateWithQuery } from "../components";
 import { useSnackbar } from "notistack";
 
 const authUserNamespace = "auth-v2-user";
@@ -50,7 +51,7 @@ export function AuthProvider({
 	const { enqueueSnackbar } = useSnackbar();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [loadingInitial, setLoadingInitial] = useState<boolean>(true);
-	const navigate = useNavigate();
+	const navigate = useNavigateWithQuery();
 	const location = useLocation();
 	const returnTo = useGetQueryParam("return_to");
 	const [popupWindowCloseTimeout, setPopupWindowCloseTimeout] = useState<

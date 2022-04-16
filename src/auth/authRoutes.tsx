@@ -45,10 +45,10 @@ export const authRoutes: AuthRoute[] = [
 function TokenSignIn() {
 	const type = useGetQueryParam("type");
 	if (type === "reset") {
-		return <NavigateWithQuery to="../password-reset-finish" />;
+		return <NavigateWithQuery to="/auth/password-reset-finish" />;
 	}
 	if (type === "sign-in") {
-		return <NavigateWithQuery to="../login-link-finish" />;
+		return <NavigateWithQuery to="/auth/login-link-finish" />;
 	}
 	if (type === "welcome") {
 		return <NavigateWithQuery to="/" />;

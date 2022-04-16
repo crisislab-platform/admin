@@ -34,7 +34,7 @@ export default function LoginLinkFinish() {
 			</Typography>
 			{!token && noTokenFoundText}
 			{loading && <LoadingSpinner />}
-			<LinkWithQuery to="../login">← Back to login</LinkWithQuery>
+			<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
 		</Stack>
 	);
 }

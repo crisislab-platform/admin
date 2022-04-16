@@ -67,11 +67,13 @@ export default function LoginPage() {
 					</LoadingButton>
 				</Stack>
 			</form>
-			<LinkWithQuery to="../password-reset-start">
+			<LinkWithQuery to="/auth/password-reset-start">
 				Reset password →
 			</LinkWithQuery>
-			<LinkWithQuery to="../login-link">Get a login link →</LinkWithQuery>
-			<LinkWithQuery to="../register">Register →</LinkWithQuery>
+			<LinkWithQuery to="/auth/login-link">
+				Get a login link →
+			</LinkWithQuery>
+			<LinkWithQuery to="/auth/register">Register →</LinkWithQuery>
 		</Stack>
 	);
 }

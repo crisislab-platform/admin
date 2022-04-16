@@ -182,7 +182,7 @@ export function SensorPanel() {
 	}
 
 	function onDialogCLose() {
-		navigateWithQuery("..");
+		navigateWithQuery("/manage/sensors");
 	}
 
 	let layout = (

@@ -136,7 +136,9 @@ export default function Sidebar({
 								disablePadding>
 								<ListItemButton
 									onClick={() => {
-										navigateWithQuery(`./${link.slug}`);
+										navigateWithQuery(
+											`/manage/${link.slug}`,
+										);
 										setMobileDrawerOpen(false);
 									}}>
 									<ListItemIcon>
