@@ -1,4 +1,5 @@
 import "./styles.css";
+import "@fontsource/manrope/variable.css";
 
 import { BrowserRouter as Router } from "react-router-dom";
 import { StrictMode } from "react";
