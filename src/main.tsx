@@ -1,8 +1,5 @@
-import "@fontsource/nunito/300.css";
-import "@fontsource/nunito/400.css";
-import "@fontsource/nunito/500.css";
-import "@fontsource/nunito/700.css";
 import "./styles.css";
+import "@fontsource/manrope/variable.css";
 
 import { BrowserRouter as Router } from "react-router-dom";
 import { StrictMode } from "react";
@@ -11,12 +8,15 @@ import { render } from "react-dom";
 
 function Entrypoint() {
 	return (
-		<StrictMode>
-			<Router>
-				<WrappedApp />
-			</Router>
-		</StrictMode>
+		<Router>
+			<WrappedApp />
+		</Router>
 	);
 }
 
-render(<Entrypoint />, document.getElementById("root"));
+render(
+	<StrictMode>
+		<Entrypoint />
+	</StrictMode>,
+	document.getElementById("root"),
+);

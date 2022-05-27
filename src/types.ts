@@ -64,6 +64,7 @@ export interface Sensor {
 	elevation?: number;
 	total_floors?: number;
 	on_floor?: number;
+	secondary_id?: string;
 }
 export type SensorSortKey = "id" | "type" | "online";
 

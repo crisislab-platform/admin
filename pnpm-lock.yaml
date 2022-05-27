@@ -4,7 +4,7 @@ specifiers:
   '@babel/core': ^7.17.8
   '@emotion/react': ^11.8.2
   '@emotion/styled': ^11.8.1
-  '@fontsource/nunito': ^4.5.3
+  '@fontsource/manrope': ^4.5.9
   '@mui/icons-material': ^5.5.1
   '@mui/lab': ^5.0.0-alpha.73
   '@mui/material': ^5.5.1
@@ -14,7 +14,7 @@ specifiers:
   '@types/react': ^17.0.41
   '@types/react-dom': ^17.0.14
   '@vitejs/plugin-react': ^1.2.0
-  beryllium: ^1.0.3
+  beryllium: ^1.1.1
   events: ^3.3.0
   generate-avatar: ^1.4.10
   notistack: ^2.0.3
@@ -30,11 +30,11 @@ dependencies:
   '@babel/core': 7.17.8
   '@emotion/react': 11.8.2_vshgidxc5pspznaibmtwfyzfji
   '@emotion/styled': 11.8.1_bpizmvsgrxq5jkrzg6n376cjca
-  '@fontsource/nunito': 4.5.8
+  '@fontsource/manrope': 4.5.9
   '@mui/icons-material': 5.5.1_hcmbjdintobltl353nfi4fyxrm
   '@mui/lab': 5.0.0-alpha.73_rucjhcnkimcrd2ih4yjivd6pzm
   '@mui/material': 5.5.1_pyjtdmnsfdx2x7xwiy6v7pbqwe
-  beryllium: 1.0.3_@mui+material@5.5.1
+  beryllium: 1.1.1_@mui+material@5.5.1
   events: 3.3.0
   generate-avatar: 1.4.10
   notistack: 2.0.3_mmaraapx4cxrnmdn3wj4mlrcmi
@@ -475,8 +475,8 @@ packages:
     resolution: {integrity: sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==}
     dev: false
 
-  /@fontsource/nunito/4.5.8:
-    resolution: {integrity: sha512-JrXmYKyrhM+80808hk85+ieuXOvZqVdAyAA9Xsqz4L+dwGpfJ08e+4vjVNcfVn4YLkgpC57WW2GTn3Xwkv3NIQ==}
+  /@fontsource/manrope/4.5.9:
+    resolution: {integrity: sha512-N7M2iVxZChnN8b+8VcuhvlcclNzEqpSfIPC0CdnH9K/sSMtvqrFInP4IrPNUb1F0G51FRuZGCNVp9aWMtMznLQ==}
     dev: false
 
   /@jridgewell/resolve-uri/3.0.5:
@@ -813,8 +813,8 @@ packages:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
     dev: false
 
-  /beryllium/1.0.3_@mui+material@5.5.1:
-    resolution: {integrity: sha512-fK8zSYEOQMjghITyH8VTUJqwHeJlnCum4zy+gs5/WNhj4n8RfUKubDw1cXlFyMBUgvu8LQEDBGwv5wJDRgmLKA==}
+  /beryllium/1.1.1_@mui+material@5.5.1:
+    resolution: {integrity: sha512-yrRiUL2K4NcpRC85KrkJij/CaaaQSvPzr8LOZmtgtwqvnMj8DUaqNA9Ch4XdL0V/DkpmB2JypFuH8GBqxSDvTA==}
     peerDependencies:
       '@mui/material': '5'
     dependencies:
