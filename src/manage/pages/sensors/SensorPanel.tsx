@@ -315,12 +315,12 @@ export function SensorPanel() {
 							</IconButton>
 						</Tooltip>
 					</Stack>
-					{activeSensor.elevation && (
+					{!!activeSensor.elevation && (
 						<Typography>
 							Elevation: <strong>{activeSensor.elevation}</strong>
 						</Typography>
 					)}
-					{(activeSensor.total_floors || activeSensor.on_floor) && (
+					{!!(activeSensor.total_floors || activeSensor.on_floor) && (
 						<Stack direction="row" gap={1} alignItems="center">
 							<Typography>
 								Building floors:{" "}
