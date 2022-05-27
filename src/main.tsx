@@ -7,12 +7,15 @@ import { render } from "react-dom";
 
 function Entrypoint() {
 	return (
-		<StrictMode>
-			<Router>
-				<WrappedApp />
-			</Router>
-		</StrictMode>
+		<Router>
+			<WrappedApp />
+		</Router>
 	);
 }
 
-render(<Entrypoint />, document.getElementById("root"));
+render(
+	<StrictMode>
+		<Entrypoint />
+	</StrictMode>,
+	document.getElementById("root"),
+);
