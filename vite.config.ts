@@ -28,4 +28,7 @@ export default defineConfig({
 			},
 		},
 	},
+	server: {
+		port: 6969,
+	},
 });
