@@ -25,9 +25,10 @@ export function SensorSetupCommand({ sensor }: { sensor: Sensor }) {
 		makeGetSensorToken(sensor.id, user && user.token),
 	);
 
-	const setupCommand = useMemo<null | string>(() => {
+	const sensorToken = useMemo<null | string>(() => {
 		if (!sensorTokenQuery.isSuccess) return null;
-		return generateSensorSetupCommand(sensorTokenQuery.data.token);
+		// return generateSensorSetupCommand(sensorTokenQuery.data.token);
+		return sensorTokenQuery.data.token;
 	}, [sensorTokenQuery.isSuccess]);
 
 	if (sensorTokenQuery.isLoading) {
@@ -37,7 +38,7 @@ export function SensorSetupCommand({ sensor }: { sensor: Sensor }) {
 		return (
 			<Alert severity="error">
 				<AlertTitle>Error loading sensor token.</AlertTitle>
-				The sensor token is required to generate the setup command.
+				{/* The sensor token is required to generate the setup command. */}
 				<br />
 				{sensorTokenQuery.error + ""}
 			</Alert>
@@ -52,8 +53,8 @@ export function SensorSetupCommand({ sensor }: { sensor: Sensor }) {
 			<TextField
 				onClick={(event) => (event.target as HTMLInputElement).select()}
 				id="setup-command-read-only-input"
-				label="Setup command"
-				value={setupCommand}
+				label="Sensor token"
+				value={sensorToken}
 				InputProps={{
 					readOnly: true,
 				}}
@@ -62,19 +63,19 @@ export function SensorSetupCommand({ sensor }: { sensor: Sensor }) {
 			/>
 			{"clipboard" in navigator && (
 				<span>
-					<Tooltip title="Copy setup command">
+					<Tooltip title="Copy sensor token">
 						<IconButton
 							onClick={async () => {
 								try {
 									await navigator.clipboard.writeText(
-										setupCommand,
+										sensorToken,
 									);
-									enqueueSnackbar("Copied setup command.", {
+									enqueueSnackbar("Copied sensor token.", {
 										variant: "success",
 									});
 								} catch {
 									enqueueSnackbar(
-										"Failed to copy setup command.",
+										"Failed to copy sensor token.",
 										{ variant: "error" },
 									);
 								}
