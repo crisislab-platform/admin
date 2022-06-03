@@ -17,7 +17,7 @@ export function LiveDataGraphs({
 				}}
 				height={height}
 				frameBorder={0}
-				src={`https://ingest-worker.benhong.workers.dev/consume/${sensorID}`}
+				src={`https://ingest.benhong.me/consume/${sensorID}`}
 			/>
 		</Paper>
 	);
