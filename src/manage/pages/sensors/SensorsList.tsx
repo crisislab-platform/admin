@@ -166,9 +166,13 @@ export function SensorsList({
 						</ListItemIcon>
 						<ListItemText
 							primary={
-								sensor.name ? `"${sensor.name}"` : sensorIDText
+								sensor.secondary_id
+									? `${sensor.secondary_id}`
+									: sensorIDText
 							}
-							secondary={sensor.name ? sensorIDText : undefined}
+							secondary={
+								sensor.secondary_id ? sensorIDText : undefined
+							}
 						/>
 					</ListItemButton>
 				);
