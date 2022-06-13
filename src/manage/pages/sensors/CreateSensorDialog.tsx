@@ -47,6 +47,8 @@ export function CreateSensorDialog({
 	const [totalFloors, setTotalFloors] = useState<number | 0>();
 	const [onFloor, setOnFloor] = useState<number | 0>();
 	const [errors, setErrors] = useState<[string, string][]>([]);
+	const [IPAddress, setIPAddress] = useState<string>();
+	const [port, setPort] = useState<number | null>(null);
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
@@ -135,6 +137,8 @@ export function CreateSensorDialog({
 				total_floors: totalFloors,
 				on_floor: onFloor,
 				secondary_id: secondaryID,
+				port,
+				ip: IPAddress,
 			});
 			onClose();
 		}
@@ -269,7 +273,6 @@ export function CreateSensorDialog({
 							/>
 						)}
 					</Stack>
-
 					<Divider />
 					<Stack gap={1}>
 						<Typography variant="subtitle1">Location</Typography>
@@ -399,6 +402,45 @@ export function CreateSensorDialog({
 								</Stack>
 							</>
 						)}
+					</Stack>
+					<Divider />
+					<Stack gap={1}>
+						<Typography variant="subtitle1">Network</Typography>
+						<Stack direction="row" gap={1}>
+							<TextField
+								value={IPAddress}
+								onChange={(event) =>
+									setIPAddress(event.target.value)
+								}
+								margin="dense"
+								id="ip-textbox"
+								name="ip-textbox"
+								label="IP Address"
+								type="text"
+								fullWidth
+								variant="outlined"
+							/>
+							<TextField
+								value={port}
+								onChange={(event) => {
+									try {
+										setPort(
+											event.target.value
+												? Number(event.target.value)
+												: null,
+										);
+									} catch (e) {
+										setPort(null);
+									}
+								}}
+								margin="dense"
+								id="port-textbox"
+								name="port-textbox"
+								label="Port"
+								type="number"
+								variant="outlined"
+							/>
+						</Stack>
 					</Stack>
 				</Stack>
 			</DialogContent>

@@ -252,15 +252,19 @@ export function SensorPanel() {
 					}}
 					variant="outlined">
 					<Typography>
-						ID: <strong>{activeSensor.id}</strong>
+						# <strong>{activeSensor.id}</strong>
 						{activeSensor.name && ` "${activeSensor.name}"`}
 					</Typography>
 					{activeSensor.secondary_id && (
 						<Typography>
-							Secondary ID:{" "}
-							<strong>{activeSensor.secondary_id}</strong>
+							## <strong>{activeSensor.secondary_id}</strong>
 						</Typography>
 					)}
+					<Typography>
+						{activeSensor.ip && <strong>{activeSensor.ip}</strong>}
+						{activeSensor.ip && activeSensor.port && ":"}
+						{activeSensor.port && activeSensor.port}
+					</Typography>
 					<SensorStatusText online={activeSensor.online} addLabel />
 					{activeSensor.type && (
 						<Stack direction="row" gap={1} alignItems="center">
@@ -438,6 +442,8 @@ function EditSensorInfo({
 		activeSensor.on_floor ? activeSensor.on_floor : 0,
 	);
 	const [errors, setErrors] = useState<[string, string][]>([]);
+	const [IPAddress, setIPAddress] = useState<string>("");
+	const [port, setPort] = useState<number | undefined>(undefined);
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
@@ -522,6 +528,8 @@ function EditSensorInfo({
 			activeSensor.total_floors ? activeSensor.total_floors : 0,
 		);
 		setOnFloor(activeSensor.on_floor ? activeSensor.on_floor : 0);
+		setIPAddress(activeSensor.ip);
+		setPort(activeSensor.port ? activeSensor.port : null);
 	}, [activeSensor]);
 
 	function onSubmit() {
@@ -553,8 +561,23 @@ function EditSensorInfo({
 					total_floors: totalFloors,
 					on_floor: onFloor,
 					secondary_id: secondaryID,
+					port,
+					ip: IPAddress,
 				},
 			]);
+			console.log(activeSensor, {
+				id: activeSensor.id,
+				name,
+				type,
+				elevation,
+				longitude: enableLocation ? location[0] : undefined,
+				latitude: enableLocation ? location[1] : undefined,
+				total_floors: totalFloors,
+				on_floor: onFloor,
+				secondary_id: secondaryID,
+				port,
+				ip: IPAddress,
+			});
 			exitEditMode();
 		}
 	}
@@ -812,6 +835,41 @@ function EditSensorInfo({
 						</Stack>
 					</>
 				)}
+
+				<Typography variant="subtitle1">Network</Typography>
+				<Stack direction="row" gap={1}>
+					<TextField
+						value={IPAddress}
+						onChange={(event) => setIPAddress(event.target.value)}
+						margin="dense"
+						id="ip-textbox"
+						name="ip-textbox"
+						label="IP Address"
+						type="text"
+						fullWidth
+						variant="outlined"
+					/>
+					<TextField
+						value={port}
+						onChange={(event) => {
+							try {
+								setPort(
+									event.target.value
+										? Number(event.target.value)
+										: null,
+								);
+							} catch (e) {
+								setPort(null);
+							}
+						}}
+						margin="dense"
+						id="port-textbox"
+						name="port-textbox"
+						label="Port"
+						type="number"
+						variant="outlined"
+					/>
+				</Stack>
 			</Stack>
 		</Stack>
 	);

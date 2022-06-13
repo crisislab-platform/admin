@@ -65,6 +65,8 @@ export interface Sensor {
 	total_floors?: number;
 	on_floor?: number;
 	secondary_id?: string;
+	port?: number;
+	ip?: string;
 }
 export type SensorSortKey = "id" | "type" | "online";
 
