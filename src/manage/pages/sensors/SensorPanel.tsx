@@ -604,13 +604,6 @@ function EditSensorInfo({
 
 	return (
 		<Stack gap={1}>
-			<Button
-				sx={{ mb: 2, mt: 2, ml: "auto" }}
-				variant="outlined"
-				onClick={onSubmit}
-				startIcon={<SaveIcon />}>
-				Save changes
-			</Button>
 			<Typography>
 				Sensor ID: <strong>{activeSensor.id}</strong>
 			</Typography>
@@ -870,6 +863,13 @@ function EditSensorInfo({
 						variant="outlined"
 					/>
 				</Stack>
+				<Button
+					sx={{ mb: 2, mt: 2, ml: "auto" }}
+					variant="outlined"
+					onClick={onSubmit}
+					startIcon={<SaveIcon />}>
+					Save changes
+				</Button>
 			</Stack>
 		</Stack>
 	);
