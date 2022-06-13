@@ -500,6 +500,9 @@ function EditSensorInfo({
 
 	useEffect(() => {
 		setName(activeSensor.name ? activeSensor.name : "");
+		setSecondaryID(
+			activeSensor.secondary_id ? activeSensor.secondary_id : "",
+		);
 		setMenuType(
 			sensorMenuTypes.includes(activeSensor.type)
 				? activeSensor.type
@@ -578,6 +581,13 @@ function EditSensorInfo({
 
 	return (
 		<Stack gap={1}>
+			<Button
+				sx={{ mb: 2, mt: 2, ml: "auto" }}
+				variant="outlined"
+				onClick={onSubmit}
+				startIcon={<SaveIcon />}>
+				Save changes
+			</Button>
 			<Typography>
 				Sensor ID: <strong>{activeSensor.id}</strong>
 			</Typography>
@@ -802,15 +812,6 @@ function EditSensorInfo({
 						</Stack>
 					</>
 				)}
-			</Stack>
-			<Stack direction="row">
-				<Button
-					sx={{ mb: 2, mt: 2, ml: "auto" }}
-					variant="outlined"
-					onClick={onSubmit}
-					startIcon={<SaveIcon />}>
-					Save changes
-				</Button>
 			</Stack>
 		</Stack>
 	);
