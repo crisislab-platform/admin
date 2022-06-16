@@ -185,18 +185,14 @@ export function makeCreateSensor(
 
 export function makeEditSensor(
 	token?: string,
-): (props: [Sensor, Sensor]) => Promise<Sensor> {
-	return async ([oldSensor, newSensor]) => {
+): (props: Sensor) => Promise<Sensor> {
+	return async (newSensor) => {
 		// Get an object with the properties that have changed
-		const sensor = {
-			...getObjectWithOnlyChangedProperties(oldSensor, newSensor),
-			id: oldSensor.id,
-		};
 
-		const response = await fetch(`${sensorsAPIBase}/${sensor.id}`, {
+		const response = await fetch(`${sensorsAPIBase}/${newSensor.id}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "PATCH",
-			body: JSON.stringify(sensor),
+			body: JSON.stringify(newSensor),
 		});
 		if (!response.ok) {
 			const data = await response.text();

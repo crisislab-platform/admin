@@ -453,7 +453,7 @@ function EditSensorInfo({
 	);
 
 	const mutation = useMutation(makeEditSensor(user && user.token), {
-		onMutate: async ([oldSensor, newSensor]) => {
+		onMutate: async (newSensor) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("sensors");
 
@@ -478,7 +478,7 @@ function EditSensorInfo({
 			// Return a context object with the snapshotted value
 			return { previousSensors };
 		},
-		onError: (error, [oldSensor, newSensor], context) => {
+		onError: (error, newSensor, context) => {
 			queryClient.setQueryData(
 				"sensors",
 				(
@@ -549,23 +549,7 @@ function EditSensorInfo({
 		if (newErrors.length > 0) {
 			setErrors(newErrors);
 		} else {
-			mutation.mutate([
-				activeSensor,
-				{
-					id: activeSensor.id,
-					name,
-					type,
-					elevation,
-					longitude: enableLocation ? location[0] : undefined,
-					latitude: enableLocation ? location[1] : undefined,
-					total_floors: totalFloors,
-					on_floor: onFloor,
-					secondary_id: secondaryID,
-					port,
-					ip: IPAddress,
-				},
-			]);
-			console.log(activeSensor, {
+			mutation.mutate({
 				id: activeSensor.id,
 				name,
 				type,
@@ -578,6 +562,7 @@ function EditSensorInfo({
 				port,
 				ip: IPAddress,
 			});
+
 			exitEditMode();
 		}
 	}
@@ -849,10 +834,10 @@ function EditSensorInfo({
 								setPort(
 									event.target.value
 										? Number(event.target.value)
-										: null,
+										: undefined,
 								);
 							} catch (e) {
-								setPort(null);
+								setPort(undefined);
 							}
 						}}
 						margin="dense"

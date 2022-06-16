@@ -7,20 +7,17 @@ import {
 } from "react-router-dom";
 
 export function generateTo(to: string, location: Location): string {
-	console.log(to, location);
 	const url = new URL(
 		window.location.origin + location.pathname + location.search,
 	);
 
 	const toUrl = new URL(window.location.origin + to);
-	console.log(url, toUrl);
 
 	url.pathname = toUrl.pathname;
 
 	toUrl.searchParams.forEach((value, key) => {
 		url.searchParams.set(key, value);
 	});
-	console.log(url, toUrl);
 
 	return url.pathname + url.search;
 }

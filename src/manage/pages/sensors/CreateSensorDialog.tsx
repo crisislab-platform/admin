@@ -48,7 +48,7 @@ export function CreateSensorDialog({
 	const [onFloor, setOnFloor] = useState<number | 0>();
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const [IPAddress, setIPAddress] = useState<string>();
-	const [port, setPort] = useState<number | null>(null);
+	const [port, setPort] = useState<number | undefined>(undefined);
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
@@ -427,10 +427,10 @@ export function CreateSensorDialog({
 										setPort(
 											event.target.value
 												? Number(event.target.value)
-												: null,
+												: undefined,
 										);
 									} catch (e) {
-										setPort(null);
+										setPort(undefined);
 									}
 								}}
 								margin="dense"
