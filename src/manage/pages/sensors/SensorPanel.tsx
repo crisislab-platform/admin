@@ -1,9 +1,10 @@
 import { Account, Role, Sensor, SensorID, SensorType } from "../../../types";
-import {
+import
+{
 	Alert,
 	AlertTitle,
 	AppBar,
-	Avatar,
+	Checkbox,
 	Box,
 	Button,
 	Dialog,
@@ -30,7 +31,8 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import {
+import
+{
 	LoadingSpinner,
 	SensorImage,
 	SensorSetupCommand,
@@ -38,12 +40,14 @@ import {
 	useNavigateWithQuery,
 } from "../../../components";
 import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
-import {
+import
+{
 	defaultPosition,
 	getNextSensorID,
 	sensorMenuTypes,
 } from "../../../utils";
-import {
+import
+{
 	makeDeleteSensor,
 	makeEditSensor,
 	makeFetchSensors,
@@ -69,11 +73,13 @@ const SlideUpTransition = forwardRef(function Transition(
 		children: ReactElement;
 	},
 	ref: Ref<unknown>,
-) {
+)
+{
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export function SensorPanel() {
+export function SensorPanel()
+{
 	const { user } = useAuth();
 	const sensorsQuery = useQuery(
 		"sensors",
@@ -91,7 +97,8 @@ export function SensorPanel() {
 
 	const queryClient = useQueryClient();
 	const mutation = useMutation(makeDeleteSensor(user && user.token), {
-		onMutate: async (sensorToDelete: Sensor) => {
+		onMutate: async (sensorToDelete: Sensor) =>
+		{
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("sensors");
 
@@ -104,7 +111,8 @@ export function SensorPanel() {
 				(oldSensors: {
 					sensors: Record<SensorID, Sensor>;
 					timestamp: number;
-				}) => {
+				}) =>
+				{
 					let newSensors = oldSensors;
 					newSensors.sensors[sensorToDelete.id] = undefined;
 					return newSensors;
@@ -114,7 +122,8 @@ export function SensorPanel() {
 			// Return a context object with the snapshotted value
 			return { previousSensors };
 		},
-		onError: (error, newSensor, context) => {
+		onError: (error, newSensor, context) =>
+		{
 			queryClient.setQueryData(
 				"sensors",
 				(
@@ -130,7 +139,8 @@ export function SensorPanel() {
 				variant: "error",
 			});
 		},
-		onSuccess: () => {
+		onSuccess: () =>
+		{
 			enqueueSnackbar(
 				`Deleted sensor. Changes may take up to a minute to be reflected everywhere.`,
 				{
@@ -140,10 +150,12 @@ export function SensorPanel() {
 		},
 	});
 
-	if (sensorsQuery.isLoading) {
+	if (sensorsQuery.isLoading)
+	{
 		return <LoadingSpinner message="Loading sensor details" />;
 	}
-	if (sensorsQuery.isError) {
+	if (sensorsQuery.isError)
+	{
 		return (
 			<Alert severity="error" sx={{ width: "100%" }}>
 				<AlertTitle>Error loading sensor details.</AlertTitle>
@@ -153,12 +165,14 @@ export function SensorPanel() {
 	}
 	let sensorID: SensorID | null = null;
 	let activeSensor: Sensor;
-	try {
+	try
+	{
 		sensorID = Number(rawSensorID);
 		activeSensor = sensorsQuery.data.sensors[sensorID];
-	} catch (error) {}
+	} catch (error) { }
 
-	if (!activeSensor) {
+	if (!activeSensor)
+	{
 		return (
 			<Alert severity="warning" sx={{ width: "100%" }}>
 				<AlertTitle>No matching sensor found.</AlertTitle>
@@ -168,20 +182,24 @@ export function SensorPanel() {
 		);
 	}
 
-	function exitEditMode() {
+	function exitEditMode()
+	{
 		setEditMode(false);
 	}
 
-	function onDeletionConfirmModalClose() {
+	function onDeletionConfirmModalClose()
+	{
 		setDeletionConfirmModalOpen(false);
 	}
 
-	function deleteSensor() {
+	function deleteSensor()
+	{
 		mutation.mutate(activeSensor);
 		onDeletionConfirmModalClose();
 	}
 
-	function onDialogCLose() {
+	function onDialogCLose()
+	{
 		navigateWithQuery("/manage/sensors");
 	}
 
@@ -288,15 +306,15 @@ export function SensorPanel() {
 						</Typography>
 						<Tooltip title="Copy coordinates">
 							<IconButton
-								onClick={async () => {
-									try {
+								onClick={async () =>
+								{
+									try
+									{
 										await navigator.clipboard.writeText(
-											`${
-												activeSensor.longitude ||
-												"Unknown"
-											}, ${
-												activeSensor.latitude ||
-												"Unknown"
+											`${activeSensor.longitude ||
+											"Unknown"
+											}, ${activeSensor.latitude ||
+											"Unknown"
 											}`,
 										);
 										enqueueSnackbar(
@@ -350,7 +368,8 @@ export function SensorPanel() {
 			</Stack>
 		</Stack>
 	);
-	if (editMode) {
+	if (editMode)
+	{
 		layout = (
 			<Stack sx={{ p: onMobile ? 2 : 0 }}>
 				<Stack direction="row">
@@ -371,7 +390,8 @@ export function SensorPanel() {
 		);
 	}
 
-	if (onMobile) {
+	if (onMobile)
+	{
 		return (
 			<Dialog
 				fullScreen
@@ -411,7 +431,8 @@ function EditSensorInfo({
 }: {
 	exitEditMode: () => void;
 	activeSensor: Sensor;
-}) {
+})
+{
 	const { user } = useAuth();
 	const [name, setName] = useState<string>(
 		activeSensor.name ? activeSensor.name : "",
@@ -444,6 +465,7 @@ function EditSensorInfo({
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const [IPAddress, setIPAddress] = useState<string>("");
 	const [port, setPort] = useState<number | undefined>(undefined);
+	const [online, setOnline] = useState<boolean | undefined>(undefined);
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
@@ -453,7 +475,8 @@ function EditSensorInfo({
 	);
 
 	const mutation = useMutation(makeEditSensor(user && user.token), {
-		onMutate: async (newSensor) => {
+		onMutate: async (newSensor) =>
+		{
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("sensors");
 
@@ -478,7 +501,8 @@ function EditSensorInfo({
 			// Return a context object with the snapshotted value
 			return { previousSensors };
 		},
-		onError: (error, newSensor, context) => {
+		onError: (error, newSensor, context) =>
+		{
 			queryClient.setQueryData(
 				"sensors",
 				(
@@ -494,7 +518,8 @@ function EditSensorInfo({
 				variant: "error",
 			});
 		},
-		onSuccess: () => {
+		onSuccess: () =>
+		{
 			enqueueSnackbar(
 				`Updated sensor. Changes may take up to a minute to be reflected everywhere.`,
 				{
@@ -504,7 +529,8 @@ function EditSensorInfo({
 		},
 	});
 
-	useEffect(() => {
+	useEffect(() =>
+	{
 		setName(activeSensor.name ? activeSensor.name : "");
 		setSecondaryID(
 			activeSensor.secondary_id ? activeSensor.secondary_id : "",
@@ -530,25 +556,31 @@ function EditSensorInfo({
 		setOnFloor(activeSensor.on_floor ? activeSensor.on_floor : 0);
 		setIPAddress(activeSensor.ip);
 		setPort(activeSensor.port ? activeSensor.port : null);
+		setOnline(activeSensor.online);
 	}, [activeSensor]);
 
-	function onSubmit() {
+	function onSubmit()
+	{
 		if (!sensorsQuery.isSuccess) return;
 		setErrors([]);
 		let newErrors: typeof errors = [];
 		let type = menuType;
-		if (menuType === "__other") {
+		if (menuType === "__other")
+		{
 			type = otherType;
 		}
-		if (!type || type.length === 0) {
+		if (!type || type.length === 0)
+		{
 			newErrors.push([
 				"Make sure to choose a sensor type.",
 				"If you select 'other', make sure to enter a value in the text box provided.",
 			]);
 		}
-		if (newErrors.length > 0) {
+		if (newErrors.length > 0)
+		{
 			setErrors(newErrors);
-		} else {
+		} else
+		{
 			mutation.mutate({
 				id: activeSensor.id,
 				name,
@@ -561,28 +593,34 @@ function EditSensorInfo({
 				secondary_id: secondaryID,
 				port,
 				ip: IPAddress,
+				online,
 			});
 
 			exitEditMode();
 		}
 	}
 
-	function getLocationOfDevice() {
-		function onSuccess(position) {
+	function getLocationOfDevice()
+	{
+		function onSuccess(position)
+		{
 			const latitude = position.coords.latitude;
 			const longitude = position.coords.longitude;
 			setLocation([longitude, latitude]);
 		}
-		function onError() {
+		function onError()
+		{
 			enqueueSnackbar("Unable to find your location", {
 				variant: "error",
 			});
 		}
-		if (!navigator.geolocation) {
+		if (!navigator.geolocation)
+		{
 			enqueueSnackbar("Geolocation is not supported by your browser", {
 				variant: "warning",
 			});
-		} else {
+		} else
+		{
 			navigator.geolocation.getCurrentPosition(onSuccess, onError);
 		}
 	}
@@ -609,6 +647,26 @@ function EditSensorInfo({
 					))}
 				</Stack>
 			)}
+			<FormControlLabel
+				label="Connection status"
+				labelPlacement="start"
+				sx={{ mr: "auto", ml: 0 }}
+				control={
+					<Tooltip title={online === undefined ? "Unknown" : online === true ? "Online" : "Offline"}>
+						<Checkbox
+							checked={online !== undefined && online}
+							indeterminate={online === undefined}
+							onChange={() => setOnline((oldState) =>
+							{
+								if (oldState === undefined) return false;
+								if (oldState === false) return true;
+								return undefined;
+							})}
+						/>
+					</Tooltip>
+
+				}
+			/>
 			<Stack gap={1}>
 				<Typography variant="subtitle1">General information</Typography>
 				<TextField
@@ -829,14 +887,17 @@ function EditSensorInfo({
 					/>
 					<TextField
 						value={port}
-						onChange={(event) => {
-							try {
+						onChange={(event) =>
+						{
+							try
+							{
 								setPort(
 									event.target.value
 										? Number(event.target.value)
 										: undefined,
 								);
-							} catch (e) {
+							} catch (e)
+							{
 								setPort(undefined);
 							}
 						}}
