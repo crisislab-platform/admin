@@ -628,8 +628,11 @@ function EditSensorInfo({
 	return (
 		<Stack gap={1}>
 			<Typography>
-				Sensor ID: <strong>{activeSensor.id}</strong>
+				# <strong>{activeSensor.id}</strong>
 			</Typography>
+			{activeSensor.secondary_id && <Typography>
+				## <strong>{activeSensor.secondary_id}</strong>
+			</Typography>}
 			<Alert severity="info">
 				<AlertTitle>
 					Changes may take up to a minute to be reflected everywhere.
