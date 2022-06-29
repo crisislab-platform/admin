@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Stack, TextField, Typography } from "@mui/material";
-import { showErrorSnackbar, titleSuffix } from "./utils";
+import { titleSuffix } from "./utils";
 
 import { LinkWithQuery } from "../components";
 import { LoadingButton } from "@mui/lab";
@@ -11,7 +11,8 @@ export default function PasswordResetStartPage() {
 	useEffect(() => {
 		document.title = `Request a password reset${titleSuffix}`;
 	}, []);
-	const { loading, sendLink } = useAuth();
+	const { sendLink } = useAuth();
+	const [loading, setLoading] = useState(false);
 
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const [sent, setSent] = useState<false | string>(false);
@@ -25,10 +26,12 @@ export default function PasswordResetStartPage() {
 				variant: "warning",
 			});
 		} else {
+			setLoading(true);
 			const success = await sendLink(email.toString(), "reset");
 			if (success) {
 				setSent(email.toString());
 			}
+			setLoading(false);
 		}
 	}
 

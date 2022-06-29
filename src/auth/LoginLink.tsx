@@ -15,7 +15,8 @@ export default function MagicLinkPage() {
 
 	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 	const [sent, setSent] = useState<false | string>(false);
-	const { loading, sendLink } = useAuth();
+	const { sendLink } = useAuth();
+	const [loading, setLoading] = useState(false);
 
 	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -26,10 +27,12 @@ export default function MagicLinkPage() {
 				variant: "warning",
 			});
 		} else {
+			setLoading(true);
 			const success = await sendLink(email.toString(), "sign-in");
 			if (success) {
 				setSent(email.toString());
 			}
+			setLoading(false);
 		}
 	}
 

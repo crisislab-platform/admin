@@ -1,6 +1,6 @@
-import { FormEvent, useEffect } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Stack, TextField, Typography } from "@mui/material";
-import { showErrorSnackbar, titleSuffix, useGetQueryParam } from "./utils";
+import { titleSuffix, useGetQueryParam } from "./utils";
 
 import { LinkWithQuery } from "../components";
 import { LoadingButton } from "@mui/lab";
@@ -14,7 +14,8 @@ export default function PasswordResetFinishPage() {
 
 	const { enqueueSnackbar } = useSnackbar();
 	const token = useGetQueryParam("token");
-	const { loading, resetPassword } = useAuth();
+	const { resetPassword } = useAuth();
+	const [loading, setLoading] = useState(false);
 
 	async function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -29,7 +30,9 @@ export default function PasswordResetFinishPage() {
 				variant: "warning",
 			});
 		} else {
+			setLoading(true);
 			await resetPassword(password.toString(), token);
+			setLoading(false);
 		}
 	}
 
