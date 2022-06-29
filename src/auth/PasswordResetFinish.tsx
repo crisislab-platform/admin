@@ -53,9 +53,8 @@ export default function PasswordResetFinishPage({
 			</Typography>
 			<Typography variant="body1" sx={{ textAlign: "center" }}>
 				{welcome
-					? "Finish setting up your account by choosing a"
-					: "Chose your"}{" "}
-				new password below.
+					? "Finish setting up your account by choosing a password below."
+					: "Enter your new password below."}
 			</Typography>
 			<form action="#" onSubmit={onSubmit}>
 				<Stack gap={2}>
