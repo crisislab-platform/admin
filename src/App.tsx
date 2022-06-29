@@ -1,4 +1,11 @@
-import { Button, CssBaseline, ThemeProvider, Typography } from "@mui/material";
+import {
+	Box,
+	Button,
+	CssBaseline,
+	ThemeProvider,
+	Typography,
+	Link,
+} from "@mui/material";
 import { ErrorBoundary, MissingRole, NavigateWithQuery } from "./components";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Route, Routes } from "react-router-dom";
@@ -91,7 +98,12 @@ function renderRoutes(routes: RouteType[]) {
 		);
 	});
 }
-
+const PageNotFound = () => (
+	<Box p={2}>
+		<Typography>Page not found :{"("}</Typography>{" "}
+		<Link href="/">Go home</Link>
+	</Box>
+);
 function App() {
 	const { user } = useAuth();
 
@@ -105,11 +117,7 @@ function App() {
 		<Routes>
 			<Route path="/">
 				<Route key="index" index element={redirectElement} />
-				<Route
-					key="*"
-					path="*"
-					element={<Typography>Page not found :(</Typography>}
-				/>
+				<Route key="*" path="*" element={<PageNotFound />} />
 				<Route
 					key="token-sign-in"
 					path="token-sign-in"
@@ -134,10 +142,7 @@ function App() {
 						element={<NavigateWithQuery to="/manage/sensors" />}
 					/>
 					{renderRoutes(manageRoutes)}
-					<Route
-						path="*"
-						element={<Typography>Page not found :{"("}</Typography>}
-					/>
+					<Route path="*" element={<PageNotFound />} />
 				</Route>
 			</Route>
 		</Routes>

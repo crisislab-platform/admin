@@ -7,9 +7,16 @@ import { LoadingButton } from "@mui/lab";
 import useAuth from "./useAuth";
 import { useSnackbar } from "notistack";
 
-export default function PasswordResetFinishPage() {
+export default function PasswordResetFinishPage({
+	variant,
+}: {
+	variant: "welcome" | "reset";
+}) {
+	const welcome = variant === "welcome";
 	useEffect(() => {
-		document.title = `Choose a new password${titleSuffix}`;
+		document.title = welcome
+			? `Let's get you set up!${titleSuffix}`
+			: `Choose a new password${titleSuffix}`;
 	}, []);
 
 	const { enqueueSnackbar } = useSnackbar();
@@ -42,10 +49,13 @@ export default function PasswordResetFinishPage() {
 				variant="h4"
 				component="h2"
 				sx={{ textAlign: "center" }}>
-				Reset password
+				{welcome ? "Welcome!" : "Reset password"}
 			</Typography>
 			<Typography variant="body1" sx={{ textAlign: "center" }}>
-				Chose your new password below.
+				{welcome
+					? "Finish setting up your account by choosing a"
+					: "Chose your"}{" "}
+				new password below.
 			</Typography>
 			<form action="#" onSubmit={onSubmit}>
 				<Stack gap={2}>

@@ -22,7 +22,11 @@ export const authRoutes: AuthRoute[] = [
 	},
 	{
 		path: "password-reset-finish",
-		component: <PasswordResetFinishPage />,
+		component: <PasswordResetFinishPage variant="reset" />,
+	},
+	{
+		path: "welcome",
+		component: <PasswordResetFinishPage variant="welcome" />,
 	},
 	{
 		path: "login-link",
@@ -51,7 +55,7 @@ function TokenSignIn() {
 		return <NavigateWithQuery to="/auth/login-link-finish" />;
 	}
 	if (type === "welcome") {
-		return <NavigateWithQuery to="/" />;
+		return <NavigateWithQuery to="/auth/welcome" />;
 	}
 	return <p>Something has gone terribly wrong: Unknown type query param</p>;
 }
