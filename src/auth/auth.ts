@@ -1,7 +1,7 @@
 import { apiBase, decodeJWT } from "./utils";
 
 import { User } from "../types";
-import { roles } from "../utils";
+import { parseRoles } from "../utils";
 
 // This file just handles the API calls, all of the other logic (such as popups) is in useAuth.tsx
 
@@ -17,7 +17,7 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 		return {
 			...decoded,
 			token: token,
-			roles: decoded.roles.map((role) => roles[role]),
+			roles: parseRoles(decoded.roles),
 		};
 	} else {
 		// The function has been given a username and password
@@ -43,7 +43,7 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 				return {
 					...decoded,
 					token: data.token,
-					roles: decoded.roles.map((role) => roles[role]),
+					roles: parseRoles(decoded.roles),
 				};
 			} catch (error) {
 				throw new Error(

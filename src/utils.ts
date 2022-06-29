@@ -93,3 +93,20 @@ export function getObjectWithOnlyChangedProperties<T>(
 	}
 	return thing;
 }
+
+export function parseRoles(rolesToParse: any): Role[] {
+	if (!rolesToParse) throw new Error("No roles provided");
+	if (!Array.isArray(rolesToParse)) throw new Error("Roles must be an array");
+
+	const parsedRoles: Role[] = rolesToParse
+		.filter((role) => !!role && typeof role === "string")
+		.map((role) => roles[role])
+		.filter(
+			(role) =>
+				!!role &&
+				"raw" in role &&
+				"text" in role &&
+				Object.keys(roles).includes(role.raw),
+		);
+	return parsedRoles;
+}

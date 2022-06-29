@@ -2,7 +2,7 @@ import { Account, Role, Sensor, SensorID } from "./types";
 import {
 	generateAvatar,
 	getObjectWithOnlyChangedProperties,
-	roles,
+	parseRoles,
 	sensorsAPIBase,
 	usersAPIBase,
 } from "./utils";
@@ -21,18 +21,13 @@ export function makeFetchAccounts(token?: string): () => Promise<Account[]> {
 			);
 		}
 		const data = await response.json();
-		return data.map((account) => ({
-			...account,
-			roles: account.roles
-				.map((role) => roles[role])
-				.filter(
-					(role) =>
-						!!role &&
-						"raw" in role &&
-						Object.keys(roles).includes(role.raw),
-				),
-			picture: generateAvatar(account.email),
-		}));
+		return data.map((account) => {
+			return {
+				...account,
+				roles: parseRoles(account.roles),
+				picture: generateAvatar(account.email),
+			};
+		});
 	};
 }
 
