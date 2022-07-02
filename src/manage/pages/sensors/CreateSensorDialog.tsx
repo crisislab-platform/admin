@@ -132,8 +132,12 @@ export function CreateSensorDialog({
 				name,
 				type,
 				elevation,
-				longitude: enableLocation ? location[0] : undefined,
-				latitude: enableLocation ? location[1] : undefined,
+				location: enableLocation
+					? {
+							type: "Point",
+							coordinates: location,
+					  }
+					: undefined,
 				total_floors: totalFloors,
 				on_floor: onFloor,
 				secondary_id: secondaryID,

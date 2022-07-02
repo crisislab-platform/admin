@@ -57,7 +57,6 @@ export const filterRuleOperations: FilterRuleOperation[] = [
 
 export const filterRuleSensorProperties: (keyof Sensor)[] = [
 	"online",
-	"latitude",
 	"id",
 	"type",
 	"name",
