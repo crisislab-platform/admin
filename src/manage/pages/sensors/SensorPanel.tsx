@@ -277,14 +277,14 @@ export function SensorPanel() {
 						<Typography>
 							Longitude:{" "}
 							<strong>
-								{activeSensor?.location.coordinates[0] ||
+								{activeSensor?.location?.coordinates?.[0] ||
 									"Unknown"}
 							</strong>
 						</Typography>
 						<Typography>
 							Latitude:{" "}
 							<strong>
-								{activeSensor?.location.coordinates[1] ||
+								{activeSensor?.location?.coordinates?.[1] ||
 									"Unknown"}
 							</strong>
 						</Typography>
@@ -295,10 +295,10 @@ export function SensorPanel() {
 										await navigator.clipboard.writeText(
 											`${
 												activeSensor?.location
-													.coordinates[0] || "Unknown"
+													?.coordinates?.[0] || "Unknown"
 											}, ${
 												activeSensor?.location
-													.coordinates[1] || "Unknown"
+													?.coordinates?.[1] || "Unknown"
 											}`,
 										);
 										enqueueSnackbar(
@@ -431,8 +431,8 @@ function EditSensorInfo({
 	);
 	const [enableLocation, setEnableLocation] = useState(false);
 	const [location, setLocation] = useState<[number, number]>([
-		activeSensor?.location.coordinates[0] || defaultPosition[0],
-		activeSensor?.location.coordinates[1] || defaultPosition[1],
+		activeSensor?.location?.coordinates?.[0] || defaultPosition[0],
+		activeSensor?.location?.coordinates?.[1] || defaultPosition[1],
 	]);
 	const [elevation, setElevation] = useState<number>(
 		activeSensor.elevation ? activeSensor.elevation : 0,
@@ -523,8 +523,8 @@ function EditSensorInfo({
 				: activeSensor.type,
 		);
 		setLocation([
-			activeSensor?.location.coordinates[0] || defaultPosition[0],
-			activeSensor?.location.coordinates[1] || defaultPosition[1],
+			activeSensor?.location?.coordinates?.[0] || defaultPosition[0],
+			activeSensor?.location?.coordinates?.[1] || defaultPosition[1],
 		]);
 		setElevation(activeSensor.elevation ? activeSensor.elevation : 0);
 		setTotalFloors(
