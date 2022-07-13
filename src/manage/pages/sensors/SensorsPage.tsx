@@ -9,6 +9,8 @@ import {
 	TextField,
 	ToggleButton,
 	Tooltip,
+	useTheme,
+	useMediaQuery,
 	Typography,
 } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -44,6 +46,8 @@ const sensorSortKeys: ExtendedSensorSortKey[] = [
 ];
 
 export function SensorsPage() {
+	const theme = useTheme();
+	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 	const { user } = useAuth();
 	const [createSensorDialogOpen, setCreateSensorDialogOpen] = useState(false);
 	const [sortAscending, setSortAscending] = useState(false);
@@ -55,6 +59,8 @@ export function SensorsPage() {
 		useState<null | HTMLElement>(null);
 
 	const sortMenuOpen = Boolean(sortMenuAnchorEl);
+
+	const toolbarHeight = onMobile ? 64 : 56;
 
 	function onCreateSensorDialogClose() {
 		setCreateSensorDialogOpen(false);
@@ -72,12 +78,27 @@ export function SensorsPage() {
 	}
 
 	return (
-		<Grid container sx={{ w: "100%", h: "100%", flex: "1" }}>
-			<Grid item xs={12} md={6}>
+		<Grid
+			container
+			sx={{
+				height: `calc(100vh - ${toolbarHeight}px)`,
+				maxHeight: `calc(100vh - ${toolbarHeight}px)`,
+				w: "100%",
+				flex: "1",
+			}}>
+			<Grid
+				item
+				xs={12}
+				md={6}
+				sx={{
+					height: "100%",
+					maxHeight: "100%",
+					overflow: "auto",
+				}}>
 				<Stack>
 					<Stack
 						direction="row"
-						padding={1}
+						p={1}
 						gap={1}
 						alignItems="center"
 						flexWrap="wrap">
@@ -161,14 +182,22 @@ export function SensorsPage() {
 					/>
 				</Stack>
 			</Grid>
-			<Grid
-				item
-				xs={12}
-				md={6}
-				p={1}
-				sx={{ maxHeight: "100%", overflow: "auto" }}>
+			{onMobile ? (
 				<Outlet />
-			</Grid>
+			) : (
+				<Grid
+					item
+					xs={12}
+					md={6}
+					p={1}
+					sx={{
+						height: "100%",
+						maxHeight: "100%",
+						overflow: "auto",
+					}}>
+					<Outlet />
+				</Grid>
+			)}
 		</Grid>
 	);
 }

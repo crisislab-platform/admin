@@ -31,7 +31,12 @@ export default function ManageApp() {
 	}, []);
 
 	return (
-		<Box sx={{ pl: onMobile ? 0 : `${drawerWidth}px` }}>
+		<Box
+			sx={{
+				pl: onMobile ? 0 : `${drawerWidth}px`,
+				height: "100%",
+				maxHeight: "100%",
+			}}>
 			<AppBar position="fixed">
 				<Toolbar variant={onMobile ? undefined : "dense"}>
 					{onMobile && (
@@ -67,10 +72,7 @@ export default function ManageApp() {
 				</Toolbar>
 			</AppBar>
 
-			<Stack
-				sx={{
-					minHeight: "100vh",
-				}}>
+			<Stack sx={{ height: "100%", maxHeight: "100%" }}>
 				<Toolbar variant={onMobile ? undefined : "dense"} />
 				{/* The sidebar is here (under the toolbar) so that if it throws, the error message is still visible under the app bar. */}
 				<ErrorBoundary>
