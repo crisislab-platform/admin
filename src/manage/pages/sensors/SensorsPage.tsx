@@ -97,6 +97,14 @@ export function SensorsPage() {
 				}}>
 				<Stack>
 					<Stack
+						sx={{
+							backgroundColor: (theme) =>
+								theme.palette.background.default,
+							position: "sticky",
+							top: 0,
+							paddingTop: (theme) => theme.spacing(1),
+							zIndex: (theme) => theme.zIndex.drawer - 1,
+						}}
 						direction="row"
 						p={1}
 						gap={1}
