@@ -107,7 +107,7 @@ export function AccountPanel() {
 		},
 		onSuccess: () => {
 			enqueueSnackbar(
-				`Deleted account. Changes may take up to a minute to be reflected everywhere.`,
+				"Deleted account. Changes may take up to a minute to be reflected everywhere.",
 				{
 					variant: "success",
 				},
@@ -125,8 +125,10 @@ export function AccountPanel() {
 	if (accountsQuery.isError) {
 		return (
 			<Alert severity="error">
-				<AlertTitle>Error loading account details.</AlertTitle>
-				{accountsQuery.error}
+				<>
+					<AlertTitle>Error loading account details.</AlertTitle>
+					{accountsQuery.error}
+				</>
 			</Alert>
 		);
 	}

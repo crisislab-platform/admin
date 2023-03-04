@@ -143,8 +143,10 @@ export function SensorPanel() {
 	if (sensorsQuery.isError) {
 		return (
 			<Alert severity="error" sx={{ width: "100%" }}>
-				<AlertTitle>Error loading sensor details.</AlertTitle>
-				{sensorsQuery.error}
+				<>
+					<AlertTitle>Error loading sensor details.</AlertTitle>
+					{sensorsQuery.error}
+				</>
 			</Alert>
 		);
 	}

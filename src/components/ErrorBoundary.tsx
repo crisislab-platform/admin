@@ -1,10 +1,10 @@
 import { Alert, AlertTitle } from "@mui/material";
 
-import { Component } from "react";
+import { Component, ReactNode } from "react";
 
 export class ErrorBoundary extends Component<
-	{},
-	{ hasError: boolean; error: any }
+	{ children?: ReactNode },
+	{ hasError: boolean; error?: unknown }
 > {
 	constructor(props) {
 		super(props);
@@ -18,7 +18,8 @@ export class ErrorBoundary extends Component<
 			return (
 				<Alert severity="error" sx={{ margin: 2 }}>
 					<AlertTitle>Something has gone cataclysmically wrong!</AlertTitle>
-					{`A child component threw this error: ${this.state.error}`}
+					{this.state.error &&
+						`Send this to a developer to help figure out what happened: ${this.state.error}`}
 				</Alert>
 			);
 		}
