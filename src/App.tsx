@@ -42,7 +42,8 @@ export function WrappedApp() {
 							sx={{ color: "white" }}
 							onClick={() => {
 								notistackRef?.current?.closeSnackbar(key);
-							}}>
+							}}
+						>
 							Dismiss
 						</Button>
 					)}
@@ -56,7 +57,8 @@ export function WrappedApp() {
 						horizontal: "right",
 						vertical: "bottom",
 					}}
-					dense>
+					dense
+				>
 					<QueryClientProvider client={queryClient}>
 						<AuthProvider>
 							<ErrorBoundary>
@@ -91,23 +93,20 @@ function renderRoutes(routes: RouteType[]) {
 				key={route.slug}
 				path={route.slug}
 				element={routeElement(route)}
-				children={
-					route.subRoutes ? renderRoutes(route.subRoutes) : undefined
-				}
+				children={route.subRoutes ? renderRoutes(route.subRoutes) : undefined}
 			/>
 		);
 	});
 }
 const PageNotFound = () => (
 	<Box p={2}>
-		<Typography>Page not found :{"("}</Typography>{" "}
-		<Link href="/">Go home</Link>
+		<Typography>Page not found :{"("}</Typography> <Link href="/">Go home</Link>
 	</Box>
 );
 function App() {
 	const { user } = useAuth();
 
-	const redirectElement = !!user ? (
+	const redirectElement = user ? (
 		<NavigateWithQuery to="/manage" />
 	) : (
 		<NavigateWithQuery to="/auth" />
@@ -124,10 +123,7 @@ function App() {
 					element={<NavigateWithQuery to="/auth/token-sign-in" />}
 				/>
 				<Route key="auth" path="auth" element={<AuthWrapper />}>
-					<Route
-						index
-						element={<NavigateWithQuery to="/auth/login" />}
-					/>
+					<Route index element={<NavigateWithQuery to="/auth/login" />} />
 					{authRoutes.map((route) => (
 						<Route
 							key={route.path}
@@ -137,10 +133,7 @@ function App() {
 					))}
 				</Route>
 				<Route key="manage" path="manage" element={<ManageApp />}>
-					<Route
-						index
-						element={<NavigateWithQuery to="/manage/sensors" />}
-					/>
+					<Route index element={<NavigateWithQuery to="/manage/sensors" />} />
 					{renderRoutes(manageRoutes)}
 					<Route path="*" element={<PageNotFound />} />
 				</Route>

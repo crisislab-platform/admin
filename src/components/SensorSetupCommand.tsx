@@ -22,7 +22,7 @@ export function SensorSetupCommand({ sensor }: { sensor: Sensor }) {
 	const { enqueueSnackbar } = useSnackbar();
 	const sensorTokenQuery = useQuery(
 		["sensor-token", sensor.id],
-		makeGetSensorToken(sensor.id, user && user.token),
+		makeGetSensorToken(sensor.id, user?.token),
 	);
 
 	const sensorToken = useMemo<null | string>(() => {
@@ -45,11 +45,7 @@ export function SensorSetupCommand({ sensor }: { sensor: Sensor }) {
 		);
 	}
 	return (
-		<Stack
-			direction="row"
-			gap={1}
-			alignItems="center"
-			sx={{ width: "100%" }}>
+		<Stack direction="row" gap={1} alignItems="center" sx={{ width: "100%" }}>
 			<TextField
 				onClick={(event) => (event.target as HTMLInputElement).select()}
 				id="setup-command-read-only-input"
@@ -67,19 +63,17 @@ export function SensorSetupCommand({ sensor }: { sensor: Sensor }) {
 						<IconButton
 							onClick={async () => {
 								try {
-									await navigator.clipboard.writeText(
-										sensorToken,
-									);
+									await navigator.clipboard.writeText(sensorToken);
 									enqueueSnackbar("Copied sensor token.", {
 										variant: "success",
 									});
 								} catch {
-									enqueueSnackbar(
-										"Failed to copy sensor token.",
-										{ variant: "error" },
-									);
+									enqueueSnackbar("Failed to copy sensor token.", {
+										variant: "error",
+									});
 								}
-							}}>
+							}}
+						>
 							<ContentCopyIcon />
 						</IconButton>
 					</Tooltip>

@@ -24,10 +24,11 @@ export function LoginButton({ message }: { message?: string }) {
 			) : (
 				<Button
 					color="secondary"
-					endIcon={!!user ? <LogoutIcon /> : <LoginIcon />}
+					endIcon={user ? <LogoutIcon /> : <LoginIcon />}
 					variant="contained"
-					onClick={() => (!!user ? logout() : goToLogin())}>
-					{!!user ? "Log out" : "Log in"}
+					onClick={() => (user ? logout() : goToLogin())}
+				>
+					{user ? "Log out" : "Log in"}
 				</Button>
 			)}
 		</>
@@ -46,8 +47,9 @@ export function LoginFab({ message }: { message?: string }) {
 			<Fab
 				size="small"
 				color="secondary"
-				onClick={() => (!!user ? logout() : goToLogin())}>
-				{!!user ? <LogoutIcon /> : <LoginIcon />}
+				onClick={() => (user ? logout() : goToLogin())}
+			>
+				{user ? <LogoutIcon /> : <LoginIcon />}
 			</Fab>
 		</Tooltip>
 	);

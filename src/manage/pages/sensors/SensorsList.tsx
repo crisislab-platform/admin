@@ -26,10 +26,7 @@ export function SensorsList({
 }) {
 	const { user } = useAuth();
 	const { sensorID: rawSensorID } = useParams();
-	const sensorsQuery = useQuery(
-		"sensors",
-		makeFetchSensors(user && user.token),
-	);
+	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
 	const filteredSensors = useMemo<null | Sensor[]>(() => {
 		// Make sure that the data is loaded
 		if (!sensorsQuery.isSuccess) return null;
@@ -103,7 +100,7 @@ export function SensorsList({
 			const aLessThanB = sortAscending ? -1 : 1;
 
 			// If and and b are falsey a...
-			if (!bSortValue && !aSortValue) {
+			if (!(bSortValue || aSortValue)) {
 				return 0;
 			}
 			// If a is falsey and b is not...
@@ -143,8 +140,7 @@ export function SensorsList({
 		return (
 			<Alert severity="error" sx={{ m: 2 }}>
 				<AlertTitle>Failed to load sensors.</AlertTitle>
-				{(sensorsQuery.error as any)?.message ||
-					sensorsQuery.error + ""}
+				{(sensorsQuery.error as any)?.message || sensorsQuery.error + ""}
 			</Alert>
 		);
 	}
@@ -160,19 +156,16 @@ export function SensorsList({
 						key={sensor.id}
 						component={RouterLink}
 						to={`./${sensor.id}`}
-						selected={sensorID === sensor.id}>
+						selected={sensorID === sensor.id}
+					>
 						<ListItemIcon>
 							<SensorImage sensor={sensor} showStatusColour />
 						</ListItemIcon>
 						<ListItemText
 							primary={
-								sensor.secondary_id
-									? `${sensor.secondary_id}`
-									: sensorIDText
+								sensor.secondary_id ? `${sensor.secondary_id}` : sensorIDText
 							}
-							secondary={
-								sensor.secondary_id ? sensorIDText : undefined
-							}
+							secondary={sensor.secondary_id ? sensorIDText : undefined}
 						/>
 					</ListItemButton>
 				);

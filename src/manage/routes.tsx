@@ -28,7 +28,6 @@ export const routes: (Route | SidebarLink)[] = [
 		requiredRole: roles["sensors:read"],
 		subRoutes: [
 			{
-				showInSidebar: false,
 				slug: ":sensorID",
 				text: "Sensor info",
 				Element: <SensorPanel />,
@@ -64,7 +63,6 @@ export const routes: (Route | SidebarLink)[] = [
 		requiredRole: roles["users:read"],
 		subRoutes: [
 			{
-				showInSidebar: false,
 				slug: ":accountID",
 				text: "Account information",
 				Element: <AccountPanel />,

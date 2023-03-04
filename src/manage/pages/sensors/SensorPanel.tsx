@@ -75,10 +75,7 @@ const SlideUpTransition = forwardRef(function Transition(
 
 export function SensorPanel() {
 	const { user } = useAuth();
-	const sensorsQuery = useQuery(
-		"sensors",
-		makeFetchSensors(user && user.token),
-	);
+	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
 	const { sensorID: rawSensorID } = useParams();
 
 	const [editMode, setEditMode] = useState(false);
@@ -90,7 +87,7 @@ export function SensorPanel() {
 	const navigateWithQuery = useNavigateWithQuery();
 
 	const queryClient = useQueryClient();
-	const mutation = useMutation(makeDeleteSensor(user && user.token), {
+	const mutation = useMutation(makeDeleteSensor(user?.token), {
 		onMutate: async (sensorToDelete: Sensor) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("sensors");
@@ -132,7 +129,7 @@ export function SensorPanel() {
 		},
 		onSuccess: () => {
 			enqueueSnackbar(
-				`Deleted sensor. Changes may take up to a minute to be reflected everywhere.`,
+				"Deleted sensor. Changes may take up to a minute to be reflected everywhere.",
 				{
 					variant: "success",
 				},
@@ -162,8 +159,8 @@ export function SensorPanel() {
 		return (
 			<Alert severity="warning" sx={{ width: "100%" }}>
 				<AlertTitle>No matching sensor found.</AlertTitle>
-				If you copied the URL from somewhere, make sure that you didin't
-				miss any characters.
+				If you copied the URL from somewhere, make sure that you didin't miss
+				any characters.
 			</Alert>
 		);
 	}
@@ -193,34 +190,35 @@ export function SensorPanel() {
 					direction="row"
 					gap={1}
 					flexWrap="wrap"
-					sx={{ mb: 2 }}>
+					sx={{ mb: 2 }}
+				>
 					<Button
 						variant="outlined"
 						color="error"
 						startIcon={<DeleteIcon />}
-						onClick={() => setDeletionConfirmModalOpen(true)}>
+						onClick={() => setDeletionConfirmModalOpen(true)}
+					>
 						Delete sensor
 					</Button>
 					<Dialog
 						fullWidth
 						open={deletionConfirmModalOpen}
-						onClose={onDeletionConfirmModalClose}>
+						onClose={onDeletionConfirmModalClose}
+					>
 						<DialogTitle>Confirm deletion</DialogTitle>
 						<DialogContent>
 							<Stack gap={1}>
 								<Alert severity="info">
 									<AlertTitle>
-										Changes may take up to a minute to be
-										reflected everywhere.
+										Changes may take up to a minute to be reflected everywhere.
 									</AlertTitle>
-									If the deleted sensor reappears, don't
-									worry. The stored data has been removed and
-									will stop showing up soon.
+									If the deleted sensor reappears, don't worry. The stored data
+									has been removed and will stop showing up soon.
 								</Alert>
 								<DialogContentText>
-									Are you sure that you want to delete the
-									sensor {activeSensor.id}? It will be gone
-									forever with no way of recovering it.
+									Are you sure that you want to delete the sensor{" "}
+									{activeSensor.id}? It will be gone forever with no way of
+									recovering it.
 								</DialogContentText>
 							</Stack>
 						</DialogContent>
@@ -228,15 +226,14 @@ export function SensorPanel() {
 							<Button color="error" onClick={deleteSensor}>
 								Delete
 							</Button>
-							<Button onClick={onDeletionConfirmModalClose}>
-								Close
-							</Button>
+							<Button onClick={onDeletionConfirmModalClose}>Close</Button>
 						</DialogActions>
 					</Dialog>
 					<Button
 						variant="outlined"
 						onClick={() => setEditMode(true)}
-						startIcon={<EditIcon />}>
+						startIcon={<EditIcon />}
+					>
 						Edit sensor details
 					</Button>
 				</Stack>
@@ -250,7 +247,8 @@ export function SensorPanel() {
 						p: 2,
 						width: "100%",
 					}}
-					variant="outlined">
+					variant="outlined"
+				>
 					<Typography>
 						# <strong>{activeSensor.id}</strong>
 						{activeSensor.name && ` "${activeSensor.name}"`}
@@ -277,15 +275,13 @@ export function SensorPanel() {
 						<Typography>
 							Longitude:{" "}
 							<strong>
-								{activeSensor?.location?.coordinates?.[0] ||
-									"Unknown"}
+								{activeSensor?.location?.coordinates?.[0] || "Unknown"}
 							</strong>
 						</Typography>
 						<Typography>
 							Latitude:{" "}
 							<strong>
-								{activeSensor?.location?.coordinates?.[1] ||
-									"Unknown"}
+								{activeSensor?.location?.coordinates?.[1] || "Unknown"}
 							</strong>
 						</Typography>
 						<Tooltip title="Copy coordinates">
@@ -294,24 +290,21 @@ export function SensorPanel() {
 									try {
 										await navigator.clipboard.writeText(
 											`${
-												activeSensor?.location
-													?.coordinates?.[0] || "Unknown"
+												activeSensor?.location?.coordinates?.[0] || "Unknown"
 											}, ${
-												activeSensor?.location
-													?.coordinates?.[1] || "Unknown"
+												activeSensor?.location?.coordinates?.[1] || "Unknown"
 											}`,
 										);
-										enqueueSnackbar(
-											"Copied sensor coordinates.",
-											{ variant: "success" },
-										);
+										enqueueSnackbar("Copied sensor coordinates.", {
+											variant: "success",
+										});
 									} catch {
-										enqueueSnackbar(
-											"Failed to copy sensor coordinates.",
-											{ variant: "error" },
-										);
+										enqueueSnackbar("Failed to copy sensor coordinates.", {
+											variant: "error",
+										});
 									}
-								}}>
+								}}
+							>
 								<ContentCopyIcon
 									sx={{
 										width: (theme) => theme.spacing(2.5),
@@ -330,22 +323,16 @@ export function SensorPanel() {
 						<Stack direction="row" gap={1} alignItems="center">
 							<Typography>
 								Building floors:{" "}
-								<strong>
-									{activeSensor.total_floors || "Unknown"}
-								</strong>
+								<strong>{activeSensor.total_floors || "Unknown"}</strong>
 							</Typography>
 							<Typography>
 								Sensor's floor:{" "}
-								<strong>
-									{activeSensor.on_floor || "Unknown"}
-								</strong>
+								<strong>{activeSensor.on_floor || "Unknown"}</strong>
 							</Typography>
 						</Stack>
 					)}
 
-					{!activeSensor.online && (
-						<SensorSetupCommand sensor={activeSensor} />
-					)}
+					{!activeSensor.online && <SensorSetupCommand sensor={activeSensor} />}
 				</Paper>
 
 				<LiveDataGraphs sensorID={sensorID} height={600} />
@@ -361,7 +348,8 @@ export function SensorPanel() {
 						variant="outlined"
 						color="warning"
 						onClick={exitEditMode}
-						startIcon={<CloseIcon />}>
+						startIcon={<CloseIcon />}
+					>
 						Stop editing (discard changes)
 					</Button>
 				</Stack>
@@ -379,23 +367,20 @@ export function SensorPanel() {
 				fullScreen
 				open
 				onClose={onDialogCLose}
-				TransitionComponent={SlideUpTransition}>
+				TransitionComponent={SlideUpTransition}
+			>
 				<AppBar sx={{ position: "relative" }}>
 					<Toolbar>
 						<IconButton
 							edge="start"
 							color="inherit"
 							onClick={onDialogCLose}
-							aria-label="close">
+							aria-label="close"
+						>
 							<CloseIcon />
 						</IconButton>
-						<Typography
-							sx={{ ml: 2, flex: 1 }}
-							variant="h6"
-							component="div">
-							{editMode
-								? "Editing sensor information"
-								: "Sensor information"}
+						<Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+							{editMode ? "Editing sensor information" : "Sensor information"}
 						</Typography>
 					</Toolbar>
 				</AppBar>
@@ -422,9 +407,7 @@ function EditSensorInfo({
 		activeSensor.secondary_id ? activeSensor.secondary_id : "",
 	);
 	const [menuType, setMenuType] = useState<SensorType>(
-		sensorMenuTypes.includes(activeSensor.type)
-			? activeSensor.type
-			: "__other",
+		sensorMenuTypes.includes(activeSensor.type) ? activeSensor.type : "__other",
 	);
 	const [otherType, setOtherType] = useState<string>(
 		sensorMenuTypes.includes(activeSensor.type) ? "" : activeSensor.type,
@@ -450,12 +433,9 @@ function EditSensorInfo({
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
-	const sensorsQuery = useQuery(
-		"sensors",
-		makeFetchSensors(user && user.token),
-	);
+	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
 
-	const mutation = useMutation(makeEditSensor(user && user.token), {
+	const mutation = useMutation(makeEditSensor(user?.token), {
 		onMutate: async (newSensor) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("sensors");
@@ -499,7 +479,7 @@ function EditSensorInfo({
 		},
 		onSuccess: () => {
 			enqueueSnackbar(
-				`Updated sensor. Changes may take up to a minute to be reflected everywhere.`,
+				"Updated sensor. Changes may take up to a minute to be reflected everywhere.",
 				{
 					variant: "success",
 				},
@@ -509,27 +489,21 @@ function EditSensorInfo({
 
 	useEffect(() => {
 		setName(activeSensor.name ? activeSensor.name : "");
-		setSecondaryID(
-			activeSensor.secondary_id ? activeSensor.secondary_id : "",
-		);
+		setSecondaryID(activeSensor.secondary_id ? activeSensor.secondary_id : "");
 		setMenuType(
 			sensorMenuTypes.includes(activeSensor.type)
 				? activeSensor.type
 				: "__other",
 		);
 		setOtherType(
-			sensorMenuTypes.includes(activeSensor.type)
-				? ""
-				: activeSensor.type,
+			sensorMenuTypes.includes(activeSensor.type) ? "" : activeSensor.type,
 		);
 		setLocation([
 			activeSensor?.location?.coordinates?.[0] || defaultPosition[0],
 			activeSensor?.location?.coordinates?.[1] || defaultPosition[1],
 		]);
 		setElevation(activeSensor.elevation ? activeSensor.elevation : 0);
-		setTotalFloors(
-			activeSensor.total_floors ? activeSensor.total_floors : 0,
-		);
+		setTotalFloors(activeSensor.total_floors ? activeSensor.total_floors : 0);
 		setOnFloor(activeSensor.on_floor ? activeSensor.on_floor : 0);
 		setIPAddress(activeSensor.ip);
 		setPort(activeSensor.port ? activeSensor.port : null);
@@ -610,8 +584,8 @@ function EditSensorInfo({
 				<AlertTitle>
 					Changes may take up to a minute to be reflected everywhere.
 				</AlertTitle>
-				If the updated account information disappears, don't worry. The
-				data is stored and will show up soon.
+				If the updated account information disappears, don't worry. The data is
+				stored and will show up soon.
 			</Alert>
 			{errors.length > 0 && (
 				<Stack gap={1}>
@@ -635,7 +609,8 @@ function EditSensorInfo({
 								: online === true
 								? "Online"
 								: "Offline"
-						}>
+						}
+					>
 						<Checkbox
 							checked={online !== undefined && online}
 							indeterminate={online === undefined}
@@ -687,9 +662,8 @@ function EditSensorInfo({
 						id="sensor-type-select"
 						value={menuType}
 						label="Age"
-						onChange={(event) =>
-							setMenuType(event.target.value as SensorType)
-						}>
+						onChange={(event) => setMenuType(event.target.value as SensorType)}
+					>
 						{sensorMenuTypes.map((type) => (
 							<MenuItem value={type} key={type}>
 								{type}
@@ -721,9 +695,7 @@ function EditSensorInfo({
 					value={elevation}
 					onChange={(event) =>
 						setElevation(
-							event.target.value
-								? Number(event.target.value)
-								: undefined,
+							event.target.value ? Number(event.target.value) : undefined,
 						)
 					}
 					margin="dense"
@@ -740,9 +712,7 @@ function EditSensorInfo({
 					value={onFloor}
 					onChange={(event) =>
 						setOnFloor(
-							event.target.value
-								? Number(event.target.value)
-								: undefined,
+							event.target.value ? Number(event.target.value) : undefined,
 						)
 					}
 					margin="dense"
@@ -759,9 +729,7 @@ function EditSensorInfo({
 					value={totalFloors}
 					onChange={(event) =>
 						setTotalFloors(
-							event.target.value
-								? Number(event.target.value)
-								: undefined,
+							event.target.value ? Number(event.target.value) : undefined,
 						)
 					}
 					margin="dense"
@@ -777,9 +745,7 @@ function EditSensorInfo({
 					control={
 						<Switch
 							checked={enableLocation}
-							onChange={(event) =>
-								setEnableLocation(event.target.checked)
-							}
+							onChange={(event) => setEnableLocation(event.target.checked)}
 						/>
 					}
 					label="Enable manual position"
@@ -787,23 +753,23 @@ function EditSensorInfo({
 				{enableLocation && (
 					<>
 						<Typography variant="body1">
-							The position of the sensor will be automatically
-							determined using the{" "}
+							The position of the sensor will be automatically determined using
+							the{" "}
 							<Link href="https://en.wikipedia.org/wiki/Wi-Fi_positioning_system">
 								Wi-Fi positioning system
 							</Link>{" "}
-							which is usually more accurate than the location
-							that your brower can work out. If the sensor will be
-							in a location without many nearby Wi-Fi networks, or
-							only a few very new networks (which may not have
-							been mapped yet), you can manually set the position.
+							which is usually more accurate than the location that your brower
+							can work out. If the sensor will be in a location without many
+							nearby Wi-Fi networks, or only a few very new networks (which may
+							not have been mapped yet), you can manually set the position.
 						</Typography>
 						{navigator.geolocation && (
 							<Box>
 								<Button
 									startIcon={<MyLocationIcon />}
 									variant="outlined"
-									onClick={getLocationOfDevice}>
+									onClick={getLocationOfDevice}
+								>
 									Use my location
 								</Button>
 							</Box>
@@ -873,9 +839,7 @@ function EditSensorInfo({
 						onChange={(event) => {
 							try {
 								setPort(
-									event.target.value
-										? Number(event.target.value)
-										: undefined,
+									event.target.value ? Number(event.target.value) : undefined,
 								);
 							} catch (e) {
 								setPort(undefined);
@@ -893,7 +857,8 @@ function EditSensorInfo({
 					sx={{ mb: 2, mt: 2, ml: "auto" }}
 					variant="outlined"
 					onClick={onSubmit}
-					startIcon={<SaveIcon />}>
+					startIcon={<SaveIcon />}
+				>
 					Save changes
 				</Button>
 			</Stack>

@@ -36,7 +36,8 @@ export default function ManageApp() {
 				pl: onMobile ? 0 : `${drawerWidth}px`,
 				height: "100%",
 				maxHeight: "100%",
-			}}>
+			}}
+		>
 			<AppBar position="fixed">
 				<Toolbar variant={onMobile ? undefined : "dense"}>
 					{onMobile && (
@@ -45,27 +46,23 @@ export default function ManageApp() {
 							color="inherit"
 							aria-label="open drawer"
 							onClick={() => setMobileDrawerOpen(true)}
-							edge="start">
+							edge="start"
+						>
 							<MenuIcon />
 						</IconButton>
 					)}
 					<Typography variant="h6" component="h1">
 						{routes
 							.sort((a, b) => {
-								const aLength: number = a.slug
-									? a.slug.length
-									: 0;
-								const bLength: number = b.slug
-									? b.slug.length
-									: 0;
+								const aLength: number = a.slug ? a.slug.length : 0;
+								const bLength: number = b.slug ? b.slug.length : 0;
 								return bLength - aLength;
 							})
 							.find((route) =>
 								location.pathname.startsWith(
-									"/manage/" +
-										("indexSlug" in route
-											? route.indexSlug
-											: route.slug),
+									`/manage/${
+										"indexSlug" in route ? route.indexSlug : route.slug
+									}`,
 								),
 							)?.text || "Unknown page"}
 					</Typography>

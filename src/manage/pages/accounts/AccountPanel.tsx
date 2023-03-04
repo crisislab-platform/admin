@@ -61,11 +61,9 @@ const SlideUpTransition = forwardRef(function Transition(
 
 export function AccountPanel() {
 	const { user } = useAuth();
-	const accountsQuery = useQuery(
-		"accounts",
-		makeFetchAccounts(user && user.token),
-		{ staleTime: accountsQueryStaleTime },
-	);
+	const accountsQuery = useQuery("accounts", makeFetchAccounts(user?.token), {
+		staleTime: accountsQueryStaleTime,
+	});
 	const { accountID: encodedAccountID } = useParams();
 	const [editMode, setEditMode] = useState(false);
 	const [sendLinkMenuAnchorEl, setSendLinkMenuAnchorEl] =
@@ -79,7 +77,7 @@ export function AccountPanel() {
 	const navigateWithQuery = useNavigateWithQuery();
 
 	const queryClient = useQueryClient();
-	const mutation = useMutation(makeDeleteAccount(user && user.token), {
+	const mutation = useMutation(makeDeleteAccount(user?.token), {
 		onMutate: async (accountToDelete: Account) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("accounts");
@@ -141,8 +139,8 @@ export function AccountPanel() {
 		return (
 			<Alert severity="warning">
 				<AlertTitle>No matching user found.</AlertTitle>
-				If you copied the URL from somewhere, make sure that you didin't
-				miss any characters.
+				If you copied the URL from somewhere, make sure that you didin't miss
+				any characters.
 			</Alert>
 		);
 	}
@@ -196,7 +194,8 @@ export function AccountPanel() {
 					direction="row"
 					gap={1}
 					flexWrap="wrap"
-					sx={{ mb: 2 }}>
+					sx={{ mb: 2 }}
+				>
 					<Button
 						variant="outlined"
 						startIcon={<SendIcon />}
@@ -204,11 +203,10 @@ export function AccountPanel() {
 							setSendLinkMenuAnchorEl(event.currentTarget);
 						}}
 						id="send-link-button"
-						aria-controls={
-							sendLinkMenuOpen ? "send-link-menu" : undefined
-						}
+						aria-controls={sendLinkMenuOpen ? "send-link-menu" : undefined}
 						aria-haspopup="true"
-						aria-expanded={sendLinkMenuOpen ? "true" : undefined}>
+						aria-expanded={sendLinkMenuOpen ? "true" : undefined}
+					>
 						Send link
 					</Button>
 					<Menu
@@ -218,23 +216,21 @@ export function AccountPanel() {
 						onClose={onSendLinkMenuClose}
 						MenuListProps={{
 							"aria-labelledby": "send-link-button",
-						}}>
-						<MenuItem
-							onClick={createOnSendLinkMenuItemClick("welcome")}>
+						}}
+					>
+						<MenuItem onClick={createOnSendLinkMenuItemClick("welcome")}>
 							<ListItemIcon>
 								<WaveIcon fontSize="small" />
 							</ListItemIcon>
 							<ListItemText>Welcome</ListItemText>
 						</MenuItem>
-						<MenuItem
-							onClick={createOnSendLinkMenuItemClick("reset")}>
+						<MenuItem onClick={createOnSendLinkMenuItemClick("reset")}>
 							<ListItemIcon>
 								<LockResetIcon fontSize="small" />
 							</ListItemIcon>
 							<ListItemText>Reset password</ListItemText>
 						</MenuItem>
-						<MenuItem
-							onClick={createOnSendLinkMenuItemClick("sign-in")}>
+						<MenuItem onClick={createOnSendLinkMenuItemClick("sign-in")}>
 							<ListItemIcon>
 								<LinkIcon fontSize="small" />
 							</ListItemIcon>
@@ -246,29 +242,29 @@ export function AccountPanel() {
 						variant="outlined"
 						color="error"
 						startIcon={<DeleteIcon />}
-						onClick={() => setDeletionConfirmModalOpen(true)}>
+						onClick={() => setDeletionConfirmModalOpen(true)}
+					>
 						Delete account
 					</Button>
 					<Dialog
 						fullWidth
 						open={deletionConfirmModalOpen}
-						onClose={onDeletionConfirmModalClose}>
+						onClose={onDeletionConfirmModalClose}
+					>
 						<DialogTitle>Confirm deletion</DialogTitle>
 						<DialogContent>
 							<Stack gap={1}>
 								<Alert severity="info">
 									<AlertTitle>
-										Changes may take up to a minute to be
-										reflected everywhere.
+										Changes may take up to a minute to be reflected everywhere.
 									</AlertTitle>
-									If the deleted account reappears, don't
-									worry. The stored data has been removed and
-									will stop showing up soon.
+									If the deleted account reappears, don't worry. The stored data
+									has been removed and will stop showing up soon.
 								</Alert>
 								<DialogContentText>
-									Are you sure that you want to delete the
-									account {account.email}? It will be gone
-									forever with no way of recovering it.
+									Are you sure that you want to delete the account{" "}
+									{account.email}? It will be gone forever with no way of
+									recovering it.
 								</DialogContentText>
 							</Stack>
 						</DialogContent>
@@ -276,15 +272,14 @@ export function AccountPanel() {
 							<Button color="error" onClick={deleteAccount}>
 								Delete
 							</Button>
-							<Button onClick={onDeletionConfirmModalClose}>
-								Close
-							</Button>
+							<Button onClick={onDeletionConfirmModalClose}>Close</Button>
 						</DialogActions>
 					</Dialog>
 					<Button
 						variant="outlined"
 						onClick={() => setEditMode(true)}
-						startIcon={<EditIcon />}>
+						startIcon={<EditIcon />}
+					>
 						Edit account details
 					</Button>
 				</Stack>
@@ -308,10 +303,7 @@ export function AccountPanel() {
 			<List>
 				{account.roles.map((role) => (
 					<ListItem key={role.raw} disableGutters>
-						<ListItemText
-							primary={role.text + "."}
-							secondary={role.raw}
-						/>
+						<ListItemText primary={`${role.text}.`} secondary={role.raw} />
 					</ListItem>
 				))}
 			</List>
@@ -326,7 +318,8 @@ export function AccountPanel() {
 						variant="outlined"
 						color="warning"
 						onClick={exitEditMode}
-						startIcon={<CloseIcon />}>
+						startIcon={<CloseIcon />}
+					>
 						Stop editing (discard changes)
 					</Button>
 				</Stack>
@@ -341,23 +334,20 @@ export function AccountPanel() {
 				fullScreen
 				open
 				onClose={onDialogCLose}
-				TransitionComponent={SlideUpTransition}>
+				TransitionComponent={SlideUpTransition}
+			>
 				<AppBar sx={{ position: "relative" }}>
 					<Toolbar>
 						<IconButton
 							edge="start"
 							color="inherit"
 							onClick={onDialogCLose}
-							aria-label="close">
+							aria-label="close"
+						>
 							<CloseIcon />
 						</IconButton>
-						<Typography
-							sx={{ ml: 2, flex: 1 }}
-							variant="h6"
-							component="div">
-							{editMode
-								? "Editing user information"
-								: "User information"}
+						<Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+							{editMode ? "Editing user information" : "User information"}
 						</Typography>
 					</Toolbar>
 				</AppBar>
@@ -390,7 +380,7 @@ function EditUserInfo({
 	const [selectedRoles, setSelectedRoles] = useState<Role[]>(
 		account.roles ? account.roles : [],
 	);
-	const mutation = useMutation(makeEditAccount(user && user.token), {
+	const mutation = useMutation(makeEditAccount(user?.token), {
 		onMutate: async ([oldAccout, newAccount]) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("accounts");
@@ -432,7 +422,7 @@ function EditUserInfo({
 		},
 		onSuccess: () => {
 			enqueueSnackbar(
-				`Modified account successfully. Changes may take up to a minute to be reflected everywhere.`,
+				"Modified account successfully. Changes may take up to a minute to be reflected everywhere.",
 				{
 					variant: "success",
 				},
@@ -483,8 +473,8 @@ function EditUserInfo({
 				<AlertTitle>
 					Changes may take up to a minute to be reflected everywhere.
 				</AlertTitle>
-				If the updated account information disappears, don't worry. The
-				data is stored and will show up soon.
+				If the updated account information disappears, don't worry. The data is
+				stored and will show up soon.
 			</Alert>
 			{errors.length > 0 &&
 				errors.map((error) => (
@@ -520,9 +510,9 @@ function EditUserInfo({
 			{duplicateEmail && (
 				<Alert severity="error">
 					<AlertTitle>Email address already in use.</AlertTitle>
-					Another account is already using the email address {email}.
-					Either choose a different email address or remove the
-					account that is currently using this email address.
+					Another account is already using the email address {email}. Either
+					choose a different email address or remove the account that is
+					currently using this email address.
 				</Alert>
 			)}
 			<Autocomplete
@@ -536,12 +526,7 @@ function EditUserInfo({
 				filterSelectedOptions
 				getOptionLabel={(role: Role) => role.text}
 				renderInput={(params) => (
-					<TextField
-						{...params}
-						label="Roles"
-						margin="dense"
-						fullWidth
-					/>
+					<TextField {...params} label="Roles" margin="dense" fullWidth />
 				)}
 			/>
 			{(hasUsersWrite || hasSensorsWrite) && (
@@ -561,7 +546,8 @@ function EditUserInfo({
 					sx={{ mb: 2, mt: 2, ml: "auto" }}
 					variant="outlined"
 					onClick={onSubmit}
-					startIcon={<SaveIcon />}>
+					startIcon={<SaveIcon />}
+				>
 					Save changes
 				</Button>
 			</Stack>

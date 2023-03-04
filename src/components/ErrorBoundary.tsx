@@ -17,10 +17,8 @@ export class ErrorBoundary extends Component<
 		if (this.state.hasError) {
 			return (
 				<Alert severity="error" sx={{ margin: 2 }}>
-					<AlertTitle>
-						Something has gone cataclysmically wrong!
-					</AlertTitle>
-					{"A child component threw this error: " + this.state.error}
+					<AlertTitle>Something has gone cataclysmically wrong!</AlertTitle>
+					{`A child component threw this error: ${this.state.error}`}
 				</Alert>
 			);
 		}

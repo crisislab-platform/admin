@@ -36,8 +36,7 @@ export function AccountsList() {
 		return (
 			<Alert severity="error" sx={{ m: 2 }}>
 				<AlertTitle>Failed to load users.</AlertTitle>
-				{(accountsQuery.error as any)?.message ||
-					accountsQuery.error + ""}
+				{(accountsQuery.error as any)?.message || accountsQuery.error + ""}
 			</Alert>
 		);
 	}
@@ -49,12 +48,10 @@ export function AccountsList() {
 					key={account.email}
 					component={RouterLink}
 					to={`./${encodeURIComponent(account.email)}`}
-					selected={selectedAccountID === account.email}>
+					selected={selectedAccountID === account.email}
+				>
 					<ListItemAvatar>
-						<Avatar
-							src={account.picture}
-							alt={account.name || account.email}
-						/>
+						<Avatar src={account.picture} alt={account.name || account.email} />
 					</ListItemAvatar>
 					<ListItemText
 						primary={account.name || account.email}

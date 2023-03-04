@@ -57,12 +57,9 @@ export function SensorStatusText({
 							? theme.palette.error.main
 							: theme.palette.secondary.main;
 					},
-				}}>
-				{online === true
-					? "Online"
-					: online === false
-					? "Offline"
-					: "Unknown"}
+				}}
+			>
+				{online === true ? "Online" : online === false ? "Offline" : "Unknown"}
 			</Typography>
 		</Stack>
 	);
@@ -77,7 +74,7 @@ export function SensorImage({
 	size?: number;
 	showStatusColour?: boolean;
 }) {
-	return sensor.type && sensor.type.toLowerCase().includes("android") ? (
+	return sensor.type?.toLowerCase().includes("android") ? (
 		<AndroidIcon
 			sx={{
 				width: size,

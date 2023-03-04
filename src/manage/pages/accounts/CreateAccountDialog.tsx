@@ -79,7 +79,7 @@ export function CreateAccountDialog({
 		},
 		onSuccess: () => {
 			enqueueSnackbar(
-				`Created new account. Changes may take up to a minute to be reflected everywhere.`,
+				"Created new account. Changes may take up to a minute to be reflected everywhere.",
 				{
 					variant: "success",
 				},
@@ -121,11 +121,10 @@ export function CreateAccountDialog({
 				<Stack gap={2}>
 					<Alert severity="info">
 						<AlertTitle>
-							Changes may take up to a minute to be reflected
-							everywhere.
+							Changes may take up to a minute to be reflected everywhere.
 						</AlertTitle>
-						If the new account disappears, don't worry. The data is
-						stored and will show up soon.
+						If the new account disappears, don't worry. The data is stored and
+						will show up soon.
 					</Alert>
 					{errors.length > 0 && (
 						<>
@@ -166,13 +165,10 @@ export function CreateAccountDialog({
 						/>
 						{duplicateEmail && (
 							<Alert severity="error">
-								<AlertTitle>
-									Email address already in use.
-								</AlertTitle>
-								Another account is already using the email
-								address {email}. Either choose a different email
-								address or remove the account that is currently
-								using this email address.
+								<AlertTitle>Email address already in use.</AlertTitle>
+								Another account is already using the email address {email}.
+								Either choose a different email address or remove the account
+								that is currently using this email address.
 							</Alert>
 						)}
 					</Stack>
@@ -188,19 +184,13 @@ export function CreateAccountDialog({
 							filterSelectedOptions
 							getOptionLabel={(role: Role) => role.text}
 							renderInput={(params) => (
-								<TextField
-									{...params}
-									label="Roles"
-									margin="dense"
-									fullWidth
-								/>
+								<TextField {...params} label="Roles" margin="dense" fullWidth />
 							)}
 						/>
 						{(hasUsersWrite || hasSensorsWrite) && (
 							<Alert severity="warning">
 								<AlertTitle>
-									You are granting this account dangerous
-									permissions.
+									You are granting this account dangerous permissions.
 								</AlertTitle>
 								{hasUsersWrite &&
 									"This account will be able to create, modify, or delete any account, including their own."}
