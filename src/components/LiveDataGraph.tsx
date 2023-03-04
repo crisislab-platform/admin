@@ -1,6 +1,8 @@
 import { Paper } from "@mui/material";
 import { SensorID } from "../types";
 
+const liveDataOrigin = "https://crisislab-data.massey.ac.nz";
+
 export function LiveDataGraphs({
 	sensorID,
 	height,
@@ -17,7 +19,7 @@ export function LiveDataGraphs({
 				}}
 				height={height}
 				frameBorder={0}
-				src={`https://live-data.pages.dev/consume/${sensorID}`}
+				src={`${liveDataOrigin}/consume/${sensorID}`}
 			/>
 		</Paper>
 	);
