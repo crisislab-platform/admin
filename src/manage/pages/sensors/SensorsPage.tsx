@@ -33,6 +33,8 @@ import { Outlet } from "react-router-dom";
 import { SensorsList } from "./SensorsList";
 import SortIcon from "@mui/icons-material/Sort";
 import useAuth from "../../../auth/useAuth";
+import { useQuery } from "react-query";
+import { makeFetchSensors } from "../../../api";
 
 type ExtendedSensorSortKey = {
 	label: string;
@@ -49,6 +51,10 @@ export function SensorsPage() {
 	const theme = useTheme();
 	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
 	const { user } = useAuth();
+	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
+	const sensors = sensorsQuery.data
+		? Object.values(sensorsQuery.data.sensors)
+		: null;
 	const [createSensorDialogOpen, setCreateSensorDialogOpen] = useState(false);
 	const [sortAscending, setSortAscending] = useState(false);
 	const [sortBy, setSortBy] = useState<ExtendedSensorSortKey>(
@@ -106,75 +112,114 @@ export function SensorsPage() {
 							top: 0,
 							paddingTop: (theme) => theme.spacing(1),
 							zIndex: (theme) => theme.zIndex.drawer - 1,
+							borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
 						}}
-						direction="row"
 						p={1}
-						gap={1}
-						alignItems="center"
-						flexWrap="wrap"
 					>
-						<Button
-							startIcon={<SortIcon />}
-							size="small"
-							id="sort-sensors-button"
-							aria-controls={sortMenuOpen ? "sort-sensors-menu" : undefined}
-							aria-haspopup="true"
-							aria-expanded={sortMenuOpen ? "true" : undefined}
-							onClick={(event) => setSortMenuAnchorEl(event.currentTarget)}
-						>
-							Sort by: {sortBy.shortLabel || sortBy.label}
-						</Button>
-						<Menu
-							open={sortMenuOpen}
-							anchorEl={sortMenuAnchorEl}
-							onClose={onSortMenuClose}
-							disableScrollLock={true}
-							id="sort-sensors-menu"
-							MenuListProps={{
-								"aria-labelledby": "sort-sensors-button",
-							}}
-						>
-							{sensorSortKeys.map((sortKey) => (
-								<MenuItem
-									key={sortKey.value}
-									onClick={makeOnSortMenuClick(sortKey)}
-									selected={sortBy.value === sortKey.value}
-								>
-									{sortKey.label}
-								</MenuItem>
-							))}
-						</Menu>
-						<Button
-							startIcon={
-								sortAscending ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />
-							}
-							size="small"
-							onClick={() => setSortAscending((oldValue) => !oldValue)}
-						>
-							{sortAscending ? "Ascending" : "Decending"}
-						</Button>
-						<EditFilterRues
-							filterRules={filterRules}
-							setFilterRules={setFilterRules}
-						/>
-						{!!user &&
-							user.roles.find((role) => role.raw === "sensors:write") && (
-								<>
-									<Button
-										sx={{ ml: "auto" }}
-										startIcon={<AddIcon />}
-										variant="contained"
-										size="small"
-										onClick={() => setCreateSensorDialogOpen(true)}
+						<Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
+							<Button
+								startIcon={<SortIcon />}
+								size="small"
+								id="sort-sensors-button"
+								aria-controls={sortMenuOpen ? "sort-sensors-menu" : undefined}
+								aria-haspopup="true"
+								aria-expanded={sortMenuOpen ? "true" : undefined}
+								onClick={(event) => setSortMenuAnchorEl(event.currentTarget)}
+							>
+								Sort by: {sortBy.shortLabel || sortBy.label}
+							</Button>
+							<Menu
+								open={sortMenuOpen}
+								anchorEl={sortMenuAnchorEl}
+								onClose={onSortMenuClose}
+								disableScrollLock={true}
+								id="sort-sensors-menu"
+								MenuListProps={{
+									"aria-labelledby": "sort-sensors-button",
+								}}
+							>
+								{sensorSortKeys.map((sortKey) => (
+									<MenuItem
+										key={sortKey.value}
+										onClick={makeOnSortMenuClick(sortKey)}
+										selected={sortBy.value === sortKey.value}
 									>
-										Create sensor
-									</Button>
-									<CreateSensorDialog
-										open={createSensorDialogOpen}
-										onClose={onCreateSensorDialogClose}
-									/>
-								</>
-							)}
+										{sortKey.label}
+									</MenuItem>
+								))}
+							</Menu>
+							<Button
+								startIcon={
+									sortAscending ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />
+								}
+								size="small"
+								onClick={() => setSortAscending((oldValue) => !oldValue)}
+							>
+								{sortAscending ? "Ascending" : "Decending"}
+							</Button>
+							<EditFilterRues
+								filterRules={filterRules}
+								setFilterRules={setFilterRules}
+							/>
+							{!!user &&
+								user.roles.find((role) => role.raw === "sensors:write") && (
+									<>
+										<Button
+											sx={{ ml: "auto" }}
+											startIcon={<AddIcon />}
+											variant="contained"
+											size="small"
+											onClick={() => setCreateSensorDialogOpen(true)}
+										>
+											Create sensor
+										</Button>
+										<CreateSensorDialog
+											open={createSensorDialogOpen}
+											onClose={onCreateSensorDialogClose}
+										/>
+									</>
+								)}
+						</Stack>
+						<Stack direction="row" gap={2}>
+							<Typography
+								variant="body1"
+								sx={{ display: "flex", alignItems: "center" }}
+							>
+								<span
+									style={{
+										backgroundColor: "green",
+										borderRadius: "50%",
+										height: "1rem",
+										width: "1rem",
+										display: "inline-block",
+										marginBottom: "-0.1rem",
+										marginRight: "5px",
+									}}
+								/>
+								Online:{" "}
+								{sensors &&
+									Object.values(sensors).filter((s) => s.online).length}
+							</Typography>
+							<Typography
+								variant="body1"
+								sx={{ display: "flex", alignItems: "center" }}
+							>
+								<span
+									style={{
+										backgroundColor: "red",
+										borderRadius: "50%",
+										height: "1rem",
+										width: "1rem",
+										display: "inline-block",
+										marginBottom: "-0.1rem",
+										marginRight: "5px",
+									}}
+								/>
+								Offline:{" "}
+								{sensors &&
+									Object.values(sensors).filter((s) => !s.online).length}
+							</Typography>
+						</Stack>
 					</Stack>
 
 					<SensorsList
