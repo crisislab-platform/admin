@@ -1,11 +1,11 @@
-import { apiBase, decodeJWT } from "./utils";
+import { decodeJWT } from "./utils";
 
 import { User } from "../types";
-import { parseRoles } from "../utils";
+import { APIBase, parseRoles } from "../utils";
 
 // This file just handles the API calls, all of the other logic (such as popups) is in useAuth.tsx
 
-const APIBase = `https://shakemap.benhong.me/api/v0/auth`;
+const authAPIBase = `${APIBase}/auth`;
 
 export async function login(token: string): Promise<User>;
 export async function login(username: string, password: string): Promise<User>;
@@ -24,7 +24,7 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 		const email: string = arg1;
 		const password: string = arg2;
 		try {
-			const response = await fetch(`${APIBase}/password`, {
+			const response = await fetch(`${authAPIBase}/password`, {
 				body: JSON.stringify({ email, password }),
 				method: "POST",
 			});
@@ -68,7 +68,7 @@ export async function sendLink(
 ) {
 	try {
 		const response = await fetch(
-			`${apiBase}/link/${email}/${type}${
+			`${authAPIBase}/link/${email}/${type}${
 				!!returnTo ? `?return_to=${returnTo}` : ""
 			}`,
 			{ method: "GET" },
@@ -93,7 +93,7 @@ export async function sendLink(
 
 export async function resetPassword(password: string, token: string) {
 	try {
-		const response = await fetch(`${apiBase}/reset-password`, {
+		const response = await fetch(`${authAPIBase}/reset-password`, {
 			method: "POST",
 			body: JSON.stringify({
 				password,
