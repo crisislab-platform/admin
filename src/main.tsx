@@ -4,7 +4,7 @@ import "@fontsource/manrope/variable.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import { StrictMode } from "react";
 import { WrappedApp } from "./App";
-import { render } from "react-dom";
+import { createRoot } from "react-dom/client";
 
 function Entrypoint() {
 	return (
@@ -14,9 +14,10 @@ function Entrypoint() {
 	);
 }
 
-render(
+const root = createRoot(document.getElementById("root"));
+
+root.render(
 	<StrictMode>
 		<Entrypoint />
 	</StrictMode>,
-	document.getElementById("root"),
 );
