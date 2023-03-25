@@ -5,6 +5,7 @@ import {
 	ThemeProvider,
 	Typography,
 	Link,
+	styled,
 } from "@mui/material";
 import { ErrorBoundary, MissingRole, NavigateWithQuery } from "./components";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -20,6 +21,22 @@ import { authRoutes } from "./auth/authRoutes";
 import { routes as manageRoutes } from "./manage/routes";
 import { theme } from "beryllium";
 import { useRef } from "react";
+import { MaterialDesignContent } from "notistack";
+
+const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
+	"&.notistack-MuiContent-success": {
+		backgroundColor: "#157f1f",
+	},
+	"&.notistack-MuiContent-error": {
+		backgroundColor: "#d00000",
+	},
+	"&.notistack-MuiContent-warning": {
+		backgroundColor: "#ff7700",
+	},
+	"&.notistack-MuiContent-info": {
+		backgroundColor: "#30b7ff",
+	},
+}));
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -47,11 +64,11 @@ export function WrappedApp() {
 							Dismiss
 						</Button>
 					)}
-					classes={{
-						variantSuccess: "Snackbar-Success",
-						variantError: "Snackbar-Error",
-						variantWarning: "Snackbar-Warning",
-						variantInfo: "Snackbar-Info",
+					Components={{
+						success: StyledMaterialDesignContent,
+						error: StyledMaterialDesignContent,
+						warning: StyledMaterialDesignContent,
+						info: StyledMaterialDesignContent,
 					}}
 					anchorOrigin={{
 						horizontal: "right",

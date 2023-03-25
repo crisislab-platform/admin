@@ -2,24 +2,7 @@
 	--light-primary: #4081b3;
 	--primary: #1162a1;
 	--secondary: #5ecaeb;
-	--info: #30b7ff;
-	--success: #157f1f;
-	--warning: #ff7700;
-	--error: #d00000;
 	--spacing: 8px;
-}
-
-.Snackbar-Success {
-	background-color: var(--success);
-}
-.Snackbar-Info {
-	background-color: var(--info);
-}
-.Snackbar-Warning {
-	background-color: var(--warning);
-}
-.Snackbar-Error {
-	background-color: var(--error);
 }
 
 html,
