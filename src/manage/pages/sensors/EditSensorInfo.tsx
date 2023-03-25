@@ -16,6 +16,9 @@ import {
 	TextField,
 	Tooltip,
 	Typography,
+	ToggleButtonGroup,
+	ToggleButton,
+	FormLabel,
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
@@ -234,34 +237,27 @@ export function EditSensorInfo({
 					))}
 				</Stack>
 			)}
-			<FormControlLabel
-				label="Connection status"
-				labelPlacement="start"
-				sx={{ mr: "auto", ml: 0 }}
-				control={
-					<Tooltip
-						title={
-							online === undefined
-								? "Unknown"
-								: online === true
-								? "Online"
-								: "Offline"
+			<Stack>
+				<FormLabel for="edit-connection-status">Connection status</FormLabel>
+				<ToggleButtonGroup
+					id="edit-connection-status"
+					value={online}
+					exclusive
+					onChange={(event, value) => {
+						/**
+						 * Clicking it while selected 'de-toggles' the value by trying to set it to null,
+						 * so we just ignore it if it's null.
+						 */
+						if (value !== null) {
+							setOnline(value);
 						}
-					>
-						<Checkbox
-							checked={online !== undefined && online}
-							indeterminate={online === undefined}
-							onChange={() =>
-								setOnline((oldState) => {
-									if (oldState === undefined) return false;
-									if (oldState === false) return true;
-									return undefined;
-								})
-							}
-						/>
-					</Tooltip>
-				}
-			/>
+					}}
+					aria-label="Connection status"
+				>
+					<ToggleButton value={true}>Online</ToggleButton>
+					<ToggleButton value={false}>Offline</ToggleButton>
+				</ToggleButtonGroup>
+			</Stack>
 			<Stack gap={1}>
 				<Typography variant="subtitle1">General information</Typography>
 				<TextField
