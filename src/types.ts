@@ -55,6 +55,10 @@ export interface Sensor {
 		type: "Point";
 		coordinates: [number?, number?];
 	};
+	publicLocation?: {
+		longitude: number;
+		latitude: number;
+	};
 	id: SensorID;
 	type?: SensorType;
 	name?: string;

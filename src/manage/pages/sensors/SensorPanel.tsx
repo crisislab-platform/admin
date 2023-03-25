@@ -264,7 +264,10 @@ export function SensorPanel() {
 							<Typography>{activeSensor.type}</Typography>
 						</Stack>
 					)}
-
+					<Typography>
+						Has randomised public location:{" "}
+						<strong>{activeSensor.publicLocation ? "Yes" : "No"}</strong>
+					</Typography>
 					<Stack direction="row" gap={1} alignItems="center">
 						<Typography>
 							Longitude:{" "}
