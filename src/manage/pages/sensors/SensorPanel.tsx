@@ -252,22 +252,30 @@ export function SensorPanel() {
 					variant="outlined"
 				>
 					<Typography>
-						# <strong>{activeSensor.id}</strong>
-						{activeSensor.name && ` "${activeSensor.name}"`}
+						#<strong>{activeSensor.id}</strong>
 					</Typography>
+					{activeSensor.name && <Typography>{activeSensor.name}</Typography>}
 					{activeSensor.secondary_id && (
 						<Typography>
-							## <strong>{activeSensor.secondary_id}</strong>
+							Station: <strong>{activeSensor.secondary_id}</strong>
 						</Typography>
 					)}
 					<Typography>
-						{activeSensor.ip && <strong>{activeSensor.ip}</strong>}
-						{activeSensor.ip && activeSensor.port && ":"}
-						{activeSensor.port && activeSensor.port}
+						IP:{" "}
+						{activeSensor.ip ? (
+							<>
+								{" "}
+								<strong>{activeSensor.ip}</strong>
+								{activeSensor.port && ":"}
+							</>
+						) : (
+							activeSensor.port && activeSensor.port
+						)}
 					</Typography>
 					<SensorStatusText online={activeSensor.online} addLabel />
 					{activeSensor.type && (
 						<Stack direction="row" gap={1} alignItems="center">
+							Type:
 							<SensorImage sensor={activeSensor} />
 							<Typography>{activeSensor.type}</Typography>
 						</Stack>
