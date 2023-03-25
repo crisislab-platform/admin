@@ -29,6 +29,7 @@ export const roles: Record<RawRole, Role> = {
 		raw: "sensors:write",
 		text: "Create, modify, or delete sensors",
 	},
+	"sensors:online": {raw: "sensors:online", text: "Update online status of sensors"}
 };
 
 // ~Center of New Zealand
