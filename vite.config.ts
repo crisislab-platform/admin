@@ -12,8 +12,7 @@ export default defineConfig({
 			output: {
 				manualChunks: {
 					react: ["react", "react-dom"],
-					mui: ["@mui/material", "@mui/lab", "notistack"],
-					icons: ["@mui/icons-material"],
+					mui: ["@mui/material", "@mui/lab", "@mui/icons-material"],
 				},
 			},
 		},
