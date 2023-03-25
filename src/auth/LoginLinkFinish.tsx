@@ -26,15 +26,14 @@ export default function LoginLinkFinish() {
 
 	return (
 		<Stack gap={2}>
-			<Typography
-				variant="h4"
-				component="h2"
-				sx={{ textAlign: "center" }}>
+			<Typography variant="h4" component="h2" sx={{ textAlign: "center" }}>
 				Logging you in...
 			</Typography>
 			{!token && noTokenFoundText}
 			{loading && <LoadingSpinner />}
-			<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
+			<LinkWithQuery to="/auth/login" className="arrow-back">
+				Back to login
+			</LinkWithQuery>
 		</Stack>
 	);
 }

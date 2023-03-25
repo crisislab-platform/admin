@@ -10,7 +10,9 @@ export default function RegisterPage() {
 	return (
 		<>
 			<p>To get an account, ask a site admin to create one for you.</p>
-			<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
+			<LinkWithQuery to="/auth/login" className="arrow-back">
+				Back to login
+			</LinkWithQuery>
 		</>
 	);
 }

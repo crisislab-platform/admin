@@ -42,20 +42,18 @@ export default function PasswordResetStartPage() {
 					Password reset email sent to {sent}.
 				</Typography>
 				<Typography variant="body1">
-					If you don't see it, make sure to check your junk/spam
-					folder.
+					If you don't see it, make sure to check your junk/spam folder.
 				</Typography>
-				<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
+				<LinkWithQuery to="/auth/login" className="arrow-back">
+					Back to login
+				</LinkWithQuery>
 			</Stack>
 		);
 	}
 
 	return (
 		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
-			<Typography
-				variant="h4"
-				component="h2"
-				sx={{ textAlign: "center" }}>
+			<Typography variant="h4" component="h2" sx={{ textAlign: "center" }}>
 				Reset password
 			</Typography>
 			<Typography variant="body1" sx={{ textAlign: "center" }}>
@@ -74,12 +72,15 @@ export default function PasswordResetStartPage() {
 						loading={loading}
 						variant="contained"
 						type="submit"
-						color="secondary">
+						color="secondary"
+					>
 						Reset password
 					</LoadingButton>
 				</Stack>
 			</form>
-			<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
+			<LinkWithQuery to="/auth/login" className="arrow-back">
+				Back to login
+			</LinkWithQuery>
 		</Stack>
 	);
 }

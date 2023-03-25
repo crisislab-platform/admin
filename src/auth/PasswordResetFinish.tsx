@@ -45,10 +45,7 @@ export default function PasswordResetFinishPage({
 
 	return (
 		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
-			<Typography
-				variant="h4"
-				component="h2"
-				sx={{ textAlign: "center" }}>
+			<Typography variant="h4" component="h2" sx={{ textAlign: "center" }}>
 				{welcome ? "Welcome!" : "Reset password"}
 			</Typography>
 			<Typography variant="body1" sx={{ textAlign: "center" }}>
@@ -68,12 +65,15 @@ export default function PasswordResetFinishPage({
 						loading={loading}
 						variant="contained"
 						type="submit"
-						color="secondary">
+						color="secondary"
+					>
 						Save new password
 					</LoadingButton>
 				</Stack>
 			</form>
-			<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
+			<LinkWithQuery to="/auth/login" className="arrow-back">
+				Back to login
+			</LinkWithQuery>
 		</Stack>
 	);
 }

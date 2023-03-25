@@ -36,10 +36,7 @@ export default function LoginPage() {
 
 	return (
 		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
-			<Typography
-				variant="h4"
-				component="h2"
-				sx={{ textAlign: "center" }}>
+			<Typography variant="h4" component="h2" sx={{ textAlign: "center" }}>
 				Login
 			</Typography>
 			<form action="#" onSubmit={onSubmit}>
@@ -62,18 +59,21 @@ export default function LoginPage() {
 						variant="contained"
 						type="submit"
 						color="secondary"
-						endIcon={<LoginIcon />}>
+						endIcon={<LoginIcon />}
+					>
 						Login
 					</LoadingButton>
 				</Stack>
 			</form>
-			<LinkWithQuery to="/auth/password-reset-start">
-				Reset password →
+			<LinkWithQuery to="/auth/password-reset-start" className="arrow-forwards">
+				Reset password
 			</LinkWithQuery>
-			<LinkWithQuery to="/auth/login-link">
-				Get a login link →
+			<LinkWithQuery to="/auth/login-link" className="arrow-forwards">
+				Get a login link
 			</LinkWithQuery>
-			<LinkWithQuery to="/auth/register">Register →</LinkWithQuery>
+			<LinkWithQuery to="/auth/register" className="arrow-forwards">
+				Register
+			</LinkWithQuery>
 		</Stack>
 	);
 }

@@ -43,20 +43,18 @@ export default function MagicLinkPage() {
 					An email with a login link has been sent to {sent}.
 				</Typography>
 				<Typography variant="body1">
-					If you don't see it, make sure to check your junk/spam
-					folder.
+					If you don't see it, make sure to check your junk/spam folder.
 				</Typography>
-				<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
+				<LinkWithQuery to="/auth/login" className="arrow-back">
+					Back to login
+				</LinkWithQuery>
 			</Stack>
 		);
 	}
 
 	return (
 		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
-			<Typography
-				variant="h4"
-				component="h2"
-				sx={{ textAlign: "center" }}>
+			<Typography variant="h4" component="h2" sx={{ textAlign: "center" }}>
 				Get a login link
 			</Typography>
 			<Typography variant="body1" sx={{ textAlign: "center" }}>
@@ -76,12 +74,15 @@ export default function MagicLinkPage() {
 						variant="contained"
 						type="submit"
 						color="secondary"
-						endIcon={<MagicIcon />}>
+						endIcon={<MagicIcon />}
+					>
 						Send the link
 					</LoadingButton>
 				</Stack>
 			</form>
-			<LinkWithQuery to="/auth/login">← Back to login</LinkWithQuery>
+			<LinkWithQuery to="/auth/login" className="arrow-back">
+				Back to login
+			</LinkWithQuery>
 		</Stack>
 	);
 }
