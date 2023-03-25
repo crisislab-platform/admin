@@ -56,7 +56,7 @@ export function SensorsPage() {
 		? Object.values(sensorsQuery.data.sensors)
 		: null;
 	const [createSensorDialogOpen, setCreateSensorDialogOpen] = useState(false);
-	const [sortAscending, setSortAscending] = useState(false);
+	const [sortAscending, setSortAscending] = useState(true);
 	const [sortBy, setSortBy] = useState<ExtendedSensorSortKey>(
 		sensorSortKeys[0],
 	);
