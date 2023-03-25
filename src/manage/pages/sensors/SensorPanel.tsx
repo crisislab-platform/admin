@@ -251,13 +251,16 @@ export function SensorPanel() {
 					}}
 					variant="outlined"
 				>
+					{activeSensor.name && (
+						<Typography>Name: {activeSensor.name}</Typography>
+					)}
 					<Typography>
-						#<strong>{activeSensor.id}</strong>
+						ID: <strong>{activeSensor.id}</strong>
 					</Typography>
-					{activeSensor.name && <Typography>{activeSensor.name}</Typography>}
+
 					{activeSensor.secondary_id && (
 						<Typography>
-							Station: <strong>{activeSensor.secondary_id}</strong>
+							RS Station: <strong>{activeSensor.secondary_id}</strong>
 						</Typography>
 					)}
 					<Typography>
