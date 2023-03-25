@@ -1,20 +1,15 @@
 import { ReactNode } from "react";
 import { SvgIcon } from "@mui/material";
+import { roles } from "./utils";
 
-type ShakingDataLump = {
-	d: number;
-	t: number;
-};
 export interface MotionData {
 	time: number;
 	value: number;
 }
-type CRUDOp = "write" | "read";
-type Section = "sensors" | "users";
-export type RawRole = `${Section}:${CRUDOp}`;
+
 export type Role = {
 	text: string;
-	raw: RawRole;
+	raw: keyof typeof roles;
 };
 
 export type Account = {

@@ -1,6 +1,5 @@
 import {
 	FilterRuleOperation,
-	RawRole,
 	Role,
 	Sensor,
 	SensorID,
@@ -18,7 +17,7 @@ export function generateAvatar(email: string) {
 	return `data:image/svg+xml;utf8,${generateFromString(email)}`;
 }
 
-export const roles: Record<RawRole, Role> = {
+export const roles: Record<string, Role> = {
 	"users:read": { raw: "users:read", text: "View accounts" },
 	"users:write": {
 		raw: "users:write",
@@ -29,7 +28,10 @@ export const roles: Record<RawRole, Role> = {
 		raw: "sensors:write",
 		text: "Create, modify, or delete sensors",
 	},
-	"sensors:online": {raw: "sensors:online", text: "Update online status of sensors"}
+	"sensors:online": {
+		raw: "sensors:online",
+		text: "Update online status of sensors",
+	},
 };
 
 // ~Center of New Zealand
