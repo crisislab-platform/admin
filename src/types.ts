@@ -64,6 +64,7 @@ export interface Sensor {
 	secondary_id?: string;
 	port?: number;
 	ip?: string;
+	contact_email?: string;
 }
 export type SensorSortKey = "id" | "type" | "online";
 

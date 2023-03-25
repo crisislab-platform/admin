@@ -38,6 +38,7 @@ export function CreateSensorDialog({
 }) {
 	const { user } = useAuth();
 	const [name, setName] = useState<string>("");
+	const [contactEmail, setContactEmail] = useState<string>("");
 	const [secondaryID, setSecondaryID] = useState<string>("");
 	const [menuType, setMenuType] = useState<SensorType>("Raspberry Shake 4D");
 	const [otherType, setOtherType] = useState<string>("");
@@ -48,7 +49,7 @@ export function CreateSensorDialog({
 	const [onFloor, setOnFloor] = useState<number | 0>();
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const [IPAddress, setIPAddress] = useState<string>();
-	const [port, setPort] = useState<number | undefined>(undefined);
+	const [port, setPort] = useState<number | undefined>();
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
@@ -127,6 +128,7 @@ export function CreateSensorDialog({
 			mutation.mutate({
 				id,
 				name,
+				contact_email: contactEmail,
 				type,
 				elevation,
 				location: enableLocation
@@ -205,13 +207,24 @@ export function CreateSensorDialog({
 							variant="standard"
 						/>
 						<TextField
+							value={contactEmail}
+							onChange={(event) => setContactEmail(event.target.value)}
+							margin="dense"
+							id="sensor-contact-email"
+							name="sensor-contact-email"
+							label="Contact email"
+							type="email"
+							fullWidth
+							variant="standard"
+						/>
+						<TextField
 							InputLabelProps={{ shrink: true }}
 							value={secondaryID}
 							onChange={(event) => setSecondaryID(event.target.value)}
 							margin="dense"
 							id="sensor-secondary-id"
 							name="sensor-secondary-id"
-							label="Secondary ID"
+							label="RS Station ID"
 							type="text"
 							fullWidth
 							variant="standard"
