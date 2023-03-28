@@ -15,10 +15,7 @@ import {
 } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 import { FilterRule, Sensor, SensorSortKey } from "../../../types";
-import {
-	filterRuleOperations,
-	filterRuleSensorProperties,
-} from "../../../utils";
+import { filterRuleOperations } from "../../../utils";
 
 import AddIcon from "@mui/icons-material/Add";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -47,6 +44,17 @@ const sensorSortKeys: ExtendedSensorSortKey[] = [
 	{ label: "Station ID", value: "secondary_id" },
 	{ label: "Type", value: "type" },
 	{ label: "Connection status", shortLabel: "Status", value: "online" },
+];
+const filterRuleSensorProperties: (keyof Sensor)[] = [
+	"online",
+	"id",
+	"type",
+	"name",
+	"ip",
+	"secondary_id",
+	"elevation",
+	"total_floors",
+	"on_floor",
 ];
 
 export function SensorsPage() {

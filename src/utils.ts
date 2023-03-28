@@ -59,16 +59,6 @@ export const filterRuleOperations: FilterRuleOperation[] = [
 	"includes",
 ];
 
-export const filterRuleSensorProperties: (keyof Sensor)[] = [
-	"online",
-	"id",
-	"type",
-	"name",
-	"elevation",
-	"total_floors",
-	"on_floor",
-];
-
 export function getNextSensorID(sensors: Record<SensorID, Sensor>): SensorID {
 	const sensordIDs = Object.keys(sensors);
 	let unusedIDs = [];

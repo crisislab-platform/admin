@@ -238,7 +238,9 @@ export function EditSensorInfo({
 				</Stack>
 			)}
 			<Stack>
-				<FormLabel for="edit-connection-status">Connection status</FormLabel>
+				<FormLabel htmlFor="edit-connection-status">
+					Connection status
+				</FormLabel>
 				<ToggleButtonGroup
 					id="edit-connection-status"
 					value={online}
