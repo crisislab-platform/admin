@@ -244,18 +244,20 @@ export function SensorPanel() {
 							RS Station: <strong>{activeSensor.secondary_id}</strong>
 						</Typography>
 					)}
-					<Typography>
-						IP:{" "}
-						{activeSensor.ip ? (
-							<>
-								{" "}
-								<strong>{activeSensor.ip}</strong>
-								{activeSensor.port && ":"}
-							</>
-						) : (
-							activeSensor.port && activeSensor.port
-						)}
-					</Typography>
+
+					{activeSensor.ip ? (
+						<Typography>
+							IP: <strong>{activeSensor.ip}</strong>
+							{activeSensor.port && `:${activeSensor.port}`}
+						</Typography>
+					) : (
+						<Alert severity="warning">
+							<AlertTitle>No IP address set!</AlertTitle>
+							This means this sensor will always show as offline and it's data
+							won't be received, even if it seems fine in rs.local.
+						</Alert>
+					)}
+
 					<SensorStatusText online={activeSensor.online} addLabel />
 					{activeSensor.type && (
 						<Stack direction="row" gap={1} alignItems="center">
@@ -264,10 +266,7 @@ export function SensorPanel() {
 							<Typography>{activeSensor.type}</Typography>
 						</Stack>
 					)}
-					<Typography>
-						Has randomised public location:{" "}
-						<strong>{activeSensor.publicLocation ? "Yes" : "No"}</strong>
-					</Typography>
+
 					<Stack direction="row" gap={1} alignItems="center">
 						<Typography>
 							Longitude:{" "}

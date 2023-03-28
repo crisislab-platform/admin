@@ -275,6 +275,43 @@ export function CreateSensorDialog({
 					</Stack>
 					<Divider />
 					<Stack gap={1}>
+						<Typography variant="subtitle1">Network</Typography>
+						<Stack direction="row" gap={1}>
+							<TextField
+								value={IPAddress}
+								onChange={(event) => setIPAddress(event.target.value)}
+								margin="dense"
+								id="ip-textbox"
+								name="ip-textbox"
+								label="IP Address"
+								type="text"
+								fullWidth
+								variant="outlined"
+							/>
+							<TextField
+								value={port}
+								onChange={(event) => {
+									try {
+										setPort(
+											event.target.value
+												? Number(event.target.value)
+												: undefined,
+										);
+									} catch (e) {
+										setPort(undefined);
+									}
+								}}
+								margin="dense"
+								id="port-textbox"
+								name="port-textbox"
+								label="Port"
+								type="number"
+								variant="outlined"
+							/>
+						</Stack>
+					</Stack>
+					<Divider />
+					<Stack gap={1}>
 						<Typography variant="subtitle1">Location</Typography>
 						<TextField
 							value={elevation}
@@ -393,43 +430,6 @@ export function CreateSensorDialog({
 								</Stack>
 							</>
 						)}
-					</Stack>
-					<Divider />
-					<Stack gap={1}>
-						<Typography variant="subtitle1">Network</Typography>
-						<Stack direction="row" gap={1}>
-							<TextField
-								value={IPAddress}
-								onChange={(event) => setIPAddress(event.target.value)}
-								margin="dense"
-								id="ip-textbox"
-								name="ip-textbox"
-								label="IP Address"
-								type="text"
-								fullWidth
-								variant="outlined"
-							/>
-							<TextField
-								value={port}
-								onChange={(event) => {
-									try {
-										setPort(
-											event.target.value
-												? Number(event.target.value)
-												: undefined,
-										);
-									} catch (e) {
-										setPort(undefined);
-									}
-								}}
-								margin="dense"
-								id="port-textbox"
-								name="port-textbox"
-								label="Port"
-								type="number"
-								variant="outlined"
-							/>
-						</Stack>
 					</Stack>
 				</Stack>
 			</DialogContent>

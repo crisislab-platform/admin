@@ -70,7 +70,7 @@ export interface Sensor {
 	ip?: string;
 	contact_email?: string;
 }
-export type SensorSortKey = "id" | "type" | "online";
+export type SensorSortKey = keyof Sensor;
 
 export type ShakingDataChannel = "EHZ" | "ENE" | "ENZ" | "ENN";
 

@@ -332,6 +332,39 @@ export function EditSensorInfo({
 					/>
 				)}
 			</Stack>
+
+			<Typography variant="subtitle1">Network</Typography>
+			<Stack direction="row" gap={1}>
+				<TextField
+					value={IPAddress}
+					onChange={(event) => setIPAddress(event.target.value)}
+					margin="dense"
+					id="edit-ip-textbox"
+					name="edit-ip-textbox"
+					label="IP Address"
+					type="text"
+					fullWidth
+					variant="outlined"
+				/>
+				<TextField
+					value={port}
+					onChange={(event) => {
+						try {
+							setPort(
+								event.target.value ? Number(event.target.value) : undefined,
+							);
+						} catch (e) {
+							setPort(undefined);
+						}
+					}}
+					margin="dense"
+					id="edit-port-textbox"
+					name="edit-port-textbox"
+					label="Port"
+					type="number"
+					variant="outlined"
+				/>
+			</Stack>
 			<Stack gap={1}>
 				<Typography variant="subtitle1">Location</Typography>
 				<TextField
@@ -465,38 +498,6 @@ export function EditSensorInfo({
 					</>
 				)}
 
-				<Typography variant="subtitle1">Network</Typography>
-				<Stack direction="row" gap={1}>
-					<TextField
-						value={IPAddress}
-						onChange={(event) => setIPAddress(event.target.value)}
-						margin="dense"
-						id="edit-ip-textbox"
-						name="edit-ip-textbox"
-						label="IP Address"
-						type="text"
-						fullWidth
-						variant="outlined"
-					/>
-					<TextField
-						value={port}
-						onChange={(event) => {
-							try {
-								setPort(
-									event.target.value ? Number(event.target.value) : undefined,
-								);
-							} catch (e) {
-								setPort(undefined);
-							}
-						}}
-						margin="dense"
-						id="edit-port-textbox"
-						name="edit-port-textbox"
-						label="Port"
-						type="number"
-						variant="outlined"
-					/>
-				</Stack>
 				<Button
 					sx={{ mb: 2, mt: 2, ml: "auto" }}
 					variant="outlined"

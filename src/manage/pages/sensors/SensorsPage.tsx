@@ -43,6 +43,8 @@ type ExtendedSensorSortKey = {
 };
 const sensorSortKeys: ExtendedSensorSortKey[] = [
 	{ label: "ID", value: "id" },
+	{ label: "IP", value: "ip" },
+	{ label: "Station ID", value: "secondary_id" },
 	{ label: "Type", value: "type" },
 	{ label: "Connection status", shortLabel: "Status", value: "online" },
 ];

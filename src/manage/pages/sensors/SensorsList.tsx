@@ -39,7 +39,9 @@ export function SensorsList({
 		// Apply all filter rules
 		for (const filterRule of filterRules) {
 			sensors = sensors.filter((sensor) => {
-				let keep;
+				if (!(filterRule.property in sensor)) return true;
+
+				let keep = true;
 
 				switch (filterRule.operation) {
 					case "equals":
