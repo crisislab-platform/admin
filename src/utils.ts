@@ -18,19 +18,22 @@ export function generateAvatar(email: string) {
 }
 
 export const roles: Record<string, Role> = {
-	"users:read": { raw: "users:read", text: "View accounts" },
+	"users:read": { raw: "users:read", text: "View dashboard accounts" },
 	"users:write": {
 		raw: "users:write",
-		text: "Create, modify, or delete accounts",
+		text: "Create, modify, or delete dashboard accounts",
 	},
-	"sensors:read": { raw: "sensors:read", text: "View sensors" },
+	"sensors:read": {
+		raw: "sensors:read",
+		text: "View sensitive sensor information, like real locations and IPs",
+	},
 	"sensors:write": {
 		raw: "sensors:write",
 		text: "Create, modify, or delete sensors",
 	},
 	"sensors:online": {
 		raw: "sensors:online",
-		text: "Update online status of sensors",
+		text: "Update online status of sensors (only used by server)",
 	},
 };
 
