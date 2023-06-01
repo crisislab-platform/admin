@@ -189,6 +189,7 @@ export function EditSensorInfo({
 				port,
 				ip: IPAddress,
 				online,
+				contact_email: contactEmail
 			});
 
 			exitEditMode();
