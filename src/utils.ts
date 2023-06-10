@@ -1,3 +1,4 @@
+import { useMediaQuery, useTheme } from "@mui/material";
 import {
 	FilterRuleOperation,
 	Role,
@@ -106,3 +107,8 @@ export function parseRoles(rolesToParse: any): Role[] {
 		);
 	return parsedRoles;
 }
+
+export const useOnMobile = () => {
+	const theme = useTheme();
+	return useMediaQuery(theme.breakpoints.down("lg"));
+};

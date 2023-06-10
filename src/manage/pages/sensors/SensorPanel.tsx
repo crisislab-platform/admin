@@ -16,8 +16,6 @@ import {
 	Toolbar,
 	Tooltip,
 	Typography,
-	useMediaQuery,
-	useTheme,
 } from "@mui/material";
 import {
 	LoadingSpinner,
@@ -41,6 +39,7 @@ import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { EditSensorInfo } from "./EditSensorInfo";
+import { useOnMobile } from "../../../utils";
 
 const SlideUpTransition = forwardRef(function Transition(
 	props: TransitionProps & {
@@ -60,8 +59,7 @@ export function SensorPanel() {
 	const [deletionConfirmModalOpen, setDeletionConfirmModalOpen] =
 		useState(false);
 	const { enqueueSnackbar } = useSnackbar();
-	const theme = useTheme();
-	const onMobile = useMediaQuery(theme.breakpoints.down("md"));
+	const onMobile = useOnMobile();
 	const navigateWithQuery = useNavigateWithQuery();
 
 	const queryClient = useQueryClient();
@@ -139,8 +137,8 @@ export function SensorPanel() {
 		return (
 			<Alert severity="warning" sx={{ width: "100%" }}>
 				<AlertTitle>No matching sensor found.</AlertTitle>
-				If you copied the URL from somewhere, make sure that you didin't miss
-				any characters.
+				If you copied the URL from somewhere, make sure that you didin't
+				miss any characters.
 			</Alert>
 		);
 	}
@@ -164,60 +162,62 @@ export function SensorPanel() {
 
 	let layout = (
 		<Stack sx={{ p: onMobile ? 2 : 0, minHeight: "100%" }}>
-			{user && !!user.roles.find((role) => role.raw === "sensors:write") && (
-				<Stack
-					justifyContent="flex-end"
-					direction="row"
-					gap={1}
-					flexWrap="wrap"
-					sx={{ mb: 2 }}
-				>
-					<Button
-						variant="outlined"
-						color="error"
-						startIcon={<DeleteIcon />}
-						onClick={() => setDeletionConfirmModalOpen(true)}
-					>
-						Delete sensor
-					</Button>
-					<Dialog
-						fullWidth
-						open={deletionConfirmModalOpen}
-						onClose={onDeletionConfirmModalClose}
-					>
-						<DialogTitle>Confirm deletion</DialogTitle>
-						<DialogContent>
-							<Stack gap={1}>
-								<Alert severity="info">
-									<AlertTitle>
-										Changes may take up to a minute to be reflected everywhere.
-									</AlertTitle>
-									If the deleted sensor reappears, don't worry. The stored data
-									has been removed and will stop showing up soon.
-								</Alert>
-								<DialogContentText>
-									Are you sure that you want to delete the sensor{" "}
-									{activeSensor.id}? It will be gone forever with no way of
-									recovering it.
-								</DialogContentText>
-							</Stack>
-						</DialogContent>
-						<DialogActions>
-							<Button color="error" onClick={deleteSensor}>
-								Delete
-							</Button>
-							<Button onClick={onDeletionConfirmModalClose}>Close</Button>
-						</DialogActions>
-					</Dialog>
-					<Button
-						variant="outlined"
-						onClick={() => setEditMode(true)}
-						startIcon={<EditIcon />}
-					>
-						Edit sensor details
-					</Button>
-				</Stack>
-			)}
+			{user &&
+				!!user.roles.find((role) => role.raw === "sensors:write") && (
+					<Stack
+						justifyContent="flex-end"
+						direction="row"
+						gap={1}
+						flexWrap="wrap"
+						sx={{ mb: 2 }}>
+						<Button
+							variant="outlined"
+							color="error"
+							startIcon={<DeleteIcon />}
+							onClick={() => setDeletionConfirmModalOpen(true)}>
+							Delete sensor
+						</Button>
+						<Dialog
+							fullWidth
+							open={deletionConfirmModalOpen}
+							onClose={onDeletionConfirmModalClose}>
+							<DialogTitle>Confirm deletion</DialogTitle>
+							<DialogContent>
+								<Stack gap={1}>
+									<Alert severity="info">
+										<AlertTitle>
+											Changes may take up to a minute to
+											be reflected everywhere.
+										</AlertTitle>
+										If the deleted sensor reappears, don't
+										worry. The stored data has been removed
+										and will stop showing up soon.
+									</Alert>
+									<DialogContentText>
+										Are you sure that you want to delete the
+										sensor {activeSensor.id}? It will be
+										gone forever with no way of recovering
+										it.
+									</DialogContentText>
+								</Stack>
+							</DialogContent>
+							<DialogActions>
+								<Button color="error" onClick={deleteSensor}>
+									Delete
+								</Button>
+								<Button onClick={onDeletionConfirmModalClose}>
+									Close
+								</Button>
+							</DialogActions>
+						</Dialog>
+						<Button
+							variant="outlined"
+							onClick={() => setEditMode(true)}
+							startIcon={<EditIcon />}>
+							Edit sensor details
+						</Button>
+					</Stack>
+				)}
 			<Stack alignItems="center" gap={2}>
 				<Paper
 					sx={{
@@ -227,15 +227,15 @@ export function SensorPanel() {
 						p: 2,
 						width: "100%",
 					}}
-					variant="outlined"
-				>
+					variant="outlined">
 					<Typography>
 						Name: {activeSensor.name && activeSensor.name}
 					</Typography>
 
 					<Typography>
 						Contact email:{" "}
-						{activeSensor.contact_email && activeSensor.contact_email}
+						{activeSensor.contact_email &&
+							activeSensor.contact_email}
 					</Typography>
 
 					<Typography>
@@ -245,7 +245,8 @@ export function SensorPanel() {
 					<Typography>
 						RS Station:{" "}
 						<strong>
-							{activeSensor.secondary_id && activeSensor.secondary_id}
+							{activeSensor.secondary_id &&
+								activeSensor.secondary_id}
 						</strong>
 					</Typography>
 
@@ -257,8 +258,9 @@ export function SensorPanel() {
 					) : (
 						<Alert severity="warning">
 							<AlertTitle>No IP address set!</AlertTitle>
-							This means this sensor will always show as offline and it's data
-							won't be received, even if it seems fine in rs.local.
+							This means this sensor will always show as offline
+							and it's data won't be received, even if it seems
+							fine in rs.local.
 						</Alert>
 					)}
 
@@ -267,20 +269,24 @@ export function SensorPanel() {
 					<Stack direction="row" gap={1} alignItems="center">
 						Type:
 						<SensorImage sensor={activeSensor} />
-						{activeSensor.type && <Typography>{activeSensor.type}</Typography>}
+						{activeSensor.type && (
+							<Typography>{activeSensor.type}</Typography>
+						)}
 					</Stack>
 
 					<Stack direction="row" gap={1} alignItems="center">
 						<Typography>
 							Longitude:{" "}
 							<strong>
-								{activeSensor?.location?.coordinates?.[0] || "Unknown"}
+								{activeSensor?.location?.coordinates?.[0] ||
+									"Unknown"}
 							</strong>
 						</Typography>
 						<Typography>
 							Latitude:{" "}
 							<strong>
-								{activeSensor?.location?.coordinates?.[1] || "Unknown"}
+								{activeSensor?.location?.coordinates?.[1] ||
+									"Unknown"}
 							</strong>
 						</Typography>
 						<Tooltip title="Copy coordinates">
@@ -289,21 +295,30 @@ export function SensorPanel() {
 									try {
 										await navigator.clipboard.writeText(
 											`${
-												activeSensor?.location?.coordinates?.[0] || "Unknown"
+												activeSensor?.location
+													?.coordinates?.[0] ||
+												"Unknown"
 											}, ${
-												activeSensor?.location?.coordinates?.[1] || "Unknown"
+												activeSensor?.location
+													?.coordinates?.[1] ||
+												"Unknown"
 											}`,
 										);
-										enqueueSnackbar("Copied sensor coordinates.", {
-											variant: "success",
-										});
+										enqueueSnackbar(
+											"Copied sensor coordinates.",
+											{
+												variant: "success",
+											},
+										);
 									} catch {
-										enqueueSnackbar("Failed to copy sensor coordinates.", {
-											variant: "error",
-										});
+										enqueueSnackbar(
+											"Failed to copy sensor coordinates.",
+											{
+												variant: "error",
+											},
+										);
 									}
-								}}
-							>
+								}}>
 								<ContentCopyIcon
 									sx={{
 										width: (theme) => theme.spacing(2.5),
@@ -322,16 +337,22 @@ export function SensorPanel() {
 						<Stack direction="row" gap={1} alignItems="center">
 							<Typography>
 								Building floors:{" "}
-								<strong>{activeSensor.total_floors || "Unknown"}</strong>
+								<strong>
+									{activeSensor.total_floors || "Unknown"}
+								</strong>
 							</Typography>
 							<Typography>
 								Sensor's floor:{" "}
-								<strong>{activeSensor.on_floor || "Unknown"}</strong>
+								<strong>
+									{activeSensor.on_floor || "Unknown"}
+								</strong>
 							</Typography>
 						</Stack>
 					)}
 
-					{!activeSensor.online && <SensorSetupCommand sensor={activeSensor} />}
+					{!activeSensor.online && (
+						<SensorSetupCommand sensor={activeSensor} />
+					)}
 				</Paper>
 
 				<LiveDataGraphs sensorID={sensorID} height={600} />
@@ -347,8 +368,7 @@ export function SensorPanel() {
 						variant="outlined"
 						color="warning"
 						onClick={exitEditMode}
-						startIcon={<CloseIcon />}
-					>
+						startIcon={<CloseIcon />}>
 						Stop editing (discard changes)
 					</Button>
 				</Stack>
@@ -366,20 +386,23 @@ export function SensorPanel() {
 				fullScreen
 				open
 				onClose={onDialogCLose}
-				TransitionComponent={SlideUpTransition}
-			>
+				TransitionComponent={SlideUpTransition}>
 				<AppBar sx={{ position: "relative" }}>
 					<Toolbar>
 						<IconButton
 							edge="start"
 							color="inherit"
 							onClick={onDialogCLose}
-							aria-label="close"
-						>
+							aria-label="close">
 							<CloseIcon />
 						</IconButton>
-						<Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-							{editMode ? "Editing sensor information" : "Sensor information"}
+						<Typography
+							sx={{ ml: 2, flex: 1 }}
+							variant="h6"
+							component="div">
+							{editMode
+								? "Editing sensor information"
+								: "Sensor information"}
 						</Typography>
 					</Toolbar>
 				</AppBar>

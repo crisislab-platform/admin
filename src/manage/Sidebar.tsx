@@ -14,8 +14,6 @@ import {
 	Toolbar,
 	Tooltip,
 	Typography,
-	useMediaQuery,
-	useTheme,
 } from "@mui/material";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import { LoginButton, useNavigateWithQuery } from "../components";
@@ -23,7 +21,7 @@ import { LoginButton, useNavigateWithQuery } from "../components";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { SidebarLink } from "../types";
 import StarIcon from "@mui/icons-material/LocalPolice";
-import { mapURL } from "../utils";
+import { mapURL, useOnMobile } from "../utils";
 import useAuth from "../auth/useAuth";
 import { useLocation } from "react-router-dom";
 
@@ -44,8 +42,7 @@ export default function Sidebar({
 	setMobileDrawerOpen: Dispatch<SetStateAction<boolean>>;
 	mobileDrawerOpen: boolean;
 }) {
-	const theme = useTheme();
-	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
+	const onMobile = useOnMobile();
 	const { user } = useAuth();
 	const navigateWithQuery = useNavigateWithQuery();
 

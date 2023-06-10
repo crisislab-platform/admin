@@ -23,12 +23,15 @@ import {
 	TextField,
 	Toolbar,
 	Typography,
-	useMediaQuery,
-	useTheme,
 } from "@mui/material";
 import { LoadingSpinner, useNavigateWithQuery } from "../../../components";
 import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
-import { accountsQueryStaleTime, generateAvatar, roles } from "../../../utils";
+import {
+	accountsQueryStaleTime,
+	generateAvatar,
+	roles,
+	useOnMobile,
+} from "../../../utils";
 import {
 	makeDeleteAccount,
 	makeEditAccount,
@@ -72,8 +75,7 @@ export function AccountPanel() {
 	const [deletionConfirmModalOpen, setDeletionConfirmModalOpen] =
 		useState(false);
 	const { enqueueSnackbar } = useSnackbar();
-	const theme = useTheme();
-	const onMobile = useMediaQuery(theme.breakpoints.down("md"));
+	const onMobile = useOnMobile();
 	const navigateWithQuery = useNavigateWithQuery();
 
 	const queryClient = useQueryClient();
@@ -141,8 +143,8 @@ export function AccountPanel() {
 		return (
 			<Alert severity="warning">
 				<AlertTitle>No matching user found.</AlertTitle>
-				If you copied the URL from somewhere, make sure that you didin't miss
-				any characters.
+				If you copied the URL from somewhere, make sure that you didin't
+				miss any characters.
 			</Alert>
 		);
 	}
@@ -190,102 +192,114 @@ export function AccountPanel() {
 
 	let layout = (
 		<Stack sx={{ p: onMobile ? 2 : 0 }}>
-			{user && !!user.roles.find((role) => role.raw === "users:write") && (
-				<Stack
-					justifyContent="flex-end"
-					direction="row"
-					gap={1}
-					flexWrap="wrap"
-					sx={{ mb: 2 }}
-				>
-					<Button
-						variant="outlined"
-						startIcon={<SendIcon />}
-						onClick={(event) => {
-							setSendLinkMenuAnchorEl(event.currentTarget);
-						}}
-						id="send-link-button"
-						aria-controls={sendLinkMenuOpen ? "send-link-menu" : undefined}
-						aria-haspopup="true"
-						aria-expanded={sendLinkMenuOpen ? "true" : undefined}
-					>
-						Send link
-					</Button>
-					<Menu
-						id="send-link-menu"
-						anchorEl={sendLinkMenuAnchorEl}
-						open={sendLinkMenuOpen}
-						onClose={onSendLinkMenuClose}
-						MenuListProps={{
-							"aria-labelledby": "send-link-button",
-						}}
-					>
-						<MenuItem onClick={createOnSendLinkMenuItemClick("welcome")}>
-							<ListItemIcon>
-								<WaveIcon fontSize="small" />
-							</ListItemIcon>
-							<ListItemText>Welcome</ListItemText>
-						</MenuItem>
-						<MenuItem onClick={createOnSendLinkMenuItemClick("reset")}>
-							<ListItemIcon>
-								<LockResetIcon fontSize="small" />
-							</ListItemIcon>
-							<ListItemText>Reset password</ListItemText>
-						</MenuItem>
-						<MenuItem onClick={createOnSendLinkMenuItemClick("sign-in")}>
-							<ListItemIcon>
-								<LinkIcon fontSize="small" />
-							</ListItemIcon>
-							<ListItemText>Login link</ListItemText>
-						</MenuItem>
-					</Menu>
-					<Button
-						disabled={account.email === user.email}
-						variant="outlined"
-						color="error"
-						startIcon={<DeleteIcon />}
-						onClick={() => setDeletionConfirmModalOpen(true)}
-					>
-						Delete account
-					</Button>
-					<Dialog
-						fullWidth
-						open={deletionConfirmModalOpen}
-						onClose={onDeletionConfirmModalClose}
-					>
-						<DialogTitle>Confirm deletion</DialogTitle>
-						<DialogContent>
-							<Stack gap={1}>
-								<Alert severity="info">
-									<AlertTitle>
-										Changes may take up to a minute to be reflected everywhere.
-									</AlertTitle>
-									If the deleted account reappears, don't worry. The stored data
-									has been removed and will stop showing up soon.
-								</Alert>
-								<DialogContentText>
-									Are you sure that you want to delete the account{" "}
-									{account.email}? It will be gone forever with no way of
-									recovering it.
-								</DialogContentText>
-							</Stack>
-						</DialogContent>
-						<DialogActions>
-							<Button color="error" onClick={deleteAccount}>
-								Delete
-							</Button>
-							<Button onClick={onDeletionConfirmModalClose}>Close</Button>
-						</DialogActions>
-					</Dialog>
-					<Button
-						variant="outlined"
-						onClick={() => setEditMode(true)}
-						startIcon={<EditIcon />}
-					>
-						Edit account details
-					</Button>
-				</Stack>
-			)}
+			{user &&
+				!!user.roles.find((role) => role.raw === "users:write") && (
+					<Stack
+						justifyContent="flex-end"
+						direction="row"
+						gap={1}
+						flexWrap="wrap"
+						sx={{ mb: 2 }}>
+						<Button
+							variant="outlined"
+							startIcon={<SendIcon />}
+							onClick={(event) => {
+								setSendLinkMenuAnchorEl(event.currentTarget);
+							}}
+							id="send-link-button"
+							aria-controls={
+								sendLinkMenuOpen ? "send-link-menu" : undefined
+							}
+							aria-haspopup="true"
+							aria-expanded={
+								sendLinkMenuOpen ? "true" : undefined
+							}>
+							Send link
+						</Button>
+						<Menu
+							id="send-link-menu"
+							anchorEl={sendLinkMenuAnchorEl}
+							open={sendLinkMenuOpen}
+							onClose={onSendLinkMenuClose}
+							MenuListProps={{
+								"aria-labelledby": "send-link-button",
+							}}>
+							<MenuItem
+								onClick={createOnSendLinkMenuItemClick(
+									"welcome",
+								)}>
+								<ListItemIcon>
+									<WaveIcon fontSize="small" />
+								</ListItemIcon>
+								<ListItemText>Welcome</ListItemText>
+							</MenuItem>
+							<MenuItem
+								onClick={createOnSendLinkMenuItemClick(
+									"reset",
+								)}>
+								<ListItemIcon>
+									<LockResetIcon fontSize="small" />
+								</ListItemIcon>
+								<ListItemText>Reset password</ListItemText>
+							</MenuItem>
+							<MenuItem
+								onClick={createOnSendLinkMenuItemClick(
+									"sign-in",
+								)}>
+								<ListItemIcon>
+									<LinkIcon fontSize="small" />
+								</ListItemIcon>
+								<ListItemText>Login link</ListItemText>
+							</MenuItem>
+						</Menu>
+						<Button
+							disabled={account.email === user.email}
+							variant="outlined"
+							color="error"
+							startIcon={<DeleteIcon />}
+							onClick={() => setDeletionConfirmModalOpen(true)}>
+							Delete account
+						</Button>
+						<Dialog
+							fullWidth
+							open={deletionConfirmModalOpen}
+							onClose={onDeletionConfirmModalClose}>
+							<DialogTitle>Confirm deletion</DialogTitle>
+							<DialogContent>
+								<Stack gap={1}>
+									<Alert severity="info">
+										<AlertTitle>
+											Changes may take up to a minute to
+											be reflected everywhere.
+										</AlertTitle>
+										If the deleted account reappears, don't
+										worry. The stored data has been removed
+										and will stop showing up soon.
+									</Alert>
+									<DialogContentText>
+										Are you sure that you want to delete the
+										account {account.email}? It will be gone
+										forever with no way of recovering it.
+									</DialogContentText>
+								</Stack>
+							</DialogContent>
+							<DialogActions>
+								<Button color="error" onClick={deleteAccount}>
+									Delete
+								</Button>
+								<Button onClick={onDeletionConfirmModalClose}>
+									Close
+								</Button>
+							</DialogActions>
+						</Dialog>
+						<Button
+							variant="outlined"
+							onClick={() => setEditMode(true)}
+							startIcon={<EditIcon />}>
+							Edit account details
+						</Button>
+					</Stack>
+				)}
 			<Stack alignItems="center" gap={2}>
 				<Avatar
 					src={account.picture}
@@ -305,7 +319,10 @@ export function AccountPanel() {
 			<List>
 				{account.roles.map((role) => (
 					<ListItem key={role.raw} disableGutters>
-						<ListItemText primary={`${role.text}.`} secondary={role.raw} />
+						<ListItemText
+							primary={`${role.text}.`}
+							secondary={role.raw}
+						/>
 					</ListItem>
 				))}
 			</List>
@@ -320,8 +337,7 @@ export function AccountPanel() {
 						variant="outlined"
 						color="warning"
 						onClick={exitEditMode}
-						startIcon={<CloseIcon />}
-					>
+						startIcon={<CloseIcon />}>
 						Stop editing (discard changes)
 					</Button>
 				</Stack>
@@ -336,20 +352,23 @@ export function AccountPanel() {
 				fullScreen
 				open
 				onClose={onDialogCLose}
-				TransitionComponent={SlideUpTransition}
-			>
+				TransitionComponent={SlideUpTransition}>
 				<AppBar sx={{ position: "relative" }}>
 					<Toolbar>
 						<IconButton
 							edge="start"
 							color="inherit"
 							onClick={onDialogCLose}
-							aria-label="close"
-						>
+							aria-label="close">
 							<CloseIcon />
 						</IconButton>
-						<Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-							{editMode ? "Editing user information" : "User information"}
+						<Typography
+							sx={{ ml: 2, flex: 1 }}
+							variant="h6"
+							component="div">
+							{editMode
+								? "Editing user information"
+								: "User information"}
 						</Typography>
 					</Toolbar>
 				</AppBar>
@@ -475,8 +494,8 @@ function EditUserInfo({
 				<AlertTitle>
 					Changes may take up to a minute to be reflected everywhere.
 				</AlertTitle>
-				If the updated account information disappears, don't worry. The data is
-				stored and will show up soon.
+				If the updated account information disappears, don't worry. The
+				data is stored and will show up soon.
 			</Alert>
 			{errors.length > 0 &&
 				errors.map((error) => (
@@ -512,9 +531,9 @@ function EditUserInfo({
 			{duplicateEmail && (
 				<Alert severity="error">
 					<AlertTitle>Email address already in use.</AlertTitle>
-					Another account is already using the email address {email}. Either
-					choose a different email address or remove the account that is
-					currently using this email address.
+					Another account is already using the email address {email}.
+					Either choose a different email address or remove the
+					account that is currently using this email address.
 				</Alert>
 			)}
 			<Autocomplete
@@ -528,7 +547,12 @@ function EditUserInfo({
 				filterSelectedOptions
 				getOptionLabel={(role: Role) => role.text}
 				renderInput={(params) => (
-					<TextField {...params} label="Roles" margin="dense" fullWidth />
+					<TextField
+						{...params}
+						label="Roles"
+						margin="dense"
+						fullWidth
+					/>
 				)}
 			/>
 			{(hasUsersWrite || hasSensorsWrite) && (
@@ -548,8 +572,7 @@ function EditUserInfo({
 					sx={{ mb: 2, mt: 2, ml: "auto" }}
 					variant="outlined"
 					onClick={onSubmit}
-					startIcon={<SaveIcon />}
-				>
+					startIcon={<SaveIcon />}>
 					Save changes
 				</Button>
 			</Stack>

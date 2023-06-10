@@ -2,7 +2,6 @@ import { Sensor, SensorID, SensorType } from "../../../types";
 import {
 	Alert,
 	AlertTitle,
-	Checkbox,
 	Box,
 	Button,
 	FormControl,

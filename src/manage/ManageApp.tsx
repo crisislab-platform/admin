@@ -5,8 +5,6 @@ import {
 	Stack,
 	Toolbar,
 	Typography,
-	useMediaQuery,
-	useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -17,12 +15,12 @@ import Sidebar from "./Sidebar";
 import { SidebarLink } from "../types";
 import { routes } from "./routes";
 import { useLocation } from "react-router-dom";
+import { useOnMobile } from "../utils";
 
 const drawerWidth = 260;
 
 export default function ManageApp() {
-	const theme = useTheme();
-	const onMobile = useMediaQuery(theme.breakpoints.down("lg"));
+	const onMobile = useOnMobile();
 	const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 	const location = useLocation();
 
@@ -36,8 +34,7 @@ export default function ManageApp() {
 				pl: onMobile ? 0 : `${drawerWidth}px`,
 				height: "100%",
 				maxHeight: "100%",
-			}}
-		>
+			}}>
 			<AppBar position="fixed">
 				<Toolbar variant={onMobile ? undefined : "dense"}>
 					{onMobile && (
@@ -46,22 +43,27 @@ export default function ManageApp() {
 							color="inherit"
 							aria-label="open drawer"
 							onClick={() => setMobileDrawerOpen(true)}
-							edge="start"
-						>
+							edge="start">
 							<MenuIcon />
 						</IconButton>
 					)}
 					<Typography variant="h6" component="h1">
 						{routes
 							.sort((a, b) => {
-								const aLength: number = a.slug ? a.slug.length : 0;
-								const bLength: number = b.slug ? b.slug.length : 0;
+								const aLength: number = a.slug
+									? a.slug.length
+									: 0;
+								const bLength: number = b.slug
+									? b.slug.length
+									: 0;
 								return bLength - aLength;
 							})
 							.find((route) =>
 								location.pathname.startsWith(
 									`/manage/${
-										"indexSlug" in route ? route.indexSlug : route.slug
+										"indexSlug" in route
+											? route.indexSlug
+											: route.slug
 									}`,
 								),
 							)?.text || "Unknown page"}
