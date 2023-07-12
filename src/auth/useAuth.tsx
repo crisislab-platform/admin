@@ -24,6 +24,7 @@ const baseURL =
 
 interface AuthContextType {
 	user: User | null;
+	setUser: React.Dispatch<React.SetStateAction<User | null>>;
 	loading: boolean;
 	popupOpen: boolean;
 	closePopup: () => void;
@@ -255,6 +256,7 @@ export function AuthProvider({
 			sendLink,
 			resetPassword,
 			goToLogin,
+			setUser,
 		};
 	}, [user, loading, popupOpen]);
 

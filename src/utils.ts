@@ -48,6 +48,7 @@ export function userHasPermission(
 	permission: keyof typeof roles,
 ): Boolean {
 	if (!user) return false;
+
 	if (!user.roles.find((r) => r.raw == permission)) return false;
 	return true;
 }
