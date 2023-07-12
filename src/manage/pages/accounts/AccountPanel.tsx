@@ -34,12 +34,14 @@ import {
 	userHasPermission,
 } from "../../../utils";
 import {
+	getRefreshToken,
 	makeDeleteAccount,
 	makeEditAccount,
 	makeFetchAccounts,
 } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
+import CachedIcon from "@mui/icons-material/Cached";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -200,6 +202,31 @@ export function AccountPanel() {
 					gap={1}
 					flexWrap="wrap"
 					sx={{ mb: 2 }}>
+					{userHasPermission(user, "users:issue_refresh_token") && (
+						<Button
+							startIcon={<CachedIcon />}
+							variant="outlined"
+							onClick={async () => {
+								try {
+									// Create refresh token
+									const tokenData = await getRefreshToken(
+										user.token,
+										account.email,
+									);
+									await navigator.clipboard.writeText(
+										tokenData.token,
+									);
+									enqueueSnackbar(
+										`Copied refresh token for ${tokenData.email}. Old refresh tokens won't work now.`,
+										{ variant: "success" },
+									);
+								} catch (err) {
+									enqueueSnackbar(err, { variant: "error" });
+								}
+							}}>
+							Get refresh token
+						</Button>
+					)}
 					<Button
 						variant="outlined"
 						startIcon={<SendIcon />}
@@ -379,7 +406,7 @@ function EditUserInfo({
 	exitEditMode: () => void;
 	account: Account;
 }) {
-	const { user } = useAuth();
+	const { user, setUser } = useAuth();
 
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const { enqueueSnackbar } = useSnackbar();
@@ -433,13 +460,19 @@ function EditUserInfo({
 				variant: "error",
 			});
 		},
-		onSuccess: () => {
+		onSuccess: (data) => {
 			enqueueSnackbar(
 				"Modified account successfully. Changes may take up to a minute to be reflected everywhere.",
 				{
 					variant: "success",
 				},
 			);
+			// Also on confirm, update the auth user if it was them that was edited
+			if (user.email === data.email) {
+				// This is so cursed, but it means that the token is safe.
+				// This should also trigger an effect to save this value to localStorage.
+				setUser({ ...data, token: user.token });
+			}
 		},
 	});
 

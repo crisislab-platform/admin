@@ -1,4 +1,4 @@
-import { Account, Role, Sensor, SensorID } from "./types";
+import { Account, Role, Sensor, SensorID, User } from "./types";
 import {
 	generateAvatar,
 	getObjectWithOnlyChangedProperties,
@@ -6,6 +6,26 @@ import {
 	sensorsAPIBase,
 	usersAPIBase,
 } from "./utils";
+
+export async function getRefreshToken(
+	token: string,
+	accountEmail: string,
+): Promise<{ token: string; email: string }> {
+	const response = await fetch(
+		usersAPIBase + "/get-refresh-token/" + accountEmail,
+		{ headers: { Authorization: `Bearer ${token}` } },
+	);
+	if (!response.ok) {
+		const data = await response.text();
+		throw new Error(
+			`Error getting refresh token (${response.status}: ${
+				response.statusText
+			})${data ? ` ${data}` : ""}`,
+		);
+	}
+	const data = await response.json();
+	return data;
+}
 
 export function makeFetchAccounts(token?: string): () => Promise<Account[]> {
 	return async () => {
