@@ -34,6 +34,7 @@ import {
 	userHasPermission,
 } from "../../../utils";
 import {
+	getRefreshToken,
 	makeDeleteAccount,
 	makeEditAccount,
 	makeFetchAccounts,
@@ -200,6 +201,30 @@ export function AccountPanel() {
 					gap={1}
 					flexWrap="wrap"
 					sx={{ mb: 2 }}>
+					{userHasPermission(user, "users:issue_refresh_token") && (
+						<Button
+							variant="outlined"
+							onClick={async () => {
+								try {
+									// Create refresh token
+									const tokenData = await getRefreshToken(
+										user.token,
+										account.email,
+									);
+									await navigator.clipboard.writeText(
+										tokenData.token,
+									);
+									enqueueSnackbar(
+										`Copied refresh token for ${tokenData.email}. Old refresh tokens won't work now.`,
+										{ variant: "success" },
+									);
+								} catch (err) {
+									enqueueSnackbar(err, { variant: "error" });
+								}
+							}}>
+							Get refresh token
+						</Button>
+					)}
 					<Button
 						variant="outlined"
 						startIcon={<SendIcon />}
