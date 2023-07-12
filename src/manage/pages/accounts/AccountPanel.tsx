@@ -41,6 +41,7 @@ import {
 } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
+import CachedIcon from "@mui/icons-material/Cached";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -203,6 +204,7 @@ export function AccountPanel() {
 					sx={{ mb: 2 }}>
 					{userHasPermission(user, "users:issue_refresh_token") && (
 						<Button
+							startIcon={<CachedIcon />}
 							variant="outlined"
 							onClick={async () => {
 								try {
