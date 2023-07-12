@@ -48,6 +48,7 @@ export type SensorType =
 	| "Raspberry Boom"
 	| "Raspberry Shake and Boom"
 	| string;
+
 export type SensorID = number;
 export interface Sensor {
 	online?: boolean;

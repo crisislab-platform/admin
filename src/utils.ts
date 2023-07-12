@@ -5,6 +5,7 @@ import {
 	Sensor,
 	SensorID,
 	SensorType,
+	User,
 } from "./types";
 
 import { generateFromString } from "generate-avatar";
@@ -24,6 +25,10 @@ export const roles: Record<string, Role> = {
 		raw: "users:write",
 		text: "Create, modify, or delete dashboard accounts",
 	},
+	"users:issue_refresh_token": {
+		raw: "users:issue_refresh_token",
+		text: "Maintain perpetual access to an account.",
+	},
 	"sensors:read": {
 		raw: "sensors:read",
 		text: "View sensitive sensor information, like real locations and IPs",
@@ -37,6 +42,15 @@ export const roles: Record<string, Role> = {
 		text: "Update online status of sensors (only used by server)",
 	},
 };
+
+export function userHasPermission(
+	user: User | null | undefined,
+	permission: keyof typeof roles,
+): Boolean {
+	if (!user) return false;
+	if (!user.roles.find((r) => r.raw == permission)) return false;
+	return true;
+}
 
 // ~Center of New Zealand
 export const defaultPosition: [number, number] = [174.8, -41.325];

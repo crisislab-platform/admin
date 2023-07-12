@@ -31,6 +31,7 @@ import {
 	generateAvatar,
 	roles,
 	useOnMobile,
+	userHasPermission,
 } from "../../../utils";
 import {
 	makeDeleteAccount,
@@ -192,114 +193,105 @@ export function AccountPanel() {
 
 	let layout = (
 		<Stack sx={{ p: onMobile ? 2 : 0 }}>
-			{user &&
-				!!user.roles.find((role) => role.raw === "users:write") && (
-					<Stack
-						justifyContent="flex-end"
-						direction="row"
-						gap={1}
-						flexWrap="wrap"
-						sx={{ mb: 2 }}>
-						<Button
-							variant="outlined"
-							startIcon={<SendIcon />}
-							onClick={(event) => {
-								setSendLinkMenuAnchorEl(event.currentTarget);
-							}}
-							id="send-link-button"
-							aria-controls={
-								sendLinkMenuOpen ? "send-link-menu" : undefined
-							}
-							aria-haspopup="true"
-							aria-expanded={
-								sendLinkMenuOpen ? "true" : undefined
-							}>
-							Send link
-						</Button>
-						<Menu
-							id="send-link-menu"
-							anchorEl={sendLinkMenuAnchorEl}
-							open={sendLinkMenuOpen}
-							onClose={onSendLinkMenuClose}
-							MenuListProps={{
-								"aria-labelledby": "send-link-button",
-							}}>
-							<MenuItem
-								onClick={createOnSendLinkMenuItemClick(
-									"welcome",
-								)}>
-								<ListItemIcon>
-									<WaveIcon fontSize="small" />
-								</ListItemIcon>
-								<ListItemText>Welcome</ListItemText>
-							</MenuItem>
-							<MenuItem
-								onClick={createOnSendLinkMenuItemClick(
-									"reset",
-								)}>
-								<ListItemIcon>
-									<LockResetIcon fontSize="small" />
-								</ListItemIcon>
-								<ListItemText>Reset password</ListItemText>
-							</MenuItem>
-							<MenuItem
-								onClick={createOnSendLinkMenuItemClick(
-									"sign-in",
-								)}>
-								<ListItemIcon>
-									<LinkIcon fontSize="small" />
-								</ListItemIcon>
-								<ListItemText>Login link</ListItemText>
-							</MenuItem>
-						</Menu>
-						<Button
-							disabled={account.email === user.email}
-							variant="outlined"
-							color="error"
-							startIcon={<DeleteIcon />}
-							onClick={() => setDeletionConfirmModalOpen(true)}>
-							Delete account
-						</Button>
-						<Dialog
-							fullWidth
-							open={deletionConfirmModalOpen}
-							onClose={onDeletionConfirmModalClose}>
-							<DialogTitle>Confirm deletion</DialogTitle>
-							<DialogContent>
-								<Stack gap={1}>
-									<Alert severity="info">
-										<AlertTitle>
-											Changes may take up to a minute to
-											be reflected everywhere.
-										</AlertTitle>
-										If the deleted account reappears, don't
-										worry. The stored data has been removed
-										and will stop showing up soon.
-									</Alert>
-									<DialogContentText>
-										Are you sure that you want to delete the
-										account {account.email}? It will be gone
-										forever with no way of recovering it.
-									</DialogContentText>
-								</Stack>
-							</DialogContent>
-							<DialogActions>
-								<Button color="error" onClick={deleteAccount}>
-									Delete
-								</Button>
-								<Button onClick={onDeletionConfirmModalClose}>
-									Close
-								</Button>
-							</DialogActions>
-						</Dialog>
-						<Button
-							variant="outlined"
-							onClick={() => setEditMode(true)}
-							startIcon={<EditIcon />}>
-							Edit account details
-						</Button>
-					</Stack>
-				)}
+			{userHasPermission(user, "users:write") && (
+				<Stack
+					justifyContent="flex-end"
+					direction="row"
+					gap={1}
+					flexWrap="wrap"
+					sx={{ mb: 2 }}>
+					<Button
+						variant="outlined"
+						startIcon={<SendIcon />}
+						onClick={(event) => {
+							setSendLinkMenuAnchorEl(event.currentTarget);
+						}}
+						id="send-link-button"
+						aria-controls={
+							sendLinkMenuOpen ? "send-link-menu" : undefined
+						}
+						aria-haspopup="true"
+						aria-expanded={sendLinkMenuOpen ? "true" : undefined}>
+						Send link
+					</Button>
+					<Menu
+						id="send-link-menu"
+						anchorEl={sendLinkMenuAnchorEl}
+						open={sendLinkMenuOpen}
+						onClose={onSendLinkMenuClose}
+						MenuListProps={{
+							"aria-labelledby": "send-link-button",
+						}}>
+						<MenuItem
+							onClick={createOnSendLinkMenuItemClick("welcome")}>
+							<ListItemIcon>
+								<WaveIcon fontSize="small" />
+							</ListItemIcon>
+							<ListItemText>Welcome</ListItemText>
+						</MenuItem>
+						<MenuItem
+							onClick={createOnSendLinkMenuItemClick("reset")}>
+							<ListItemIcon>
+								<LockResetIcon fontSize="small" />
+							</ListItemIcon>
+							<ListItemText>Reset password</ListItemText>
+						</MenuItem>
+						<MenuItem
+							onClick={createOnSendLinkMenuItemClick("sign-in")}>
+							<ListItemIcon>
+								<LinkIcon fontSize="small" />
+							</ListItemIcon>
+							<ListItemText>Login link</ListItemText>
+						</MenuItem>
+					</Menu>
+					<Button
+						disabled={account.email === user.email}
+						variant="outlined"
+						color="error"
+						startIcon={<DeleteIcon />}
+						onClick={() => setDeletionConfirmModalOpen(true)}>
+						Delete account
+					</Button>
+					<Dialog
+						fullWidth
+						open={deletionConfirmModalOpen}
+						onClose={onDeletionConfirmModalClose}>
+						<DialogTitle>Confirm deletion</DialogTitle>
+						<DialogContent>
+							<Stack gap={1}>
+								<Alert severity="info">
+									<AlertTitle>
+										Changes may take up to a minute to be
+										reflected everywhere.
+									</AlertTitle>
+									If the deleted account reappears, don't
+									worry. The stored data has been removed and
+									will stop showing up soon.
+								</Alert>
+								<DialogContentText>
+									Are you sure that you want to delete the
+									account {account.email}? It will be gone
+									forever with no way of recovering it.
+								</DialogContentText>
+							</Stack>
+						</DialogContent>
+						<DialogActions>
+							<Button color="error" onClick={deleteAccount}>
+								Delete
+							</Button>
+							<Button onClick={onDeletionConfirmModalClose}>
+								Close
+							</Button>
+						</DialogActions>
+					</Dialog>
+					<Button
+						variant="outlined"
+						onClick={() => setEditMode(true)}
+						startIcon={<EditIcon />}>
+						Edit account details
+					</Button>
+				</Stack>
+			)}
 			<Stack alignItems="center" gap={2}>
 				<Avatar
 					src={account.picture}

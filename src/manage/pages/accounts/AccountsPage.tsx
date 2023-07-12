@@ -6,6 +6,7 @@ import { Outlet } from "react-router-dom";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import useAuth from "../../../auth/useAuth";
 import { useState } from "react";
+import { userHasPermission } from "../../../utils";
 
 export function AccountsPage() {
 	const { user } = useAuth();
@@ -19,32 +20,27 @@ export function AccountsPage() {
 		<Grid container sx={{ w: "100%", h: "100%", flex: 1 }}>
 			<Grid item xs={12} md={6}>
 				<Stack>
-					{!!user &&
-						user.roles.find(
-							(role) => role.raw === "users:write",
-						) && (
-							<Stack
-								direction="row"
-								padding={1}
-								gap={1}
-								alignItems="center"
-								flexWrap="wrap">
-								<Button
-									sx={{ ml: "auto" }}
-									variant="contained"
-									size="small"
-									startIcon={<PersonAddIcon />}
-									onClick={() =>
-										setCreateAccountPopupOpen(true)
-									}>
-									Create account
-								</Button>
-								<CreateAccountDialog
-									open={createAccountPopupOpen}
-									onClose={onCreateAccountPopupClose}
-								/>
-							</Stack>
-						)}
+					{userHasPermission(user, "users:write") && (
+						<Stack
+							direction="row"
+							padding={1}
+							gap={1}
+							alignItems="center"
+							flexWrap="wrap">
+							<Button
+								sx={{ ml: "auto" }}
+								variant="contained"
+								size="small"
+								startIcon={<PersonAddIcon />}
+								onClick={() => setCreateAccountPopupOpen(true)}>
+								Create account
+							</Button>
+							<CreateAccountDialog
+								open={createAccountPopupOpen}
+								onClose={onCreateAccountPopupClose}
+							/>
+						</Stack>
+					)}
 					<AccountsList />
 				</Stack>
 			</Grid>

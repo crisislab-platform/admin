@@ -13,7 +13,11 @@ import {
 } from "@mui/material";
 import { Dispatch, SetStateAction, useState } from "react";
 import { FilterRule, Sensor, SensorSortKey } from "../../../types";
-import { filterRuleOperations, useOnMobile } from "../../../utils";
+import {
+	filterRuleOperations,
+	useOnMobile,
+	userHasPermission,
+} from "../../../utils";
 
 import AddIcon from "@mui/icons-material/Add";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -182,27 +186,24 @@ export function SensorsPage() {
 								filterRules={filterRules}
 								setFilterRules={setFilterRules}
 							/>
-							{!!user &&
-								user.roles.find(
-									(role) => role.raw === "sensors:write",
-								) && (
-									<>
-										<Button
-											sx={{ ml: "auto" }}
-											startIcon={<AddIcon />}
-											variant="contained"
-											size="small"
-											onClick={() =>
-												setCreateSensorDialogOpen(true)
-											}>
-											Create sensor
-										</Button>
-										<CreateSensorDialog
-											open={createSensorDialogOpen}
-											onClose={onCreateSensorDialogClose}
-										/>
-									</>
-								)}
+							{userHasPermission(user, "sensors:write") && (
+								<>
+									<Button
+										sx={{ ml: "auto" }}
+										startIcon={<AddIcon />}
+										variant="contained"
+										size="small"
+										onClick={() =>
+											setCreateSensorDialogOpen(true)
+										}>
+										Create sensor
+									</Button>
+									<CreateSensorDialog
+										open={createSensorDialogOpen}
+										onClose={onCreateSensorDialogClose}
+									/>
+								</>
+							)}
 						</Stack>
 						<Stack direction="row" gap={2}>
 							<Typography

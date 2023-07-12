@@ -39,7 +39,7 @@ import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { EditSensorInfo } from "./EditSensorInfo";
-import { useOnMobile } from "../../../utils";
+import { useOnMobile, userHasPermission } from "../../../utils";
 
 const SlideUpTransition = forwardRef(function Transition(
 	props: TransitionProps & {
@@ -162,62 +162,60 @@ export function SensorPanel() {
 
 	let layout = (
 		<Stack sx={{ p: onMobile ? 2 : 0, minHeight: "100%" }}>
-			{user &&
-				!!user.roles.find((role) => role.raw === "sensors:write") && (
-					<Stack
-						justifyContent="flex-end"
-						direction="row"
-						gap={1}
-						flexWrap="wrap"
-						sx={{ mb: 2 }}>
-						<Button
-							variant="outlined"
-							color="error"
-							startIcon={<DeleteIcon />}
-							onClick={() => setDeletionConfirmModalOpen(true)}>
-							Delete sensor
-						</Button>
-						<Dialog
-							fullWidth
-							open={deletionConfirmModalOpen}
-							onClose={onDeletionConfirmModalClose}>
-							<DialogTitle>Confirm deletion</DialogTitle>
-							<DialogContent>
-								<Stack gap={1}>
-									<Alert severity="info">
-										<AlertTitle>
-											Changes may take up to a minute to
-											be reflected everywhere.
-										</AlertTitle>
-										If the deleted sensor reappears, don't
-										worry. The stored data has been removed
-										and will stop showing up soon.
-									</Alert>
-									<DialogContentText>
-										Are you sure that you want to delete the
-										sensor {activeSensor.id}? It will be
-										gone forever with no way of recovering
-										it.
-									</DialogContentText>
-								</Stack>
-							</DialogContent>
-							<DialogActions>
-								<Button color="error" onClick={deleteSensor}>
-									Delete
-								</Button>
-								<Button onClick={onDeletionConfirmModalClose}>
-									Close
-								</Button>
-							</DialogActions>
-						</Dialog>
-						<Button
-							variant="outlined"
-							onClick={() => setEditMode(true)}
-							startIcon={<EditIcon />}>
-							Edit sensor details
-						</Button>
-					</Stack>
-				)}
+			{userHasPermission(user, "sensors:write") && (
+				<Stack
+					justifyContent="flex-end"
+					direction="row"
+					gap={1}
+					flexWrap="wrap"
+					sx={{ mb: 2 }}>
+					<Button
+						variant="outlined"
+						color="error"
+						startIcon={<DeleteIcon />}
+						onClick={() => setDeletionConfirmModalOpen(true)}>
+						Delete sensor
+					</Button>
+					<Dialog
+						fullWidth
+						open={deletionConfirmModalOpen}
+						onClose={onDeletionConfirmModalClose}>
+						<DialogTitle>Confirm deletion</DialogTitle>
+						<DialogContent>
+							<Stack gap={1}>
+								<Alert severity="info">
+									<AlertTitle>
+										Changes may take up to a minute to be
+										reflected everywhere.
+									</AlertTitle>
+									If the deleted sensor reappears, don't
+									worry. The stored data has been removed and
+									will stop showing up soon.
+								</Alert>
+								<DialogContentText>
+									Are you sure that you want to delete the
+									sensor {activeSensor.id}? It will be gone
+									forever with no way of recovering it.
+								</DialogContentText>
+							</Stack>
+						</DialogContent>
+						<DialogActions>
+							<Button color="error" onClick={deleteSensor}>
+								Delete
+							</Button>
+							<Button onClick={onDeletionConfirmModalClose}>
+								Close
+							</Button>
+						</DialogActions>
+					</Dialog>
+					<Button
+						variant="outlined"
+						onClick={() => setEditMode(true)}
+						startIcon={<EditIcon />}>
+						Edit sensor details
+					</Button>
+				</Stack>
+			)}
 			<Stack alignItems="center" gap={2}>
 				<Paper
 					sx={{
