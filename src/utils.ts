@@ -27,7 +27,7 @@ export const roles: Record<string, Role> = {
 	},
 	"users:issue_refresh_token": {
 		raw: "users:issue_refresh_token",
-		text: "Maintain perpetual access to an account.",
+		text: "Maintain perpetual access to an account",
 	},
 	"sensors:read": {
 		raw: "sensors:read",
