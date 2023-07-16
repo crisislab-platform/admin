@@ -348,9 +348,10 @@ export function SensorPanel() {
 						</Stack>
 					)}
 
-					{!activeSensor.online && (
+					{/* I think this is unused now, but am keeping it here just in case Raj gets mad */}
+					{/* {!activeSensor.online && (
 						<SensorSetupCommand sensor={activeSensor} />
-					)}
+					)} */}
 				</Paper>
 
 				<LiveDataGraphs sensorID={sensorID} height={600} />
