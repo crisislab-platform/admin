@@ -28,13 +28,13 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 				body: JSON.stringify({ email, password }),
 				method: "POST",
 			});
-			if (response.status !== 200) {
+			if (!response.ok) {
 				let message = "";
 				try {
 					message = ` ${await response.text()}.`;
 				} catch (_) {}
 				throw new Error(
-					`E: Non-200 status code returned from server.${message} ${response.status} (${response.statusText})`,
+					`E: Non-ok status code returned from server.${message} ${response.status} (${response.statusText})`,
 				);
 			}
 			try {
@@ -73,13 +73,13 @@ export async function sendLink(
 			}`,
 			{ method: "GET" },
 		);
-		if (response.status !== 200) {
+		if (!response.ok) {
 			let message = "";
 			try {
 				message = ` ${await response.text()}.`;
 			} catch (_) {}
 			throw new Error(
-				`E: Non-200 status code returned from server.${message} ${response.status} (${response.statusText})`,
+				`E: Non-ok status code returned from server.${message} ${response.status} (${response.statusText})`,
 			);
 		}
 	} catch (error) {
@@ -102,13 +102,13 @@ export async function resetPassword(password: string, token: string) {
 				Authorization: `Bearer ${token}`,
 			},
 		});
-		if (response.status !== 200) {
+		if (!response.ok) {
 			let message = "";
 			try {
 				message = ` ${await response.text()}.`;
 			} catch (_) {}
 			throw new Error(
-				`E: Non-200 status code returned from server.${message} ${response.status} (${response.statusText})`,
+				`E: Non-ok status code returned from server.${message} ${response.status} (${response.statusText})`,
 			);
 		}
 	} catch (error) {
