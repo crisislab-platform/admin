@@ -8,7 +8,7 @@ import {
 	styled,
 } from "@mui/material";
 import { ErrorBoundary, MissingRole, NavigateWithQuery } from "./components";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClientProvider } from "react-query";
 import { Route, Routes } from "react-router-dom";
 import useAuth, { AuthProvider } from "./auth/useAuth";
 
@@ -23,6 +23,7 @@ import { theme } from "beryllium";
 import { useRef } from "react";
 import { MaterialDesignContent } from "notistack";
 import { userHasPermission } from "./utils";
+import { queryClient } from "./api";
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
 	"&.notistack-MuiContent-success": {
@@ -38,14 +39,6 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
 		backgroundColor: "#30b7ff",
 	},
 }));
-
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			staleTime: 60 * 1000, // One minute
-		},
-	},
-});
 
 export function WrappedApp() {
 	const notistackRef = useRef(null);

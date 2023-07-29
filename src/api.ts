@@ -1,3 +1,4 @@
+import { QueryClient } from "react-query";
 import { Account, Role, Sensor, SensorID, User } from "./types";
 import {
 	generateAvatar,
@@ -6,6 +7,14 @@ import {
 	sensorsAPIBase,
 	usersAPIBase,
 } from "./utils";
+
+export const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: 60 * 1000, // One minute
+		},
+	},
+});
 
 export async function getRefreshToken(
 	token: string,
