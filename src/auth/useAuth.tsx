@@ -15,6 +15,7 @@ import { User } from "../types";
 import { generateAvatar } from "../utils";
 import { useNavigateWithQuery } from "../components";
 import { useSnackbar } from "notistack";
+import { queryClient } from "../api";
 
 const authUserNamespace = "auth-v2-user";
 const baseURL =
@@ -163,11 +164,19 @@ export function AuthProvider({
 		}
 
 		setLoading(false);
+
+		// This hurts my soul, but younger me was very dumb and architected
+		// everything wrong, so it's the only way to make sure the data being
+		// displayed is up-to-date with the user's auth state.
+		window.location.reload();
 	}
 
 	function logout() {
 		setUser(undefined);
 		localStorage.removeItem(authUserNamespace);
+
+		// See above in login function for reasoning
+		window.location.reload();
 	}
 
 	async function sendLink(
