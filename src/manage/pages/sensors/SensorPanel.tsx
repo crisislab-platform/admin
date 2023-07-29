@@ -217,6 +217,20 @@ export function SensorPanel() {
 				</Stack>
 			)}
 			<Stack alignItems="center" gap={2}>
+				{(!user || !userHasPermission(user, "sensors:read")) && (
+					<Alert severity="info">
+						<AlertTitle>
+							{!user
+								? "You're not logged in"
+								: "You have limited permissions"}
+						</AlertTitle>
+						Lots of the fields here will look blank because you
+						don't have permission to see them. Make sure you're
+						logged in with an account that has permission to view
+						sensor details.
+					</Alert>
+				)}
+
 				<Paper
 					sx={{
 						display: "flex",
