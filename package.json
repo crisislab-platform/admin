@@ -1,6 +1,6 @@
 {
-	"name": "internship-website1",
-	"version": "0.1.0",
+	"name": "@crisislab/shakenet-admin",
+	"version": "1.0.0",
 	"private": true,
 	"scripts": {
 		"dev": "vite",
@@ -8,13 +8,13 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@babel/core": "^7.22.8",
+		"@babel/core": "^7.22.9",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
 		"@fontsource/manrope": "^5.0.5",
-		"@mui/icons-material": "^5.14.0",
-		"@mui/lab": "5.0.0-alpha.136",
-		"@mui/material": "^5.14.0",
+		"@mui/icons-material": "^5.14.1",
+		"@mui/lab": "5.0.0-alpha.137",
+		"@mui/material": "^5.14.2",
 		"beryllium": "^1.2.1",
 		"events": "^3.3.0",
 		"generate-avatar": "^1.4.10",
@@ -22,17 +22,17 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-query": "^3.39.3",
-		"react-router-dom": "^6.14.1"
+		"react-router-dom": "^6.14.2"
 	},
 	"devDependencies": {
 		"@types/events": "^3.0.0",
-		"@types/mapbox-gl": "^2.7.11",
+		"@types/mapbox-gl": "^2.7.12",
 		"@types/mapbox__mapbox-gl-geocoder": "^4.7.3",
-		"@types/react": "^18.2.14",
-		"@types/react-dom": "^18.2.6",
+		"@types/react": "^18.2.17",
+		"@types/react-dom": "^18.2.7",
 		"@vitejs/plugin-react": "^4.0.3",
 		"typescript": "^5.1.6",
-		"vite": "^4.4.3",
+		"vite": "^4.4.7",
 		"vite-plugin-rewrite-all": "^1.0.1"
 	},
 	"browserslist": {
