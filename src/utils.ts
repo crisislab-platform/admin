@@ -41,6 +41,10 @@ export const roles: Record<string, Role> = {
 		raw: "sensors:online",
 		text: "Update online status of sensors (only used by server)",
 	},
+	"sensor-data:bulk-export": {
+		raw: "sensor-data:bulk-export",
+		text: "Export bulk stored sensor data",
+	},
 };
 
 export function userHasPermission(
