@@ -21,6 +21,19 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
 
+function formatBytes(bytes: number, decimals = 1) {
+	// From https://stackoverflow.com/a/18650828
+
+	if (!+bytes) return "0 bytes";
+
+	const k = 1024;
+	const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+	const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+	return `${(bytes / Math.pow(k, i)).toFixed(decimals)} ${sizes[i]}`;
+}
+
 export function ExportSensorDataPage() {
 	const { user } = useAuth();
 	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
@@ -37,6 +50,7 @@ export function ExportSensorDataPage() {
 	);
 	const [processedLines, setProcessedLines] = useState(0);
 	const [totalLines, setTotalLines] = useState(0);
+	const [bytesDownloaded, setBytesDownloaded] = useState(0);
 
 	const progress =
 		totalLines === 0
@@ -63,6 +77,7 @@ export function ExportSensorDataPage() {
 			// Reset stuff
 			setProcessedLines(0);
 			setTotalLines(0);
+			setBytesDownloaded(0);
 			setDownloading(true);
 			setError(null);
 
@@ -84,7 +99,16 @@ export function ExportSensorDataPage() {
 			);
 
 			// This is for the progress bar
-			setTotalLines(parseInt(res.headers.get("X-Number-Of-Records")) + 1);
+			const totalLines = parseInt(res.headers.get("X-Number-Of-Records"));
+			if (totalLines === 0) {
+				setDownloading(false);
+				setError(
+					`No records found for sensor #${chosenSensor.id} in that time range.`,
+				);
+				return;
+			}
+			// This is the extra line for the column headers
+			setTotalLines(totalLines + 1);
 
 			// Now we ask where the user wants to save the file, and get a handle
 			// to write to it
@@ -100,17 +124,28 @@ export function ExportSensorDataPage() {
 
 			// This is where the magic happens.
 			res.body
-				// For the stats, we convert to text,
+				.pipeThrough(
+					new TransformStream({
+						transform(chunk, controller) {
+							setBytesDownloaded(
+								(oldAmount) => oldAmount + chunk.length,
+							);
+							controller.enqueue(chunk);
+						},
+					}),
+				)
+				// For the line counting, we convert to text,
 				.pipeThrough(new TextDecoderStream(), {
 					signal: downloadAbortController.signal,
 				})
-				// Then we record stats
+				// Then we record stats on number of lines
 				.pipeThrough(
 					// By piping it 'through' a 'transformer' that just counts
 					// newlines before passing it on
 					new TransformStream({
 						transform(chunk, controller) {
-							const lines = chunk.split("\n").length;
+							// Count the number of '\n's
+							const lines = chunk.split("\n").length - 1;
 							setProcessedLines((oldAmount) => oldAmount + lines);
 							controller.enqueue(chunk);
 						},
@@ -223,15 +258,18 @@ export function ExportSensorDataPage() {
 				value={progress}
 			/>
 
-			<Typography>
-				{Math.round(progress)}% ({processedLines} / {totalLines})
+			<Typography sx={{ fontFamily: "monospace" }}>
+				{(Math.round(progress * 10) / 10).toFixed(1)}% done (
+				{processedLines} / {totalLines} records downloaded)
 			</Typography>
-			{downloading && (
-				<Stack direction="row" gap={2}>
-					<Typography>Downloading... </Typography>
-					<CircularProgress variant="indeterminate" size="25px" />
-				</Stack>
-			)}
+			<Stack direction="row" gap={2}>
+				<Typography sx={{ fontFamily: "monospace" }}>
+					Downloaded {formatBytes(bytesDownloaded)}
+				</Typography>{" "}
+				{downloading && (
+					<CircularProgress variant="indeterminate" size="18px" />
+				)}
+			</Stack>
 
 			{error && (
 				<Alert severity="error">
