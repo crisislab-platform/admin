@@ -38,14 +38,17 @@ export default function PasswordResetFinishPage({
 			});
 		} else {
 			setLoading(true);
-			await resetPassword(password.toString(), token);
+			await resetPassword(password.toString().toLowerCase(), token);
 			setLoading(false);
 		}
 	}
 
 	return (
 		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
-			<Typography variant="h4" component="h2" sx={{ textAlign: "center" }}>
+			<Typography
+				variant="h4"
+				component="h2"
+				sx={{ textAlign: "center" }}>
 				{welcome ? "Welcome!" : "Reset password"}
 			</Typography>
 			<Typography variant="body1" sx={{ textAlign: "center" }}>
@@ -65,8 +68,7 @@ export default function PasswordResetFinishPage({
 						loading={loading}
 						variant="contained"
 						type="submit"
-						color="secondary"
-					>
+						color="secondary">
 						Save new password
 					</LoadingButton>
 				</Stack>

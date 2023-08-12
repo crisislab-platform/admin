@@ -30,13 +30,16 @@ export default function LoginPage() {
 				variant: "warning",
 			});
 		} else {
-			await login(email.toString(), password.toString());
+			await login(email.toString().toLowerCase(), password.toString());
 		}
 	}
 
 	return (
 		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
-			<Typography variant="h4" component="h2" sx={{ textAlign: "center" }}>
+			<Typography
+				variant="h4"
+				component="h2"
+				sx={{ textAlign: "center" }}>
 				Login
 			</Typography>
 			<form action="#" onSubmit={onSubmit}>
@@ -59,13 +62,14 @@ export default function LoginPage() {
 						variant="contained"
 						type="submit"
 						color="secondary"
-						endIcon={<LoginIcon />}
-					>
+						endIcon={<LoginIcon />}>
 						Login
 					</LoadingButton>
 				</Stack>
 			</form>
-			<LinkWithQuery to="/auth/password-reset-start" className="arrow-forwards">
+			<LinkWithQuery
+				to="/auth/password-reset-start"
+				className="arrow-forwards">
 				Reset password
 			</LinkWithQuery>
 			<LinkWithQuery to="/auth/login-link" className="arrow-forwards">

@@ -27,9 +27,12 @@ export default function PasswordResetStartPage() {
 			});
 		} else {
 			setLoading(true);
-			const success = await sendLink(email.toString(), "reset");
+			const success = await sendLink(
+				email.toString().toLowerCase(),
+				"reset",
+			);
 			if (success) {
-				setSent(email.toString());
+				setSent(email.toString().toLowerCase());
 			}
 			setLoading(false);
 		}
@@ -42,7 +45,8 @@ export default function PasswordResetStartPage() {
 					Password reset email sent to {sent}.
 				</Typography>
 				<Typography variant="body1">
-					If you don't see it, make sure to check your junk/spam folder.
+					If you don't see it, make sure to check your junk/spam
+					folder.
 				</Typography>
 				<LinkWithQuery to="/auth/login" className="arrow-back">
 					Back to login
@@ -53,7 +57,10 @@ export default function PasswordResetStartPage() {
 
 	return (
 		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
-			<Typography variant="h4" component="h2" sx={{ textAlign: "center" }}>
+			<Typography
+				variant="h4"
+				component="h2"
+				sx={{ textAlign: "center" }}>
 				Reset password
 			</Typography>
 			<Typography variant="body1" sx={{ textAlign: "center" }}>
@@ -72,8 +79,7 @@ export default function PasswordResetStartPage() {
 						loading={loading}
 						variant="contained"
 						type="submit"
-						color="secondary"
-					>
+						color="secondary">
 						Reset password
 					</LoadingButton>
 				</Stack>
