@@ -57,6 +57,20 @@ export function userHasPermission(
 	return true;
 }
 
+export function setQueryParams(params: Record<string, string | null>) {
+	const newURL = new URL(location.toString());
+
+	for (const [key, value] of Object.entries(params)) {
+		if (value === null) {
+			newURL.searchParams.delete(key);
+		} else {
+			newURL.searchParams.set(key, value);
+		}
+	}
+
+	history.replaceState(null, "", newURL);
+}
+
 // ~Center of New Zealand
 export const defaultPosition: [number, number] = [174.8, -41.325];
 

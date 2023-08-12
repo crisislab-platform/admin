@@ -20,7 +20,6 @@ import {
 import {
 	LoadingSpinner,
 	SensorImage,
-	SensorSetupCommand,
 	SensorStatusText,
 	useNavigateWithQuery,
 } from "../../../components";
@@ -29,6 +28,7 @@ import { ReactElement, Ref, forwardRef, useState } from "react";
 import { makeDeleteSensor, makeFetchSensors } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import CloseIcon from "@mui/icons-material/Close";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -162,60 +162,79 @@ export function SensorPanel() {
 
 	let layout = (
 		<Stack sx={{ p: onMobile ? 2 : 0, minHeight: "100%" }}>
-			{userHasPermission(user, "sensors:write") && (
-				<Stack
-					justifyContent="flex-end"
-					direction="row"
-					gap={1}
-					flexWrap="wrap"
-					sx={{ mb: 2 }}>
+			<Stack
+				justifyContent="flex-end"
+				direction="row"
+				gap={1}
+				flexWrap="wrap"
+				sx={{ mb: 2 }}>
+				{userHasPermission(user, "sensor-data:bulk-export") && (
 					<Button
 						variant="outlined"
-						color="error"
-						startIcon={<DeleteIcon />}
-						onClick={() => setDeletionConfirmModalOpen(true)}>
-						Delete sensor
+						onClick={() =>
+							navigateWithQuery(
+								`/manage/data-export?export_data_sensor_id=${sensorID}`,
+								{
+									replace: false,
+								},
+							)
+						}
+						startIcon={<FileDownloadIcon />}>
+						Export data
 					</Button>
-					<Dialog
-						fullWidth
-						open={deletionConfirmModalOpen}
-						onClose={onDeletionConfirmModalClose}>
-						<DialogTitle>Confirm deletion</DialogTitle>
-						<DialogContent>
-							<Stack gap={1}>
-								<Alert severity="info">
-									<AlertTitle>
-										Changes may take up to a minute to be
-										reflected everywhere.
-									</AlertTitle>
-									If the deleted sensor reappears, don't
-									worry. The stored data has been removed and
-									will stop showing up soon.
-								</Alert>
-								<DialogContentText>
-									Are you sure that you want to delete the
-									sensor {activeSensor.id}? It will be gone
-									forever with no way of recovering it.
-								</DialogContentText>
-							</Stack>
-						</DialogContent>
-						<DialogActions>
-							<Button color="error" onClick={deleteSensor}>
-								Delete
-							</Button>
-							<Button onClick={onDeletionConfirmModalClose}>
-								Close
-							</Button>
-						</DialogActions>
-					</Dialog>
-					<Button
-						variant="outlined"
-						onClick={() => setEditMode(true)}
-						startIcon={<EditIcon />}>
-						Edit sensor details
-					</Button>
-				</Stack>
-			)}
+				)}
+				{userHasPermission(user, "sensors:write") && (
+					<>
+						<Button
+							variant="outlined"
+							color="error"
+							startIcon={<DeleteIcon />}
+							onClick={() => setDeletionConfirmModalOpen(true)}>
+							Delete sensor
+						</Button>
+						<Dialog
+							fullWidth
+							open={deletionConfirmModalOpen}
+							onClose={onDeletionConfirmModalClose}>
+							<DialogTitle>Confirm deletion</DialogTitle>
+							<DialogContent>
+								<Stack gap={1}>
+									<Alert severity="info">
+										<AlertTitle>
+											Changes may take up to a minute to
+											be reflected everywhere.
+										</AlertTitle>
+										If the deleted sensor reappears, don't
+										worry. The stored data has been removed
+										and will stop showing up soon.
+									</Alert>
+									<DialogContentText>
+										Are you sure that you want to delete the
+										sensor {activeSensor.id}? It will be
+										gone forever with no way of recovering
+										it.
+									</DialogContentText>
+								</Stack>
+							</DialogContent>
+							<DialogActions>
+								<Button color="error" onClick={deleteSensor}>
+									Delete
+								</Button>
+								<Button onClick={onDeletionConfirmModalClose}>
+									Close
+								</Button>
+							</DialogActions>
+						</Dialog>
+						<Button
+							variant="outlined"
+							onClick={() => setEditMode(true)}
+							startIcon={<EditIcon />}>
+							Edit sensor details
+						</Button>
+					</>
+				)}
+			</Stack>
+
 			<Stack alignItems="center" gap={2}>
 				{(!user || !userHasPermission(user, "sensors:read")) && (
 					<Alert severity="info">

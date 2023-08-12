@@ -14,12 +14,15 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sensor } from "../../../types";
 import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
+import { useSearchParams } from "react-router-dom";
+import { useGetQueryParam } from "../../../auth/utils";
+import { setQueryParams } from "../../../utils";
 
 function formatBytes(bytes: number, decimals = 1) {
 	// From https://stackoverflow.com/a/18650828
@@ -37,6 +40,7 @@ function formatBytes(bytes: number, decimals = 1) {
 export function ExportSensorDataPage() {
 	const { user } = useAuth();
 	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
+	const defaultSensorID = useGetQueryParam("export_data_sensor_id");
 	const [chosenSensor, setChosenSensor] = useState<Sensor | null>(null);
 	const [downloading, setDownloading] = useState(false);
 	const [error, setError] = useState<null | string>(null);
@@ -51,6 +55,30 @@ export function ExportSensorDataPage() {
 	const [processedLines, setProcessedLines] = useState(0);
 	const [totalLines, setTotalLines] = useState(0);
 	const [bytesDownloaded, setBytesDownloaded] = useState(0);
+
+	useEffect(() => {
+		if (
+			defaultSensorID === null ||
+			!sensorsQuery.data ||
+			chosenSensor !== null
+		)
+			return;
+
+		try {
+			const sensor = sensorsQuery.data.sensors[parseInt(defaultSensorID)];
+
+			setChosenSensor(sensor);
+		} catch (err) {
+			console.warn("Error setting sensor from query param: ", err);
+		}
+	}, [sensorsQuery.data, defaultSensorID]);
+
+	useEffect(() => {
+		if (chosenSensor === null) return;
+		setQueryParams({
+			export_data_sensor_id: chosenSensor?.id + "",
+		});
+	}, [chosenSensor]);
 
 	const progress =
 		totalLines === 0
