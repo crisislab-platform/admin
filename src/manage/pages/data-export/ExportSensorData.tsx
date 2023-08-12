@@ -38,30 +38,36 @@ export function ExportSensorDataPage() {
 	const [processedLines, setProcessedLines] = useState(0);
 	const [totalLines, setTotalLines] = useState(0);
 
+	const progress =
+		totalLines === 0
+			? 0
+			: processedLines > totalLines
+			? 100
+			: (processedLines * 100) / totalLines;
+
 	async function startDownload() {
+		// Check that we have the APIs we need
 		if (
 			!("showSaveFilePicker" in window) ||
 			!("TransformStream" in window)
 		) {
-			alert(
-				"Missing APIs. Try using latest Firefox or Chrome. Also this doesn't usually work on mobile.",
-			);
+			alert("Missing APIs. Try using latest Chrome desktop.");
 			return;
 		}
 
+		// This is so that the cancel button works
 		const downloadAbortController = new AbortController();
 		setDownloadAbort(downloadAbortController);
 
-		let fileWriteStream: FileSystemWritableFileStream | null = null;
-		let res: Response | null = null;
-
 		try {
+			// Reset stuff
 			setProcessedLines(0);
 			setTotalLines(0);
 			setDownloading(true);
 			setError(null);
 
-			res = await fetch(
+			// We await this to get the headers, but not the whole body
+			const res = await fetch(
 				`${
 					import.meta.env.DEV
 						? "http://localhost:8080"
@@ -77,6 +83,11 @@ export function ExportSensorDataPage() {
 				},
 			);
 
+			// This is for the progress bar
+			setTotalLines(parseInt(res.headers.get("X-Number-Of-Records")) + 1);
+
+			// Now we ask where the user wants to save the file, and get a handle
+			// to write to it
 			const fileDownloadHandle =
 				// @ts-expect-error This should be fixed eventually
 				(await window.showSaveFilePicker({
@@ -84,36 +95,45 @@ export function ExportSensorDataPage() {
 						chosenSensor.id
 					}_data_from_${fromDate.toISOString()}_to_${toDate.toISOString()}.tsv`,
 				})) as FileSystemFileHandle;
-			fileWriteStream =
+			const fileWriteStream =
 				(await fileDownloadHandle.createWritable()) as FileSystemWritableFileStream;
 
-			setTotalLines(parseInt(res.headers.get("X-Number-Of-Records")) + 1);
-
+			// This is where the magic happens.
 			res.body
-				.pipeThrough(new TextDecoderStream())
+				// For the stats, we convert to text,
+				.pipeThrough(new TextDecoderStream(), {
+					signal: downloadAbortController.signal,
+				})
+				// Then we record stats
 				.pipeThrough(
+					// By piping it 'through' a 'transformer' that just counts
+					// newlines before passing it on
 					new TransformStream({
 						transform(chunk, controller) {
-							// const lines = new TextDecoder()
-							// 	.decode(chunk)
 							const lines = chunk.split("\n").length;
 							setProcessedLines((oldAmount) => oldAmount + lines);
 							controller.enqueue(chunk);
 						},
 					}),
+					{ signal: downloadAbortController.signal },
 				)
+				// Lastly we just pipe it into the file
 				.pipeTo(fileWriteStream, {
 					signal: downloadAbortController.signal,
 				})
+				// This happens when we successfully save the file
 				.then(() => {
 					setDownloading(false);
+					alert("Data file saved successfully!");
 				})
+				// And handle errors with the streams
 				.catch((err) => {
 					setDownloading(false);
 					setError(err);
 					console.error("stream error:", err);
 				});
 		} catch (err) {
+			// This handles fetch errors
 			setDownloading(false);
 			setError(err);
 			console.error("fetch error:", err);
@@ -194,15 +214,17 @@ export function ExportSensorDataPage() {
 			</Stack>
 			<LinearProgress
 				variant={
-					processedLines > totalLines
+					!downloading
+						? "determinate"
+						: processedLines > totalLines
 						? "indeterminate"
 						: "determinate"
 				}
-				value={(processedLines * 100) / totalLines}
+				value={progress}
 			/>
 
 			<Typography>
-				{processedLines} / {totalLines}
+				{Math.round(progress)}% ({processedLines} / {totalLines})
 			</Typography>
 			{downloading && (
 				<Stack direction="row" gap={2}>
