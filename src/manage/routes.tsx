@@ -8,14 +8,13 @@ import {
 import { Route, SidebarLink } from "../types";
 
 import CompareIcon from "@mui/icons-material/Compare";
-import CompareOutlinedIcon from "@mui/icons-material/CompareOutlined";
 import PersonIcon from "@mui/icons-material/Person";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import SensorsOutlinedIcon from "@mui/icons-material/SensorsOutlined";
-import SettingsIcon from "@mui/icons-material/Settings";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { roles } from "../utils";
+import { ExportSensorDataPage } from "./pages/data-export/ExportSensorData";
 
 export const routes: (Route | SidebarLink)[] = [
 	{
@@ -59,16 +58,14 @@ export const routes: (Route | SidebarLink)[] = [
 		text: "Sensors: side-by-side",
 		Element: <SensorsSideBySide />,
 		requiredRole: roles["sensors:read"],
-		Icon: CompareOutlinedIcon,
-		ActiveIcon: CompareIcon,
+		Icon: CompareIcon,
 	},
 	{
 		position: 3,
-		slug: "global-config",
-		text: "Global configuration",
-		ActiveIcon: SettingsIcon,
-		Icon: SettingsOutlinedIcon,
-		Element: <div>Global sensor configuration - coming soon?</div>,
-		requiredRole: roles["sensors:write"],
+		slug: "data-export",
+		text: "Data Export",
+		Icon: FileDownloadIcon,
+		Element: <ExportSensorDataPage />,
+		requiredRole: roles["sensor-data:bulk-export"],
 	},
 ];

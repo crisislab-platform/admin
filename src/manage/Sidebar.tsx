@@ -139,9 +139,13 @@ export default function Sidebar({
 										setMobileDrawerOpen(false);
 									}}>
 									<ListItemIcon>
-										{location.pathname.split("/")[2] ===
-										link.slug ? (
-											<link.ActiveIcon />
+										{link.ActiveIcon ? (
+											location.pathname.split("/")[2] ===
+											link.slug ? (
+												<link.ActiveIcon />
+											) : (
+												<link.Icon />
+											)
 										) : (
 											<link.Icon />
 										)}
