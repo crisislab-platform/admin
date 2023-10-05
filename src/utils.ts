@@ -85,6 +85,11 @@ export const sensorMenuTypes: SensorType[] = [
 	"Raspberry Shake and Boom",
 ];
 
+export const sensorTypeChannels: Record<SensorType, string[]> = {
+	"Raspberry Shake 4D": ["EHZ", "ENN", "ENZ", "ENE"],
+	"Raspberry Shake and Boom": ["EHZ", "HDF"],
+};
+
 export function generateSensorSetupCommand(sensorToken: string) {
 	return `curl -s https://raw.githubusercontent.com/rs-Web-Interface-CRISiSLab/pishake-client/main/setup.sh | sudo bash /dev/stdin ${sensorToken}`;
 }
@@ -145,3 +150,16 @@ export const useOnMobile = () => {
 	const theme = useTheme();
 	return useMediaQuery(theme.breakpoints.down("lg"));
 };
+
+export function formatBytes(bytes: number, decimals = 1) {
+	// From https://stackoverflow.com/a/18650828
+
+	if (!+bytes) return "0 bytes";
+
+	const k = 1024;
+	const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+	const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+	return `${(bytes / Math.pow(k, i)).toFixed(decimals)} ${sizes[i]}`;
+}

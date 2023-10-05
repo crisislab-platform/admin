@@ -7,9 +7,14 @@ import {
 	Autocomplete,
 	Button,
 	CircularProgress,
+	FormControl,
+	FormControlLabel,
+	FormLabel,
 	LinearProgress,
 	Link,
 	Paper,
+	Radio,
+	RadioGroup,
 	Stack,
 	TextField,
 	Typography,
@@ -20,28 +25,35 @@ import dayjs, { Dayjs } from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
-import { useSearchParams } from "react-router-dom";
 import { useGetQueryParam } from "../../../auth/utils";
-import { setQueryParams } from "../../../utils";
+import {
+	setQueryParams,
+	formatBytes,
+	sensorTypeChannels,
+} from "../../../utils";
 
-function formatBytes(bytes: number, decimals = 1) {
-	// From https://stackoverflow.com/a/18650828
-
-	if (!+bytes) return "0 bytes";
-
-	const k = 1024;
-	const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-
-	const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-	return `${(bytes / Math.pow(k, i)).toFixed(decimals)} ${sizes[i]}`;
-}
+const exportTypes: Record<
+	string,
+	{ channelCount: number; displayName: string }
+> = {
+	miniseed3: {
+		channelCount: 1,
+		displayName: "miniSEED V3",
+	},
+	tsv1: {
+		channelCount: Infinity,
+		displayName: "CSV file (TSV)",
+	},
+};
 
 export function ExportSensorDataPage() {
 	const { user } = useAuth();
 	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
 	const defaultSensorID = useGetQueryParam("export_data_sensor_id");
 	const [chosenSensor, setChosenSensor] = useState<Sensor | null>(null);
+	const [exportFormat, setExportFormat] =
+		useState<keyof typeof exportTypes>("miniseed3");
+	const [selectedChannels, setSelectedChannels] = useState<String[]>([]);
 	const [downloading, setDownloading] = useState(false);
 	const [error, setError] = useState<null | string>(null);
 
@@ -80,6 +92,25 @@ export function ExportSensorDataPage() {
 		});
 	}, [chosenSensor]);
 
+	// Function so that it can be used in effects without going stale
+	const singleChannel = () => exportTypes[exportFormat].channelCount === 1;
+
+	useEffect(() => {
+		if (singleChannel()) {
+			setSelectedChannels(
+				chosenSensor?.type in sensorTypeChannels
+					? [sensorTypeChannels[chosenSensor.type][0]]
+					: ["All"],
+			);
+		} else {
+			setSelectedChannels(
+				chosenSensor?.type in sensorTypeChannels
+					? sensorTypeChannels[chosenSensor.type]
+					: ["All"],
+			);
+		}
+	}, [exportFormat, chosenSensor?.type]);
+
 	const progress =
 		totalLines === 0
 			? 0
@@ -115,7 +146,11 @@ export function ExportSensorDataPage() {
 					import.meta.env.DEV
 						? "http://localhost:8080"
 						: "https://crisislab-data.massey.ac.nz"
-				}/api/v1/data-bulk-export?sensor_id=${chosenSensor.id}&from=${
+				}/api/v1/data-bulk-export?sensor_id=${
+					chosenSensor.id
+				}&channels=${selectedChannels.join(
+					",",
+				)}&format=${exportFormat}&from=${
 					fromDate.toDate().getTime() / 1000
 				}&to=${toDate.toDate().getTime() / 1000}`,
 				{
@@ -227,6 +262,30 @@ export function ExportSensorDataPage() {
 					<Typography variant="caption">Export options</Typography>
 				</legend>
 				<Stack gap={2}>
+					<FormControl required>
+						<FormLabel id="export-format-group-label">
+							Export format
+						</FormLabel>
+						<RadioGroup
+							row
+							aria-labelledby="export-format-group-label"
+							name="export-format-group"
+							value={exportFormat}
+							onChange={(event) =>
+								setExportFormat(event.target.value)
+							}>
+							{Object.entries(exportTypes).map(
+								([type, { displayName }]) => (
+									<FormControlLabel
+										key={type}
+										value={type}
+										control={<Radio />}
+										label={displayName}
+									/>
+								),
+							)}
+						</RadioGroup>
+					</FormControl>
 					<Autocomplete
 						options={
 							sensorsQuery.data
@@ -238,10 +297,43 @@ export function ExportSensorDataPage() {
 							`${option.secondary_id} (#${option.id})`
 						}
 						renderInput={(params) => (
-							<TextField {...params} label="Sensor" />
+							<TextField {...params} label="Sensor" required />
 						)}
 						onChange={(_, newValue) => setChosenSensor(newValue)}
 						value={chosenSensor}
+					/>
+					<Autocomplete
+						options={
+							chosenSensor?.type in sensorTypeChannels
+								? sensorTypeChannels[chosenSensor.type]
+								: ["Auto"]
+						}
+						multiple={singleChannel() ? false : true}
+						disabled={chosenSensor === null}
+						renderInput={(params) => (
+							<TextField
+								required
+								{...params}
+								label={
+									"Data channel" +
+									(singleChannel() ? "" : "s")
+								}
+							/>
+						)}
+						onChange={(_, newValue) => {
+							if (singleChannel()) {
+								// @ts-expect-error Just deal with it okay
+								setSelectedChannels([newValue]);
+							} else {
+								// @ts-expect-error Just deal with it okay
+								setSelectedChannels(newValue);
+							}
+						}}
+						value={
+							singleChannel()
+								? selectedChannels[0] ?? "All"
+								: selectedChannels
+						}
 					/>
 					<Stack gap={2} direction="row">
 						<LocalizationProvider dateAdapter={AdapterDayjs}>
