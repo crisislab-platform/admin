@@ -67,6 +67,7 @@ export function ExportSensorDataPage() {
 	const [processedLines, setProcessedLines] = useState(0);
 	const [totalLines, setTotalLines] = useState(0);
 	const [bytesDownloaded, setBytesDownloaded] = useState(0);
+	const [totalBytes, setTotalBytes] = useState(0);
 
 	useEffect(() => {
 		if (
@@ -112,11 +113,17 @@ export function ExportSensorDataPage() {
 	}, [exportFormat, chosenSensor?.type]);
 
 	const progress =
-		totalLines === 0
+		exportFormat === "tsv1"
+			? totalLines === 0
+				? 0
+				: processedLines > totalLines
+				? 100
+				: (processedLines * 100) / totalLines
+			: totalBytes === 0
 			? 0
-			: processedLines > totalLines
+			: bytesDownloaded > totalBytes
 			? 100
-			: (processedLines * 100) / totalLines;
+			: (bytesDownloaded * 100) / totalBytes;
 
 	async function startDownload() {
 		// Check that we have the APIs we need
@@ -136,6 +143,7 @@ export function ExportSensorDataPage() {
 			// Reset stuff
 			setProcessedLines(0);
 			setTotalLines(0);
+			setTotalBytes(0);
 			setBytesDownloaded(0);
 			setDownloading(true);
 			setError(null);
@@ -161,17 +169,33 @@ export function ExportSensorDataPage() {
 				},
 			);
 
-			// This is for the progress bar
-			const totalLines = parseInt(res.headers.get("X-Number-Of-Records"));
-			if (totalLines === 0) {
+			if (!res.ok) {
 				setDownloading(false);
 				setError(
-					`No records found for sensor #${chosenSensor.id} in that time range.`,
+					`${res.statusText}! (${res.status}) ` + (await res.text()),
 				);
 				return;
 			}
-			// This is the extra line for the column headers
-			setTotalLines(totalLines + 1);
+
+			if (exportFormat === "miniseed3") {
+				setTotalBytes(Number(res.headers.get("Content-Length")));
+			} else {
+				// This is for the progress bar
+				const _totalLines = parseInt(
+					res.headers.get("X-Number-Of-Records") ?? "1",
+				);
+				if (_totalLines === 0) {
+					setDownloading(false);
+					setError(
+						`No records found for sensor #${chosenSensor.id} in that time range.`,
+					);
+					return;
+				}
+				// This is the extra line for the column headers
+				setTotalLines(_totalLines + 1);
+			}
+
+			const extension = exportFormat === "tsv1" ? "tsv" : "mseed";
 
 			// Now we ask where the user wants to save the file, and get a handle
 			// to write to it
@@ -180,7 +204,7 @@ export function ExportSensorDataPage() {
 				(await window.showSaveFilePicker({
 					suggestedName: `sensor_${
 						chosenSensor.id
-					}_data_from_${fromDate.toISOString()}_to_${toDate.toISOString()}.tsv`,
+					}_data_from_${fromDate.toISOString()}_to_${toDate.toISOString()}.${extension}`,
 				})) as FileSystemFileHandle;
 			const fileWriteStream =
 				(await fileDownloadHandle.createWritable()) as FileSystemWritableFileStream;
@@ -207,6 +231,10 @@ export function ExportSensorDataPage() {
 					// newlines before passing it on
 					new TransformStream({
 						transform(chunk, controller) {
+							if (exportFormat === "miniseed3") {
+								controller.enqueue(chunk);
+								return;
+							}
 							// Count the number of '\n's
 							const lines = chunk.split("\n").length - 1;
 							setProcessedLines((oldAmount) => oldAmount + lines);
@@ -380,16 +408,28 @@ export function ExportSensorDataPage() {
 
 			<Typography sx={{ fontFamily: "monospace" }}>
 				{(Math.round(progress * 10) / 10).toFixed(1)}% done (
-				{processedLines} / {totalLines} records downloaded)
+				{exportFormat === "tsv1" ? (
+					<>
+						{processedLines} / {totalLines} records
+					</>
+				) : (
+					<>
+						{formatBytes(bytesDownloaded)} /{" "}
+						{formatBytes(totalBytes)}
+					</>
+				)}{" "}
+				downloaded)
 			</Typography>
-			<Stack direction="row" gap={2}>
-				<Typography sx={{ fontFamily: "monospace" }}>
-					Downloaded {formatBytes(bytesDownloaded)}
-				</Typography>{" "}
-				{downloading && (
-					<CircularProgress variant="indeterminate" size="18px" />
-				)}
-			</Stack>
+			{exportFormat === "tsv1" && (
+				<Stack direction="row" gap={2}>
+					<Typography sx={{ fontFamily: "monospace" }}>
+						Downloaded {formatBytes(bytesDownloaded)}
+					</Typography>{" "}
+					{downloading && (
+						<CircularProgress variant="indeterminate" size="18px" />
+					)}
+				</Stack>
+			)}
 
 			{error && (
 				<Alert severity="error">
