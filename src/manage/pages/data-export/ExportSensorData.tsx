@@ -210,39 +210,44 @@ export function ExportSensorDataPage() {
 				(await fileDownloadHandle.createWritable()) as FileSystemWritableFileStream;
 
 			// This is where the magic happens.
-			res.body
-				.pipeThrough(
-					new TransformStream({
-						transform(chunk, controller) {
-							setBytesDownloaded(
-								(oldAmount) => oldAmount + chunk.length,
-							);
-							controller.enqueue(chunk);
-						},
-					}),
-				)
-				// For the line counting, we convert to text,
-				.pipeThrough(new TextDecoderStream(), {
-					signal: downloadAbortController.signal,
-				})
-				// Then we record stats on number of lines
-				.pipeThrough(
-					// By piping it 'through' a 'transformer' that just counts
-					// newlines before passing it on
-					new TransformStream({
-						transform(chunk, controller) {
-							if (exportFormat === "miniseed3") {
+			let stream = res.body.pipeThrough(
+				new TransformStream({
+					transform(chunk, controller) {
+						setBytesDownloaded(
+							(oldAmount) => oldAmount + chunk.length,
+						);
+						controller.enqueue(chunk);
+					},
+				}),
+			);
+
+			// We DO NOT want to decode miniSEED to text
+			// (this caused me so much pain and suffering during development)
+			if (exportFormat === "tsv1") {
+				stream = stream
+					// For the line counting, we convert to text,
+					.pipeThrough(new TextDecoderStream(), {
+						signal: downloadAbortController.signal,
+					})
+					.pipeThrough(
+						// By piping it 'through' a 'transformer' that just counts
+						// newlines before passing it on
+						new TransformStream({
+							transform(chunk, controller) {
+								// Count the number of '\n's
+								const lines = chunk.split("\n").length - 1;
+								setProcessedLines(
+									(oldAmount) => oldAmount + lines,
+								);
 								controller.enqueue(chunk);
-								return;
-							}
-							// Count the number of '\n's
-							const lines = chunk.split("\n").length - 1;
-							setProcessedLines((oldAmount) => oldAmount + lines);
-							controller.enqueue(chunk);
-						},
-					}),
-					{ signal: downloadAbortController.signal },
-				)
+							},
+						}),
+						{ signal: downloadAbortController.signal },
+					);
+			}
+
+			// Then we record stats on number of lines
+			stream
 				// Lastly we just pipe it into the file
 				.pipeTo(fileWriteStream, {
 					signal: downloadAbortController.signal,
