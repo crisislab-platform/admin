@@ -45,6 +45,10 @@ export const roles: Record<string, Role> = {
 		raw: "sensor-data:bulk-export",
 		text: "Export bulk stored sensor data",
 	},
+	"sensor-data:db-size": {
+		raw: "sensor-data:db-size",
+		text: "Query size of database",
+	},
 };
 
 export function userHasPermission(

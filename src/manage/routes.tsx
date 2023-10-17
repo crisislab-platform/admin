@@ -6,7 +6,7 @@ import {
 	SensorsSideBySide,
 } from "./pages/index";
 import { Route, SidebarLink } from "../types";
-
+import { DatabaseSizePage } from "./pages/DatabaseSizePage";
 import CompareIcon from "@mui/icons-material/Compare";
 import PersonIcon from "@mui/icons-material/Person";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
@@ -15,7 +15,7 @@ import SensorsOutlinedIcon from "@mui/icons-material/SensorsOutlined";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { roles } from "../utils";
 import { ExportSensorDataPage } from "./pages/data-export/ExportSensorData";
-
+import StorageIcon from "@mui/icons-material/Storage";
 export const routes: (Route | SidebarLink)[] = [
 	{
 		position: 0,
@@ -67,5 +67,13 @@ export const routes: (Route | SidebarLink)[] = [
 		Icon: FileDownloadIcon,
 		Element: <ExportSensorDataPage />,
 		requiredRole: roles["sensor-data:bulk-export"],
+	},
+	{
+		position: 4,
+		slug: "database-size",
+		text: "Database size",
+		Icon: StorageIcon,
+		Element: <DatabaseSizePage />,
+		requiredRole: roles["sensor-data:db-size"],
 	},
 ];

@@ -47,8 +47,8 @@ export default function Sidebar({
 	const navigateWithQuery = useNavigateWithQuery();
 
 	const sortedLinks = useMemo(() => {
-		let linksCopy = [...links];
-		links.sort((a, b) => {
+		const linksCopy = [...links];
+		linksCopy.sort((a, b) => {
 			if (b.position === undefined && a.position === undefined) {
 				return 0;
 			}
@@ -68,7 +68,7 @@ export default function Sidebar({
 			}
 			return 0;
 		});
-		return links;
+		return linksCopy;
 	}, [links]);
 
 	const location = useLocation();
