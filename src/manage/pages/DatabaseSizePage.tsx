@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import useAuth from "../../auth/useAuth";
 import { useEffect, useRef, useState } from "react";
 import { formatBytes } from "../../utils";
@@ -6,6 +6,7 @@ import { formatBytes } from "../../utils";
 export function DatabaseSizePage() {
 	const { user } = useAuth();
 	const [error, setError] = useState<string | null>(null);
+	const [time, setTime] = useState<Date | null>(null);
 	const [size, setSize] = useState<number | null>(null);
 	const controller = useRef<AbortController>(null);
 
@@ -34,9 +35,12 @@ export function DatabaseSizePage() {
 				if (!res.ok) throw body;
 				setSize(Number(body));
 				setError(null);
+				setTime(new Date());
 			} catch (err) {
 				setSize(null);
-				setError(err);
+				setTime(null);
+				// Don't show aborted messages
+				if (!(err + "").includes("aborted")) setError(err);
 			}
 		})();
 		return () => {
@@ -46,8 +50,15 @@ export function DatabaseSizePage() {
 	}, [user.token]);
 
 	return (
-		<Typography sx={{ fontWeight: "bold", fontSize: "x-large" }}>
-			{error ? error + "" : size ? formatBytes(size) : "Loading..."}
-		</Typography>
+		<Stack p={3}>
+			<Typography sx={{ fontWeight: "bold", fontSize: "80pt" }}>
+				{error ? error + "" : size ? formatBytes(size) : "Loading..."}
+			</Typography>
+			{time && (
+				<Typography sx={{ fontSize: "15pt" }}>
+					Updated at {time?.toString()}
+				</Typography>
+			)}
+		</Stack>
 	);
 }
