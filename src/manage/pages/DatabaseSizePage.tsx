@@ -41,6 +41,7 @@ export function DatabaseSizePage() {
 		})();
 		return () => {
 			controller?.current?.abort();
+			setError(null);
 		};
 	}, [user.token]);
 
