@@ -48,12 +48,13 @@ export function EditSensorInfo({
 		activeSensor.secondary_id ? activeSensor.secondary_id : "",
 	);
 	const [menuType, setMenuType] = useState<SensorType>(
-		sensorMenuTypes.includes(activeSensor.type) ? activeSensor.type : "__other",
+		sensorMenuTypes.includes(activeSensor.type)
+			? activeSensor.type
+			: "__other",
 	);
 	const [otherType, setOtherType] = useState<string>(
 		sensorMenuTypes.includes(activeSensor.type) ? "" : activeSensor.type,
 	);
-	const [enableLocation, setEnableLocation] = useState(false);
 	const [location, setLocation] = useState<[number, number]>([
 		activeSensor?.location?.coordinates?.[0] || defaultPosition[0],
 		activeSensor?.location?.coordinates?.[1] || defaultPosition[1],
@@ -133,21 +134,27 @@ export function EditSensorInfo({
 		setContactEmail(
 			activeSensor.contact_email ? activeSensor.contact_email : "",
 		);
-		setSecondaryID(activeSensor.secondary_id ? activeSensor.secondary_id : "");
+		setSecondaryID(
+			activeSensor.secondary_id ? activeSensor.secondary_id : "",
+		);
 		setMenuType(
 			sensorMenuTypes.includes(activeSensor.type)
 				? activeSensor.type
 				: "__other",
 		);
 		setOtherType(
-			sensorMenuTypes.includes(activeSensor.type) ? "" : activeSensor.type,
+			sensorMenuTypes.includes(activeSensor.type)
+				? ""
+				: activeSensor.type,
 		);
 		setLocation([
 			activeSensor?.location?.coordinates?.[0] || defaultPosition[0],
 			activeSensor?.location?.coordinates?.[1] || defaultPosition[1],
 		]);
 		setElevation(activeSensor.elevation ? activeSensor.elevation : 0);
-		setTotalFloors(activeSensor.total_floors ? activeSensor.total_floors : 0);
+		setTotalFloors(
+			activeSensor.total_floors ? activeSensor.total_floors : 0,
+		);
 		setOnFloor(activeSensor.on_floor ? activeSensor.on_floor : 0);
 		setIPAddress(activeSensor.ip);
 		setPort(activeSensor.port ? activeSensor.port : null);
@@ -176,19 +183,17 @@ export function EditSensorInfo({
 				name,
 				type,
 				elevation,
-				location: enableLocation
-					? {
-							type: "Point",
-							coordinates: location,
-					  }
-					: undefined,
+				location: {
+					type: "Point",
+					coordinates: location,
+				},
 				total_floors: totalFloors,
 				on_floor: onFloor,
 				secondary_id: secondaryID,
 				port,
 				ip: IPAddress,
 				online,
-				contact_email: contactEmail
+				contact_email: contactEmail,
 			});
 
 			exitEditMode();
@@ -224,8 +229,8 @@ export function EditSensorInfo({
 				<AlertTitle>
 					Changes may take up to a minute to be reflected everywhere.
 				</AlertTitle>
-				If the updated account information disappears, don't worry. The data is
-				stored and will show up soon.
+				If the updated account information disappears, don't worry. The
+				data is stored and will show up soon.
 			</Alert>
 			{errors.length > 0 && (
 				<Stack gap={1}>
@@ -254,8 +259,7 @@ export function EditSensorInfo({
 							setOnline(value);
 						}
 					}}
-					aria-label="Connection status"
-				>
+					aria-label="Connection status">
 					<ToggleButton value={true}>Online</ToggleButton>
 					<ToggleButton value={false}>Offline</ToggleButton>
 				</ToggleButtonGroup>
@@ -308,8 +312,9 @@ export function EditSensorInfo({
 						id="edit-sensor-type-select"
 						value={menuType}
 						label="Age"
-						onChange={(event) => setMenuType(event.target.value as SensorType)}
-					>
+						onChange={(event) =>
+							setMenuType(event.target.value as SensorType)
+						}>
 						{sensorMenuTypes.map((type) => (
 							<MenuItem value={type} key={type}>
 								{type}
@@ -353,7 +358,9 @@ export function EditSensorInfo({
 					onChange={(event) => {
 						try {
 							setPort(
-								event.target.value ? Number(event.target.value) : undefined,
+								event.target.value
+									? Number(event.target.value)
+									: undefined,
 							);
 						} catch (e) {
 							setPort(undefined);
@@ -369,12 +376,70 @@ export function EditSensorInfo({
 			</Stack>
 			<Stack gap={1}>
 				<Typography variant="subtitle1">Location</Typography>
-				<TextField
+				<Stack>
+					{navigator.geolocation && (
+						<Box>
+							<Button
+								startIcon={<MyLocationIcon />}
+								variant="outlined"
+								onClick={getLocationOfDevice}>
+								Use my location
+							</Button>
+						</Box>
+					)}
+					<Stack direction="row" gap={1}>
+						<TextField
+							value={location[0]}
+							onChange={(event) =>
+								setLocation((oldLocation) => [
+									Number(event.target.value),
+									oldLocation[1],
+								])
+							}
+							margin="dense"
+							id="edit-longitude-textbox"
+							name="edit-longitude-textbox"
+							label="Longitude"
+							type="text"
+							inputProps={{
+								inputMode: "numeric",
+								pattern: "[0-9]*",
+							}}
+							fullWidth
+							variant="outlined"
+							required
+						/>
+						<TextField
+							value={location[1]}
+							onChange={(event) =>
+								setLocation((oldLocation) => [
+									oldLocation[0],
+									Number(event.target.value),
+								])
+							}
+							margin="dense"
+							id="edit-latitude-textbox"
+							name="edit-latitude-textbox"
+							label="Latitude"
+							type="text"
+							inputProps={{
+								inputMode: "numeric",
+								pattern: "[0-9]*",
+							}}
+							fullWidth
+							variant="outlined"
+							required
+						/>
+					</Stack>
+				</Stack>
+				{/* <TextField
 					InputLabelProps={{ shrink: true }}
 					value={elevation}
 					onChange={(event) =>
 						setElevation(
-							event.target.value ? Number(event.target.value) : undefined,
+							event.target.value
+								? Number(event.target.value)
+								: undefined,
 						)
 					}
 					margin="dense"
@@ -391,7 +456,9 @@ export function EditSensorInfo({
 					value={onFloor}
 					onChange={(event) =>
 						setOnFloor(
-							event.target.value ? Number(event.target.value) : undefined,
+							event.target.value
+								? Number(event.target.value)
+								: undefined,
 						)
 					}
 					margin="dense"
@@ -408,7 +475,9 @@ export function EditSensorInfo({
 					value={totalFloors}
 					onChange={(event) =>
 						setTotalFloors(
-							event.target.value ? Number(event.target.value) : undefined,
+							event.target.value
+								? Number(event.target.value)
+								: undefined,
 						)
 					}
 					margin="dense"
@@ -419,93 +488,12 @@ export function EditSensorInfo({
 					inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
 					fullWidth
 					variant="outlined"
-				/>
-				<FormControlLabel
-					control={
-						<Switch
-							checked={enableLocation}
-							onChange={(event) => setEnableLocation(event.target.checked)}
-						/>
-					}
-					label="Enable manual position"
-				/>
-				{enableLocation && (
-					<>
-						<Typography variant="body1">
-							The position of the sensor will be automatically determined using
-							the{" "}
-							<Link href="https://en.wikipedia.org/wiki/Wi-Fi_positioning_system">
-								Wi-Fi positioning system
-							</Link>{" "}
-							which is usually more accurate than the location that your brower
-							can work out. If the sensor will be in a location without many
-							nearby Wi-Fi networks, or only a few very new networks (which may
-							not have been mapped yet), you can manually set the position.
-						</Typography>
-						{navigator.geolocation && (
-							<Box>
-								<Button
-									startIcon={<MyLocationIcon />}
-									variant="outlined"
-									onClick={getLocationOfDevice}
-								>
-									Use my location
-								</Button>
-							</Box>
-						)}
-						<Stack direction="row" gap={1}>
-							<TextField
-								value={location[0]}
-								onChange={(event) =>
-									setLocation((oldLocation) => [
-										Number(event.target.value),
-										oldLocation[1],
-									])
-								}
-								margin="dense"
-								id="edit-longitude-textbox"
-								name="edit-longitude-textbox"
-								label="Longitude"
-								type="text"
-								inputProps={{
-									inputMode: "numeric",
-									pattern: "[0-9]*",
-								}}
-								fullWidth
-								variant="outlined"
-								required
-							/>
-							<TextField
-								value={location[1]}
-								onChange={(event) =>
-									setLocation((oldLocation) => [
-										oldLocation[0],
-										Number(event.target.value),
-									])
-								}
-								margin="dense"
-								id="edit-latitude-textbox"
-								name="edit-latitude-textbox"
-								label="Latitude"
-								type="text"
-								inputProps={{
-									inputMode: "numeric",
-									pattern: "[0-9]*",
-								}}
-								fullWidth
-								variant="outlined"
-								required
-							/>
-						</Stack>
-					</>
-				)}
-
+				/> */}
 				<Button
 					sx={{ mb: 2, mt: 2, ml: "auto" }}
 					variant="outlined"
 					onClick={onSubmit}
-					startIcon={<SaveIcon />}
-				>
+					startIcon={<SaveIcon />}>
 					Save changes
 				</Button>
 			</Stack>
