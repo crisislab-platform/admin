@@ -303,7 +303,7 @@ export function CreateSensorDialog({
 								fullWidth
 								variant="outlined"
 							/>
-							<TextField
+							{/* <TextField
 								value={port}
 								onChange={(event) => {
 									try {
@@ -322,7 +322,7 @@ export function CreateSensorDialog({
 								label="Port"
 								type="number"
 								variant="outlined"
-							/>
+							/> */}
 						</Stack>
 					</Stack>
 					<Divider />

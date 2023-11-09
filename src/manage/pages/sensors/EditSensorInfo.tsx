@@ -353,7 +353,7 @@ export function EditSensorInfo({
 					fullWidth
 					variant="outlined"
 				/>
-				<TextField
+				{/* <TextField
 					value={port}
 					onChange={(event) => {
 						try {
@@ -372,7 +372,7 @@ export function EditSensorInfo({
 					label="Port"
 					type="number"
 					variant="outlined"
-				/>
+				/> */}
 			</Stack>
 			<Stack gap={1}>
 				<Typography variant="subtitle1">Location</Typography>
