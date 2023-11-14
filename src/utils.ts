@@ -81,17 +81,21 @@ export const defaultPosition: [number, number] = [174.8, -41.325];
 export const mapURL = "https://shakemap.crisislab.org.nz";
 
 export const sensorMenuTypes: SensorType[] = [
-	"Android phone",
 	"Raspberry Shake 4D",
-	"Raspberry Shake 3D",
-	"Raspberry Shake 1D",
-	"Raspberry Boom",
 	"Raspberry Shake and Boom",
+	"Palert",
+	"CSI",
+	// "Raspberry Shake 3D",
+	// "Raspberry Shake 1D",
+	// "Raspberry Boom",
+	"Android Phone",
 ];
 
 export const sensorTypeChannels: Record<SensorType, string[]> = {
 	"Raspberry Shake 4D": ["EHZ", "ENN", "ENZ", "ENE"],
 	"Raspberry Shake and Boom": ["EHZ", "HDF"],
+	// Stop prettier from getting rid of brackets
+	["Palert"]: ["ENN", "ENZ", "ENE"],
 };
 
 export function generateSensorSetupCommand(sensorToken: string) {

@@ -1,4 +1,4 @@
-import { Stack, Theme, Typography } from "@mui/material";
+import { Stack, SxProps, Theme, Typography } from "@mui/material";
 
 import AndroidIcon from "@mui/icons-material/PhoneAndroid";
 import ConnectedIcon from "@mui/icons-material/Sensors";
@@ -6,7 +6,7 @@ import NotConnectedIcon from "@mui/icons-material/SensorsOff";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import { Sensor } from "../types";
 import SensorIcon from "@mui/icons-material/RouterOutlined";
-
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 export function statusColour(theme: Theme, online?: boolean) {
 	return online === true
 		? theme.palette.success.main
@@ -57,9 +57,12 @@ export function SensorStatusText({
 							? theme.palette.error.main
 							: theme.palette.secondary.main;
 					},
-				}}
-			>
-				{online === true ? "Online" : online === false ? "Offline" : "Unknown"}
+				}}>
+				{online === true
+					? "Online"
+					: online === false
+					? "Offline"
+					: "Unknown"}
 			</Typography>
 		</Stack>
 	);
@@ -74,25 +77,18 @@ export function SensorImage({
 	size?: number;
 	showStatusColour?: boolean;
 }) {
-	return sensor.type?.toLowerCase().includes("android") ? (
-		<AndroidIcon
-			sx={{
-				width: size,
-				height: size,
-				color: showStatusColour
-					? (theme) => statusColour(theme, sensor.online)
-					: undefined,
-			}}
-		/>
-	) : (
-		<SensorIcon
-			sx={{
-				width: size,
-				height: size,
-				color: showStatusColour
-					? (theme) => statusColour(theme, sensor.online)
-					: undefined,
-			}}
-		/>
-	);
+	const iconStyle: SxProps<Theme> = {
+		width: size,
+		height: size,
+		color: showStatusColour
+			? (theme) => statusColour(theme, sensor.online)
+			: undefined,
+	};
+
+	const type = sensor.type?.toLowerCase() + "";
+
+	if (type.includes("android")) return <AndroidIcon sx={iconStyle} />;
+	if (type.includes("palert")) return <AddCircleOutlineIcon sx={iconStyle} />;
+
+	return <SensorIcon sx={iconStyle} />;
 }
