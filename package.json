@@ -8,14 +8,14 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@babel/core": "^7.23.2",
+		"@babel/core": "^7.23.3",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
 		"@fontsource/manrope": "^5.0.17",
 		"@mui/icons-material": "^5.14.16",
 		"@mui/lab": "5.0.0-alpha.152",
 		"@mui/material": "^5.14.17",
-		"@mui/x-date-pickers": "^6.18.0",
+		"@mui/x-date-pickers": "^6.18.1",
 		"beryllium": "^1.2.1",
 		"dayjs": "^1.11.10",
 		"events": "^3.3.0",
