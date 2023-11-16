@@ -432,63 +432,7 @@ export function EditSensorInfo({
 						/>
 					</Stack>
 				</Stack>
-				{/* <TextField
-					InputLabelProps={{ shrink: true }}
-					value={elevation}
-					onChange={(event) =>
-						setElevation(
-							event.target.value
-								? Number(event.target.value)
-								: undefined,
-						)
-					}
-					margin="dense"
-					id="edit-elevation-textbox"
-					name="edit-elevation"
-					label="Elevation (meters above sea level)"
-					type="text"
-					inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-					fullWidth
-					variant="outlined"
-				/>
-				<TextField
-					InputLabelProps={{ shrink: true }}
-					value={onFloor}
-					onChange={(event) =>
-						setOnFloor(
-							event.target.value
-								? Number(event.target.value)
-								: undefined,
-						)
-					}
-					margin="dense"
-					id="edit-on-floor-textbox"
-					name="edit-on-floor"
-					label="Floor of building that sensor is on (basement is level 0)"
-					type="text"
-					inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-					fullWidth
-					variant="outlined"
-				/>
-				<TextField
-					InputLabelProps={{ shrink: true }}
-					value={totalFloors}
-					onChange={(event) =>
-						setTotalFloors(
-							event.target.value
-								? Number(event.target.value)
-								: undefined,
-						)
-					}
-					margin="dense"
-					id="edit-total-floors-textbox"
-					name="edit-total-floors"
-					label="Total number of floors in building (excluding basement)"
-					type="text"
-					inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-					fullWidth
-					variant="outlined"
-				/> */}
+
 				<Button
 					sx={{ mb: 2, mt: 2, ml: "auto" }}
 					variant="outlined"
