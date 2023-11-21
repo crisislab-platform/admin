@@ -10,7 +10,7 @@ import {
 
 import { generateFromString } from "generate-avatar";
 
-export const APIOrigin = "https://shakenet-manager.viggers.workers.dev";
+export const APIOrigin = "https://shakenet-manager.viggers.net";
 export const APIBase = `${APIOrigin}/api/v0`;
 export const usersAPIBase = `${APIBase}/users`;
 export const sensorsAPIBase = `${APIBase}/sensors`;
