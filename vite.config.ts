@@ -12,7 +12,6 @@ export default defineConfig({
 				manualChunks: {
 					react: ["react", "react-dom"],
 					mui: ["@mui/material", "@mui/lab"],
-					mui_icons: ["@mui/icons-material"],
 					date_pickers: ["@mui/x-date-pickers", "dayjs"],
 				},
 			},
