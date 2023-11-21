@@ -12,9 +12,9 @@
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
 		"@fontsource/manrope": "^5.0.17",
-		"@mui/icons-material": "^5.14.16",
-		"@mui/lab": "5.0.0-alpha.152",
-		"@mui/material": "^5.14.17",
+		"@mui/icons-material": "^5.14.18",
+		"@mui/lab": "5.0.0-alpha.153",
+		"@mui/material": "^5.14.18",
 		"@mui/x-date-pickers": "^6.18.1",
 		"beryllium": "^1.2.1",
 		"dayjs": "^1.11.10",
@@ -24,7 +24,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-query": "^3.39.3",
-		"react-router-dom": "^6.18.0"
+		"react-router-dom": "^6.19.0"
 	},
 	"devDependencies": {
 		"@types/events": "^3.0.3",
@@ -32,10 +32,9 @@
 		"@types/mapbox__mapbox-gl-geocoder": "^4.7.7",
 		"@types/react": "^18.2.37",
 		"@types/react-dom": "^18.2.15",
-		"@vitejs/plugin-react": "^4.1.1",
-		"typescript": "^5.2.2",
-		"vite": "^4.5.0",
-		"vite-plugin-rewrite-all": "^1.0.1"
+		"@vitejs/plugin-react": "^4.2.0",
+		"typescript": "^5.3.2",
+		"vite": "^5.0.0"
 	},
 	"browserslist": {
 		"production": [
