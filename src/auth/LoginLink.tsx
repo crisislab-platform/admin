@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Stack, TextField, Typography } from "@mui/material";
+import { Alert, Stack, TextField, Typography } from "@mui/material";
 import { showErrorSnackbar, titleSuffix } from "./utils";
 
 import { LinkWithQuery } from "../components";
@@ -58,6 +58,10 @@ export default function MagicLinkPage() {
 
 	return (
 		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
+			<Alert severity="warning">
+				Login links are disabled at the moment. Ask Zade to reset your
+				password.
+			</Alert>
 			<Typography
 				variant="h4"
 				component="h2"
@@ -77,6 +81,7 @@ export default function MagicLinkPage() {
 						type="email"
 					/>
 					<LoadingButton
+						disabled
 						loading={loading}
 						variant="contained"
 						type="submit"

@@ -54,9 +54,6 @@ const filterRuleSensorProperties: (keyof Sensor)[] = [
 	"name",
 	"ip",
 	"secondary_id",
-	"elevation",
-	"total_floors",
-	"on_floor",
 ];
 
 export function SensorsPage() {
