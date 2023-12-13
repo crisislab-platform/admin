@@ -13,6 +13,7 @@ export type Role = {
 };
 
 export type Account = {
+	id: number;
 	name?: string;
 	email: string;
 	roles: Role[];

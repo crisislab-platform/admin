@@ -73,7 +73,7 @@ export function makeCreateAccount(
 			email,
 			roles: roles.map((role) => role.raw),
 		});
-		const response = await fetch(`${usersAPIBase}/${email}`, {
+		const response = await fetch(usersAPIBase, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "POST",
 			body,
