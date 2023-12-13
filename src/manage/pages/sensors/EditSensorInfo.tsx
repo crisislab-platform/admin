@@ -56,18 +56,10 @@ export function EditSensorInfo({
 		sensorMenuTypes.includes(activeSensor.type) ? "" : activeSensor.type,
 	);
 	const [location, setLocation] = useState<[number, number]>([
-		activeSensor?.location?.coordinates?.[0] || defaultPosition[0],
-		activeSensor?.location?.coordinates?.[1] || defaultPosition[1],
+		activeSensor?.location?.[0] || defaultPosition[0],
+		activeSensor?.location?.[1] || defaultPosition[1],
 	]);
-	const [elevation, setElevation] = useState<number>(
-		activeSensor.elevation ? activeSensor.elevation : 0,
-	);
-	const [totalFloors, setTotalFloors] = useState<number>(
-		activeSensor.total_floors ? activeSensor.total_floors : 0,
-	);
-	const [onFloor, setOnFloor] = useState<number>(
-		activeSensor.on_floor ? activeSensor.on_floor : 0,
-	);
+
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const [IPAddress, setIPAddress] = useState<string>("");
 	const [port, setPort] = useState<number | undefined>(undefined);
@@ -148,16 +140,10 @@ export function EditSensorInfo({
 				: activeSensor.type,
 		);
 		setLocation([
-			activeSensor?.location?.coordinates?.[0] || defaultPosition[0],
-			activeSensor?.location?.coordinates?.[1] || defaultPosition[1],
+			activeSensor?.location?.[0] || defaultPosition[0],
+			activeSensor?.location?.[1] || defaultPosition[1],
 		]);
-		setElevation(activeSensor.elevation ? activeSensor.elevation : 0);
-		setTotalFloors(
-			activeSensor.total_floors ? activeSensor.total_floors : 0,
-		);
-		setOnFloor(activeSensor.on_floor ? activeSensor.on_floor : 0);
 		setIPAddress(activeSensor.ip);
-		setPort(activeSensor.port ? activeSensor.port : null);
 		setOnline(activeSensor.online);
 	}, [activeSensor]);
 
@@ -182,15 +168,8 @@ export function EditSensorInfo({
 				id: activeSensor.id,
 				name,
 				type,
-				elevation,
-				location: {
-					type: "Point",
-					coordinates: location,
-				},
-				total_floors: totalFloors,
-				on_floor: onFloor,
+				location,
 				secondary_id: secondaryID,
-				port,
 				ip: IPAddress,
 				online,
 				contact_email: contactEmail,

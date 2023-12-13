@@ -154,7 +154,7 @@ export function ExportSensorDataPage() {
 					import.meta.env.DEV
 						? "http://localhost:8080"
 						: "https://crisislab-data.massey.ac.nz"
-				}/api/v1/data-bulk-export?sensor_id=${
+				}/api/v2/data-bulk-export?sensor_id=${
 					chosenSensor.id
 				}&channels=${selectedChannels.join(
 					",",
