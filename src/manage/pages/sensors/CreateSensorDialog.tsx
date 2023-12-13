@@ -47,8 +47,12 @@ export function CreateSensorDialog({
 	const [menuType, setMenuType] = useState<SensorType>("Raspberry Shake 4D");
 	const [otherType, setOtherType] = useState<string>("");
 	const [location, setLocation] = useState<[number, number]>(defaultPosition);
+	const [elevation, setElevation] = useState<number | 0>();
+	const [totalFloors, setTotalFloors] = useState<number | 0>();
+	const [onFloor, setOnFloor] = useState<number | 0>();
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const [IPAddress, setIPAddress] = useState<string>();
+	const [port, setPort] = useState<number | undefined>();
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
@@ -129,8 +133,15 @@ export function CreateSensorDialog({
 				name,
 				contact_email: contactEmail,
 				type,
-				location,
+				elevation,
+				location: {
+					type: "Point",
+					coordinates: location,
+				},
+				total_floors: totalFloors,
+				on_floor: onFloor,
 				secondary_id: secondaryID,
+				port,
 				ip: IPAddress,
 			});
 			onClose();

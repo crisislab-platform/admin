@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Alert, Stack, TextField, Typography } from "@mui/material";
+import { Stack, TextField, Typography } from "@mui/material";
 import { titleSuffix } from "./utils";
 
 import { LinkWithQuery } from "../components";
@@ -57,10 +57,6 @@ export default function PasswordResetStartPage() {
 
 	return (
 		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
-			<Alert severity="warning">
-				Password resets are disabled at the moment. Ask Zade to reset
-				your password.
-			</Alert>
 			<Typography
 				variant="h4"
 				component="h2"
@@ -80,7 +76,6 @@ export default function PasswordResetStartPage() {
 						type="email"
 					/>
 					<LoadingButton
-						disabled
 						loading={loading}
 						variant="contained"
 						type="submit"

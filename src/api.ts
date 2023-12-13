@@ -75,7 +75,7 @@ export function makeCreateAccount(
 		});
 		const response = await fetch(`${usersAPIBase}/${email}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-			method: "POST",
+			method: "PUT",
 			body,
 		});
 
@@ -118,7 +118,7 @@ export function makeEditAccount(
 
 		const response = await fetch(`${usersAPIBase}/${oldAccount.email}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-			method: "PATCH",
+			method: "PUT",
 			body: JSON.stringify(account),
 		});
 		if (!response.ok) {

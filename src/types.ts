@@ -52,12 +52,22 @@ export type SensorType =
 export type SensorID = number;
 export interface Sensor {
 	online?: boolean;
-	location?: [number?, number?];
-	public_location?: [number?, number?];
-	id: number;
+	location?: {
+		type: "Point";
+		coordinates: [number?, number?];
+	};
+	publicLocation?: {
+		longitude: number;
+		latitude: number;
+	};
+	id: SensorID;
 	type?: SensorType;
 	name?: string;
+	elevation?: number;
+	total_floors?: number;
+	on_floor?: number;
 	secondary_id?: string;
+	port?: number;
 	ip?: string;
 	contact_email?: string;
 }

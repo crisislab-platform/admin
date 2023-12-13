@@ -284,6 +284,7 @@ export function SensorPanel() {
 					{activeSensor.ip ? (
 						<Typography>
 							IP: <strong>{activeSensor.ip}</strong>
+							{activeSensor.port && `:${activeSensor.port}`}
 						</Typography>
 					) : (
 						<Alert severity="warning">
@@ -308,13 +309,15 @@ export function SensorPanel() {
 						<Typography>
 							Longitude:{" "}
 							<strong>
-								{activeSensor?.location?.[0] || "Unknown"}
+								{activeSensor?.location?.coordinates?.[0] ||
+									"Unknown"}
 							</strong>
 						</Typography>
 						<Typography>
 							Latitude:{" "}
 							<strong>
-								{activeSensor?.location?.[1] || "Unknown"}
+								{activeSensor?.location?.coordinates?.[1] ||
+									"Unknown"}
 							</strong>
 						</Typography>
 						<Tooltip title="Copy coordinates">
@@ -323,10 +326,12 @@ export function SensorPanel() {
 									try {
 										await navigator.clipboard.writeText(
 											`${
-												activeSensor?.location?.[0] ||
+												activeSensor?.location
+													?.coordinates?.[0] ||
 												"Unknown"
 											}, ${
-												activeSensor?.location?.[1] ||
+												activeSensor?.location
+													?.coordinates?.[1] ||
 												"Unknown"
 											}`,
 										);
@@ -354,6 +359,32 @@ export function SensorPanel() {
 							</IconButton>
 						</Tooltip>
 					</Stack>
+					{!!activeSensor.elevation && (
+						<Typography>
+							Elevation: <strong>{activeSensor.elevation}</strong>
+						</Typography>
+					)}
+					{!!(activeSensor.total_floors || activeSensor.on_floor) && (
+						<Stack direction="row" gap={1} alignItems="center">
+							<Typography>
+								Building floors:{" "}
+								<strong>
+									{activeSensor.total_floors || "Unknown"}
+								</strong>
+							</Typography>
+							<Typography>
+								Sensor's floor:{" "}
+								<strong>
+									{activeSensor.on_floor || "Unknown"}
+								</strong>
+							</Typography>
+						</Stack>
+					)}
+
+					{/* I think this is unused now, but am keeping it here just in case Raj gets mad */}
+					{/* {!activeSensor.online && (
+						<SensorSetupCommand sensor={activeSensor} />
+					)} */}
 				</Paper>
 
 				<LiveDataGraphs sensorID={sensorID} height={600} />
