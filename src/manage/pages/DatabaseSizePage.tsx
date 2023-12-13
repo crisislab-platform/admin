@@ -23,7 +23,7 @@ export function DatabaseSizePage() {
 						import.meta.env.DEV
 							? "http://localhost:8080"
 							: "https://crisislab-data.massey.ac.nz"
-					}/api/v2/database-size`,
+					}/api/v1/database-size`,
 					{
 						signal: controller.current.signal,
 						headers: {
