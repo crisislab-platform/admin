@@ -103,7 +103,8 @@ export function CreateSensorDialog({
 		},
 	});
 
-	function onSubmit() {
+	function onSubmit(event: SubmitEvent) {
+		event.preventDefault();
 		if (!sensorsQuery.isSuccess) return;
 		setErrors([]);
 		let newErrors: typeof errors = [];
@@ -177,7 +178,6 @@ export function CreateSensorDialog({
 						<TextField
 							value={name}
 							onChange={(event) => setName(event.target.value)}
-							autoFocus
 							margin="dense"
 							id="sensor-name"
 							name="sensor-name"
@@ -212,6 +212,7 @@ export function CreateSensorDialog({
 							type="text"
 							placeholder="AM.R1234.00"
 							fullWidth
+							autoFocus
 							required
 						/>
 						<FormControl fullWidth required>
@@ -270,20 +271,7 @@ export function CreateSensorDialog({
 							helperText="Use the ZeroTier IP"
 						/>
 
-						<Stack>
-							<Typography variant="subtitle1">
-								Location
-							</Typography>
-							{navigator.geolocation && (
-								<Box>
-									<Button
-										startIcon={<MyLocationIcon />}
-										onClick={getLocationOfDevice}
-										variant="outlined">
-										Use my location
-									</Button>
-								</Box>
-							)}
+						<Stack gap={1}>
 							<Stack direction="row" gap={1}>
 								<TextField
 									value={location[0]}
@@ -318,6 +306,16 @@ export function CreateSensorDialog({
 									required
 								/>
 							</Stack>
+							{navigator.geolocation && (
+								<Box>
+									<Button
+										startIcon={<MyLocationIcon />}
+										onClick={getLocationOfDevice}
+										variant="outlined">
+										Use my location
+									</Button>
+								</Box>
+							)}
 						</Stack>
 					</Stack>
 				</DialogContent>
