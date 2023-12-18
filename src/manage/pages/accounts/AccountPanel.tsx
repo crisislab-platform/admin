@@ -137,16 +137,6 @@ export function AccountPanel() {
 		(account) => account.email === accountID,
 	);
 
-	if (!account) {
-		return (
-			<Alert severity="warning">
-				<AlertTitle>No matching user found.</AlertTitle>
-				If you copied the URL from somewhere, make sure that you didin't
-				miss any characters.
-			</Alert>
-		);
-	}
-
 	function exitEditMode() {
 		setEditMode(false);
 	}
@@ -188,7 +178,13 @@ export function AccountPanel() {
 		navigateWithQuery("/manage/accounts");
 	}
 
-	let layout = (
+	let layout = !account ? (
+		<Alert severity="error">
+			<AlertTitle>No matching account found.</AlertTitle>
+			If you copied the URL from somewhere, make sure that you didn't miss
+			any characters.
+		</Alert>
+	) : (
 		<Stack sx={{ p: onMobile ? 2 : 0 }}>
 			{userHasPermission(user, "users:write") && (
 				<Stack
@@ -333,7 +329,7 @@ export function AccountPanel() {
 			</List>
 		</Stack>
 	);
-	if (editMode) {
+	if (account && editMode) {
 		layout = (
 			<Stack sx={{ p: onMobile ? 2 : 0 }}>
 				<Stack direction="row">

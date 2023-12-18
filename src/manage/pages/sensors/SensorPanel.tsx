@@ -128,16 +128,6 @@ export function SensorPanel() {
 		activeSensor = sensorsQuery.data.sensors[sensorID];
 	} catch (error) {}
 
-	if (!activeSensor) {
-		return (
-			<Alert severity="warning" sx={{ width: "100%" }}>
-				<AlertTitle>No matching sensor found.</AlertTitle>
-				If you copied the URL from somewhere, make sure that you didin't
-				miss any characters.
-			</Alert>
-		);
-	}
-
 	function exitEditMode() {
 		setEditMode(false);
 	}
@@ -155,7 +145,13 @@ export function SensorPanel() {
 		navigateWithQuery("/manage/sensors");
 	}
 
-	let layout = (
+	let layout = !activeSensor ? (
+		<Alert severity="error" sx={{ width: "100%" }}>
+			<AlertTitle>No matching sensor found.</AlertTitle>
+			If you copied the URL from somewhere, make sure that you didn't miss
+			any characters.
+		</Alert>
+	) : (
 		<Stack sx={{ p: onMobile ? 2 : 0, minHeight: "100%" }}>
 			<Stack
 				justifyContent="flex-end"
@@ -346,7 +342,7 @@ export function SensorPanel() {
 			</Stack>
 		</Stack>
 	);
-	if (editMode) {
+	if (activeSensor && editMode) {
 		layout = (
 			<Stack sx={{ p: onMobile ? 2 : 0 }}>
 				<Stack direction="row">
