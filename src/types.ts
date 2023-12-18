@@ -19,6 +19,7 @@ export type Account = {
 	roles: Role[];
 	picture: string;
 };
+export type ServerAccount = Omit<Account, "picture">;
 
 export type User = Account & {
 	token: string;

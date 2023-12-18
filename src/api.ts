@@ -1,5 +1,5 @@
 import { QueryClient } from "react-query";
-import { Account, Role, Sensor, SensorID, User } from "./types";
+import { Account, Role, Sensor, SensorID, ServerAccount, User } from "./types";
 import {
 	generateAvatar,
 	getObjectWithOnlyChangedProperties,
@@ -62,11 +62,7 @@ export function makeFetchAccounts(token?: string): () => Promise<Account[]> {
 
 export function makeCreateAccount(
 	token?: string,
-): (props: {
-	name?: string;
-	email: string;
-	roles: Role[];
-}) => Promise<Account> {
+): (props: Omit<ServerAccount, "id">) => Promise<Account> {
 	return async ({ name, email, roles }) => {
 		const body = JSON.stringify({
 			name,
@@ -87,22 +83,16 @@ export function makeCreateAccount(
 				})${data ? ` ${data}` : ""}`,
 			);
 		}
+		const data = (await response.json()) as ServerAccount;
 		return {
-			email,
-			name,
-			roles,
+			...data,
 			picture: generateAvatar(email),
 		};
 	};
 }
-type EditAccount = {
-	name?: string;
-	email: string;
-	roles: Role[];
-};
 export function makeEditAccount(
 	token?: string,
-): (props: [EditAccount, EditAccount]) => Promise<Account> {
+): (props: [ServerAccount, Partial<ServerAccount>]) => Promise<Account> {
 	return async ([oldAccount, newAccount]) => {
 		// Get an object with the properties that have changed
 		let account: any = {
@@ -116,7 +106,7 @@ export function makeEditAccount(
 			};
 		}
 
-		const response = await fetch(`${usersAPIBase}/${oldAccount.email}`, {
+		const response = await fetch(`${usersAPIBase}/${oldAccount.id}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "PATCH",
 			body: JSON.stringify(account),
@@ -129,8 +119,10 @@ export function makeEditAccount(
 				})${data ? ` ${data}` : ""}`,
 			);
 		}
+		const data = (await response.json()) as ServerAccount;
+
 		return {
-			...newAccount,
+			...data,
 			picture: generateAvatar(newAccount.email),
 		};
 	};

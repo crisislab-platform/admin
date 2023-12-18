@@ -31,7 +31,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import useAuth from "../../../auth/useAuth";
 import { useSnackbar } from "notistack";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 export function CreateSensorDialog({
 	open,
@@ -103,7 +103,7 @@ export function CreateSensorDialog({
 		},
 	});
 
-	function onSubmit(event: SubmitEvent) {
+	function onSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		if (!sensorsQuery.isSuccess) return;
 		setErrors([]);
