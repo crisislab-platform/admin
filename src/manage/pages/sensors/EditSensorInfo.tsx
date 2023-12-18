@@ -112,12 +112,7 @@ export function EditSensorInfo({
 			});
 		},
 		onSuccess: () => {
-			enqueueSnackbar(
-				"Updated sensor. Changes may take up to a minute to be reflected everywhere.",
-				{
-					variant: "success",
-				},
-			);
+			enqueueSnackbar("Sensor updated");
 		},
 	});
 
@@ -204,13 +199,6 @@ export function EditSensorInfo({
 			<Typography>
 				ID: <strong>{activeSensor.id}</strong>
 			</Typography>
-			<Alert severity="info">
-				<AlertTitle>
-					Changes may take up to a minute to be reflected everywhere.
-				</AlertTitle>
-				If the updated account information disappears, don't worry. The
-				data is stored and will show up soon.
-			</Alert>
 			{errors.length > 0 && (
 				<Stack gap={1}>
 					{errors.map((error) => (

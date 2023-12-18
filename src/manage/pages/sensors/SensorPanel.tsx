@@ -104,12 +104,7 @@ export function SensorPanel() {
 			});
 		},
 		onSuccess: () => {
-			enqueueSnackbar(
-				"Deleted sensor. Changes may take up to a minute to be reflected everywhere.",
-				{
-					variant: "success",
-				},
-			);
+			enqueueSnackbar("Sensor deleted");
 		},
 	});
 
@@ -199,15 +194,6 @@ export function SensorPanel() {
 							<DialogTitle>Confirm deletion</DialogTitle>
 							<DialogContent>
 								<Stack gap={1}>
-									<Alert severity="info">
-										<AlertTitle>
-											Changes may take up to a minute to
-											be reflected everywhere.
-										</AlertTitle>
-										If the deleted sensor reappears, don't
-										worry. The stored data has been removed
-										and will stop showing up soon.
-									</Alert>
 									<DialogContentText>
 										Are you sure that you want to delete the
 										sensor {activeSensor.id}? It will be
