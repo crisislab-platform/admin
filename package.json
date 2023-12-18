@@ -9,33 +9,28 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@babel/core": "^7.23.3",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@fontsource/manrope": "^5.0.17",
-		"@mui/icons-material": "^5.14.18",
-		"@mui/lab": "5.0.0-alpha.153",
-		"@mui/material": "^5.14.18",
-		"@mui/x-date-pickers": "^6.18.1",
+		"@fontsource/manrope": "^5.0.18",
+		"@mui/icons-material": "^5.15.0",
+		"@mui/lab": "5.0.0-alpha.156",
+		"@mui/material": "^5.15.0",
+		"@mui/x-date-pickers": "^6.18.5",
 		"beryllium": "^1.2.1",
 		"dayjs": "^1.11.10",
-		"events": "^3.3.0",
 		"generate-avatar": "^1.4.10",
 		"notistack": "^3.0.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-query": "^3.39.3",
-		"react-router-dom": "^6.19.0"
+		"react-router-dom": "^6.21.0"
 	},
 	"devDependencies": {
-		"@types/events": "^3.0.3",
-		"@types/mapbox-gl": "^2.7.18",
-		"@types/mapbox__mapbox-gl-geocoder": "^4.7.7",
-		"@types/react": "^18.2.37",
-		"@types/react-dom": "^18.2.15",
-		"@vitejs/plugin-react": "^4.2.0",
-		"typescript": "^5.3.2",
-		"vite": "^5.0.0"
+		"@types/react": "^18.2.45",
+		"@types/react-dom": "^18.2.18",
+		"@vitejs/plugin-react": "^4.2.1",
+		"typescript": "^5.3.3",
+		"vite": "^5.0.10"
 	},
 	"browserslist": {
 		"production": [
