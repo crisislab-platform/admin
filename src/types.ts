@@ -13,11 +13,13 @@ export type Role = {
 };
 
 export type Account = {
+	id: number;
 	name?: string;
 	email: string;
 	roles: Role[];
 	picture: string;
 };
+export type ServerAccount = Omit<Account, "picture">;
 
 export type User = Account & {
 	token: string;
@@ -52,22 +54,12 @@ export type SensorType =
 export type SensorID = number;
 export interface Sensor {
 	online?: boolean;
-	location?: {
-		type: "Point";
-		coordinates: [number?, number?];
-	};
-	publicLocation?: {
-		longitude: number;
-		latitude: number;
-	};
-	id: SensorID;
+	location?: [number?, number?];
+	public_location?: [number?, number?];
+	id: number;
 	type?: SensorType;
 	name?: string;
-	elevation?: number;
-	total_floors?: number;
-	on_floor?: number;
 	secondary_id?: string;
-	port?: number;
 	ip?: string;
 	contact_email?: string;
 }

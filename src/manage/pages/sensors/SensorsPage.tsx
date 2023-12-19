@@ -54,9 +54,6 @@ const filterRuleSensorProperties: (keyof Sensor)[] = [
 	"name",
 	"ip",
 	"secondary_id",
-	"elevation",
-	"total_floors",
-	"on_floor",
 ];
 
 export function SensorsPage() {
@@ -120,7 +117,7 @@ export function SensorsPage() {
 							position: "sticky",
 							top: 0,
 							paddingTop: (theme) => theme.spacing(1),
-							zIndex: (theme) => theme.zIndex.drawer - 1,
+							zIndex: (theme) => theme.zIndex.appBar - 1,
 							borderBottom: (theme) =>
 								`1px solid ${theme.palette.divider}`,
 						}}

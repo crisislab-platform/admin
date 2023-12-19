@@ -111,12 +111,7 @@ export function AccountPanel() {
 			});
 		},
 		onSuccess: () => {
-			enqueueSnackbar(
-				"Deleted account. Changes may take up to a minute to be reflected everywhere.",
-				{
-					variant: "success",
-				},
-			);
+			enqueueSnackbar("Deleted account");
 		},
 	});
 
@@ -141,16 +136,6 @@ export function AccountPanel() {
 	const account = accountsQuery.data.find(
 		(account) => account.email === accountID,
 	);
-
-	if (!account) {
-		return (
-			<Alert severity="warning">
-				<AlertTitle>No matching user found.</AlertTitle>
-				If you copied the URL from somewhere, make sure that you didin't
-				miss any characters.
-			</Alert>
-		);
-	}
 
 	function exitEditMode() {
 		setEditMode(false);
@@ -193,7 +178,13 @@ export function AccountPanel() {
 		navigateWithQuery("/manage/accounts");
 	}
 
-	let layout = (
+	let layout = !account ? (
+		<Alert severity="error">
+			<AlertTitle>No matching account found.</AlertTitle>
+			If you copied the URL from somewhere, make sure that you didn't miss
+			any characters.
+		</Alert>
+	) : (
 		<Stack sx={{ p: onMobile ? 2 : 0 }}>
 			{userHasPermission(user, "users:write") && (
 				<Stack
@@ -286,15 +277,6 @@ export function AccountPanel() {
 						<DialogTitle>Confirm deletion</DialogTitle>
 						<DialogContent>
 							<Stack gap={1}>
-								<Alert severity="info">
-									<AlertTitle>
-										Changes may take up to a minute to be
-										reflected everywhere.
-									</AlertTitle>
-									If the deleted account reappears, don't
-									worry. The stored data has been removed and
-									will stop showing up soon.
-								</Alert>
 								<DialogContentText>
 									Are you sure that you want to delete the
 									account {account.email}? It will be gone
@@ -347,7 +329,7 @@ export function AccountPanel() {
 			</List>
 		</Stack>
 	);
-	if (editMode) {
+	if (account && editMode) {
 		layout = (
 			<Stack sx={{ p: onMobile ? 2 : 0 }}>
 				<Stack direction="row">
@@ -461,12 +443,7 @@ function EditUserInfo({
 			});
 		},
 		onSuccess: (data) => {
-			enqueueSnackbar(
-				"Modified account successfully. Changes may take up to a minute to be reflected everywhere.",
-				{
-					variant: "success",
-				},
-			);
+			enqueueSnackbar("Account modified");
 			// Also on confirm, update the auth user if it was them that was edited
 			if (user.email === data.email) {
 				// This is so cursed, but it means that the token is safe.
@@ -515,13 +492,6 @@ function EditUserInfo({
 
 	return (
 		<Stack gap={1}>
-			<Alert severity="info">
-				<AlertTitle>
-					Changes may take up to a minute to be reflected everywhere.
-				</AlertTitle>
-				If the updated account information disappears, don't worry. The
-				data is stored and will show up soon.
-			</Alert>
 			{errors.length > 0 &&
 				errors.map((error) => (
 					<Alert severity="error">

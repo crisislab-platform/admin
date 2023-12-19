@@ -74,13 +74,12 @@ export function SensorPanel() {
 			// Optimistically update to the new value
 			queryClient.setQueryData(
 				"sensors",
-				(oldSensors: {
+				(sensors: {
 					sensors: Record<SensorID, Sensor>;
 					timestamp: number;
 				}) => {
-					let newSensors = oldSensors;
-					newSensors.sensors[sensorToDelete.id] = undefined;
-					return newSensors;
+					delete sensors.sensors[sensorToDelete.id];
+					return sensors;
 				},
 			);
 
@@ -104,12 +103,7 @@ export function SensorPanel() {
 			});
 		},
 		onSuccess: () => {
-			enqueueSnackbar(
-				"Deleted sensor. Changes may take up to a minute to be reflected everywhere.",
-				{
-					variant: "success",
-				},
-			);
+			enqueueSnackbar("Sensor deleted");
 		},
 	});
 
@@ -133,16 +127,6 @@ export function SensorPanel() {
 		activeSensor = sensorsQuery.data.sensors[sensorID];
 	} catch (error) {}
 
-	if (!activeSensor) {
-		return (
-			<Alert severity="warning" sx={{ width: "100%" }}>
-				<AlertTitle>No matching sensor found.</AlertTitle>
-				If you copied the URL from somewhere, make sure that you didin't
-				miss any characters.
-			</Alert>
-		);
-	}
-
 	function exitEditMode() {
 		setEditMode(false);
 	}
@@ -160,7 +144,13 @@ export function SensorPanel() {
 		navigateWithQuery("/manage/sensors");
 	}
 
-	let layout = (
+	let layout = !activeSensor ? (
+		<Alert severity="error" sx={{ width: "100%" }}>
+			<AlertTitle>No matching sensor found.</AlertTitle>
+			If you copied the URL from somewhere, make sure that you didn't miss
+			any characters.
+		</Alert>
+	) : (
 		<Stack sx={{ p: onMobile ? 2 : 0, minHeight: "100%" }}>
 			<Stack
 				justifyContent="flex-end"
@@ -199,15 +189,6 @@ export function SensorPanel() {
 							<DialogTitle>Confirm deletion</DialogTitle>
 							<DialogContent>
 								<Stack gap={1}>
-									<Alert severity="info">
-										<AlertTitle>
-											Changes may take up to a minute to
-											be reflected everywhere.
-										</AlertTitle>
-										If the deleted sensor reappears, don't
-										worry. The stored data has been removed
-										and will stop showing up soon.
-									</Alert>
 									<DialogContentText>
 										Are you sure that you want to delete the
 										sensor {activeSensor.id}? It will be
@@ -284,7 +265,6 @@ export function SensorPanel() {
 					{activeSensor.ip ? (
 						<Typography>
 							IP: <strong>{activeSensor.ip}</strong>
-							{activeSensor.port && `:${activeSensor.port}`}
 						</Typography>
 					) : (
 						<Alert severity="warning">
@@ -309,15 +289,13 @@ export function SensorPanel() {
 						<Typography>
 							Longitude:{" "}
 							<strong>
-								{activeSensor?.location?.coordinates?.[0] ||
-									"Unknown"}
+								{activeSensor?.location?.[0] || "Unknown"}
 							</strong>
 						</Typography>
 						<Typography>
 							Latitude:{" "}
 							<strong>
-								{activeSensor?.location?.coordinates?.[1] ||
-									"Unknown"}
+								{activeSensor?.location?.[1] || "Unknown"}
 							</strong>
 						</Typography>
 						<Tooltip title="Copy coordinates">
@@ -326,12 +304,10 @@ export function SensorPanel() {
 									try {
 										await navigator.clipboard.writeText(
 											`${
-												activeSensor?.location
-													?.coordinates?.[0] ||
+												activeSensor?.location?.[0] ||
 												"Unknown"
 											}, ${
-												activeSensor?.location
-													?.coordinates?.[1] ||
+												activeSensor?.location?.[1] ||
 												"Unknown"
 											}`,
 										);
@@ -359,39 +335,13 @@ export function SensorPanel() {
 							</IconButton>
 						</Tooltip>
 					</Stack>
-					{!!activeSensor.elevation && (
-						<Typography>
-							Elevation: <strong>{activeSensor.elevation}</strong>
-						</Typography>
-					)}
-					{!!(activeSensor.total_floors || activeSensor.on_floor) && (
-						<Stack direction="row" gap={1} alignItems="center">
-							<Typography>
-								Building floors:{" "}
-								<strong>
-									{activeSensor.total_floors || "Unknown"}
-								</strong>
-							</Typography>
-							<Typography>
-								Sensor's floor:{" "}
-								<strong>
-									{activeSensor.on_floor || "Unknown"}
-								</strong>
-							</Typography>
-						</Stack>
-					)}
-
-					{/* I think this is unused now, but am keeping it here just in case Raj gets mad */}
-					{/* {!activeSensor.online && (
-						<SensorSetupCommand sensor={activeSensor} />
-					)} */}
 				</Paper>
 
 				<LiveDataGraphs sensorID={sensorID} height={600} />
 			</Stack>
 		</Stack>
 	);
-	if (editMode) {
+	if (activeSensor && editMode) {
 		layout = (
 			<Stack sx={{ p: onMobile ? 2 : 0 }}>
 				<Stack direction="row">
