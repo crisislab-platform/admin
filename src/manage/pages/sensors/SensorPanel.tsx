@@ -74,13 +74,12 @@ export function SensorPanel() {
 			// Optimistically update to the new value
 			queryClient.setQueryData(
 				"sensors",
-				(oldSensors: {
+				(sensors: {
 					sensors: Record<SensorID, Sensor>;
 					timestamp: number;
 				}) => {
-					let newSensors = oldSensors;
-					newSensors.sensors[sensorToDelete.id] = undefined;
-					return newSensors;
+					delete sensors.sensors[sensorToDelete.id];
+					return sensors;
 				},
 			);
 
