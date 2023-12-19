@@ -180,9 +180,9 @@ export function makeFetchSensors(
 
 export function makeCreateSensor(
 	token?: string,
-): (props: Sensor) => Promise<Sensor> {
+): (sensor: Omit<Sensor, "id">) => Promise<Sensor> {
 	return async (sensor) => {
-		const response = await fetch(`${sensorsAPIBase}/${sensor.id}`, {
+		const response = await fetch(`${sensorsAPIBase}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "POST",
 			body: JSON.stringify(sensor),
@@ -195,7 +195,8 @@ export function makeCreateSensor(
 				})${data ? ` ${data}` : ""}`,
 			);
 		}
-		return sensor;
+		const id = Number(await response.text());
+		return { ...sensor, id };
 	};
 }
 
