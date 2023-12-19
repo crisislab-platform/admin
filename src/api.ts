@@ -180,7 +180,7 @@ export function makeFetchSensors(
 
 export function makeCreateSensor(
 	token?: string,
-): (sensor: Omit<Sensor, "id">) => Promise<Sensor> {
+): (sensor: Sensor) => Promise<Sensor> {
 	return async (sensor) => {
 		const response = await fetch(`${sensorsAPIBase}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
