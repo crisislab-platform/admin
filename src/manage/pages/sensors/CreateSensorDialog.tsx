@@ -213,7 +213,6 @@ export function CreateSensorDialog({
 							placeholder="AM.R1234.00"
 							fullWidth
 							autoFocus
-							required
 						/>
 						<FormControl fullWidth required>
 							<InputLabel
