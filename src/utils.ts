@@ -86,6 +86,7 @@ export const sensorMenuTypes: SensorType[] = [
 	"Palert",
 	"CSI",
 	"Global Seismic Data",
+	"CRISiSLab Sensor",
 	// "Raspberry Shake 3D",
 	// "Raspberry Shake 1D",
 	// "Raspberry Boom",

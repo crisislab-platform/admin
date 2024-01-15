@@ -1,5 +1,5 @@
-import { Stack, SxProps, Theme, Typography } from "@mui/material";
-
+import { Box, Stack, SxProps, Theme, Typography } from "@mui/material";
+import CRISiSLabSensorIcon from "../assets/1024 Crisislab Native Logo transparent.png";
 import AndroidIcon from "@mui/icons-material/PhoneAndroid";
 import ConnectedIcon from "@mui/icons-material/Sensors";
 import NotConnectedIcon from "@mui/icons-material/SensorsOff";
@@ -77,6 +77,8 @@ export function SensorImage({
 	size?: number;
 	showStatusColour?: boolean;
 }) {
+	size ??= 24;
+
 	const iconStyle: SxProps<Theme> = {
 		width: size,
 		height: size,
@@ -87,6 +89,16 @@ export function SensorImage({
 
 	const type = sensor.type?.toLowerCase() + "";
 
+	if (type.includes("crisislab"))
+		return (
+			<Box
+				component="img"
+				sx={iconStyle}
+				width={size}
+				height={size}
+				src={CRISiSLabSensorIcon}
+			/>
+		);
 	if (type.includes("android")) return <AndroidIcon sx={iconStyle} />;
 	if (type.includes("palert")) return <AddCircleOutlineIcon sx={iconStyle} />;
 
