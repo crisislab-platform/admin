@@ -19,7 +19,7 @@ export function LiveDataGraphs({
 				}}
 				height={height}
 				frameBorder={0}
-				src={`${liveDataOrigin}/consume/${sensorID}`}
+				src={`${liveDataOrigin}/consume/${sensorID}?sort-channels=id`}
 			/>
 		</Paper>
 	);
