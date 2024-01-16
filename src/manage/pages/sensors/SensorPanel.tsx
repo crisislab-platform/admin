@@ -336,8 +336,9 @@ export function SensorPanel() {
 						</Tooltip>
 					</Stack>
 				</Paper>
-
-				<LiveDataGraphs sensorID={sensorID} height={600} />
+				<Paper variant="outlined" sx={{ width: "100%", p: 1 }}>
+					<LiveDataGraphs sensorID={sensorID} height={600} />
+				</Paper>
 			</Stack>
 		</Stack>
 	);
