@@ -12,6 +12,7 @@ export function LiveDataGraphs({
 	height: number;
 	extraFlags?: Record<string, string>;
 }) {
+	if (typeof sensorID !== "number") return null;
 	return (
 		<iframe
 			style={{
