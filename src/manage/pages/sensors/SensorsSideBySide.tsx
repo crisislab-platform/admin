@@ -1,34 +1,66 @@
-import { Stack, TextField } from "@mui/material";
+import { Autocomplete, Stack, TextField } from "@mui/material";
 import { useMemo, useState } from "react";
 import { LiveDataGraphs } from "../../../components";
+import { useQuery } from "react-query";
+import useAuth from "../../../auth/useAuth";
+import { makeFetchSensors } from "../../../api";
+import { Sensor } from "../../../types";
 
 export function SensorsSideBySide() {
-	const [sensor1Raw, setSensor1Raw] = useState("2");
-	const [sensor2Raw, setSensor2Raw] = useState("4");
+	const { user } = useAuth();
+	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
+	const [sensor1, setSensor1] = useState<{ id: number; label: string }>({
+		id: 2,
+		label: "Choose a sensor (#2 currently)",
+	});
+	const [sensor2, setSensor2] = useState<{ id: number; label: string }>({
+		id: 4,
+		label: "Choose a sensor (#4 currently)",
+	});
 
-	const sensor1ID = useMemo(() => Number.parseInt(sensor1Raw), [sensor1Raw]);
-	const sensor2ID = useMemo(() => Number.parseInt(sensor2Raw), [sensor2Raw]);
+	const sensorOptions = useMemo(
+		() =>
+			sensorsQuery?.data?.sensors
+				? Object.values(sensorsQuery.data.sensors).map((sensor) => ({
+						label: `#${sensor.id}${
+							sensor.secondary_id ? ` ${sensor.secondary_id}` : ""
+						}${sensor.name ? ` "${sensor.name}"` : ""}${
+							sensor.type ? ` ${sensor.type}` : ""
+						}`,
+						id: sensor.id,
+				  }))
+				: [],
+		[sensorsQuery.data],
+	);
 
 	return (
 		<Stack direction="row" sx={{ p: 2 }}>
 			<Stack sx={{ width: "50%", height: "100%" }} gap={1}>
-				<TextField
-					label="First sensor ID"
-					value={sensor1Raw}
-					onChange={(ev) => setSensor1Raw(ev.target.value)}
+				<Autocomplete
+					disabled={!sensorsQuery.isFetched}
+					options={sensorOptions}
+					value={sensor1}
+					onChange={(_, value) => setSensor1(value)}
+					renderInput={(params) => (
+						<TextField {...params} label="First sensor" />
+					)}
 				/>
-				<LiveDataGraphs sensorID={sensor1ID} height={600} />
+				<LiveDataGraphs sensorID={sensor1.id} height={600} />
 			</Stack>
 			<Stack sx={{ width: "50%", height: "100%" }} gap={1}>
-				<TextField
-					label="Second sensor ID"
-					value={sensor2Raw}
-					onChange={(ev) => setSensor2Raw(ev.target.value)}
+				<Autocomplete
+					disabled={!sensorsQuery.isFetched}
+					options={sensorOptions}
+					value={sensor2}
+					onChange={(_, value) => setSensor2(value)}
+					renderInput={(params) => (
+						<TextField {...params} label="Second sensor" />
+					)}
 				/>
 				<LiveDataGraphs
-					sensorID={sensor2ID}
+					sensorID={sensor2.id}
 					height={600}
-					extraFlags={{ "axis-side": "right" }}
+					extraFlags={{ "y-axis-side": "right" }}
 				/>
 			</Stack>
 		</Stack>
