@@ -118,8 +118,9 @@ export default function Sidebar({
 				<Box>
 					<LoginButton />
 				</Box>
-				<Divider />
 			</Stack>
+			<Divider />
+
 			<List>
 				{sortedLinks.map(
 					(link) =>
