@@ -31,6 +31,7 @@ import {
 	formatBytes,
 	sensorTypeChannels,
 } from "../../../utils";
+import { SensorSelector } from "../../../components";
 
 const exportTypes: Record<
 	string,
@@ -48,7 +49,6 @@ const exportTypes: Record<
 
 export function ExportSensorDataPage() {
 	const { user } = useAuth();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
 	const defaultSensorID = useGetQueryParam("export_data_sensor_id");
 	const [chosenSensor, setChosenSensor] = useState<Sensor | null>(null);
 	const [exportFormat, setExportFormat] =
@@ -68,23 +68,6 @@ export function ExportSensorDataPage() {
 	const [totalLines, setTotalLines] = useState(0);
 	const [bytesDownloaded, setBytesDownloaded] = useState(0);
 	const [totalBytes, setTotalBytes] = useState(0);
-
-	useEffect(() => {
-		if (
-			defaultSensorID === null ||
-			!sensorsQuery.data ||
-			chosenSensor !== null
-		)
-			return;
-
-		try {
-			const sensor = sensorsQuery.data.sensors[parseInt(defaultSensorID)];
-
-			setChosenSensor(sensor);
-		} catch (err) {
-			console.warn("Error setting sensor from query param: ", err);
-		}
-	}, [sensorsQuery.data, defaultSensorID]);
 
 	useEffect(() => {
 		if (chosenSensor === null) return;
@@ -319,21 +302,20 @@ export function ExportSensorDataPage() {
 							)}
 						</RadioGroup>
 					</FormControl>
-					<Autocomplete
-						options={
-							sensorsQuery.data
-								? Object.values(sensorsQuery.data.sensors)
-								: []
-						}
-						disabled={sensorsQuery.isLoading}
-						getOptionLabel={(option) =>
-							`${option.secondary_id} (#${option.id})`
-						}
-						renderInput={(params) => (
-							<TextField {...params} label="Sensor" required />
-						)}
-						onChange={(_, newValue) => setChosenSensor(newValue)}
-						value={chosenSensor}
+					<SensorSelector
+						label="Sensor"
+						onChange={setChosenSensor}
+						sensor={chosenSensor}
+						onLoaded={(sensors) => {
+							if (chosenSensor !== null) return;
+
+							const sensor =
+								sensors[parseInt(defaultSensorID)] ??
+								Object.values(sensors)[0] ??
+								null;
+
+							setChosenSensor(sensor);
+						}}
 					/>
 					<Autocomplete
 						options={

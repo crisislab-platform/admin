@@ -53,7 +53,7 @@ export function SensorSelector({
 	);
 
 	useEffect(() => {
-		if (sensorsQuery?.data?.sensors) onLoaded(sensorsQuery.data.sensors);
+		if (sensorsQuery?.data?.sensors) onLoaded?.(sensorsQuery.data.sensors);
 	}, [sensorsQuery.data]);
 
 	return (
