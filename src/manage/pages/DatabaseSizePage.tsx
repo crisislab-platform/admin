@@ -59,6 +59,7 @@ export function DatabaseSizePage() {
 	useEffect(() => {
 		if (!timeline.current) return;
 		console.log("recomputing", timeline.current);
+		timeline.current.data = history;
 		timeline.current.recompute();
 	}, [history]);
 
