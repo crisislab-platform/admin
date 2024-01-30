@@ -1,14 +1,66 @@
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import useAuth from "../../auth/useAuth";
 import { useEffect, useRef, useState } from "react";
 import { formatBytes } from "../../utils";
+import {
+	TimeLine,
+	TimeLineDataPoint,
+	axisLabelPlugin,
+	highlightNearestPointPlugin,
+	pointerCrosshairPlugin,
+	timeAxisPlugin,
+	valueAxisPlugin,
+} from "@crisislab/timeline";
 
 export function DatabaseSizePage() {
 	const { user } = useAuth();
 	const [error, setError] = useState<string | null>(null);
 	const [time, setTime] = useState<Date | null>(null);
 	const [size, setSize] = useState<number | null>(null);
+	const [history, setHistory] = useState<TimeLineDataPoint[]>([]);
 	const controller = useRef<AbortController>(null);
+
+	const timelineContainerRef = useRef<HTMLDivElement>(null);
+	const timeline = useRef<TimeLine | null>(null);
+
+	useEffect(() => {
+		if (!timelineContainerRef?.current) return;
+
+		timeline.current = new TimeLine({
+			container: timelineContainerRef.current,
+			data: history,
+			timeAxisLabel: "Time",
+			valueAxisLabel: "Size",
+			// TODO: Add an option to have 'time' be a Date
+			// TODO: Make chart render borders even if data is empty
+			// TODO: Add option for padding inside the chart border
+
+			plugins: [
+				axisLabelPlugin(),
+				timeAxisPlugin(),
+				valueAxisPlugin((size) => formatBytes(size)),
+				highlightNearestPointPlugin(),
+				pointerCrosshairPlugin(),
+				{
+					construct(chart) {
+						chart.padding.left += 10;
+					},
+				},
+			],
+		});
+
+		return () => {
+			timeline.current = null;
+			if (timelineContainerRef.current)
+				timelineContainerRef.current.innerHTML = "";
+		};
+	}, [timelineContainerRef]);
+
+	useEffect(() => {
+		if (!timeline.current) return;
+		console.log("recomputing", timeline.current);
+		timeline.current.recompute();
+	}, [history]);
 
 	useEffect(() => {
 		// I hate that I still need to do this
@@ -36,6 +88,29 @@ export function DatabaseSizePage() {
 				setSize(Number(body));
 				setError(null);
 				setTime(new Date());
+
+				const historyRes = await fetch(
+					`${
+						import.meta.env.DEV
+							? "http://localhost:8080"
+							: "https://crisislab-data.massey.ac.nz"
+					}/api/v2/db/database-size-history`,
+					{
+						signal: controller.current.signal,
+						headers: {
+							Authorization: `Bearer ${user.token}`,
+						},
+					},
+				);
+				const historyBody = await historyRes.text();
+				if (!historyRes.ok) throw historyBody;
+				setHistory(
+					JSON.parse(historyBody).map((d) => ({
+						value: Number.parseInt(d.size),
+						time: new Date(d.time).getTime(),
+					})),
+				);
+				setError(null);
 			} catch (err) {
 				setSize(null);
 				setTime(null);
@@ -52,12 +127,28 @@ export function DatabaseSizePage() {
 	return (
 		<Stack p={3}>
 			<Typography sx={{ fontWeight: "bold", fontSize: "80pt" }}>
-				{error ? error + "" : size ? formatBytes(size) : "Loading..."}
+				{size ? formatBytes(size) : "..."}
 			</Typography>
-			{time && (
+			{error ? (
+				error + ""
+			) : size ? (
 				<Typography sx={{ fontSize: "15pt" }}>
 					Updated at {time?.toString()}
 				</Typography>
+			) : (
+				"Loading..."
+			)}
+			{history && (
+				<Stack>
+					<Typography sx={{ fontSize: "15pt" }}>History</Typography>
+					<div>
+						{/* Protect from the flex */}
+						<div
+							id="time-line-container"
+							ref={timelineContainerRef}
+						/>
+					</div>
+				</Stack>
 			)}
 		</Stack>
 	);
