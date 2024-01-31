@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@crisislab/timeline':
-    specifier: ^0.11.0
-    version: 0.11.0
+    specifier: ^0.11.1
+    version: 0.11.1
   '@emotion/react':
     specifier: ^11.11.3
     version: 11.11.3(@types/react@18.2.48)(react@18.2.0)
@@ -298,8 +298,8 @@ packages:
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
 
-  /@crisislab/timeline@0.11.0:
-    resolution: {integrity: sha512-vMVLYeuShsVy9dJ6F4hwhKncw8NoTNeyXkDgM620iK9RdOVrBzGsnziUQqze8vwro/DvjFQ9nT5kDRGadQjz0Q==}
+  /@crisislab/timeline@0.11.1:
+    resolution: {integrity: sha512-qeUXNpxE3H1yCoogBPpmh2OMjMJADJS7XANcypCHXlspecWtZnBMNguBxddzUTfk+AoHdFGug7CYAGXC8C34Rw==}
     dev: false
 
   /@emotion/babel-plugin@11.11.0:

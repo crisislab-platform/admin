@@ -31,10 +31,6 @@ export function DatabaseSizePage() {
 			data: history,
 			timeAxisLabel: "Time",
 			valueAxisLabel: "Size",
-			// TODO: Add an option to have 'time' be a Date
-			// TODO: Make chart render borders even if data is empty
-			// TODO: Add option for padding inside the chart border
-
 			plugins: [
 				axisLabelPlugin(),
 				timeAxisPlugin(),
@@ -43,7 +39,7 @@ export function DatabaseSizePage() {
 				pointerCrosshairPlugin(),
 				{
 					construct(chart) {
-						chart.padding.left += 10;
+						chart.padding.left += 30;
 					},
 				},
 			],
@@ -108,7 +104,7 @@ export function DatabaseSizePage() {
 				setHistory(
 					JSON.parse(historyBody).map((d) => ({
 						value: Number.parseInt(d.size),
-						time: new Date(d.time).getTime(),
+						time: new Date(d.time),
 					})),
 				);
 				setError(null);
@@ -139,18 +135,13 @@ export function DatabaseSizePage() {
 			) : (
 				"Loading..."
 			)}
-			{history && (
-				<Stack>
-					<Typography sx={{ fontSize: "15pt" }}>History</Typography>
-					<div>
-						{/* Protect from the flex */}
-						<div
-							id="time-line-container"
-							ref={timelineContainerRef}
-						/>
-					</div>
-				</Stack>
-			)}
+			<Stack>
+				<Typography sx={{ fontSize: "15pt" }}>History</Typography>
+				<div>
+					{/* Protect from the flex */}
+					<div id="time-line-container" ref={timelineContainerRef} />
+				</div>
+			</Stack>
 		</Stack>
 	);
 }
