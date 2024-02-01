@@ -11,6 +11,7 @@ import {
 	timeAxisPlugin,
 	valueAxisPlugin,
 } from "@crisislab/timeline";
+import { flushSync } from "react-dom";
 
 export function DatabaseSizePage() {
 	const { user } = useAuth();
@@ -82,9 +83,12 @@ export function DatabaseSizePage() {
 				);
 				const body = await res.text();
 				if (!res.ok) throw body;
-				setSize(Number(body));
+				const soonSize = Number(body);
+				const soonTime = new Date();
+
+				setSize(soonSize);
 				setError(null);
-				setTime(new Date());
+				setTime(soonTime);
 
 				const historyRes = await fetch(
 					`${
@@ -101,12 +105,17 @@ export function DatabaseSizePage() {
 				);
 				const historyBody = await historyRes.text();
 				if (!historyRes.ok) throw historyBody;
-				setHistory(
-					JSON.parse(historyBody).map((d) => ({
+				console.log(JSON.parse(historyBody), size, time);
+				setHistory([
+					...JSON.parse(historyBody).map((d) => ({
 						value: Number.parseInt(d.size),
 						time: new Date(d.time),
 					})),
-				);
+					{
+						value: soonSize,
+						time: soonTime,
+					},
+				]);
 				setError(null);
 			} catch (err) {
 				setSize(null);
