@@ -33,7 +33,7 @@ export function DatabaseSizePage() {
 			valueAxisLabel: "Size",
 			plugins: [
 				axisLabelPlugin(),
-				timeAxisPlugin(),
+				timeAxisPlugin((time) => new Date(time).toLocaleString(), 4),
 				valueAxisPlugin((size) => formatBytes(size)),
 				highlightNearestPointPlugin(),
 				pointerCrosshairPlugin(),
@@ -67,19 +67,12 @@ export function DatabaseSizePage() {
 
 			try {
 				controller.current = new AbortController();
-				const res = await fetch(
-					`${
-						import.meta.env.DEV
-							? "http://localhost:8080"
-							: "https://crisislab-data.massey.ac.nz"
-					}/api/v2/db/database-size`,
-					{
-						signal: controller.current.signal,
-						headers: {
-							Authorization: `Bearer ${user.token}`,
-						},
+				const res = await fetch(`${APIBase}/db/database-size`, {
+					signal: controller.current.signal,
+					headers: {
+						Authorization: `Bearer ${user.token}`,
 					},
-				);
+				});
 				const body = await res.text();
 				if (!res.ok) throw body;
 				const soonSize = Number(body);
