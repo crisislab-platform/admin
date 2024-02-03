@@ -1,7 +1,7 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import useAuth from "../../auth/useAuth";
 import { useEffect, useRef, useState } from "react";
-import { formatBytes } from "../../utils";
+import { APIBase, formatBytes } from "../../utils";
 import {
 	TimeLine,
 	TimeLineDataPoint,
@@ -11,7 +11,6 @@ import {
 	timeAxisPlugin,
 	valueAxisPlugin,
 } from "@crisislab/timeline";
-import { flushSync } from "react-dom";
 
 export function DatabaseSizePage() {
 	const { user } = useAuth();
@@ -91,11 +90,7 @@ export function DatabaseSizePage() {
 				setTime(soonTime);
 
 				const historyRes = await fetch(
-					`${
-						import.meta.env.DEV
-							? "http://localhost:8080"
-							: "https://crisislab-data.massey.ac.nz"
-					}/api/v2/db/database-size-history`,
+					`${APIBase}/db/database-size-history`,
 					{
 						signal: controller.current.signal,
 						headers: {

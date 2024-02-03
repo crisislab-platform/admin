@@ -1,7 +1,8 @@
 import { Paper } from "@mui/material";
 import { SensorID } from "../types";
+import { APIBase } from "../utils";
 
-const liveDataOrigin = "https://crisislab-data.massey.ac.nz";
+const liveDataOrigin = APIBase;
 
 export function LiveDataGraphs({
 	sensorID,

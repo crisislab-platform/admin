@@ -10,7 +10,10 @@ import {
 
 import { generateFromString } from "generate-avatar";
 
-export const APIOrigin = "https://crisislab-data.massey.ac.nz";
+export const APIOrigin =
+	import.meta.env.DEV && window.location.search.includes("use-local-server")
+		? "http://localhost:8080"
+		: "https://crisislab-data.massey.ac.nz";
 export const APIBase = `${APIOrigin}/api/v2`;
 export const usersAPIBase = `${APIBase}/users`;
 export const sensorsAPIBase = `${APIBase}/sensors`;
