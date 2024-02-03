@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactElement, ReactNode } from "react";
 import { SvgIcon } from "@mui/material";
 import { roles } from "./utils";
 
@@ -26,7 +26,7 @@ export type User = Account & {
 };
 
 export type Route = {
-	Element: ReactNode;
+	Element: () => JSX.Element;
 	text: string;
 	requiredRole: Role;
 	slug: string;

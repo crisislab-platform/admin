@@ -23,13 +23,13 @@ export const routes: (Route | SidebarLink)[] = [
 		text: "Sensors",
 		ActiveIcon: SensorsIcon,
 		Icon: SensorsOutlinedIcon,
-		Element: <SensorsPage />,
+		Element: SensorsPage,
 		requiredRole: roles["sensors:read"],
 		subRoutes: [
 			{
 				slug: ":sensorID",
 				text: "Sensor info",
-				Element: <SensorPanel />,
+				Element: SensorPanel,
 				requiredRole: roles["sensors:read"],
 			},
 		],
@@ -40,13 +40,13 @@ export const routes: (Route | SidebarLink)[] = [
 		text: "Accounts",
 		Icon: PersonOutlineOutlinedIcon,
 		ActiveIcon: PersonIcon,
-		Element: <AccountsPage />,
+		Element: AccountsPage,
 		requiredRole: roles["users:read"],
 		subRoutes: [
 			{
 				slug: ":accountID",
 				text: "Account information",
-				Element: <AccountPanel />,
+				Element: AccountPanel,
 				requiredRole: roles["users:read"],
 			},
 		],
@@ -56,7 +56,7 @@ export const routes: (Route | SidebarLink)[] = [
 		position: 2,
 		slug: "sensors-side-by-side",
 		text: "Sensors: side-by-side",
-		Element: <SensorsSideBySide />,
+		Element: SensorsSideBySide,
 		requiredRole: roles["sensors:read"],
 		Icon: CompareIcon,
 	},
@@ -65,7 +65,7 @@ export const routes: (Route | SidebarLink)[] = [
 		slug: "data-export",
 		text: "Data Export",
 		Icon: FileDownloadIcon,
-		Element: <ExportSensorDataPage />,
+		Element: ExportSensorDataPage,
 		requiredRole: roles["sensor-data:bulk-export"],
 	},
 	{
@@ -73,7 +73,7 @@ export const routes: (Route | SidebarLink)[] = [
 		slug: "database-size",
 		text: "Database size",
 		Icon: StorageIcon,
-		Element: <DatabaseSizePage />,
+		Element: DatabaseSizePage,
 		requiredRole: roles["sensor-data:db-size"],
 	},
 ];

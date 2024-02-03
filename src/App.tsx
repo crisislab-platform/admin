@@ -82,14 +82,21 @@ export function WrappedApp() {
 	);
 }
 
-function routeElement(route: RouteType) {
+function RouteElement({ route }: { route: RouteType }) {
 	const { user } = useAuth();
-	return userHasPermission(user, route.requiredRole.raw) ||
-		route.requiredRole.raw === "sensors:read" ? (
-		route.Element
-	) : (
-		<MissingRole role={route.requiredRole} addPadding />
+	console.log("Rendering route with slug: ", route.slug);
+	const layout = (
+		<ErrorBoundary>
+			{userHasPermission(user, route.requiredRole.raw) ||
+			route.requiredRole.raw === "sensors:read" ? (
+				<route.Element />
+			) : (
+				<MissingRole role={route.requiredRole} addPadding />
+			)}
+		</ErrorBoundary>
 	);
+	console.log("Rendered route with slug: ", route.slug);
+	return layout;
 }
 
 function renderRoutes(routes: RouteType[]) {
@@ -100,7 +107,11 @@ function renderRoutes(routes: RouteType[]) {
 			<Route
 				key={route.slug}
 				path={route.slug}
-				element={routeElement(route)}
+				element={
+					<ErrorBoundary>
+						<RouteElement route={route} />
+					</ErrorBoundary>
+				}
 				children={
 					route.subRoutes ? renderRoutes(route.subRoutes) : undefined
 				}
@@ -149,10 +160,21 @@ function App() {
 				<Route key="manage" path="manage" element={<ManageApp />}>
 					<Route
 						index
-						element={<NavigateWithQuery to="/manage/sensors" />}
+						element={
+							<ErrorBoundary>
+								<NavigateWithQuery to="/manage/sensors" />{" "}
+							</ErrorBoundary>
+						}
 					/>
 					{renderRoutes(manageRoutes)}
-					<Route path="*" element={<PageNotFound />} />
+					<Route
+						path="*"
+						element={
+							<ErrorBoundary>
+								<PageNotFound />{" "}
+							</ErrorBoundary>
+						}
+					/>
 				</Route>
 			</Route>
 		</Routes>
