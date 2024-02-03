@@ -1,8 +1,7 @@
-import { Paper } from "@mui/material";
 import { SensorID } from "../types";
-import { APIBase } from "../utils";
+import { APIOrigin } from "../utils";
 
-const liveDataOrigin = APIBase;
+const liveDataOrigin = APIOrigin;
 
 export function LiveDataGraphs({
 	sensorID,
