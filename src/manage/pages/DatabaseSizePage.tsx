@@ -23,8 +23,6 @@ export function DatabaseSizePage() {
 	const timelineContainerRef = useRef<HTMLDivElement>(null);
 	const timeline = useRef<TimeLine | null>(null);
 
-	throw "beans";
-
 	useEffect(() => {
 		if (!timelineContainerRef?.current) return;
 
