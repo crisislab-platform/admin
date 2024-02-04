@@ -23,7 +23,7 @@ import {
 	SensorStatusText,
 	useNavigateWithQuery,
 } from "../../../components";
-import { ReactElement, Ref, forwardRef, useState } from "react";
+import { ReactElement, Ref, forwardRef, useMemo, useState } from "react";
 
 import { makeDeleteSensor, makeFetchSensors } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -40,6 +40,8 @@ import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { EditSensorInfo } from "./EditSensorInfo";
 import { useOnMobile, userHasPermission } from "../../../utils";
+
+const listFormatter = new Intl.ListFormat("en");
 
 const SlideUpTransition = forwardRef(function Transition(
 	props: TransitionProps & {
@@ -107,6 +109,35 @@ export function SensorPanel() {
 		},
 	});
 
+	const sensorID: SensorID | null = useMemo(() => {
+		try {
+			const id = Number(rawSensorID);
+			return id;
+		} catch (err) {
+			console.warn("Error parsing sensor ID", err);
+		}
+		return null;
+	}, [rawSensorID]);
+
+	const activeSensor: Sensor = useMemo(() => {
+		try {
+			const sensor = sensorsQuery.data.sensors[sensorID];
+			return sensor;
+		} catch (err) {
+			console.warn("Error getting active sensor", err);
+		}
+	}, [sensorID, sensorsQuery.data]);
+
+	const duplicateIPs = useMemo(() => {
+		if (!sensorsQuery?.data?.sensors) return [];
+		if (!activeSensor) return [];
+		if (!activeSensor.ip) return [];
+		const dupes = Object.values(sensorsQuery.data.sensors).filter(
+			(s) => s.ip === activeSensor.ip && s.id !== activeSensor.id,
+		);
+		return dupes;
+	}, [sensorsQuery.data, activeSensor]);
+
 	if (sensorsQuery.isLoading) {
 		return <LoadingSpinner message="Loading sensor details" />;
 	}
@@ -120,12 +151,6 @@ export function SensorPanel() {
 			</Alert>
 		);
 	}
-	let sensorID: SensorID | null = null;
-	let activeSensor: Sensor;
-	try {
-		sensorID = Number(rawSensorID);
-		activeSensor = sensorsQuery.data.sensors[sensorID];
-	} catch (error) {}
 
 	function exitEditMode() {
 		setEditMode(false);
@@ -218,7 +243,7 @@ export function SensorPanel() {
 
 			<Stack alignItems="center" gap={2}>
 				{(!user || !userHasPermission(user, "sensors:read")) && (
-					<Alert severity="info">
+					<Alert severity="info" sx={{ width: "100%" }}>
 						<AlertTitle>
 							{!user
 								? "You're not logged in"
@@ -228,6 +253,20 @@ export function SensorPanel() {
 						don't have permission to see them. Make sure you're
 						logged in with an account that has permission to view
 						sensor details.
+					</Alert>
+				)}
+				{duplicateIPs.length > 0 && (
+					<Alert severity="error" sx={{ width: "100%" }}>
+						<AlertTitle>Duplicate IP!</AlertTitle>
+						This sensor has the same IP address set as{" "}
+						{listFormatter.format(
+							duplicateIPs.map((s) => `#${s.id}`),
+						)}
+						!
+						<br />
+						This means that weird glitches will occur, e.g. it
+						showing as online, but the graph view saying it's
+						offline.
 					</Alert>
 				)}
 
