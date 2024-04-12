@@ -178,7 +178,7 @@ export function ExportSensorDataPage() {
 				setTotalLines(_totalLines + 1);
 			}
 
-			const extension = exportFormat === "tsv1" ? "tsv" : "mseed";
+			const extension = exportFormat === "tsv1" ? "tsv" : "mseed3";
 
 			// Now we ask where the user wants to save the file, and get a handle
 			// to write to it
