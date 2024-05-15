@@ -182,10 +182,14 @@ export function makeCreateSensor(
 	token?: string,
 ): (sensor: Sensor) => Promise<Sensor> {
 	return async (sensor) => {
+		// Frontend hack because I'm too lazy to redeploy the server
+		// This removes the ID from the sensor object so that the
+		// server autogenerates one
+		const { id, ...remainingSensor } = sensor;
 		const response = await fetch(`${sensorsAPIBase}`, {
 			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
 			method: "POST",
-			body: JSON.stringify(sensor),
+			body: JSON.stringify(remainingSensor),
 		});
 		if (!response.ok) {
 			const data = await response.text();
@@ -195,8 +199,8 @@ export function makeCreateSensor(
 				})${data ? ` ${data}` : ""}`,
 			);
 		}
-		const id = Number(await response.text());
-		return { ...sensor, id };
+		const createdID = Number(await response.text());
+		return { ...remainingSensor, id: createdID };
 	};
 }
 

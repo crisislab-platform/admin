@@ -96,7 +96,21 @@ export function CreateSensorDialog({
 				variant: "error",
 			});
 		},
-		onSuccess: () => {
+		onSuccess: (data) => {
+			// Update with the new ID from the server
+			queryClient.setQueryData(
+				"sensors",
+				(oldSensors: {
+					sensors: Record<SensorID, Sensor>;
+					timestamp: number;
+				}) => ({
+					...oldSensors,
+					sensors: {
+						...oldSensors.sensors,
+						[data.id]: data,
+					},
+				}),
+			);
 			enqueueSnackbar("Sensor created", {
 				variant: "success",
 			});
@@ -213,6 +227,7 @@ export function CreateSensorDialog({
 							placeholder="AM.R1234.00"
 							fullWidth
 							autoFocus
+							required
 						/>
 						<FormControl fullWidth required>
 							<InputLabel

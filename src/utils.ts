@@ -115,16 +115,19 @@ export const filterRuleOperations: FilterRuleOperation[] = [
 ];
 
 export function getNextSensorID(sensors: Record<SensorID, Sensor>): SensorID {
-	const sensordIDs = Object.keys(sensors);
-	let unusedIDs = [];
-	for (const sensorId of sensordIDs) {
-		const prevID = Number(sensorId) - 1 + "";
-		if (prevID !== "0" && !sensordIDs.includes(prevID)) {
-			unusedIDs.push(prevID);
-		}
-	}
-	unusedIDs.push(Number(sensordIDs[sensordIDs.length - 1]) + 1 + "");
-	return unusedIDs[0];
+	// const sensordIDs = Object.keys(sensors);
+	// let unusedIDs = [];
+	// for (const sensorId of sensordIDs) {
+	// 	const prevID = Number(sensorId) - 1 + "";
+	// 	if (prevID !== "0" && !sensordIDs.includes(prevID)) {
+	// 		unusedIDs.push(prevID);
+	// 	}
+	// }
+	// unusedIDs.push(Number(sensordIDs[sensordIDs.length - 1]) + 1 + "");
+	// return unusedIDs[0];
+
+	// Let the server figure it out idk
+	return -1;
 }
 
 export const accountsQueryStaleTime = 10 * 60 * 1000; // 10 minutes
