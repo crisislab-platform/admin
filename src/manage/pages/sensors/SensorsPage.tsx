@@ -103,7 +103,7 @@ export function SensorsPage() {
 			<Grid
 				item
 				xs={12}
-				md={6}
+				lg={6}
 				sx={{
 					height: "100%",
 					maxHeight: "100%",
