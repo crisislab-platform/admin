@@ -1,3 +1,4 @@
+import { Link } from "@mui/material";
 import { SensorID } from "../types";
 import { APIOrigin } from "../utils";
 
@@ -13,21 +14,32 @@ export function LiveDataGraphs({
 	extraFlags?: Record<string, string>;
 }) {
 	if (typeof sensorID !== "number") return null;
+	const liveDataURL = `${liveDataOrigin}/consume/${sensorID}?sort-channels=id${
+		extraFlags
+			? "&" +
+			  Object.entries(extraFlags)
+					.map(([k, v]) => `${k}=${v}`)
+					.join("&")
+			: ""
+	}`;
 	return (
-		<iframe
-			style={{
-				width: "100%",
-			}}
-			height={height}
-			frameBorder={0}
-			src={`${liveDataOrigin}/consume/${sensorID}?sort-channels=id${
-				extraFlags
-					? "&" +
-					  Object.entries(extraFlags)
-							.map(([k, v]) => `${k}=${v}`)
-							.join("&")
-					: ""
-			}`}
-		/>
+		<>
+			<Link
+				target="_blank"
+				href={liveDataURL}
+				sx={{
+					"&::after": { content: `" →"` },
+				}}>
+				View expanded
+			</Link>
+			<iframe
+				style={{
+					width: "100%",
+					border: 0,
+				}}
+				height={height}
+				src={liveDataURL}
+			/>
+		</>
 	);
 }

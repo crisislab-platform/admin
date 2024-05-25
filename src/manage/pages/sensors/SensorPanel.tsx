@@ -10,6 +10,7 @@ import {
 	DialogContentText,
 	DialogTitle,
 	IconButton,
+	Link,
 	Paper,
 	Slide,
 	Stack,
@@ -279,6 +280,11 @@ export function SensorPanel() {
 						width: "100%",
 					}}
 					variant="outlined">
+					<Link
+						href={`https://shakemap.crisislab.org.nz/sensor/${activeSensor.id}`}
+						sx={{ "&::after": { content: `" →"` } }}>
+						View on shakemap
+					</Link>
 					<Typography>
 						Name: {activeSensor.name && activeSensor.name}
 					</Typography>
