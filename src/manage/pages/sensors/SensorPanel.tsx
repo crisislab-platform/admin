@@ -382,7 +382,13 @@ export function SensorPanel() {
 					</Stack>
 				</Paper>
 				<Paper variant="outlined" sx={{ width: "100%", p: 1 }}>
-					<LiveDataGraphs sensorID={sensorID} height={600} />
+					<LiveDataGraphs
+						sensorID={sensorID}
+						height={600}
+						extraFlags={{
+							"show-raw-channel-names": "yes",
+						}}
+					/>
 				</Paper>
 			</Stack>
 		</Stack>
