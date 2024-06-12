@@ -356,27 +356,6 @@ export function EditSensorInfo({
 					)}
 					<Stack direction="row" gap={1}>
 						<TextField
-							value={location[0]}
-							onChange={(event) =>
-								setLocation((oldLocation) => [
-									Number(event.target.value),
-									oldLocation[1],
-								])
-							}
-							margin="dense"
-							id="edit-longitude-textbox"
-							name="edit-longitude-textbox"
-							label="Longitude"
-							type="text"
-							inputProps={{
-								inputMode: "numeric",
-								pattern: "[0-9]*",
-							}}
-							fullWidth
-							variant="outlined"
-							required
-						/>
-						<TextField
 							value={location[1]}
 							onChange={(event) =>
 								setLocation((oldLocation) => [
@@ -388,6 +367,27 @@ export function EditSensorInfo({
 							id="edit-latitude-textbox"
 							name="edit-latitude-textbox"
 							label="Latitude"
+							type="text"
+							inputProps={{
+								inputMode: "numeric",
+								pattern: "[0-9]*",
+							}}
+							fullWidth
+							variant="outlined"
+							required
+						/>
+						<TextField
+							value={location[0]}
+							onChange={(event) =>
+								setLocation((oldLocation) => [
+									Number(event.target.value),
+									oldLocation[1],
+								])
+							}
+							margin="dense"
+							id="edit-longitude-textbox"
+							name="edit-longitude-textbox"
+							label="Longitude"
 							type="text"
 							inputProps={{
 								inputMode: "numeric",

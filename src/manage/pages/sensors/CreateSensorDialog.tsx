@@ -288,22 +288,6 @@ export function CreateSensorDialog({
 						<Stack gap={1}>
 							<Stack direction="row" gap={1}>
 								<TextField
-									value={location[0]}
-									onChange={(event) =>
-										setLocation((oldLocation) => [
-											Number(event.target.value),
-											oldLocation[1],
-										])
-									}
-									margin="dense"
-									id="longitude-textbox"
-									name="longitude-textbox"
-									label="Longitude"
-									type="number"
-									fullWidth
-									required
-								/>
-								<TextField
 									value={location[1]}
 									onChange={(event) =>
 										setLocation((oldLocation) => [
@@ -320,6 +304,23 @@ export function CreateSensorDialog({
 									required
 								/>
 							</Stack>
+							<TextField
+								value={location[0]}
+								onChange={(event) =>
+									setLocation((oldLocation) => [
+										Number(event.target.value),
+										oldLocation[1],
+									])
+								}
+								margin="dense"
+								id="longitude-textbox"
+								name="longitude-textbox"
+								label="Longitude"
+								type="number"
+								fullWidth
+								required
+							/>
+
 							{navigator.geolocation && (
 								<Box>
 									<Button
