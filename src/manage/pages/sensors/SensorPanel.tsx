@@ -332,17 +332,18 @@ export function SensorPanel() {
 
 					<Stack direction="row" gap={1} alignItems="center">
 						<Typography>
-							Longitude:{" "}
-							<strong>
-								{activeSensor?.location?.[0] || "Unknown"}
-							</strong>
-						</Typography>
-						<Typography>
 							Latitude:{" "}
 							<strong>
 								{activeSensor?.location?.[1] || "Unknown"}
 							</strong>
 						</Typography>
+						<Typography>
+							Longitude:{" "}
+							<strong>
+								{activeSensor?.location?.[0] || "Unknown"}
+							</strong>
+						</Typography>
+
 						<Tooltip title="Copy coordinates">
 							<IconButton
 								onClick={async () => {
