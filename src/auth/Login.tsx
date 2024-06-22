@@ -1,83 +1,65 @@
-import { FormEvent, useEffect } from "react";
-import { Stack, TextField, Typography } from "@mui/material";
-
+import { Alert, AlertTitle, Stack, TextField, Typography } from "@mui/material";
 import { LinkWithQuery } from "../components";
-import { LoadingButton } from "@mui/lab";
-import LoginIcon from "@mui/icons-material/VpnKey";
-import { titleSuffix } from "./utils";
+import { titleSuffix, useGetQueryParam } from "./utils";
+import { MouseEvent, useEffect, useMemo, useState } from "react";
 import useAuth from "./useAuth";
+import { PasskeyIcon } from "./PasskeyIcon";
+import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
 
-export default function LoginPage() {
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-	const { login, loading } = useAuth();
+export function LoginPage() {
+	const { enqueueSnackbar } = useSnackbar();
+	const { loading, login } = useAuth();
+	const [email, setEmail] = useState("");
 
 	useEffect(() => {
 		document.title = `Login${titleSuffix}`;
 	}, []);
 
-	async function onSubmit(e: FormEvent<HTMLFormElement>) {
+	async function onClick(e: MouseEvent) {
 		e.preventDefault();
-		const data = new FormData(e.currentTarget);
-		const email = data.get("email");
-		const password = data.get("password");
-		if (!email) {
-			enqueueSnackbar("Please provide an email address.", {
-				variant: "warning",
-			});
-		} else if (!password) {
-			enqueueSnackbar("Please provide a password.", {
+		const emailAddress = email.toLowerCase().trim();
+
+		if (!emailAddress) {
+			enqueueSnackbar("Please enter your email", {
 				variant: "warning",
 			});
 		} else {
-			await login(email.toString().toLowerCase(), password.toString());
+			await login({
+				email: emailAddress,
+			});
 		}
 	}
 
 	return (
-		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
-			<Typography
-				variant="h4"
-				component="h2"
-				sx={{ textAlign: "center" }}>
+		<>
+			<Typography variant="h5" component="h2" sx={{ pt: 1, pb: 3 }}>
 				Login
 			</Typography>
-			<form action="#" onSubmit={onSubmit}>
-				<Stack gap={2}>
-					<TextField
-						name="email"
-						required
-						label="Email address"
-						placeholder="john@doe.net"
-						type="email"
-					/>
-					<TextField
-						name="password"
-						required
-						label="Password"
-						type="password"
-					/>
-					<LoadingButton
-						loading={loading}
-						variant="contained"
-						type="submit"
-						color="secondary"
-						endIcon={<LoginIcon />}>
-						Login
-					</LoadingButton>
-				</Stack>
-			</form>
+			<Stack gap={1} sx={{ width: "100%", mb: 3 }}>
+				<TextField
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+					name="email"
+					required
+					label="Account email"
+					placeholder="john@joe.net"
+				/>
+				<LoadingButton
+					onClick={onClick}
+					loading={loading}
+					variant="contained"
+					type="submit"
+					color="secondary"
+					startIcon={<PasskeyIcon />}>
+					Login
+				</LoadingButton>
+			</Stack>
 			<LinkWithQuery
-				to="/auth/password-reset-start"
+				to="/auth/help-locked-out"
 				className="arrow-forwards">
-				Reset password
+				I'm locked out
 			</LinkWithQuery>
-			<LinkWithQuery to="/auth/login-link" className="arrow-forwards">
-				Get a login link
-			</LinkWithQuery>
-			<LinkWithQuery to="/auth/register" className="arrow-forwards">
-				Register
-			</LinkWithQuery>
-		</Stack>
+		</>
 	);
 }

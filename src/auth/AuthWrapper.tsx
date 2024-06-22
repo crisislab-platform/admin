@@ -21,7 +21,8 @@ export default function AuthPagesWrapper() {
 			<Paper
 				elevation={16}
 				sx={{
-					p: 4,
+					p: 2,
+					px: 4,
 					width: smallScreen ? "100%" : (theme) => theme.spacing(45),
 					height: smallScreen ? "100%" : (theme) => theme.spacing(65),
 					borderRadius: smallScreen
@@ -33,8 +34,8 @@ export default function AuthPagesWrapper() {
 						src="/logo.png"
 						alt="CRISiSLab Logo"
 						title="CRISiSLab logo"
-						width={90}
-						height={90}
+						width={120}
+						height={120}
 					/>
 					<Outlet />
 				</Stack>

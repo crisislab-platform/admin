@@ -17,6 +17,7 @@
 		"@mui/lab": "5.0.0-alpha.170",
 		"@mui/material": "^5.15.18",
 		"@mui/x-date-pickers": "^7.5.1",
+		"@simplewebauthn/browser": "^10.0.0",
 		"beryllium": "^1.2.1",
 		"dayjs": "^1.11.11",
 		"generate-avatar": "^1.4.10",

@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 
 import { useLocation } from "react-router-dom";
+import { APIBase } from "../utils";
 
-export const titleSuffix = " | CRISiSLab Shakemap auth";
+export const titleSuffix = " | CRISiSLab Admin";
+
+export const authAPIBase = `${APIBase}/auth`;
 
 export function getQueryParam(paramName: string): null | string {
 	const searchParams = new URL(window.location.href).searchParams;

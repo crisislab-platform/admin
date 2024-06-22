@@ -51,7 +51,6 @@ import SaveIcon from "@mui/icons-material/Save";
 import SendIcon from "@mui/icons-material/Send";
 import { TransitionProps } from "@mui/material/transitions";
 import WaveIcon from "@mui/icons-material/EmojiPeople";
-import { sendLink } from "../../../auth/auth";
 import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -159,7 +158,7 @@ export function AccountPanel() {
 		return async () => {
 			try {
 				onSendLinkMenuClose();
-				await sendLink(account.email, type);
+				// await sendLink(account.email, type);
 				enqueueSnackbar(`Sent ${type} link to ${account.email}.`, {
 					variant: "success",
 				});
