@@ -6,12 +6,21 @@ import {
 	startRegistration,
 } from "@simplewebauthn/browser";
 
-export async function login({ email }: { email: string }): Promise<User> {
+export async function login({
+	email,
+	conditionalUI,
+}: {
+	email?: string;
+	conditionalUI?: boolean;
+}): Promise<User> {
 	const challenge = await fetch(
-		`${authAPIBase}/login/challenge?email=${email}`,
+		`${authAPIBase}/login/challenge${email ? `?email=${email}` : ""}`,
 	);
 
-	let authResponse = await startAuthentication(await challenge.json());
+	let authResponse = await startAuthentication(
+		await challenge.json(),
+		conditionalUI,
+	);
 
 	const verificationRes = await fetch(`${authAPIBase}/login/verify`, {
 		method: "POST",

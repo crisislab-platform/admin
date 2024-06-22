@@ -27,7 +27,7 @@ interface AuthContextType {
 	user: User | null;
 	setUser: React.Dispatch<React.SetStateAction<User | null>>;
 	loading: boolean;
-	login: (args: { email: string }) => Promise<void>;
+	login: (args: { email?: string; conditionalUI?: boolean }) => Promise<void>;
 	addDevice: (args: { deviceName: string; token: string }) => Promise<void>;
 	logout: () => void;
 	goToLogin: () => void;
@@ -98,10 +98,16 @@ export function AuthProvider({
 		};
 	}, []);
 
-	async function login({ email }: { email: string }) {
+	async function login({
+		email,
+		conditionalUI,
+	}: {
+		email: string;
+		conditionalUI?: boolean;
+	}) {
 		setLoading(true);
 		try {
-			let newUser = await authAPI.login({ email });
+			let newUser = await authAPI.login({ email, conditionalUI });
 			newUser.picture = generateAvatar(newUser.email);
 			setUser(newUser);
 			// @ts-ignore
@@ -115,7 +121,10 @@ export function AuthProvider({
 
 			enqueueSnackbar(`Logged in${user.name ? ` as ${user.name}` : ""}`);
 		} catch (error) {
-			showErrorSnackbar(enqueueSnackbar, error);
+			if (!conditionalUI) {
+				showErrorSnackbar(enqueueSnackbar, error);
+			}
+			console.warn("Error logging with with webauthn: ", error);
 		}
 		setLoading(false);
 

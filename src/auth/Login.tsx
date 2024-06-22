@@ -1,12 +1,15 @@
 import { Alert, AlertTitle, Stack, TextField, Typography } from "@mui/material";
 import { LinkWithQuery } from "../components";
-import { titleSuffix } from "./utils";
+import { authAPIBase, titleSuffix } from "./utils";
 import { MouseEvent, useEffect, useState } from "react";
 import useAuth from "./useAuth";
 import { PasskeyIcon } from "./PasskeyIcon";
 import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
-import { browserSupportsWebAuthn } from "@simplewebauthn/browser";
+import {
+	browserSupportsWebAuthn,
+	startAuthentication,
+} from "@simplewebauthn/browser";
 
 export function LoginPage() {
 	const { enqueueSnackbar } = useSnackbar();
@@ -15,6 +18,12 @@ export function LoginPage() {
 
 	useEffect(() => {
 		document.title = `Login${titleSuffix}`;
+	}, []);
+
+	useEffect(() => {
+		// Setup conditional UI
+
+		login({ conditionalUI: true });
 	}, []);
 
 	async function onClick(e: MouseEvent) {
@@ -52,6 +61,8 @@ export function LoginPage() {
 						required
 						label="Account email"
 						placeholder="john@joe.net"
+						// This triggers webauthn conditional UI
+						autoComplete="email webauthn"
 					/>
 					<LoadingButton
 						onClick={onClick}
