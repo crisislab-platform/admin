@@ -5,6 +5,7 @@ import useAuth from "./useAuth";
 import { PasskeyIcon } from "./PasskeyIcon";
 import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
+import { browserSupportsWebAuthn } from "@simplewebauthn/browser";
 
 const variantTitles = {
 	register: "Setup login",
@@ -78,7 +79,13 @@ export function AddDevicePage({
 			<Typography variant="h5" component="h2" sx={{ pt: 1 }}>
 				{variantTitle}
 			</Typography>
-			{!token || !emailAddress || !tokenExpires ? (
+			{!browserSupportsWebAuthn() ? (
+				<Alert severity="error">
+					<AlertTitle>Unsupported browser</AlertTitle>
+					Your browser or device doesn't support passkeys (AKA
+					webauthn). Try with a different browser or a newer device.
+				</Alert>
+			) : !token || !emailAddress || !tokenExpires ? (
 				<Alert severity="error">
 					<AlertTitle>Malformed token</AlertTitle>
 					Try asking the person who sent you this link for a new one
