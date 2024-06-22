@@ -1,7 +1,7 @@
-import { Alert, AlertTitle, Stack, TextField, Typography } from "@mui/material";
+import { Stack, TextField, Typography } from "@mui/material";
 import { LinkWithQuery } from "../components";
-import { titleSuffix, useGetQueryParam } from "./utils";
-import { MouseEvent, useEffect, useMemo, useState } from "react";
+import { titleSuffix } from "./utils";
+import { MouseEvent, useEffect, useState } from "react";
 import useAuth from "./useAuth";
 import { PasskeyIcon } from "./PasskeyIcon";
 import { LoadingButton } from "@mui/lab";
