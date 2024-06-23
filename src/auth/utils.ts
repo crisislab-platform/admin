@@ -5,7 +5,7 @@ import { APIBase } from "../utils";
 
 export const titleSuffix = " | CRISiSLab Admin";
 
-export const authAPIBase = `${APIBase}/auth`;
+export const authAPIBase = `${APIBase}/auth/passkeys`;
 
 export function getQueryParam(paramName: string): null | string {
 	const searchParams = new URL(window.location.href).searchParams;

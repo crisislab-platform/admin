@@ -63,7 +63,7 @@ export async function addDevice({
 				{ cause: err },
 			);
 		}
-		throw err;
+		throw new Error("Error registering device", { cause: err });
 	}
 
 	const verificationRes = await fetch(`${authAPIBase}/add_device/verify`, {
