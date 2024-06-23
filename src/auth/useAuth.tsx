@@ -1,4 +1,4 @@
-import * as authAPI from "./auth";
+import * as authAPI from "./authAPI";
 
 import {
 	ReactNode,
@@ -27,15 +27,9 @@ interface AuthContextType {
 	user: User | null;
 	setUser: React.Dispatch<React.SetStateAction<User | null>>;
 	loading: boolean;
-	popupOpen: boolean;
-	closePopup: () => void;
-	login: (emailOrToken: string, password?: string) => Promise<void>;
+	login: (args: { email?: string; conditionalUI?: boolean }) => Promise<void>;
+	addDevice: (args: { deviceName: string; token: string }) => Promise<void>;
 	logout: () => void;
-	sendLink: (
-		email: string,
-		type: "welcome" | "sign-in" | "reset",
-	) => Promise<boolean>;
-	resetPassword: (password: string, token: string) => Promise<void>;
 	goToLogin: () => void;
 }
 
@@ -56,11 +50,6 @@ export function AuthProvider({
 	const navigate = useNavigateWithQuery();
 	const location = useLocation();
 	const returnTo = useGetQueryParam("return_to");
-	const [popupWindowCloseTimeout, setPopupWindowCloseTimeout] = useState<
-		null | any
-	>(null);
-	const [popupWindowRef, setPopupWindowRef] = useState<null | Window>(null);
-	const [popupOpen, setPopupOpen] = useState<boolean>(false);
 
 	// Every time the user updates, save their data to localStorage
 	useEffect(() => {
@@ -109,66 +98,72 @@ export function AuthProvider({
 		};
 	}, []);
 
-	useEffect(() => {
-		setPopupWindowCloseTimeout(
-			setTimeout(() => {
-				if (popupWindowRef) {
-					popupWindowRef.close();
-					enqueueSnackbar("Popup closed after 2 minutes.", {
-						variant: "warning",
-					});
-				}
-
-				setLoading(false);
-			}, 2 * 60 * 1000 /*2 minutes */),
-		);
-		return () => {
-			clearTimeout(popupWindowCloseTimeout);
-		};
-	}, [
-		setPopupWindowCloseTimeout,
-		popupWindowRef,
-		setLoading,
-		enqueueSnackbar,
-	]);
-
-	async function login(email: string, password?: string) {
+	async function login({
+		email,
+		conditionalUI,
+	}: {
+		email: string;
+		conditionalUI?: boolean;
+	}) {
 		setLoading(true);
-
 		try {
-			let newUser = await authAPI.login(email, password);
+			let newUser = await authAPI.login({ email, conditionalUI });
 			newUser.picture = generateAvatar(newUser.email);
 			setUser(newUser);
 			// @ts-ignore
 			window.user = newUser;
-			if (getQueryParam("in_popup_window")) {
-				console.info(
-					"In popup, will try and close because login succeeded.",
-				);
-				try {
-					window.close();
-				} catch (e) {
-					console.warn("Failed to close popup window");
-				}
+
+			if (returnTo) {
+				navigate(returnTo);
 			} else {
-				if (returnTo) {
-					navigate(returnTo);
-				} else {
-					navigate("/");
-				}
+				navigate("/");
 			}
 
-			enqueueSnackbar("Successfully logged in.", { variant: "success" });
+			enqueueSnackbar(`Logged in${user.name ? ` as ${user.name}` : ""}`);
+		} catch (error) {
+			if (!conditionalUI) {
+				showErrorSnackbar(enqueueSnackbar, error);
+			}
+			console.warn("Error logging with with webauthn: ", error);
+		}
+		setLoading(false);
+
+		// // Get stuff up-to-date
+		// window.location.reload();
+	}
+
+	async function addDevice({
+		token,
+		deviceName,
+	}: {
+		token: string;
+		deviceName: string;
+	}) {
+		setLoading(true);
+		try {
+			let newUser = await authAPI.addDevice({
+				deviceName,
+				token,
+			});
+
+			newUser.picture = generateAvatar(newUser.email);
+			setUser(newUser);
+			// @ts-ignore
+			window.user = newUser;
+
+			if (returnTo) {
+				navigate(returnTo);
+			} else {
+				navigate("/");
+			}
+
+			enqueueSnackbar(`Successfully added ${deviceName}`, {
+				variant: "success",
+			});
 		} catch (error) {
 			showErrorSnackbar(enqueueSnackbar, error);
 		}
-
 		setLoading(false);
-
-		// This hurts my soul, but younger me was very dumb and architected
-		// everything wrong, so it's the only way to make sure the data being
-		// displayed is up-to-date with the user's auth state.
-		window.location.reload();
 	}
 
 	function logout() {
@@ -179,71 +174,15 @@ export function AuthProvider({
 		window.location.reload();
 	}
 
-	async function sendLink(
-		email: string,
-		type: "welcome" | "sign-in" | "reset",
-	): Promise<boolean> {
-		try {
-			await authAPI.sendLink(email, type, returnTo);
-			enqueueSnackbar("Link sent.", { variant: "success" });
-			return true;
-		} catch (error) {
-			showErrorSnackbar(enqueueSnackbar, error);
-			return false;
-		}
-	}
-
-	async function resetPassword(
-		password: string,
-		token: string,
-	): Promise<void> {
-		try {
-			await authAPI.resetPassword(password, token);
-			enqueueSnackbar("Password changed.", { variant: "success" });
-			await login(token);
-		} catch (error) {
-			showErrorSnackbar(enqueueSnackbar, error);
-		}
-	}
-
 	/*
 	 * Make sure this function is called from an event listener for a user-generated action like a clik
 	 */
 	function goToLogin() {
-		if (getQueryParam("use_popup_window")) {
-			console.info("Logging in with popup window...");
-			const popupWidth = 400;
-			const popupHeight = 600;
-			const popupLeft =
-				window.screenX + (window.innerWidth - popupWidth) / 2;
-			const popupTop =
-				window.screenY + (window.innerHeight - popupHeight) / 2;
+		console.info("Logging in with redirect...");
 
-			setLoading(true);
-			setPopupWindowRef(
-				window.open(
-					`${baseURL}/auth/login?in_popup_window=true`,
-					"crisislab-shakemap-auth-popup",
-					`popup,width=${popupWidth},height=${popupHeight},left=${popupLeft},top=${popupTop}`,
-				),
-			);
-			if (popupWindowRef) {
-				popupWindowRef.addEventListener("close", () => {
-					if (popupWindowCloseTimeout) {
-						clearTimeout(popupWindowCloseTimeout);
-					}
-					setLoading(false);
-				});
-			}
-		} else {
-			console.info("Logging in with redirect...");
-
-			const newReturnTo = encodeURIComponent(location.pathname);
-			navigate(`/auth/login?return_to=${newReturnTo}`);
-		}
+		const newReturnTo = encodeURIComponent(location.pathname);
+		navigate(`/auth/login?return_to=${newReturnTo}`);
 	}
-
-	const closePopup = () => setPopupOpen(false);
 
 	// Make the provider update only when it should.
 	// We only want to force re-renders if the user
@@ -258,16 +197,13 @@ export function AuthProvider({
 		return {
 			user,
 			loading,
-			popupOpen,
-			closePopup,
 			login,
 			logout,
-			sendLink,
-			resetPassword,
 			goToLogin,
 			setUser,
+			addDevice,
 		};
-	}, [user, loading, popupOpen]);
+	}, [user, loading]);
 
 	return (
 		<AuthContext.Provider value={memoedValue}>

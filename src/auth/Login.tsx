@@ -1,83 +1,85 @@
-import { FormEvent, useEffect } from "react";
-import { Stack, TextField, Typography } from "@mui/material";
-
+import { Alert, AlertTitle, Stack, TextField, Typography } from "@mui/material";
 import { LinkWithQuery } from "../components";
-import { LoadingButton } from "@mui/lab";
-import LoginIcon from "@mui/icons-material/VpnKey";
-import { titleSuffix } from "./utils";
+import { authAPIBase, titleSuffix } from "./utils";
+import { MouseEvent, useEffect, useState } from "react";
 import useAuth from "./useAuth";
+import { PasskeyIcon } from "./PasskeyIcon";
+import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
+import {
+	browserSupportsWebAuthn,
+	startAuthentication,
+} from "@simplewebauthn/browser";
 
-export default function LoginPage() {
-	const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-	const { login, loading } = useAuth();
+export function LoginPage() {
+	const { enqueueSnackbar } = useSnackbar();
+	const { loading, login } = useAuth();
+	const [email, setEmail] = useState("");
 
 	useEffect(() => {
 		document.title = `Login${titleSuffix}`;
 	}, []);
 
-	async function onSubmit(e: FormEvent<HTMLFormElement>) {
+	useEffect(() => {
+		// Setup conditional UI
+
+		login({ conditionalUI: true });
+	}, []);
+
+	async function onClick(e: MouseEvent) {
 		e.preventDefault();
-		const data = new FormData(e.currentTarget);
-		const email = data.get("email");
-		const password = data.get("password");
-		if (!email) {
-			enqueueSnackbar("Please provide an email address.", {
-				variant: "warning",
-			});
-		} else if (!password) {
-			enqueueSnackbar("Please provide a password.", {
+		const emailAddress = email.toLowerCase().trim();
+
+		if (!emailAddress) {
+			enqueueSnackbar("Please enter your email", {
 				variant: "warning",
 			});
 		} else {
-			await login(email.toString().toLowerCase(), password.toString());
+			await login({
+				email: emailAddress,
+			});
 		}
 	}
 
 	return (
-		<Stack gap={2} sx={{ width: "100%", mt: 2 }}>
-			<Typography
-				variant="h4"
-				component="h2"
-				sx={{ textAlign: "center" }}>
+		<>
+			<Typography variant="h5" component="h2" sx={{ pt: 1, pb: 3 }}>
 				Login
 			</Typography>
-			<form action="#" onSubmit={onSubmit}>
-				<Stack gap={2}>
+			{!browserSupportsWebAuthn() ? (
+				<Alert severity="error">
+					<AlertTitle>Unsupported browser</AlertTitle>
+					Your browser or device doesn't support passkeys (AKA
+					webauthn). Try with a different browser or a newer device.
+				</Alert>
+			) : (
+				<Stack gap={1} sx={{ width: "100%", mb: 3 }}>
 					<TextField
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
 						name="email"
 						required
-						label="Email address"
-						placeholder="john@doe.net"
-						type="email"
-					/>
-					<TextField
-						name="password"
-						required
-						label="Password"
-						type="password"
+						label="Account email"
+						placeholder="john@joe.net"
+						// This triggers webauthn conditional UI
+						autoComplete="email webauthn"
 					/>
 					<LoadingButton
+						onClick={onClick}
 						loading={loading}
 						variant="contained"
 						type="submit"
 						color="secondary"
-						endIcon={<LoginIcon />}>
+						startIcon={<PasskeyIcon />}>
 						Login
 					</LoadingButton>
 				</Stack>
-			</form>
+			)}
 			<LinkWithQuery
-				to="/auth/password-reset-start"
+				to="/auth/help-locked-out"
 				className="arrow-forwards">
-				Reset password
+				I'm locked out
 			</LinkWithQuery>
-			<LinkWithQuery to="/auth/login-link" className="arrow-forwards">
-				Get a login link
-			</LinkWithQuery>
-			<LinkWithQuery to="/auth/register" className="arrow-forwards">
-				Register
-			</LinkWithQuery>
-		</Stack>
+		</>
 	);
 }

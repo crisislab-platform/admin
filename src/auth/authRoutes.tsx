@@ -1,61 +1,65 @@
-import LoginLinkFinishPage from "./LoginLinkFinish";
-import LoginLinkPage from "./LoginLink";
-import LoginPage from "./Login";
-import { NavigateWithQuery } from "../components";
-import PasswordResetFinishPage from "./PasswordResetFinish";
-import PasswordResetStartPage from "./PasswordResetStart";
-import RegisterPage from "./Register";
+import { LinkWithQuery, NavigateWithQuery } from "../components";
+import { AddDevicePage } from "./AddDevice";
+import { LoginPage } from "./Login";
 import { useGetQueryParam } from "./utils";
 
 export interface AuthRoute {
 	path: string;
 	component: any;
 }
+const HelpLockedOut = () => (
+	<>
+		<p>
+			Just email zviggers@massey.ac.nz, or contact another admin and ask
+			them for a link to re-add your device.
+		</p>
+		<LinkWithQuery to="/auth/login" className="arrow-back">
+			Back to login
+		</LinkWithQuery>
+	</>
+);
 export const authRoutes: AuthRoute[] = [
 	{
-		path: "token-sign-in",
-		component: <TokenSignIn />,
+		path: "register",
+		component: <AddDevicePage variant="register" />,
 	},
 	{
-		path: "password-reset-start",
-		component: <PasswordResetStartPage />,
+		path: "recover",
+		component: <AddDevicePage variant="recover" />,
 	},
 	{
-		path: "password-reset-finish",
-		component: <PasswordResetFinishPage variant="reset" />,
-	},
-	{
-		path: "welcome",
-		component: <PasswordResetFinishPage variant="welcome" />,
-	},
-	{
-		path: "login-link",
-		component: <LoginLinkPage />,
-	},
-	{
-		path: "login-link-finish",
-		component: <LoginLinkFinishPage />,
+		path: "add-device",
+		component: <AddDevicePage variant="additional-device" />,
 	},
 	{
 		path: "login",
 		component: <LoginPage />,
 	},
 	{
-		path: "register",
-		component: <RegisterPage />,
+		path: "token-sign-in",
+		component: <TokenSignIn />,
+	},
+	{
+		path: "help-locked-out",
+		component: <HelpLockedOut />,
 	},
 ];
 
 function TokenSignIn() {
-	const type = useGetQueryParam("type");
-	if (type === "reset") {
-		return <NavigateWithQuery to="/auth/password-reset-finish" />;
+	const type = useGetQueryParam("add_device_type");
+	if (type === "additional_device") {
+		return <NavigateWithQuery to="/auth/register" />;
 	}
-	if (type === "sign-in") {
-		return <NavigateWithQuery to="/auth/login-link-finish" />;
+	if (type === "recover_access") {
+		return <NavigateWithQuery to="/auth/recover" />;
 	}
-	if (type === "welcome") {
-		return <NavigateWithQuery to="/auth/welcome" />;
+	if (type === "register") {
+		return <NavigateWithQuery to="/auth/register" />;
 	}
-	return <p>Something has gone terribly wrong: Unknown type query param</p>;
+	return (
+		<p>
+			Something has gone terribly wrong: Unknown add_device_type query
+			param
+		</p>
+	);
 }
