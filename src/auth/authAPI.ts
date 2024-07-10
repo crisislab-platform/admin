@@ -48,7 +48,7 @@ export async function addDevice({
 	deviceName: string;
 }): Promise<User> {
 	const challenge = await fetch(
-		`${authAPIBase}/add_device/challenge?token=${token}`,
+		`${authAPIBase}/add-device/challenge?token=${token}`,
 	);
 
 	let authResponse;
@@ -63,10 +63,10 @@ export async function addDevice({
 				{ cause: err },
 			);
 		}
-		throw new Error("Error registering device", { cause: err });
+		throw new Error(`Error registering device: ${err}`, { cause: err });
 	}
 
-	const verificationRes = await fetch(`${authAPIBase}/add_device/verify`, {
+	const verificationRes = await fetch(`${authAPIBase}/add-device/verify`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
