@@ -101,6 +101,7 @@ export const sensorTypeChannels: Record<SensorType, string[]> = {
 	"Raspberry Shake and Boom": ["EHZ", "HDF"],
 	// Stop prettier from getting rid of brackets
 	["Palert"]: ["ENN", "ENZ", "ENE"],
+	["CRISiSLab Sensor"]: ["x", "y", "z"],
 };
 
 export function generateSensorSetupCommand(sensorToken: string) {
