@@ -52,7 +52,7 @@ export function ExportSensorDataPage() {
 	const defaultSensorID = useGetQueryParam("export_data_sensor_id");
 	const [chosenSensor, setChosenSensor] = useState<Sensor | null>(null);
 	const [exportFormat, setExportFormat] =
-		useState<keyof typeof exportTypes>("miniseed3");
+		useState<keyof typeof exportTypes>("tsv1");
 	const [selectedChannels, setSelectedChannels] = useState<String[]>([]);
 	const [downloading, setDownloading] = useState(false);
 	const [error, setError] = useState<null | string>(null);
