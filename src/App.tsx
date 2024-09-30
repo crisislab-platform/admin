@@ -84,7 +84,7 @@ export function WrappedApp() {
 
 function RouteElement({ route }: { route: RouteType }) {
 	const { user } = useAuth();
-	console.log("Rendering route with slug: ", route.slug);
+	// console.log("Rendering route with slug: ", route.slug);
 	const layout = (
 		<ErrorBoundary>
 			{userHasPermission(user, route.requiredRole.raw) ||
@@ -101,7 +101,7 @@ function RouteElement({ route }: { route: RouteType }) {
 
 function renderRoutes(routes: RouteType[]) {
 	return routes.map((route) => {
-		console.info(`Rendering route with slug: ${route.slug}`);
+		// console.info(`Rendering route with slug: ${route.slug}`);
 
 		return (
 			<Route

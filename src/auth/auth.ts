@@ -61,45 +61,20 @@ export async function login(arg1: string, arg2?: string): Promise<User> {
 	}
 }
 
-export async function sendLink(
-	email: string,
-	type: "welcome" | "sign-in" | "reset",
-	returnTo?: string | null,
-) {
+export async function changePassword(opts: {
+	newPassword: string;
+	accountID: number;
+	token: string;
+}) {
 	try {
-		const response = await fetch(
-			`${authAPIBase}/link/${email}/${type}${
-				!!returnTo ? `?return_to=${returnTo}` : ""
-			}`,
-			{ method: "GET" },
-		);
-		if (!response.ok) {
-			let message = "";
-			try {
-				message = ` ${await response.text()}.`;
-			} catch (_) {}
-			throw new Error(
-				`E: Non-ok status code returned from server.${message} ${response.status} (${response.statusText})`,
-			);
-		}
-	} catch (error) {
-		// Don't double-handle errors
-		if (typeof error === "string" && error.startsWith("E:")) {
-			throw new Error(error);
-		}
-		throw new Error(`E: Failed to get the server to send a link. ${error}`);
-	}
-}
-
-export async function resetPassword(password: string, token: string) {
-	try {
-		const response = await fetch(`${authAPIBase}/reset-password`, {
-			method: "POST",
+		const response = await fetch(`${authAPIBase}/change-password`, {
+			method: "PATCH",
 			body: JSON.stringify({
-				password,
+				password: opts.newPassword,
+				accountID: opts.accountID,
 			}),
 			headers: {
-				Authorization: `Bearer ${token}`,
+				Authorization: `Bearer ${opts.token}`,
 			},
 		});
 		if (!response.ok) {

@@ -56,6 +56,7 @@ export default function LoginPage() {
 						required
 						label="Password"
 						type="password"
+						autoComplete="current-password"
 					/>
 					<LoadingButton
 						loading={loading}
@@ -67,16 +68,8 @@ export default function LoginPage() {
 					</LoadingButton>
 				</Stack>
 			</form>
-			<LinkWithQuery
-				to="/auth/password-reset-start"
-				className="arrow-forwards">
-				Reset password
-			</LinkWithQuery>
-			<LinkWithQuery to="/auth/login-link" className="arrow-forwards">
-				Get a login link
-			</LinkWithQuery>
-			<LinkWithQuery to="/auth/register" className="arrow-forwards">
-				Register
+			<LinkWithQuery to="/auth/login-help" className="arrow-forwards">
+				Need help?
 			</LinkWithQuery>
 		</Stack>
 	);
