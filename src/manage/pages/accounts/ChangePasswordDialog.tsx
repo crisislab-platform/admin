@@ -23,7 +23,7 @@ export function ChangePasswordDialog({
 }) {
 	const { changePassword, user } = useAuth();
 
-	const ownAccount = user.id === changingAccount.id;
+	const ownAccount = user?.id === changingAccount.id;
 	const { enqueueSnackbar } = useSnackbar();
 	const [loading, setLoading] = useState(false);
 

@@ -125,7 +125,7 @@ export function AccountPanel() {
 		);
 	}
 
-	const account = accountsQuery.data.find(
+	const account = (accountsQuery.data ?? []).find(
 		(account) => account.email === accountID,
 	);
 
@@ -138,6 +138,8 @@ export function AccountPanel() {
 	}
 
 	function deleteAccount() {
+		if (!account) return;
+
 		mutation.mutate(account);
 		onDeletionConfirmModalClose();
 	}
@@ -167,6 +169,8 @@ export function AccountPanel() {
 							variant="outlined"
 							onClick={async () => {
 								try {
+									if (!user) return;
+
 									// Create refresh token
 									const tokenData = await getRefreshToken(
 										user.token,
@@ -201,7 +205,7 @@ export function AccountPanel() {
 					/>
 
 					<Button
-						disabled={account.email === user.email}
+						disabled={account.email === user?.email}
 						variant="outlined"
 						color="error"
 						startIcon={<DeleteIcon />}
@@ -330,7 +334,7 @@ function EditUserInfo({
 
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const { enqueueSnackbar } = useSnackbar();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token), {
+	const accountsQuery = useQuery("accounts", makeFetchAccounts(user?.token), {
 		staleTime: accountsQueryStaleTime,
 	});
 	const queryClient = useQueryClient();
@@ -357,12 +361,12 @@ function EditUserInfo({
 					),
 					{
 						...newAccount,
-						picture: generateAvatar(newAccount.email),
+						picture: generateAvatar(newAccount.email ?? ""),
 					},
 				];
 				newAccounts.sort(function (a, b) {
-					const textA = a.email.toLowerCase();
-					const textB = b.email.toLowerCase();
+					const textA = a?.email?.toLowerCase() ?? "";
+					const textB = b?.email?.toLowerCase() ?? "";
 					return textA < textB ? -1 : textA > textB ? 1 : 0;
 				});
 				return newAccounts;
@@ -383,7 +387,7 @@ function EditUserInfo({
 		onSuccess: (data) => {
 			enqueueSnackbar("Account modified");
 			// Also on confirm, update the auth user if it was them that was edited
-			if (user.email === data.email) {
+			if (user && user?.email === data.email) {
 				// This is so cursed, but it means that the token is safe.
 				// This should also trigger an effect to save this value to localStorage.
 				setUser({ ...data, token: user.token });
@@ -393,7 +397,7 @@ function EditUserInfo({
 
 	useEffect(() => {
 		setEmail(account.email);
-		setName(account.name);
+		setName(account.name ?? "");
 		setSelectedRoles(account.roles);
 	}, [account]);
 
@@ -472,7 +476,7 @@ function EditUserInfo({
 			<Autocomplete
 				value={selectedRoles}
 				onChange={(event, newValue: Role[] | null) => {
-					setSelectedRoles(newValue);
+					setSelectedRoles(newValue ?? []);
 				}}
 				options={Object.values(roles) as Role[]}
 				multiple

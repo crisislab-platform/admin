@@ -48,12 +48,14 @@ export function EditSensorInfo({
 		activeSensor.secondary_id ? activeSensor.secondary_id : "",
 	);
 	const [menuType, setMenuType] = useState<SensorType>(
-		sensorMenuTypes.includes(activeSensor.type)
+		activeSensor.type && sensorMenuTypes.includes(activeSensor.type)
 			? activeSensor.type
 			: "__other",
 	);
 	const [otherType, setOtherType] = useState<string>(
-		sensorMenuTypes.includes(activeSensor.type) ? "" : activeSensor.type,
+		!activeSensor.type || sensorMenuTypes.includes(activeSensor.type)
+			? ""
+			: activeSensor.type,
 	);
 	const [location, setLocation] = useState<[number, number]>([
 		activeSensor?.location?.[0] || defaultPosition[0],
@@ -125,12 +127,12 @@ export function EditSensorInfo({
 			activeSensor.secondary_id ? activeSensor.secondary_id : "",
 		);
 		setMenuType(
-			sensorMenuTypes.includes(activeSensor.type)
+			activeSensor.type && sensorMenuTypes.includes(activeSensor.type)
 				? activeSensor.type
 				: "__other",
 		);
 		setOtherType(
-			sensorMenuTypes.includes(activeSensor.type)
+			!activeSensor.type || sensorMenuTypes.includes(activeSensor.type)
 				? ""
 				: activeSensor.type,
 		);
@@ -138,7 +140,7 @@ export function EditSensorInfo({
 			activeSensor?.location?.[0] || defaultPosition[0],
 			activeSensor?.location?.[1] || defaultPosition[1],
 		]);
-		setIPAddress(activeSensor.ip);
+		setIPAddress(activeSensor.ip ?? "");
 		setOnline(activeSensor.online);
 	}, [activeSensor]);
 

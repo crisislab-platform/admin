@@ -1,4 +1,4 @@
-import { Alert, AlertTitle } from "@mui/material";
+import { Alert, AlertTitle, Typography } from "@mui/material";
 
 import { Component, ReactNode } from "react";
 
@@ -17,9 +17,15 @@ export class ErrorBoundary extends Component<
 		if (this.state.hasError) {
 			return (
 				<Alert severity="error" sx={{ margin: 2 }}>
-					<AlertTitle>Something has gone cataclysmically wrong!</AlertTitle>
-					{this.state.error &&
-						`Send this to a developer to help figure out what happened: ${this.state.error}`}
+					<AlertTitle>
+						Something has gone cataclysmically wrong!
+					</AlertTitle>
+					{!!this.state.error && (
+						<>
+							Send this to a developer to help figure out what
+							happened: {this.state.error.toString()}
+						</>
+					)}
 				</Alert>
 			);
 		}

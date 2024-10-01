@@ -131,7 +131,7 @@ export function AuthProvider({
 		enqueueSnackbar,
 	]);
 
-	async function login(email: string, password?: string) {
+	async function login(email: string, password: string) {
 		setLoading(true);
 
 		try {
@@ -168,18 +168,20 @@ export function AuthProvider({
 		// This hurts my soul, but younger me was very dumb and architected
 		// everything wrong, so it's the only way to make sure the data being
 		// displayed is up-to-date with the user's auth state.
-		window.location.reload();
+		// window.location.reload();
 	}
 
 	function logout() {
-		setUser(undefined);
+		setUser(null);
 		localStorage.removeItem(authUserNamespace);
 
 		// See above in login function for reasoning
+		navigate("/manage/sensors");
 		window.location.reload();
 	}
 
 	const changePassword: AuthContextType["changePassword"] = async (opts) => {
+		if (!user) return false;
 		try {
 			await authAPI.changePassword({ ...opts, token: user.token });
 			enqueueSnackbar("Password changed.", { variant: "success" });

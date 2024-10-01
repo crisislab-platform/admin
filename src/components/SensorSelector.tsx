@@ -61,9 +61,15 @@ export function SensorSelector({
 			disabled={!sensorsQuery.isFetched}
 			options={sensorOptions}
 			value={simplifySensor(sensor)}
-			onChange={(_, value) =>
-				onChange(sensorsQuery?.data?.sensors[value.id])
-			}
+			onChange={(_, value) => {
+				if (!value) return;
+
+				const sensor = sensorsQuery.data?.sensors?.[value.id];
+
+				if (!sensor) return;
+
+				onChange(sensor);
+			}}
 			renderInput={(params) => (
 				<TextField
 					{...params}
@@ -80,9 +86,9 @@ export function SensorSelector({
 			)}
 			renderOption={(props, option) => (
 				<ListItem {...props}>
-					<SensorStatusIcon online={option.online} />
+					<SensorStatusIcon online={option?.online} />
 					<Box sx={{ ml: 1 }} component="span">
-						{option.label}
+						{option?.label}
 					</Box>
 				</ListItem>
 			)}

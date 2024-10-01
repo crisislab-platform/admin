@@ -20,7 +20,7 @@ import { useQuery } from "react-query";
 export function AccountsList() {
 	const { user } = useAuth();
 	const { accountID: encodedSelectedAccountID } = useParams();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token), {
+	const accountsQuery = useQuery("accounts", makeFetchAccounts(user?.token), {
 		staleTime: accountsQueryStaleTime,
 	});
 
@@ -36,28 +36,31 @@ export function AccountsList() {
 		return (
 			<Alert severity="error" sx={{ m: 2 }}>
 				<AlertTitle>Failed to load users.</AlertTitle>
-				{(accountsQuery.error as any)?.message || accountsQuery.error + ""}
+				{(accountsQuery.error as any)?.message ||
+					accountsQuery.error + ""}
 			</Alert>
 		);
 	}
 
 	return (
 		<List>
-			{accountsQuery.data.map((account) => (
+			{(accountsQuery.data ?? []).map((account) => (
 				<ListItemButton
 					key={account.email}
 					component={RouterLink}
 					to={`./${encodeURIComponent(account.email)}`}
-					selected={selectedAccountID === account.email}
-				>
+					selected={selectedAccountID === account.email}>
 					<ListItemAvatar>
-						<Avatar src={account.picture} alt={account.name || account.email} />
+						<Avatar
+							src={account.picture}
+							alt={account.name || account.email}
+						/>
 					</ListItemAvatar>
 					<ListItemText
 						primary={account.name || account.email}
 						secondary={account.name ? account.email : undefined}
 					/>
-					{"verified" in user && "verified" in account && (
+					{user && "verified" in user && "verified" in account && (
 						<Tooltip title="Verified user">
 							<TickIcon />
 						</Tooltip>

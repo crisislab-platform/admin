@@ -41,7 +41,7 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
 }));
 
 export function WrappedApp() {
-	const notistackRef = useRef(null);
+	const notistackRef = useRef<SnackbarProvider | null>(null);
 	return (
 		<ThemeProvider theme={theme}>
 			<ErrorBoundary>

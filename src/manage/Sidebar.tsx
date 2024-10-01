@@ -64,10 +64,10 @@ export default function Sidebar({
 			}
 
 			// Smaller position = higher in list
-			if (a.position < b.position) {
+			if (a.position! < b.position!) {
 				return -1;
 			}
-			if (b.position < a.position) {
+			if (b.position! < a.position!) {
 				return 1;
 			}
 			return 0;
@@ -120,21 +120,26 @@ export default function Sidebar({
 					</Stack>
 				)}
 				<Stack gap={1}>
-					<Button
-						variant="outlined"
-						onClick={() => setChangePasswordOpen(true)}
-						startIcon={<PasswordIcon />}>
-						Change password
-					</Button>
-					{/* TODO: Fix transition */}
-					{/* <Grow
+					{user && (
+						<>
+							<Button
+								variant="outlined"
+								onClick={() => setChangePasswordOpen(true)}
+								startIcon={<PasswordIcon />}>
+								Change password
+							</Button>
+							{/* TODO: Fix transition */}
+							{/* <Grow
 						in={changePasswordOpen}
 						style={{ transformOrigin: "0 0 0" }}> */}
-					<ChangePasswordDialog
-						open={changePasswordOpen}
-						onClose={() => setChangePasswordOpen(false)}
-						changingAccount={user}
-					/>
+
+							<ChangePasswordDialog
+								open={changePasswordOpen}
+								onClose={() => setChangePasswordOpen(false)}
+								changingAccount={user}
+							/>
+						</>
+					)}
 					{/* </Grow> */}
 					<LoginButton />
 				</Stack>

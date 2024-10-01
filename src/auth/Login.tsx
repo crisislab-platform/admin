@@ -30,7 +30,15 @@ export default function LoginPage() {
 				variant: "warning",
 			});
 		} else {
-			await login(email.toString().toLowerCase(), password.toString());
+			try {
+				await login(
+					email.toString().toLowerCase(),
+					password.toString(),
+				);
+			} catch (err) {
+				console.error("Login error:", err);
+				enqueueSnackbar(err, { variant: "error" });
+			}
 		}
 	}
 
