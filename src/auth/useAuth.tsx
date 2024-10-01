@@ -186,7 +186,8 @@ export function AuthProvider({
 			if (opts.accountID === user.id) {
 				// If this was for the current user, their token
 				// is now invalid and they need to log back in
-				await login(user.email, opts.newPassword);
+				// Disabled for now since it isn't needed
+				// await login(user.email, opts.newPassword);
 			}
 			return true;
 		} catch (error) {
