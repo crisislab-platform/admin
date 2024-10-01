@@ -18,7 +18,7 @@ export function DatabaseSizePage() {
 	const [time, setTime] = useState<Date | null>(null);
 	const [size, setSize] = useState<number | null>(null);
 	const [history, setHistory] = useState<TimeLineDataPoint[]>([]);
-	const controller = useRef<AbortController>(null);
+	const controller = useRef<AbortController | null>(null);
 
 	const timelineContainerRef = useRef<HTMLDivElement>(null);
 	const timeline = useRef<TimeLine | null>(null);
@@ -63,7 +63,7 @@ export function DatabaseSizePage() {
 		// I hate that I still need to do this
 		setError(null);
 		(async () => {
-			if (!user.token) return;
+			if (!user?.token) return;
 
 			try {
 				controller.current = new AbortController();
@@ -116,7 +116,7 @@ export function DatabaseSizePage() {
 			controller?.current?.abort();
 			setError(null);
 		};
-	}, [user.token]);
+	}, [user]);
 
 	return (
 		<Stack p={3}>

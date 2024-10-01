@@ -14,10 +14,7 @@ import {
 	IconButton,
 	List,
 	ListItem,
-	ListItemIcon,
 	ListItemText,
-	Menu,
-	MenuItem,
 	Slide,
 	Stack,
 	TextField,
@@ -40,21 +37,18 @@ import {
 	makeFetchAccounts,
 } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import PasswordIcon from "@mui/icons-material/Password";
 
 import CachedIcon from "@mui/icons-material/Cached";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import LinkIcon from "@mui/icons-material/Link";
-import LockResetIcon from "@mui/icons-material/LockReset";
 import SaveIcon from "@mui/icons-material/Save";
-import SendIcon from "@mui/icons-material/Send";
 import { TransitionProps } from "@mui/material/transitions";
-import WaveIcon from "@mui/icons-material/EmojiPeople";
-import { sendLink } from "../../../auth/auth";
 import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { ChangePasswordDialog } from "./ChangePasswordDialog";
 
 const SlideUpTransition = forwardRef(function Transition(
 	props: TransitionProps & {
@@ -72,9 +66,7 @@ export function AccountPanel() {
 	});
 	const { accountID: encodedAccountID } = useParams();
 	const [editMode, setEditMode] = useState(false);
-	const [sendLinkMenuAnchorEl, setSendLinkMenuAnchorEl] =
-		useState<null | HTMLElement>(null);
-	const sendLinkMenuOpen = Boolean(sendLinkMenuAnchorEl);
+	const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 	const [deletionConfirmModalOpen, setDeletionConfirmModalOpen] =
 		useState(false);
 	const { enqueueSnackbar } = useSnackbar();
@@ -133,7 +125,7 @@ export function AccountPanel() {
 		);
 	}
 
-	const account = accountsQuery.data.find(
+	const account = (accountsQuery.data ?? []).find(
 		(account) => account.email === accountID,
 	);
 
@@ -146,32 +138,10 @@ export function AccountPanel() {
 	}
 
 	function deleteAccount() {
+		if (!account) return;
+
 		mutation.mutate(account);
 		onDeletionConfirmModalClose();
-	}
-
-	function onSendLinkMenuClose() {
-		setSendLinkMenuAnchorEl(null);
-	}
-	function createOnSendLinkMenuItemClick(
-		type: "welcome" | "sign-in" | "reset",
-	) {
-		return async () => {
-			try {
-				onSendLinkMenuClose();
-				await sendLink(account.email, type);
-				enqueueSnackbar(`Sent ${type} link to ${account.email}.`, {
-					variant: "success",
-				});
-			} catch (error) {
-				enqueueSnackbar(
-					`Error sendding ${type} link to ${account.email}: ${
-						error.message || error
-					}.`,
-					{ variant: "error" },
-				);
-			}
-		};
 	}
 
 	function onDialogCLose() {
@@ -199,6 +169,8 @@ export function AccountPanel() {
 							variant="outlined"
 							onClick={async () => {
 								try {
+									if (!user) return;
+
 									// Create refresh token
 									const tokenData = await getRefreshToken(
 										user.token,
@@ -220,50 +192,20 @@ export function AccountPanel() {
 					)}
 					<Button
 						variant="outlined"
-						startIcon={<SendIcon />}
+						startIcon={<PasswordIcon />}
 						onClick={(event) => {
-							setSendLinkMenuAnchorEl(event.currentTarget);
-						}}
-						id="send-link-button"
-						aria-controls={
-							sendLinkMenuOpen ? "send-link-menu" : undefined
-						}
-						aria-haspopup="true"
-						aria-expanded={sendLinkMenuOpen ? "true" : undefined}>
-						Send link
-					</Button>
-					<Menu
-						id="send-link-menu"
-						anchorEl={sendLinkMenuAnchorEl}
-						open={sendLinkMenuOpen}
-						onClose={onSendLinkMenuClose}
-						MenuListProps={{
-							"aria-labelledby": "send-link-button",
+							setChangePasswordOpen(true);
 						}}>
-						<MenuItem
-							onClick={createOnSendLinkMenuItemClick("welcome")}>
-							<ListItemIcon>
-								<WaveIcon fontSize="small" />
-							</ListItemIcon>
-							<ListItemText>Welcome</ListItemText>
-						</MenuItem>
-						<MenuItem
-							onClick={createOnSendLinkMenuItemClick("reset")}>
-							<ListItemIcon>
-								<LockResetIcon fontSize="small" />
-							</ListItemIcon>
-							<ListItemText>Reset password</ListItemText>
-						</MenuItem>
-						<MenuItem
-							onClick={createOnSendLinkMenuItemClick("sign-in")}>
-							<ListItemIcon>
-								<LinkIcon fontSize="small" />
-							</ListItemIcon>
-							<ListItemText>Login link</ListItemText>
-						</MenuItem>
-					</Menu>
+						Change password
+					</Button>
+					<ChangePasswordDialog
+						open={changePasswordOpen}
+						onClose={() => setChangePasswordOpen(false)}
+						changingAccount={account}
+					/>
+
 					<Button
-						disabled={account.email === user.email}
+						disabled={account.email === user?.email}
 						variant="outlined"
 						color="error"
 						startIcon={<DeleteIcon />}
@@ -392,7 +334,7 @@ function EditUserInfo({
 
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const { enqueueSnackbar } = useSnackbar();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token), {
+	const accountsQuery = useQuery("accounts", makeFetchAccounts(user?.token), {
 		staleTime: accountsQueryStaleTime,
 	});
 	const queryClient = useQueryClient();
@@ -419,12 +361,12 @@ function EditUserInfo({
 					),
 					{
 						...newAccount,
-						picture: generateAvatar(newAccount.email),
+						picture: generateAvatar(newAccount.email ?? ""),
 					},
 				];
 				newAccounts.sort(function (a, b) {
-					const textA = a.email.toLowerCase();
-					const textB = b.email.toLowerCase();
+					const textA = a?.email?.toLowerCase() ?? "";
+					const textB = b?.email?.toLowerCase() ?? "";
 					return textA < textB ? -1 : textA > textB ? 1 : 0;
 				});
 				return newAccounts;
@@ -445,7 +387,7 @@ function EditUserInfo({
 		onSuccess: (data) => {
 			enqueueSnackbar("Account modified");
 			// Also on confirm, update the auth user if it was them that was edited
-			if (user.email === data.email) {
+			if (user && user?.email === data.email) {
 				// This is so cursed, but it means that the token is safe.
 				// This should also trigger an effect to save this value to localStorage.
 				setUser({ ...data, token: user.token });
@@ -455,7 +397,7 @@ function EditUserInfo({
 
 	useEffect(() => {
 		setEmail(account.email);
-		setName(account.name);
+		setName(account.name ?? "");
 		setSelectedRoles(account.roles);
 	}, [account]);
 
@@ -534,7 +476,7 @@ function EditUserInfo({
 			<Autocomplete
 				value={selectedRoles}
 				onChange={(event, newValue: Role[] | null) => {
-					setSelectedRoles(newValue);
+					setSelectedRoles(newValue ?? []);
 				}}
 				options={Object.values(roles) as Role[]}
 				multiple

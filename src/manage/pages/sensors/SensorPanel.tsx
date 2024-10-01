@@ -120,13 +120,10 @@ export function SensorPanel() {
 		return null;
 	}, [rawSensorID]);
 
-	const activeSensor: Sensor = useMemo(() => {
-		try {
-			const sensor = sensorsQuery.data.sensors[sensorID];
-			return sensor;
-		} catch (err) {
-			console.warn("Error getting active sensor", err);
-		}
+	const activeSensor: Sensor | null = useMemo(() => {
+		if (!sensorID || !sensorsQuery.data) return null;
+
+		return sensorsQuery.data.sensors[sensorID] ?? null;
 	}, [sensorID, sensorsQuery.data]);
 
 	const duplicateIPs = useMemo(() => {
@@ -162,6 +159,7 @@ export function SensorPanel() {
 	}
 
 	function deleteSensor() {
+		if (!activeSensor) return;
 		mutation.mutate(activeSensor);
 		onDeletionConfirmModalClose();
 	}
@@ -383,13 +381,15 @@ export function SensorPanel() {
 					</Stack>
 				</Paper>
 				<Paper variant="outlined" sx={{ width: "100%", p: 1 }}>
-					<LiveDataGraphs
-						sensorID={sensorID}
-						height={600}
-						extraFlags={{
-							"show-raw-channel-names": "yes",
-						}}
-					/>
+					{sensorID && (
+						<LiveDataGraphs
+							sensorID={sensorID}
+							height={600}
+							extraFlags={{
+								"show-raw-channel-names": "yes",
+							}}
+						/>
+					)}
 				</Paper>
 			</Stack>
 		</Stack>

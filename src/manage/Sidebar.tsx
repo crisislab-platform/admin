@@ -1,8 +1,10 @@
 import {
 	Avatar,
-	Box,
+	Button,
 	Divider,
 	Drawer,
+	Grow,
+	IconButton,
 	List,
 	ListItem,
 	ListItemButton,
@@ -15,15 +17,16 @@ import {
 	Tooltip,
 	Typography,
 } from "@mui/material";
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { LoginButton, useNavigateWithQuery } from "../components";
-
+import PasswordIcon from "@mui/icons-material/Password";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { SidebarLink } from "../types";
 import StarIcon from "@mui/icons-material/LocalPolice";
 import { mapURL, useOnMobile } from "../utils";
 import useAuth from "../auth/useAuth";
 import { useLocation } from "react-router-dom";
+import { ChangePasswordDialog } from "./pages/accounts/ChangePasswordDialog";
 
 const longTextMixin = {
 	textOverflow: "ellipsis",
@@ -42,6 +45,7 @@ export default function Sidebar({
 	setMobileDrawerOpen: Dispatch<SetStateAction<boolean>>;
 	mobileDrawerOpen: boolean;
 }) {
+	const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 	const onMobile = useOnMobile();
 	const { user } = useAuth();
 	const navigateWithQuery = useNavigateWithQuery();
@@ -60,10 +64,10 @@ export default function Sidebar({
 			}
 
 			// Smaller position = higher in list
-			if (a.position < b.position) {
+			if (a.position! < b.position!) {
 				return -1;
 			}
-			if (b.position < a.position) {
+			if (b.position! < a.position!) {
 				return 1;
 			}
 			return 0;
@@ -115,9 +119,30 @@ export default function Sidebar({
 						</Stack>
 					</Stack>
 				)}
-				<Box>
+				<Stack gap={1}>
+					{user && (
+						<>
+							<Button
+								variant="outlined"
+								onClick={() => setChangePasswordOpen(true)}
+								startIcon={<PasswordIcon />}>
+								Change password
+							</Button>
+							{/* TODO: Fix transition */}
+							{/* <Grow
+						in={changePasswordOpen}
+						style={{ transformOrigin: "0 0 0" }}> */}
+
+							<ChangePasswordDialog
+								open={changePasswordOpen}
+								onClose={() => setChangePasswordOpen(false)}
+								changingAccount={user}
+							/>
+						</>
+					)}
+					{/* </Grow> */}
 					<LoginButton />
-				</Box>
+				</Stack>
 			</Stack>
 			<Divider />
 

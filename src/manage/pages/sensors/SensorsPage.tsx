@@ -300,8 +300,8 @@ function EditFilterRues({
 		setInProgressFilterRules((oldFilterRules) => [
 			...oldFilterRules,
 			{
-				property: "id",
-				operation: "greater-than",
+				property: "secondary_id",
+				operation: "includes",
 				reversed: false,
 				value: "0",
 				id: `${Math.random() * 10000}-${Math.random() * 10000}-${

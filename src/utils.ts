@@ -104,15 +104,11 @@ export const sensorTypeChannels: Record<SensorType, string[]> = {
 	["CRISiSLab Sensor"]: ["x", "y", "z"],
 };
 
-export function generateSensorSetupCommand(sensorToken: string) {
-	return `curl -s https://raw.githubusercontent.com/rs-Web-Interface-CRISiSLab/pishake-client/main/setup.sh | sudo bash /dev/stdin ${sensorToken}`;
-}
-
 export const filterRuleOperations: FilterRuleOperation[] = [
+	"includes",
 	"equals",
 	"greater-than",
 	"less-than",
-	"includes",
 ];
 
 export function getNextSensorID(sensors: Record<SensorID, Sensor>): SensorID {
@@ -133,10 +129,9 @@ export function getNextSensorID(sensors: Record<SensorID, Sensor>): SensorID {
 
 export const accountsQueryStaleTime = 10 * 60 * 1000; // 10 minutes
 
-export function getObjectWithOnlyChangedProperties<T>(
-	oldThing: T,
-	newThing: T,
-): object {
+export function getObjectWithOnlyChangedProperties<
+	T extends Record<string, any>,
+>(oldThing: T, newThing: T): object {
 	let thing = {};
 	for (const [key, value] of Object.entries(oldThing)) {
 		if (newThing[key] !== value) {

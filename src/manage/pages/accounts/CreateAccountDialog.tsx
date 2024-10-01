@@ -33,11 +33,11 @@ export function CreateAccountDialog({
 	const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const { enqueueSnackbar } = useSnackbar();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user.token), {
+	const accountsQuery = useQuery("accounts", makeFetchAccounts(user?.token), {
 		staleTime: accountsQueryStaleTime,
 	});
 	const queryClient = useQueryClient();
-	const mutation = useMutation(makeCreateAccount(user.token), {
+	const mutation = useMutation(makeCreateAccount(user?.token), {
 		onMutate: async (newAccount) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries("accounts");
@@ -169,7 +169,7 @@ export function CreateAccountDialog({
 						<Autocomplete
 							value={selectedRoles}
 							onChange={(event, newValue: Role[] | null) => {
-								setSelectedRoles(newValue);
+								setSelectedRoles(newValue ?? []);
 							}}
 							options={Object.values(roles) as Role[]}
 							multiple

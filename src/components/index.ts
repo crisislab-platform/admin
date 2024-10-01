@@ -6,6 +6,5 @@ export * from "./MobileDialog";
 export * from "./LiveDataGraph";
 export * from "./LinkWithQuery";
 export * from "./NavigateWithQuery";
-export * from "./SensorSetupCommand";
 export * from "./ErrorBoundary";
 export * from "./SensorSelector";

@@ -31,13 +31,15 @@ export function SensorsSideBySide() {
 						if (sensor1 === null) setSensor1(sensors[2] ?? null);
 					}}
 				/>
-				<LiveDataGraphs
-					sensorID={sensor1?.id}
-					height={600}
-					extraFlags={{
-						"hide-pause-button": "yes",
-					}}
-				/>
+				{sensor1 && (
+					<LiveDataGraphs
+						sensorID={sensor1.id}
+						height={600}
+						extraFlags={{
+							"hide-pause-button": "yes",
+						}}
+					/>
+				)}
 			</Stack>
 			<Stack sx={{ width: "50%", height: "100%" }} gap={1}>
 				<SensorSelector
@@ -48,14 +50,16 @@ export function SensorsSideBySide() {
 						if (sensor2 === null) setSensor2(sensors[4] ?? null);
 					}}
 				/>
-				<LiveDataGraphs
-					sensorID={sensor2?.id}
-					height={600}
-					extraFlags={{
-						"y-axis-side": "right",
-						"hide-pause-button": "yes",
-					}}
-				/>
+				{sensor2 && (
+					<LiveDataGraphs
+						sensorID={sensor2.id}
+						height={600}
+						extraFlags={{
+							"y-axis-side": "right",
+							"hide-pause-button": "yes",
+						}}
+					/>
+				)}
 			</Stack>
 		</Stack>
 	);

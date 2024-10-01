@@ -82,13 +82,13 @@ export function ExportSensorDataPage() {
 	useEffect(() => {
 		if (singleChannel()) {
 			setSelectedChannels(
-				chosenSensor?.type in sensorTypeChannels
+				chosenSensor?.type && chosenSensor?.type in sensorTypeChannels
 					? [sensorTypeChannels[chosenSensor.type][0]]
 					: ["All"],
 			);
 		} else {
 			setSelectedChannels(
-				chosenSensor?.type in sensorTypeChannels
+				chosenSensor?.type && chosenSensor?.type in sensorTypeChannels
 					? sensorTypeChannels[chosenSensor.type]
 					: ["All"],
 			);
@@ -109,6 +109,8 @@ export function ExportSensorDataPage() {
 			: (bytesDownloaded * 100) / totalBytes;
 
 	async function startDownload() {
+		if (!chosenSensor || !fromDate || !toDate || !user) return;
+
 		// Check that we have the APIs we need
 		if (
 			!("showSaveFilePicker" in window) ||
@@ -193,7 +195,7 @@ export function ExportSensorDataPage() {
 				(await fileDownloadHandle.createWritable()) as FileSystemWritableFileStream;
 
 			// This is where the magic happens.
-			let stream = res.body.pipeThrough(
+			let stream = res.body?.pipeThrough(
 				new TransformStream({
 					transform(chunk, controller) {
 						setBytesDownloaded(
@@ -209,7 +211,7 @@ export function ExportSensorDataPage() {
 			if (exportFormat === "tsv1") {
 				stream = stream
 					// For the line counting, we convert to text,
-					.pipeThrough(new TextDecoderStream(), {
+					?.pipeThrough(new TextDecoderStream(), {
 						signal: downloadAbortController.signal,
 					})
 					.pipeThrough(
@@ -232,7 +234,7 @@ export function ExportSensorDataPage() {
 			// Then we record stats on number of lines
 			stream
 				// Lastly we just pipe it into the file
-				.pipeTo(fileWriteStream, {
+				?.pipeTo(fileWriteStream, {
 					signal: downloadAbortController.signal,
 				})
 				// This happens when we successfully save the file
@@ -310,7 +312,9 @@ export function ExportSensorDataPage() {
 							if (chosenSensor !== null) return;
 
 							const sensor =
-								sensors[parseInt(defaultSensorID)] ??
+								(defaultSensorID
+									? sensors[parseInt(defaultSensorID)]
+									: null) ??
 								Object.values(sensors)[0] ??
 								null;
 
@@ -319,6 +323,7 @@ export function ExportSensorDataPage() {
 					/>
 					<Autocomplete
 						options={
+							chosenSensor?.type &&
 							chosenSensor?.type in sensorTypeChannels
 								? sensorTypeChannels[chosenSensor.type]
 								: ["Auto"]
@@ -376,7 +381,7 @@ export function ExportSensorDataPage() {
 				<Button
 					disabled={!downloading || !downloadAbort}
 					onClick={() => {
-						downloadAbort.abort("User cancelled download");
+						downloadAbort?.abort("User cancelled download");
 						setDownloading(false);
 					}}>
 					Cancel download

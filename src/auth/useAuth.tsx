@@ -31,11 +31,10 @@ interface AuthContextType {
 	closePopup: () => void;
 	login: (emailOrToken: string, password?: string) => Promise<void>;
 	logout: () => void;
-	sendLink: (
-		email: string,
-		type: "welcome" | "sign-in" | "reset",
-	) => Promise<boolean>;
-	resetPassword: (password: string, token: string) => Promise<void>;
+	changePassword: (opts: {
+		newPassword: string;
+		accountID: number;
+	}) => Promise<boolean>;
 	goToLogin: () => void;
 }
 
@@ -132,7 +131,7 @@ export function AuthProvider({
 		enqueueSnackbar,
 	]);
 
-	async function login(email: string, password?: string) {
+	async function login(email: string, password: string) {
 		setLoading(true);
 
 		try {
@@ -165,82 +164,47 @@ export function AuthProvider({
 
 		setLoading(false);
 
+		// TODO: Fix this
 		// This hurts my soul, but younger me was very dumb and architected
 		// everything wrong, so it's the only way to make sure the data being
 		// displayed is up-to-date with the user's auth state.
-		window.location.reload();
+		// window.location.reload();
 	}
 
 	function logout() {
-		setUser(undefined);
+		setUser(null);
 		localStorage.removeItem(authUserNamespace);
 
 		// See above in login function for reasoning
+		navigate("/manage/sensors");
 		window.location.reload();
 	}
 
-	async function sendLink(
-		email: string,
-		type: "welcome" | "sign-in" | "reset",
-	): Promise<boolean> {
+	const changePassword: AuthContextType["changePassword"] = async (opts) => {
+		if (!user) return false;
 		try {
-			await authAPI.sendLink(email, type, returnTo);
-			enqueueSnackbar("Link sent.", { variant: "success" });
+			await authAPI.changePassword({ ...opts, token: user.token });
+			enqueueSnackbar("Password changed.", { variant: "success" });
+			if (opts.accountID === user.id) {
+				// If this was for the current user, their token
+				// is now invalid and they need to log back in
+				// Disabled for now since it isn't needed
+				// await login(user.email, opts.newPassword);
+			}
 			return true;
 		} catch (error) {
-			showErrorSnackbar(enqueueSnackbar, error);
-			return false;
-		}
-	}
-
-	async function resetPassword(
-		password: string,
-		token: string,
-	): Promise<void> {
-		try {
-			await authAPI.resetPassword(password, token);
-			enqueueSnackbar("Password changed.", { variant: "success" });
-			await login(token);
-		} catch (error) {
+			console.error(error);
 			showErrorSnackbar(enqueueSnackbar, error);
 		}
-	}
+		return false;
+	};
 
 	/*
 	 * Make sure this function is called from an event listener for a user-generated action like a clik
 	 */
 	function goToLogin() {
-		if (getQueryParam("use_popup_window")) {
-			console.info("Logging in with popup window...");
-			const popupWidth = 400;
-			const popupHeight = 600;
-			const popupLeft =
-				window.screenX + (window.innerWidth - popupWidth) / 2;
-			const popupTop =
-				window.screenY + (window.innerHeight - popupHeight) / 2;
-
-			setLoading(true);
-			setPopupWindowRef(
-				window.open(
-					`${baseURL}/auth/login?in_popup_window=true`,
-					"crisislab-shakemap-auth-popup",
-					`popup,width=${popupWidth},height=${popupHeight},left=${popupLeft},top=${popupTop}`,
-				),
-			);
-			if (popupWindowRef) {
-				popupWindowRef.addEventListener("close", () => {
-					if (popupWindowCloseTimeout) {
-						clearTimeout(popupWindowCloseTimeout);
-					}
-					setLoading(false);
-				});
-			}
-		} else {
-			console.info("Logging in with redirect...");
-
-			const newReturnTo = encodeURIComponent(location.pathname);
-			navigate(`/auth/login?return_to=${newReturnTo}`);
-		}
+		const newReturnTo = encodeURIComponent(location.pathname);
+		navigate(`/auth/login?return_to=${newReturnTo}`);
 	}
 
 	const closePopup = () => setPopupOpen(false);
@@ -262,8 +226,7 @@ export function AuthProvider({
 			closePopup,
 			login,
 			logout,
-			sendLink,
-			resetPassword,
+			changePassword,
 			goToLogin,
 			setUser,
 		};

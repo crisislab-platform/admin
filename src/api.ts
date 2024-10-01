@@ -123,7 +123,7 @@ export function makeEditAccount(
 
 		return {
 			...data,
-			picture: generateAvatar(newAccount.email),
+			picture: generateAvatar(newAccount.email ?? ""),
 		};
 	};
 }

@@ -57,10 +57,14 @@ export function SensorsList({
 							.includes(filterRule.value);
 						break;
 					case "greater-than":
-						keep = sensor[filterRule.property] > filterRule.value;
+						keep =
+							(sensor[filterRule.property] ?? 0) >
+							filterRule.value;
 						break;
 					case "less-than":
-						keep = sensor[filterRule.property] < filterRule.value;
+						keep =
+							(sensor[filterRule.property] ?? 0) <
+							filterRule.value;
 						break;
 					default:
 						// If for some reason there isn't an operation, keep the sensor
@@ -88,7 +92,7 @@ export function SensorsList({
 
 		// Sort
 		sensors.sort((a, b) => {
-			// Noramalise the sort values
+			// Normalise the sort values
 			let aSortValue = a[sortKey];
 			if (typeof aSortValue === "string") {
 				aSortValue = aSortValue.trim().toLowerCase();
@@ -113,6 +117,10 @@ export function SensorsList({
 			if (!bSortValue && !!aSortValue) {
 				return aGreaterThanB;
 			}
+
+			// Reduce type checks below
+			aSortValue ??= 0;
+			bSortValue ??= 0;
 
 			// If a is greater than b
 			if (aSortValue > bSortValue) {
@@ -142,14 +150,15 @@ export function SensorsList({
 		return (
 			<Alert severity="error" sx={{ m: 2 }}>
 				<AlertTitle>Failed to load sensors.</AlertTitle>
-				{(sensorsQuery.error as any)?.message || sensorsQuery.error + ""}
+				{(sensorsQuery.error as any)?.message ||
+					sensorsQuery.error + ""}
 			</Alert>
 		);
 	}
 
 	return (
 		<List sx={{ maxHeight: "100%", overflow: "auto" }}>
-			{sortedSensors.map((sensor) => {
+			{sortedSensors?.map((sensor) => {
 				const sensorIDText = `#${sensor.id}${
 					sensor.type ? ` - ${sensor.type}` : ""
 				}`;
@@ -158,16 +167,19 @@ export function SensorsList({
 						key={sensor.id}
 						component={RouterLink}
 						to={`./${sensor.id}`}
-						selected={sensorID === sensor.id}
-					>
+						selected={sensorID === sensor.id}>
 						<ListItemIcon>
 							<SensorImage sensor={sensor} showStatusColour />
 						</ListItemIcon>
 						<ListItemText
 							primary={
-								sensor.secondary_id ? `${sensor.secondary_id}` : sensorIDText
+								sensor.secondary_id
+									? `${sensor.secondary_id}`
+									: sensorIDText
 							}
-							secondary={sensor.secondary_id ? sensorIDText : undefined}
+							secondary={
+								sensor.secondary_id ? sensorIDText : undefined
+							}
 						/>
 					</ListItemButton>
 				);
