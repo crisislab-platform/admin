@@ -30,7 +30,7 @@ function getAPIOrigin() {
 
 export function setCustomAPIOrigin() {
 	const newOrigin = prompt(
-		"Enter new API origin.\n\nInclude 'https://', but not '/api' or any path.\n\nLeave blank to remove.",
+		"Enter custom API origin.\n\nInclude 'https://', but not '/api' or any path. (Do include ports if needed)\n\nLeave blank to remove custom API origin.\n\nThis will probably log you out. If something breaks, clear site data then reload.",
 	)
 		?.trim()
 		?.toLowerCase();
