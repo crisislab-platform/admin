@@ -30,6 +30,7 @@ import {
 	setQueryParams,
 	formatBytes,
 	sensorTypeChannels,
+	APIBase,
 } from "../../../utils";
 import { SensorSelector } from "../../../components";
 
@@ -135,11 +136,7 @@ export function ExportSensorDataPage() {
 
 			// We await this to get the headers, but not the whole body
 			const res = await fetch(
-				`${
-					import.meta.env.DEV
-						? "http://localhost:8080"
-						: "https://crisislab-data.massey.ac.nz"
-				}/api/v2/db/data-bulk-export?sensor_id=${
+				`${APIBase}/db/data-bulk-export?sensor_id=${
 					chosenSensor.id
 				}&channels=${selectedChannels.join(
 					",",

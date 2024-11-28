@@ -40,7 +40,7 @@ import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { EditSensorInfo } from "./EditSensorInfo";
-import { useOnMobile, userHasPermission } from "../../../utils";
+import { mapURL, useOnMobile, userHasPermission } from "../../../utils";
 
 const listFormatter = new Intl.ListFormat("en");
 
@@ -279,7 +279,7 @@ export function SensorPanel() {
 					}}
 					variant="outlined">
 					<Link
-						href={`https://shakemap.crisislab.org.nz/sensor/${activeSensor.id}`}
+						href={`${mapURL}/sensor/${activeSensor.id}`}
 						sx={{ "&::after": { content: `" →"` } }}>
 						View on shakemap
 					</Link>

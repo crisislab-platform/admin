@@ -74,7 +74,7 @@ export function WrappedApp() {
 								<App />
 							</ErrorBoundary>
 						</AuthProvider>
-						<ReactQueryDevtools />
+						{/* <ReactQueryDevtools /> */}
 					</QueryClientProvider>
 				</SnackbarProvider>
 			</ErrorBoundary>
