@@ -1,5 +1,5 @@
 import { Box, Paper, Stack, useMediaQuery, useTheme } from "@mui/material";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router";
 
 import { useGetQueryParam } from "./utils";
 

@@ -9,7 +9,7 @@ import {
 	useState,
 } from "react";
 import { getQueryParam, showErrorSnackbar, useGetQueryParam } from "./utils";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 
 import { User } from "../types";
 import { generateAvatar } from "../utils";

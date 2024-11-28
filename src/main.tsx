@@ -1,7 +1,7 @@
 import "./styles.css";
 import "@fontsource/manrope";
 
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router";
 import { StrictMode } from "react";
 import { WrappedApp } from "./App";
 import { createRoot } from "react-dom/client";

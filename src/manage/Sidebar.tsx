@@ -25,7 +25,7 @@ import { SidebarLink } from "../types";
 import StarIcon from "@mui/icons-material/LocalPolice";
 import { mapURL, setCustomAPIOrigin, useOnMobile } from "../utils";
 import useAuth from "../auth/useAuth";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { ChangePasswordDialog } from "./pages/accounts/ChangePasswordDialog";
 import PermDataSettingIcon from "@mui/icons-material/PermDataSetting";
 
@@ -151,14 +151,12 @@ export default function Sidebar({
 				{sortedLinks.map(
 					(link) =>
 						link.showInSidebar !== false && (
-							<ListItem
-								key={link.slug}
-								selected={
-									location.pathname.split("/")[2] ===
-									link.slug
-								}
-								disablePadding>
+							<ListItem key={link.slug} disablePadding>
 								<ListItemButton
+									selected={
+										location.pathname.split("/")[2] ===
+										link.slug
+									}
 									onClick={() => {
 										navigateWithQuery(
 											`/manage/${link.slug}`,

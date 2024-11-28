@@ -37,7 +37,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { LiveDataGraphs } from "../../../components";
 import { TransitionProps } from "@mui/material/transitions";
 import useAuth from "../../../auth/useAuth";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useSnackbar } from "notistack";
 import { EditSensorInfo } from "./EditSensorInfo";
 import { mapURL, useOnMobile, userHasPermission } from "../../../utils";

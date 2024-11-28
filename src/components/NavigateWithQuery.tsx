@@ -4,7 +4,7 @@ import {
 	NavigateOptions,
 	useLocation,
 	useNavigate,
-} from "react-router-dom";
+} from "react-router";
 
 export function generateTo(to: string, location: Location): string {
 	const url = new URL(
