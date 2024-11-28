@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { ErrorBoundary, MissingRole, NavigateWithQuery } from "./components";
 import { QueryClientProvider } from "react-query";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router";
 import useAuth, { AuthProvider } from "./auth/useAuth";
 
 import AuthWrapper from "./auth/AuthWrapper";
@@ -74,7 +74,7 @@ export function WrappedApp() {
 								<App />
 							</ErrorBoundary>
 						</AuthProvider>
-						<ReactQueryDevtools />
+						{/* <ReactQueryDevtools /> */}
 					</QueryClientProvider>
 				</SnackbarProvider>
 			</ErrorBoundary>

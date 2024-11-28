@@ -1,9 +1,9 @@
 import {
 	Avatar,
+	Box,
 	Button,
 	Divider,
 	Drawer,
-	Grow,
 	IconButton,
 	List,
 	ListItem,
@@ -23,10 +23,11 @@ import PasswordIcon from "@mui/icons-material/Password";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { SidebarLink } from "../types";
 import StarIcon from "@mui/icons-material/LocalPolice";
-import { mapURL, useOnMobile } from "../utils";
+import { mapURL, setCustomAPIOrigin, useOnMobile } from "../utils";
 import useAuth from "../auth/useAuth";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { ChangePasswordDialog } from "./pages/accounts/ChangePasswordDialog";
+import PermDataSettingIcon from "@mui/icons-material/PermDataSetting";
 
 const longTextMixin = {
 	textOverflow: "ellipsis",
@@ -150,14 +151,12 @@ export default function Sidebar({
 				{sortedLinks.map(
 					(link) =>
 						link.showInSidebar !== false && (
-							<ListItem
-								key={link.slug}
-								selected={
-									location.pathname.split("/")[2] ===
-									link.slug
-								}
-								disablePadding>
+							<ListItem key={link.slug} disablePadding>
 								<ListItemButton
+									selected={
+										location.pathname.split("/")[2] ===
+										link.slug
+									}
 									onClick={() => {
 										navigateWithQuery(
 											`/manage/${link.slug}`,
@@ -190,6 +189,13 @@ export default function Sidebar({
 					</ListItemButton>
 				</ListItem>
 			</List>
+			<Box sx={{ ml: 1, mt: "auto" }}>
+				<Tooltip title="Use custom API origin" placement="right">
+					<IconButton onClick={setCustomAPIOrigin}>
+						<PermDataSettingIcon />
+					</IconButton>
+				</Tooltip>
+			</Box>
 		</>
 	);
 

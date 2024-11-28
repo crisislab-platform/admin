@@ -10,11 +10,11 @@ import { useEffect, useState } from "react";
 
 import { ErrorBoundary } from "../components";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 import Sidebar from "./Sidebar";
 import { SidebarLink } from "../types";
 import { routes } from "./routes";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import { useOnMobile } from "../utils";
 
 const drawerWidth = 260;

@@ -2,7 +2,7 @@ import { Button, Grid, Stack } from "@mui/material";
 
 import { AccountsList } from "./AccountsList";
 import { CreateAccountDialog } from "./CreateAccountDialog";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import useAuth from "../../../auth/useAuth";
 import { useState } from "react";

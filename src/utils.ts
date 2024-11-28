@@ -10,10 +10,43 @@ import {
 
 import { generateFromString } from "generate-avatar";
 
-export const APIOrigin =
-	import.meta.env.DEV && window.location.search.includes("use-local-server")
-		? "http://localhost:8080"
-		: "https://crisislab-data.massey.ac.nz";
+function getAPIOrigin() {
+	if (window.location.search.includes("use-local-server")) {
+		return "http://localhost:8080";
+	}
+
+	const customOrigin = localStorage.getItem("cl-custom-api-origin");
+	if (customOrigin) {
+		return customOrigin;
+	}
+
+	if (import.meta.env.VITE_DEFAULT_API_ORIGIN) {
+		return import.meta.env.VITE_DEFAULT_API_ORIGIN;
+	}
+
+	// Fallback to official
+	return "https://crisislab-data.massey.ac.nz";
+}
+
+export function setCustomAPIOrigin() {
+	const newOrigin = prompt(
+		"Enter custom API origin.\n\nInclude 'https://', but not '/api' or any path. (Do include ports if needed)\n\nLeave blank to remove custom API origin.\n\nThis will probably log you out. If something breaks, clear site data then reload.",
+	)
+		?.trim()
+		?.toLowerCase();
+
+	// User canceled action
+	if (newOrigin === null || newOrigin === undefined) return;
+
+	if (newOrigin === "") {
+		localStorage.removeItem("cl-custom-api-origin");
+	} else {
+		localStorage.setItem("cl-custom-api-origin", newOrigin);
+	}
+	location.reload();
+}
+
+export const APIOrigin = getAPIOrigin();
 export const APIBase = `${APIOrigin}/api/v2`;
 export const usersAPIBase = `${APIBase}/users`;
 export const sensorsAPIBase = `${APIBase}/sensors`;
@@ -81,7 +114,8 @@ export function setQueryParams(params: Record<string, string | null>) {
 // ~Center of New Zealand
 export const defaultPosition: [number, number] = [174.8, -41.325];
 
-export const mapURL = "https://shakemap.crisislab.org.nz";
+export const mapURL =
+	import.meta.env.VITE_SHAKEMAP_ORIGIN || "https://shakemap.crisislab.org.nz";
 
 export const sensorMenuTypes: SensorType[] = [
 	"Raspberry Shake 4D",

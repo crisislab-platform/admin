@@ -28,7 +28,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from "@mui/icons-material/Done";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import NotIcon from "@mui/icons-material/PriorityHigh";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 import { SensorsList } from "./SensorsList";
 import SortIcon from "@mui/icons-material/Sort";
 import useAuth from "../../../auth/useAuth";

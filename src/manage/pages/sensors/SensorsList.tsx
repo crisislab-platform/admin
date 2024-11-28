@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { FilterRule, Sensor, SensorID, SensorSortKey } from "../../../types";
 import { LoadingSpinner, SensorImage } from "../../../components";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router";
 
 import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";

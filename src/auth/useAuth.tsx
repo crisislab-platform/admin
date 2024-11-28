@@ -9,19 +9,14 @@ import {
 	useState,
 } from "react";
 import { getQueryParam, showErrorSnackbar, useGetQueryParam } from "./utils";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 
 import { User } from "../types";
 import { generateAvatar } from "../utils";
 import { useNavigateWithQuery } from "../components";
 import { useSnackbar } from "notistack";
-import { queryClient } from "../api";
 
 const authUserNamespace = "auth-v2-user";
-const baseURL =
-	import.meta.env.MODE === "production"
-		? "https://shakemap.crisislab.org.nz"
-		: "http://localhost:3000";
 
 interface AuthContextType {
 	user: User | null;

@@ -46,7 +46,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import { TransitionProps } from "@mui/material/transitions";
 import useAuth from "../../../auth/useAuth";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useSnackbar } from "notistack";
 import { ChangePasswordDialog } from "./ChangePasswordDialog";
 
@@ -117,10 +117,8 @@ export function AccountPanel() {
 	if (accountsQuery.isError) {
 		return (
 			<Alert severity="error">
-				<>
-					<AlertTitle>Error loading account details.</AlertTitle>
-					{accountsQuery.error}
-				</>
+				<AlertTitle>Error loading account details.</AlertTitle>
+				{accountsQuery.error + ""}
 			</Alert>
 		);
 	}

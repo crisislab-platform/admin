@@ -1,22 +1,10 @@
-import {
-	Autocomplete,
-	Box,
-	InputAdornment,
-	ListItem,
-	Stack,
-	TextField,
-} from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
-import { LiveDataGraphs, SensorStatusIcon } from "../../../components";
-import { useQuery } from "react-query";
-import useAuth from "../../../auth/useAuth";
-import { makeFetchSensors } from "../../../api";
+import { Stack } from "@mui/material";
+import { useState } from "react";
+import { LiveDataGraphs } from "../../../components";
 import { Sensor } from "../../../types";
 import { SensorSelector } from "../../../components/SensorSelector";
 
 export function SensorsSideBySide() {
-	const { user } = useAuth();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
 	const [sensor1, setSensor1] = useState<Sensor | null>(null);
 	const [sensor2, setSensor2] = useState<Sensor | null>(null);
 
