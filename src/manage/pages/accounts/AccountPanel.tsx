@@ -117,10 +117,8 @@ export function AccountPanel() {
 	if (accountsQuery.isError) {
 		return (
 			<Alert severity="error">
-				<>
-					<AlertTitle>Error loading account details.</AlertTitle>
-					{accountsQuery.error}
-				</>
+				<AlertTitle>Error loading account details.</AlertTitle>
+				{accountsQuery.error + ""}
 			</Alert>
 		);
 	}
