@@ -26,7 +26,7 @@ export function EditChartMarkerPanel() {
 
 	const schema = getCreateAndEditMarkerSchema(user!.token);
 	const {
-		submitCreate,
+		submitEdit,
 		readyToSubmit,
 		resetFormWithNewValues,
 		formState,
@@ -53,7 +53,7 @@ export function EditChartMarkerPanel() {
 		return false;
 	}, [selectedMarker, formState]);
 
-	const readyToSave = readyToSubmit && changesMade;
+	const readyToSave = readyToSubmit && changesMade && selectedMarker;
 
 	return (
 		<Box>
@@ -62,7 +62,8 @@ export function EditChartMarkerPanel() {
 					sx={{ ml: "auto" }}
 					variant="contained"
 					color="warning"
-					disabled={!readyToSave}>
+					disabled={!readyToSave}
+					onClick={() => submitEdit(selectedMarker!.id)}>
 					Save changes
 				</Button>
 			</Stack>
