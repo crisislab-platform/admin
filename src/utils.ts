@@ -85,6 +85,10 @@ export const roles: Record<string, Role> = {
 		raw: "sensor-data:db-size",
 		text: "Query size of database",
 	},
+	"charts:markers": {
+		raw: "charts:markers",
+		text: "Manage live chart markers",
+	},
 };
 
 export function userHasPermission(
@@ -208,4 +212,9 @@ export function formatBytes(bytes: number, decimals = 1) {
 	const i = Math.floor(Math.log(bytes) / Math.log(k));
 
 	return `${(bytes / Math.pow(k, i)).toFixed(decimals)} ${sizes[i]}`;
+}
+
+export function useToolbarHeight() {
+	const onMobile = useOnMobile();
+	return onMobile ? 64 : 56;
 }
