@@ -6,19 +6,37 @@ import { Outlet } from "react-router";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import useAuth from "../../../auth/useAuth";
 import { useState } from "react";
-import { userHasPermission } from "../../../utils";
+import { userHasPermission, useToolbarHeight } from "../../../utils";
 
 export function AccountsPage() {
 	const { user } = useAuth();
 	const [createAccountPopupOpen, setCreateAccountPopupOpen] = useState(false);
+	const toolbarHeight = useToolbarHeight();
 
 	function onCreateAccountPopupClose() {
 		setCreateAccountPopupOpen(false);
 	}
 
 	return (
-		<Grid container sx={{ w: "100%", h: "100%", flex: 1 }}>
-			<Grid item xs={12} md={6}>
+		<Grid
+			container
+			sx={{
+				height: `calc(100vh - ${toolbarHeight}px)`,
+				maxHeight: `calc(100vh - ${toolbarHeight}px)`,
+				w: "100%",
+				flex: "1",
+			}}>
+			<Grid
+				item
+				xs={12}
+				md={6}
+				sx={{
+					height: "100%",
+					maxHeight: "100%",
+					overflow: "auto",
+					borderRight: (theme) =>
+						`1px solid ${theme.palette.divider}`,
+				}}>
 				<Stack>
 					{userHasPermission(user, "users:write") && (
 						<Stack
@@ -44,7 +62,16 @@ export function AccountsPage() {
 					<AccountsList />
 				</Stack>
 			</Grid>
-			<Grid item xs={12} md={6} p={1}>
+			<Grid
+				item
+				sx={{
+					height: "100%",
+					maxHeight: "100%",
+					overflow: "auto",
+				}}
+				xs={12}
+				md={6}
+				p={1}>
 				<Outlet />
 			</Grid>
 		</Grid>
