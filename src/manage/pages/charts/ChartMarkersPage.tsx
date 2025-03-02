@@ -10,12 +10,12 @@ import {
 	ListItemText,
 	Stack,
 } from "@mui/material";
-import { Outlet, useParams } from "react-router";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router";
 import { useOnMobile, useToolbarHeight } from "../../../utils";
 import useAuth from "../../../auth/useAuth";
 import { useQuery } from "react-query";
 import { makeFetchChartMarkers } from "../../../api";
-import { LinkWithQuery, LoadingSpinner } from "../../../components";
+import { generateTo, LinkWithQuery, LoadingSpinner } from "../../../components";
 import { useState } from "react";
 import { getCreateAndEditMarkerSchema } from "./markerSchema";
 import { CreateThingForm } from "../../../components/CreateAndEditForms";
@@ -28,6 +28,8 @@ export function ChartMarkersPage() {
 	);
 	const onMobile = useOnMobile();
 	const toolbarHeight = useToolbarHeight();
+	const location = useLocation();
+	const navigate = useNavigate();
 
 	const [createMakerFormOpen, setCreateMarkerFormOpen] = useState(false);
 
@@ -41,6 +43,9 @@ export function ChartMarkersPage() {
 	const selectedMarkerID = rawMarkerID && Number(rawMarkerID);
 
 	const schema = getCreateAndEditMarkerSchema(user!.token);
+
+	const onCreate = () =>
+		navigate(generateTo("/manage/chart-markers", location));
 
 	return (
 		<Grid
@@ -86,6 +91,7 @@ export function ChartMarkersPage() {
 							title="Create new Marker"
 							open={createMakerFormOpen}
 							onClose={closeCreateMarkerForm}
+							onCreate={onCreate}
 							schema={schema}
 						/>
 					</Stack>

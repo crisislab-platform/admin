@@ -6,9 +6,14 @@ import {
 import { getCreateAndEditMarkerSchema } from "./markerSchema";
 import useAuth from "../../../auth/useAuth";
 import { useQuery } from "react-query";
-import { makeFetchChartMarkers } from "../../../api";
-import { useParams } from "react-router";
+import {
+	makeFetchChartMarkers,
+	deleteMarker as APIDeleteMarker,
+	queryClient,
+} from "../../../api";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { useEffect, useMemo } from "react";
+import { generateTo, NavigateWithQuery } from "../../../components";
 
 export function EditChartMarkerPanel() {
 	const { user } = useAuth();
@@ -19,6 +24,8 @@ export function EditChartMarkerPanel() {
 
 	const { markerID: rawMarkerID } = useParams();
 	const selectedMarkerID = rawMarkerID && Number(rawMarkerID);
+	const navigate = useNavigate();
+	const location = useLocation();
 
 	const selectedMarker = markersQuery.data?.find(
 		(m) => m.id === selectedMarkerID,
@@ -53,17 +60,55 @@ export function EditChartMarkerPanel() {
 		return false;
 	}, [selectedMarker, formState]);
 
+	async function deleteMarker() {
+		if (!user?.token) {
+			return;
+		}
+
+		if (!selectedMarker?.id) {
+			return;
+		}
+
+		if (
+			!window.confirm(
+				`Are you sure you want to delete marker ${selectedMarker.id}`,
+			)
+		) {
+			return;
+		}
+
+		await APIDeleteMarker(user.token, selectedMarker.id);
+
+		queryClient.invalidateQueries("charts/markers");
+
+		navigate(generateTo("/manage/chart-markers", location));
+	}
+
 	const readyToSave = readyToSubmit && changesMade && selectedMarker;
+
+	async function saveChanges() {
+		await submitEdit(selectedMarker!.id);
+	}
 
 	return (
 		<Box>
-			<Stack direction="row" sx={{ pb: 1 }}>
+			<Stack
+				direction="row"
+				sx={{ pb: 1 }}
+				gap={1}
+				justifyContent="flex-end">
 				<Button
-					sx={{ ml: "auto" }}
+					variant="outlined"
+					color="error"
+					onClick={deleteMarker}
+					disabled={!selectedMarker?.id}>
+					Delete
+				</Button>
+				<Button
 					variant="contained"
-					color="warning"
+					color="success"
 					disabled={!readyToSave}
-					onClick={() => submitEdit(selectedMarker!.id)}>
+					onClick={saveChanges}>
 					Save changes
 				</Button>
 			</Stack>

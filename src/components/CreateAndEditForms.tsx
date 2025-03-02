@@ -11,7 +11,14 @@ import {
 	Stack,
 	TextField,
 } from "@mui/material";
-import { ChangeEvent, ReactNode, Reducer, useId, useReducer } from "react";
+import {
+	ChangeEvent,
+	ReactNode,
+	Reducer,
+	useId,
+	useReducer,
+	useState,
+} from "react";
 import { Entries } from "../types";
 
 type BaseThingType = Record<string, any>;
@@ -169,9 +176,16 @@ function useFormFields<T extends BaseThingType>(
 		Reducer<FormState<T>, FormStateReducerAction<T>>,
 		[CreateAndEditThingsSchema<T>, T | undefined]
 	>(formStateReducer, [schema, initialValue], getInitialState);
+	const [loading, setLoading] = useState(false);
 
 	const readyToSubmit =
 		Object.values(formState).find((v) => !v.valid) === undefined;
+
+	const currentThing = readyToSubmit
+		? (Object.fromEntries(
+				Object.entries(formState).map(([k, v]) => [k, v.value]),
+		  ) as T)
+		: null;
 
 	function makeHandleFieldChange<Property extends keyof T = keyof T>(
 		property: Property,
@@ -213,24 +227,35 @@ function useFormFields<T extends BaseThingType>(
 	}
 
 	async function submitCreate(): Promise<boolean> {
-		if (!readyToSubmit) return false;
-
-		return schema.handleCreateSubmit(
-			Object.fromEntries(
-				Object.entries(formState).map(([k, v]) => [k, v.value]),
-			) as T,
-		);
+		if (!readyToSubmit) {
+			return false;
+		}
+		setLoading(true);
+		try {
+			const v = await schema.handleCreateSubmit(currentThing!);
+			setLoading(false);
+			return v;
+		} catch (err) {
+			console.error(err);
+			setLoading(false);
+			return false;
+		}
 	}
 
 	async function submitEdit(id: number): Promise<boolean> {
-		if (!readyToSubmit) return false;
-
-		return schema.handleEditSubmit(
-			id,
-			Object.fromEntries(
-				Object.entries(formState).map(([k, v]) => [k, v.value]),
-			) as T,
-		);
+		if (!readyToSubmit) {
+			return false;
+		}
+		setLoading(true);
+		try {
+			const v = await schema.handleEditSubmit(id, currentThing!);
+			setLoading(false);
+			return v;
+		} catch (err) {
+			console.error(err);
+			setLoading(false);
+			return false;
+		}
 	}
 
 	return {
@@ -242,6 +267,8 @@ function useFormFields<T extends BaseThingType>(
 		makeHandleFieldChange,
 		schema,
 		resetFormWithNewValues,
+		currentThing,
+		loading,
 	};
 }
 export const useCreateOrEditThingFormFields = useFormFields;
@@ -253,12 +280,14 @@ export function CreateOrEditThingForm<
 	schema,
 	formState,
 	makeHandleFieldChange,
+	loading,
 }: {
 	schema: CreateAndEditThingsSchema<T>;
 	formState: FormState<T>;
 	makeHandleFieldChange: (
 		property: Property,
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
+	loading: boolean;
 }) {
 	const baseID = useId();
 
@@ -271,7 +300,9 @@ export function CreateOrEditThingForm<
 			).map(([property, field]: [Property, T[Property]]) => {
 				const fieldState = formState[property];
 				let disabled = false;
-				if (field.requires !== undefined) {
+				if (loading) {
+					disabled = true;
+				} else if (field.requires !== undefined) {
 					if (typeof field.requires === "function") {
 						disabled = field.requires(formState);
 					} else {
@@ -352,6 +383,7 @@ export interface CreateThingFormOptions<T extends BaseThingType> {
 	onClose: () => void;
 	title: string;
 	submitLabel?: string;
+	onCreate?: (thing: T) => void;
 }
 export function CreateThingForm<T extends BaseThingType>({
 	schema,
@@ -359,6 +391,7 @@ export function CreateThingForm<T extends BaseThingType>({
 	onClose,
 	title,
 	submitLabel = "Create",
+	onCreate,
 }: CreateThingFormOptions<T>) {
 	const { submitCreate, readyToSubmit, ...formState } = useFormFields(schema);
 	return (
@@ -371,7 +404,10 @@ export function CreateThingForm<T extends BaseThingType>({
 				<Button
 					onClick={async () => {
 						const ok = await submitCreate();
-						if (ok) onClose();
+						if (ok) {
+							onClose();
+							onCreate?.(formState.currentThing!);
+						}
 					}}
 					disabled={!readyToSubmit}>
 					{submitLabel}
