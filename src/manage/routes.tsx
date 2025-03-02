@@ -16,6 +16,10 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { roles } from "../utils";
 import { ExportSensorDataPage } from "./pages/data-export/ExportSensorData";
 import StorageIcon from "@mui/icons-material/Storage";
+import WavesIcon from "@mui/icons-material/Waves";
+import { ChartMarkersPage } from "./pages/charts/ChartMarkersPage";
+import { EditChartMarkerPanel } from "./pages/charts/EditChartMarkerPanel";
+
 export const routes: (Route | SidebarLink)[] = [
 	{
 		position: 0,
@@ -48,6 +52,22 @@ export const routes: (Route | SidebarLink)[] = [
 				text: "Account information",
 				Element: AccountPanel,
 				requiredRole: roles["users:read"],
+			},
+		],
+	},
+	{
+		position: 1.1,
+		slug: "chart-markers",
+		text: "Chart markers",
+		Icon: WavesIcon,
+		Element: ChartMarkersPage,
+		requiredRole: roles["charts:markers"],
+		subRoutes: [
+			{
+				slug: ":markerID",
+				text: "Edit marker",
+				Element: EditChartMarkerPanel,
+				requiredRole: roles["charts:markers"],
 			},
 		],
 	},

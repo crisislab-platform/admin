@@ -79,3 +79,19 @@ export type FilterRule<T> = {
 	value: string;
 	id: string;
 };
+
+export const chartMarkerTypes = ["fixed-value", "24h-max"] as const;
+export const chartMarkerStyles = ["dotted", "dashed", "solid"] as const;
+export interface ChartMarker {
+	id: number;
+	sensor_channel: string;
+	sensor_type: string;
+	type: (typeof chartMarkerTypes)[number];
+	label: string;
+	colour: string;
+	style: (typeof chartMarkerStyles)[number];
+	value: number;
+	enabled: boolean;
+}
+
+export type Entries<T, P extends keyof T = keyof T> = [P, T[P]][];

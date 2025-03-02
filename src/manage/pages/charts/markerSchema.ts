@@ -1,0 +1,112 @@
+import { createMarker, queryClient, updateMarker } from "../../../api";
+import { CreateAndEditThingsSchema } from "../../../components/CreateAndEditForms";
+import {
+	ChartMarker,
+	chartMarkerStyles,
+	chartMarkerTypes,
+} from "../../../types";
+import { sensorTypeChannels } from "../../../utils";
+
+export const getCreateAndEditMarkerSchema = (
+	token: string,
+): CreateAndEditThingsSchema<ChartMarker> => ({
+	async handleCreateSubmit(data) {
+		let success = false;
+		try {
+			await queryClient.executeMutation({
+				mutationFn: () => {
+					return createMarker(token, data);
+				},
+				onSuccess() {
+					queryClient.invalidateQueries("charts/markers");
+					success = true;
+				},
+				onError(error) {
+					console.error("Mutation failed:", error);
+					success = false;
+				},
+			});
+		} catch {
+			return false;
+		}
+
+		return success;
+	},
+	async handleEditSubmit(id, data) {
+		let success = false;
+		try {
+			await queryClient.executeMutation({
+				mutationFn: () => {
+					return updateMarker(token, id, data);
+				},
+				onSuccess() {
+					queryClient.invalidateQueries("charts/markers");
+					success = true;
+				},
+				onError(error) {
+					console.error("Mutation failed:", error);
+					success = false;
+				},
+			});
+		} catch {
+			return false;
+		}
+
+		return success;
+	},
+
+	fields: {
+		sensor_type: {
+			label: "Sensor type",
+			type: "select",
+			getOptions: () => Object.keys(sensorTypeChannels),
+			default: "Raspberry Shake 4D",
+		},
+		sensor_channel: {
+			label: "Channel",
+			type: "select",
+			getOptions: (data) => sensorTypeChannels[data.sensor_type.value!],
+			requires: "sensor_type",
+		},
+
+		label: {
+			label: "Marker Label",
+			type: "text",
+		},
+		colour: {
+			label: "Colour",
+			type: "colour",
+			default: "#FF0000",
+		},
+		style: {
+			label: "Style",
+			type: "select",
+			getOptions: () => chartMarkerStyles,
+			default: "solid",
+		},
+		type: {
+			label: "Type",
+			type: "select",
+			getOptions: () => chartMarkerTypes,
+			default: "fixed-value",
+		},
+		value: {
+			label: "Marked value",
+			type: "number",
+			default: 0,
+			optional: true,
+			requires(state) {
+				if (state.type.value === "24h-max") return true;
+				return false;
+			},
+			validate(state) {
+				if (state.type.value === "24h-max") return true;
+
+				return (
+					state.value.value !== undefined &&
+					!Number.isNaN(state.value.value)
+				);
+			},
+		},
+	},
+});

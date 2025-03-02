@@ -17,6 +17,7 @@ import {
 	filterRuleOperations,
 	useOnMobile,
 	userHasPermission,
+	useToolbarHeight,
 } from "../../../utils";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -74,7 +75,7 @@ export function SensorsPage() {
 
 	const sortMenuOpen = Boolean(sortMenuAnchorEl);
 
-	const toolbarHeight = onMobile ? 64 : 56;
+	const toolbarHeight = useToolbarHeight();
 
 	function onCreateSensorDialogClose() {
 		setCreateSensorDialogOpen(false);

@@ -1,6 +1,15 @@
 import { QueryClient } from "react-query";
-import { Account, Role, Sensor, SensorID, ServerAccount, User } from "./types";
 import {
+	Account,
+	ChartMarker,
+	Role,
+	Sensor,
+	SensorID,
+	ServerAccount,
+	User,
+} from "./types";
+import {
+	APIBase,
 	generateAvatar,
 	getObjectWithOnlyChangedProperties,
 	parseRoles,
@@ -264,4 +273,82 @@ export function makeGetSensorToken(
 		}
 		return await response.json();
 	};
+}
+
+export function makeFetchChartMarkers(
+	token?: string,
+): () => Promise<ChartMarker[]> {
+	return async () => {
+		const response = await fetch(APIBase + "/charts/markers", {
+			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+		});
+		if (!response.ok) {
+			const data = await response.text();
+			throw new Error(
+				`Network response was not ok (${response.status}: ${
+					response.statusText
+				})${data ? ` ${data}` : ""}`,
+			);
+		}
+
+		return await response.json();
+	};
+}
+
+export async function createMarker(
+	token: string,
+	data: Omit<Omit<ChartMarker, "id">, "enabled">,
+): Promise<ChartMarker> {
+	const response = await fetch(APIBase + "/charts/markers", {
+		headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+		method: "POST",
+		body: JSON.stringify(data),
+	});
+	if (!response.ok) {
+		const data = await response.text();
+		throw new Error(
+			`Network response was not ok (${response.status}: ${
+				response.statusText
+			})${data ? ` ${data}` : ""}`,
+		);
+	}
+
+	const id = Number(await response.text());
+
+	return { enabled: true, ...data, id };
+}
+
+export async function updateMarker(
+	token: string,
+	id: number,
+	data: Partial<ChartMarker>,
+) {
+	const response = await fetch(APIBase + "/charts/markers/" + id, {
+		headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+		method: "PATCH",
+		body: JSON.stringify(data),
+	});
+	if (!response.ok) {
+		const data = await response.text();
+		throw new Error(
+			`Network response was not ok (${response.status}: ${
+				response.statusText
+			})${data ? ` ${data}` : ""}`,
+		);
+	}
+}
+
+export async function deleteMarker(token: string, id: number) {
+	const response = await fetch(APIBase + "/charts/markers/" + id, {
+		headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+		method: "DELETE",
+	});
+	if (!response.ok) {
+		const data = await response.text();
+		throw new Error(
+			`Network response was not ok (${response.status}: ${
+				response.statusText
+			})${data ? ` ${data}` : ""}`,
+		);
+	}
 }
