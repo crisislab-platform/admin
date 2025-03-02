@@ -1,4 +1,3 @@
-import { ReactElement, ReactNode } from "react";
 import { SvgIcon } from "@mui/material";
 import { roles } from "./utils";
 
@@ -7,9 +6,10 @@ export interface MotionData {
 	value: number;
 }
 
+export type RawRole = keyof typeof roles;
 export type Role = {
 	text: string;
-	raw: keyof typeof roles;
+	raw: RawRole;
 };
 
 export type Account = {

@@ -13,7 +13,7 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import SensorsIcon from "@mui/icons-material/Sensors";
 import SensorsOutlinedIcon from "@mui/icons-material/SensorsOutlined";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { roles } from "../utils";
+import { role, roles } from "../utils";
 import { ExportSensorDataPage } from "./pages/data-export/ExportSensorData";
 import StorageIcon from "@mui/icons-material/Storage";
 import WavesIcon from "@mui/icons-material/Waves";
@@ -28,13 +28,13 @@ export const routes: (Route | SidebarLink)[] = [
 		ActiveIcon: SensorsIcon,
 		Icon: SensorsOutlinedIcon,
 		Element: SensorsPage,
-		requiredRole: roles["sensors:read"],
+		requiredRole: role("sensors:read"),
 		subRoutes: [
 			{
 				slug: ":sensorID",
 				text: "Sensor info",
 				Element: SensorPanel,
-				requiredRole: roles["sensors:read"],
+				requiredRole: role("sensors:read"),
 			},
 		],
 	},
@@ -45,13 +45,13 @@ export const routes: (Route | SidebarLink)[] = [
 		Icon: PersonOutlineOutlinedIcon,
 		ActiveIcon: PersonIcon,
 		Element: AccountsPage,
-		requiredRole: roles["users:read"],
+		requiredRole: role("users:read"),
 		subRoutes: [
 			{
 				slug: ":accountID",
 				text: "Account information",
 				Element: AccountPanel,
-				requiredRole: roles["users:read"],
+				requiredRole: role("users:read"),
 			},
 		],
 	},
@@ -61,13 +61,13 @@ export const routes: (Route | SidebarLink)[] = [
 		text: "Chart markers",
 		Icon: WavesIcon,
 		Element: ChartMarkersPage,
-		requiredRole: roles["charts:markers"],
+		requiredRole: role("charts:markers"),
 		subRoutes: [
 			{
 				slug: ":markerID",
 				text: "Edit marker",
 				Element: EditChartMarkerPanel,
-				requiredRole: roles["charts:markers"],
+				requiredRole: role("charts:markers"),
 			},
 		],
 	},
@@ -77,7 +77,7 @@ export const routes: (Route | SidebarLink)[] = [
 		slug: "sensors-side-by-side",
 		text: "Sensors: side-by-side",
 		Element: SensorsSideBySide,
-		requiredRole: roles["sensors:read"],
+		requiredRole: role("sensors:read"),
 		Icon: CompareIcon,
 	},
 	{
@@ -86,7 +86,7 @@ export const routes: (Route | SidebarLink)[] = [
 		text: "Data Export",
 		Icon: FileDownloadIcon,
 		Element: ExportSensorDataPage,
-		requiredRole: roles["sensor-data:bulk-export"],
+		requiredRole: role("sensor-data:bulk-export"),
 	},
 	{
 		position: 4,
@@ -94,6 +94,6 @@ export const routes: (Route | SidebarLink)[] = [
 		text: "Database size",
 		Icon: StorageIcon,
 		Element: DatabaseSizePage,
-		requiredRole: roles["sensor-data:db-size"],
+		requiredRole: role("sensor-data:db-size"),
 	},
 ];

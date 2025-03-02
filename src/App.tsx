@@ -22,7 +22,7 @@ import { routes as manageRoutes } from "./manage/routes";
 import { theme } from "beryllium";
 import { useRef } from "react";
 import { MaterialDesignContent } from "notistack";
-import { userHasPermission } from "./utils";
+import { publicPermissions, userHasPermission } from "./utils";
 import { queryClient } from "./api";
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
@@ -88,7 +88,7 @@ function RouteElement({ route }: { route: RouteType }) {
 	const layout = (
 		<ErrorBoundary>
 			{userHasPermission(user, route.requiredRole.raw) ||
-			route.requiredRole.raw === "sensors:read" ? (
+			publicPermissions.includes(route.requiredRole) ? (
 				<route.Element />
 			) : (
 				<MissingRole role={route.requiredRole} addPadding />

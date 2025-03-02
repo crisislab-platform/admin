@@ -1,6 +1,7 @@
 import { useMediaQuery, useTheme } from "@mui/material";
 import {
 	FilterRuleOperation,
+	RawRole,
 	Role,
 	Sensor,
 	SensorID,
@@ -91,13 +92,23 @@ export const roles: Record<string, Role> = {
 	},
 };
 
+// Granted to all non-logged in public users automatically
+export const publicPermissions: Role[] = [role("sensors:read")];
+
+export function role(raw: RawRole): Role {
+	return roles[raw];
+}
+
 export function userHasPermission(
 	user: User | null | undefined,
-	permission: keyof typeof roles,
+	_permission: RawRole | Role,
 ): Boolean {
-	if (!user) return false;
+	const permission =
+		typeof _permission === "string" ? role(_permission) : _permission;
 
-	if (!user.roles.find((r) => r.raw == permission)) return false;
+	if (!user) return publicPermissions.includes(permission);
+
+	if (!user.roles.find((r) => r.raw == permission.raw)) return false;
 	return true;
 }
 

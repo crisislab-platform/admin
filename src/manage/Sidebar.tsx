@@ -23,7 +23,12 @@ import PasswordIcon from "@mui/icons-material/Password";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { SidebarLink } from "../types";
 import StarIcon from "@mui/icons-material/LocalPolice";
-import { mapURL, setCustomAPIOrigin, useOnMobile } from "../utils";
+import {
+	mapURL,
+	setCustomAPIOrigin,
+	useOnMobile,
+	userHasPermission,
+} from "../utils";
 import useAuth from "../auth/useAuth";
 import { useLocation } from "react-router";
 import { ChangePasswordDialog } from "./pages/accounts/ChangePasswordDialog";
@@ -52,29 +57,31 @@ export default function Sidebar({
 	const navigateWithQuery = useNavigateWithQuery();
 
 	const sortedLinks = useMemo(() => {
-		const linksCopy = [...links];
-		linksCopy.sort((a, b) => {
-			if (b.position === undefined && a.position === undefined) {
-				return 0;
-			}
-			if (a.position && b.position === undefined) {
-				return -1;
-			}
-			if (b.position && a.position === undefined) {
-				return 1;
-			}
+		return [...links]
+			.filter((link) => {
+				return userHasPermission(user, link.requiredRole);
+			})
+			.toSorted((a, b) => {
+				if (b.position === undefined && a.position === undefined) {
+					return 0;
+				}
+				if (a.position && b.position === undefined) {
+					return -1;
+				}
+				if (b.position && a.position === undefined) {
+					return 1;
+				}
 
-			// Smaller position = higher in list
-			if (a.position! < b.position!) {
-				return -1;
-			}
-			if (b.position! < a.position!) {
-				return 1;
-			}
-			return 0;
-		});
-		return linksCopy;
-	}, [links]);
+				// Smaller position = higher in list
+				if (a.position! < b.position!) {
+					return -1;
+				}
+				if (b.position! < a.position!) {
+					return 1;
+				}
+				return 0;
+			});
+	}, [links, user]);
 
 	const location = useLocation();
 	const onIOS =
