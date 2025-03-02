@@ -75,7 +75,7 @@ export const routes: (Route | SidebarLink)[] = [
 	{
 		position: 2,
 		slug: "sensors-side-by-side",
-		text: "Sensors: side-by-side",
+		text: "Compare sensors",
 		Element: SensorsSideBySide,
 		requiredRole: role("sensors:read"),
 		Icon: CompareIcon,
