@@ -1,4 +1,11 @@
-import { Alert, Box, Button, Stack } from "@mui/material";
+import {
+	Alert,
+	Box,
+	Button,
+	FormControlLabel,
+	Stack,
+	Switch,
+} from "@mui/material";
 import {
 	CreateOrEditThingForm,
 	useCreateOrEditThingFormFields,
@@ -9,10 +16,11 @@ import { useQuery } from "react-query";
 import {
 	makeFetchChartMarkers,
 	deleteMarker as APIDeleteMarker,
+	updateMarker as APIUpdateMarker,
 	queryClient,
 } from "../../../api";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { useEffect, useMemo } from "react";
+import { ChangeEvent, useEffect, useMemo } from "react";
 import { generateTo, NavigateWithQuery } from "../../../components";
 
 export function EditChartMarkerPanel() {
@@ -90,6 +98,24 @@ export function EditChartMarkerPanel() {
 		await submitEdit(selectedMarker!.id);
 	}
 
+	async function onEnabledChange(e: ChangeEvent<HTMLInputElement>) {
+		if (!user?.token) {
+			return;
+		}
+
+		if (!selectedMarker?.id) {
+			return;
+		}
+
+		await APIUpdateMarker(user.token, selectedMarker.id, {
+			enabled: e.target.checked,
+		});
+
+		queryClient.invalidateQueries("charts/markers");
+	}
+
+	const switchChecked = selectedMarker?.enabled ?? true;
+
 	return (
 		<Box>
 			<Stack
@@ -97,6 +123,17 @@ export function EditChartMarkerPanel() {
 				sx={{ pb: 1 }}
 				gap={1}
 				justifyContent="flex-end">
+				<FormControlLabel
+					sx={{ mr: "auto", ml: 0.1 }}
+					control={
+						<Switch
+							disabled={!selectedMarker || markersQuery.isLoading}
+							checked={switchChecked}
+							onChange={onEnabledChange}
+						/>
+					}
+					label={switchChecked ? "Enabled" : "Disabled"}
+				/>
 				<Button
 					variant="outlined"
 					color="error"
