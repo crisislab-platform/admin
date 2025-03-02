@@ -1,5 +1,5 @@
 import { FormEvent, useEffect } from "react";
-import { Stack, TextField, Typography } from "@mui/material";
+import { Link, Stack, TextField, Typography } from "@mui/material";
 
 import { LinkWithQuery } from "../components";
 import { LoadingButton } from "@mui/lab";
@@ -76,9 +76,12 @@ export default function LoginPage() {
 					</LoadingButton>
 				</Stack>
 			</form>
-			<LinkWithQuery to="/auth/login-help" className="arrow-forwards">
+			<Link
+				component={LinkWithQuery}
+				to="/auth/login-help"
+				className="arrow-forwards">
 				Need help?
-			</LinkWithQuery>
+			</Link>
 		</Stack>
 	);
 }

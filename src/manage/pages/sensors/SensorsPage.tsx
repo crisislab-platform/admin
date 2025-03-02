@@ -109,6 +109,8 @@ export function SensorsPage() {
 					height: "100%",
 					maxHeight: "100%",
 					overflow: "auto",
+					borderRight: (theme) =>
+						`1px solid ${theme.palette.divider}`,
 				}}>
 				<Stack>
 					<Stack

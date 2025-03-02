@@ -10,12 +10,12 @@ import {
 	ListItemText,
 	Stack,
 } from "@mui/material";
-import { Outlet, useParams, Link as RouterLink } from "react-router";
+import { Outlet, useParams } from "react-router";
 import { useOnMobile, useToolbarHeight } from "../../../utils";
 import useAuth from "../../../auth/useAuth";
 import { useQuery } from "react-query";
 import { makeFetchChartMarkers } from "../../../api";
-import { LoadingSpinner } from "../../../components";
+import { LinkWithQuery, LoadingSpinner } from "../../../components";
 import { useState } from "react";
 import { getCreateAndEditMarkerSchema } from "./markerSchema";
 import { CreateThingForm } from "../../../components/CreateAndEditForms";
@@ -59,6 +59,8 @@ export function ChartMarkersPage() {
 					height: "100%",
 					maxHeight: "100%",
 					overflow: "auto",
+					borderRight: (theme) =>
+						`1px solid ${theme.palette.divider}`,
 				}}>
 				<Stack>
 					<Stack
@@ -91,7 +93,7 @@ export function ChartMarkersPage() {
 						<List disablePadding>
 							{markersQuery.data.map((marker) => (
 								<ListItemButton
-									component={RouterLink}
+									component={LinkWithQuery}
 									to={`./${marker.id}`}
 									key={marker.id}
 									selected={marker.id === selectedMarkerID}>

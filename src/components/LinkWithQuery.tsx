@@ -1,12 +1,14 @@
 import { Link as RouterLink, useLocation } from "react-router";
-import { Link } from "@mui/material";
+import { forwardRef, Ref } from "react";
 
-export function LinkWithQuery({ children, to, ...props }) {
+function _LinkWithQuery({ children, to, ...props }, ref: Ref<any>) {
 	const { search } = useLocation();
 
 	return (
-		<Link component={RouterLink} to={to + search} {...props}>
+		<RouterLink ref={ref} to={to + search} {...props}>
 			{children}
-		</Link>
+		</RouterLink>
 	);
 }
+
+export const LinkWithQuery = forwardRef(_LinkWithQuery);

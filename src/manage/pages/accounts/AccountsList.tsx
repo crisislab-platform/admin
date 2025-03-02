@@ -8,10 +8,10 @@ import {
 	ListItemText,
 	Tooltip,
 } from "@mui/material";
-import { Link as RouterLink, useParams } from "react-router";
+import { useParams } from "react-router";
 import { accountsQueryStaleTime } from "../../../utils";
 
-import { LoadingSpinner } from "../../../components";
+import { LinkWithQuery, LoadingSpinner } from "../../../components";
 import TickIcon from "@mui/icons-material/VerifiedUser";
 import { makeFetchAccounts } from "../../../api";
 import useAuth from "../../../auth/useAuth";
@@ -47,7 +47,7 @@ export function AccountsList() {
 			{(accountsQuery.data ?? []).map((account) => (
 				<ListItemButton
 					key={account.email}
-					component={RouterLink}
+					component={LinkWithQuery}
 					to={`./${encodeURIComponent(account.email)}`}
 					selected={selectedAccountID === account.email}>
 					<ListItemAvatar>

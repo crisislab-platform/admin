@@ -7,8 +7,12 @@ import {
 	ListItemText,
 } from "@mui/material";
 import { FilterRule, Sensor, SensorID, SensorSortKey } from "../../../types";
-import { LoadingSpinner, SensorImage } from "../../../components";
-import { Link as RouterLink, useParams } from "react-router";
+import {
+	LinkWithQuery,
+	LoadingSpinner,
+	SensorImage,
+} from "../../../components";
+import { useParams } from "react-router";
 
 import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";
@@ -165,7 +169,7 @@ export function SensorsList({
 				return (
 					<ListItemButton
 						key={sensor.id}
-						component={RouterLink}
+						component={LinkWithQuery}
 						to={`./${sensor.id}`}
 						selected={sensorID === sensor.id}>
 						<ListItemIcon>

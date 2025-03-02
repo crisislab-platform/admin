@@ -26,6 +26,7 @@ type FormState<T extends BaseThingType> = {
 	};
 };
 export interface CreateAndEditThingsSchema<T extends BaseThingType> {
+	ignoreProperties?: (keyof T)[];
 	fields: {
 		[Property in keyof T]?: {
 			label: string;
@@ -35,6 +36,7 @@ export interface CreateAndEditThingsSchema<T extends BaseThingType> {
 				| keyof Omit<T, Property>
 				| ((state: FormState<T>) => boolean);
 			validate?: (state: FormState<T>) => boolean;
+			recheckTheseWhenIChange?: (keyof Omit<T, Property>)[];
 		} & (
 			| {
 					type: "select";
@@ -63,26 +65,24 @@ export interface CreateAndEditThingsSchema<T extends BaseThingType> {
 	handleEditSubmit: (id: number, structure: T) => Promise<boolean>;
 }
 
-function getInitialState<T extends BaseThingType>(
-	schema: CreateAndEditThingsSchema<T>,
-): FormState<T> {
+function getInitialState<T extends BaseThingType>([schema, initialValue]: [
+	CreateAndEditThingsSchema<T>,
+	T | undefined,
+]): FormState<T> {
 	const state: Partial<FormState<T>> = {};
 
 	for (const [fieldName, field] of Object.entries(
 		schema.fields,
 	) as Entries<T>) {
+		const value = initialValue?.[fieldName] ?? field.default ?? undefined;
 		state[fieldName] = {
-			value: field.default ?? undefined,
+			value,
 			empty:
-				field.default !== undefined
-					? field.default === undefined || field.default === ""
+				value !== undefined
+					? value === undefined || value === ""
 					: true,
-			valid: field.optional
-				? true
-				: field.default !== undefined
-				? true
-				: false,
-			rawValue: field.default !== undefined ? field.default + "" : "",
+			valid: field.optional ? true : value !== undefined ? true : false,
+			rawValue: value !== undefined ? value + "" : "",
 		};
 	}
 
@@ -102,41 +102,74 @@ function formStateReducer<T extends BaseThingType>(
 	state: FormState<T>,
 	{ property, value, rawValue, schema }: FormStateReducerAction<T>,
 ): FormState<T> {
+	if (schema.ignoreProperties?.includes(property)) {
+		return state;
+	}
+
 	const schemaField = schema.fields[property]!;
 
-	const empty = value === undefined || value === "";
 	const newState = {
 		...state,
 		[property]: {
 			...state[property],
 			value,
 			rawValue,
-			empty,
+			empty: false,
 			valid: true,
 		},
 	};
 
-	const validatorPassed =
-		schemaField.validate !== undefined
-			? schemaField.validate(newState)
-			: true;
-
-	const emptinessOkay = schemaField.optional ? true : !empty;
-
-	const valid = validatorPassed && emptinessOkay;
+	const { valid, empty } = isValid(schema, property, newState);
 
 	newState[property].valid = valid;
+	newState[property].empty = empty;
+
+	if (schemaField.recheckTheseWhenIChange) {
+		for (const recheckProp of schemaField.recheckTheseWhenIChange) {
+			newState[recheckProp].valid = isValid(
+				schema,
+				recheckProp,
+				newState,
+			).valid;
+		}
+	}
 
 	return newState;
 }
 
+function isValid<T extends BaseThingType, Property extends keyof T = keyof T>(
+	schema: CreateAndEditThingsSchema<T>,
+	property: Property,
+	state: FormState<T>,
+) {
+	const schemaField = schema.fields[property]!;
+	const stateField = state[property];
+
+	const empty = stateField.value === undefined || stateField.value === "";
+
+	const validatorPassed =
+		schemaField.validate !== undefined ? schemaField.validate(state) : true;
+
+	const optionsOkay =
+		schemaField.type === "select"
+			? schemaField.getOptions(state).includes(stateField.value ?? "")
+			: true;
+
+	const emptinessOkay = schemaField.optional ? true : !empty;
+
+	const valid = validatorPassed && optionsOkay && emptinessOkay;
+
+	return { valid, empty };
+}
+
 function useFormFields<T extends BaseThingType>(
 	schema: CreateAndEditThingsSchema<T>,
+	initialValue?: T,
 ) {
 	const [formState, updateField] = useReducer<
 		Reducer<FormState<T>, FormStateReducerAction<T>>,
-		CreateAndEditThingsSchema<T>
-	>(formStateReducer, schema, getInitialState);
+		[CreateAndEditThingsSchema<T>, T | undefined]
+	>(formStateReducer, [schema, initialValue], getInitialState);
 
 	const readyToSubmit =
 		Object.values(formState).find((v) => !v.valid) === undefined;
@@ -169,6 +202,17 @@ function useFormFields<T extends BaseThingType>(
 			});
 	}
 
+	function resetFormWithNewValues(newValues: T) {
+		for (const property in newValues) {
+			updateField({
+				property,
+				schema,
+				rawValue: newValues[property] + "",
+				value: newValues[property],
+			});
+		}
+	}
+
 	async function submitCreate(): Promise<boolean> {
 		if (!readyToSubmit) return false;
 
@@ -198,6 +242,7 @@ function useFormFields<T extends BaseThingType>(
 		updateField,
 		makeHandleFieldChange,
 		schema,
+		resetFormWithNewValues,
 	};
 }
 export const useCreateOrEditThingFormFields = useFormFields;

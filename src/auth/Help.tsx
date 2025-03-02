@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Link, Typography } from "@mui/material";
 import { LinkWithQuery } from "../components";
 import { titleSuffix } from "./utils";
 import { useEffect } from "react";
@@ -18,9 +18,12 @@ export default function RegisterPage() {
 				Similarly, if you've lost your password, ask an admin to reset
 				it for you.
 			</Typography>
-			<LinkWithQuery to="/auth/login" className="arrow-back">
+			<Link
+				component={LinkWithQuery}
+				to="/auth/login"
+				className="arrow-back">
 				Back to login
-			</LinkWithQuery>
+			</Link>
 		</>
 	);
 }

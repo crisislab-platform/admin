@@ -54,13 +54,14 @@ export const getCreateAndEditMarkerSchema = (
 
 		return success;
 	},
-
+	ignoreProperties: ["id", "enabled"],
 	fields: {
 		sensor_type: {
 			label: "Sensor type",
 			type: "select",
 			getOptions: () => Object.keys(sensorTypeChannels),
 			default: "Raspberry Shake 4D",
+			recheckTheseWhenIChange: ["sensor_channel"],
 		},
 		sensor_channel: {
 			label: "Channel",
