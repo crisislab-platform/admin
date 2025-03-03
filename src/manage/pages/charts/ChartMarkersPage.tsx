@@ -1,11 +1,9 @@
 import {
 	Alert,
 	AlertTitle,
-	Box,
 	Button,
 	Grid,
 	List,
-	ListItem,
 	ListItemButton,
 	ListItemText,
 	Stack,
@@ -136,7 +134,6 @@ export function ChartMarkersPage() {
 						height: "100%",
 						maxHeight: "100%",
 						overflow: "auto",
-						p: 1,
 					}}>
 					<Outlet />
 				</Grid>

@@ -1,10 +1,15 @@
 import {
 	Alert,
+	AppBar,
 	Box,
 	Button,
+	Dialog,
 	FormControlLabel,
+	IconButton,
 	Stack,
 	Switch,
+	Toolbar,
+	Typography,
 } from "@mui/material";
 import {
 	CreateOrEditThingForm,
@@ -20,8 +25,11 @@ import {
 	queryClient,
 } from "../../../api";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { ChangeEvent, useEffect, useMemo } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { generateTo, NavigateWithQuery } from "../../../components";
+import { SlideUpTransition } from "../../../components/SlideUpTransition";
+import CloseIcon from "@mui/icons-material/Close";
+import { useOnMobile } from "../../../utils";
 
 export function EditChartMarkerPanel() {
 	const { user } = useAuth();
@@ -52,6 +60,12 @@ export function EditChartMarkerPanel() {
 		if (!selectedMarker) return;
 		resetFormWithNewValues(selectedMarker);
 	}, [selectedMarker]);
+
+	const onMobile = useOnMobile();
+
+	function onDialogCLose() {
+		navigate(generateTo("/manage/chart-markers", location));
+	}
 
 	const changesMade = useMemo(() => {
 		if (!selectedMarker) return false;
@@ -116,8 +130,8 @@ export function EditChartMarkerPanel() {
 
 	const switchChecked = selectedMarker?.enabled ?? true;
 
-	return (
-		<Box>
+	const layout = (
+		<Box p={1}>
 			<Stack
 				direction="row"
 				sx={{ pb: 1 }}
@@ -159,4 +173,35 @@ export function EditChartMarkerPanel() {
 			)}
 		</Box>
 	);
+
+	if (onMobile) {
+		return (
+			<Dialog
+				fullScreen
+				open={onMobile}
+				onClose={onDialogCLose}
+				TransitionComponent={SlideUpTransition}>
+				<AppBar sx={{ position: "relative" }}>
+					<Toolbar>
+						<IconButton
+							edge="start"
+							color="inherit"
+							onClick={onDialogCLose}
+							aria-label="close">
+							<CloseIcon />
+						</IconButton>
+						<Typography
+							sx={{ ml: 2, flex: 1 }}
+							variant="h6"
+							component="div">
+							Edit chart marker
+						</Typography>
+					</Toolbar>
+				</AppBar>
+				{layout}
+			</Dialog>
+		);
+	}
+
+	return layout;
 }

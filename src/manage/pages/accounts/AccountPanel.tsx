@@ -15,14 +15,13 @@ import {
 	List,
 	ListItem,
 	ListItemText,
-	Slide,
 	Stack,
 	TextField,
 	Toolbar,
 	Typography,
 } from "@mui/material";
 import { LoadingSpinner, useNavigateWithQuery } from "../../../components";
-import { ReactElement, Ref, forwardRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	accountsQueryStaleTime,
 	generateAvatar,
@@ -44,20 +43,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
-import { TransitionProps } from "@mui/material/transitions";
 import useAuth from "../../../auth/useAuth";
 import { useParams } from "react-router";
 import { useSnackbar } from "notistack";
 import { ChangePasswordDialog } from "./ChangePasswordDialog";
-
-const SlideUpTransition = forwardRef(function Transition(
-	props: TransitionProps & {
-		children: ReactElement;
-	},
-	ref: Ref<unknown>,
-) {
-	return <Slide direction="up" ref={ref} {...props} />;
-});
+import { SlideUpTransition } from "../../../components/SlideUpTransition";
 
 export function AccountPanel() {
 	const { user } = useAuth();
