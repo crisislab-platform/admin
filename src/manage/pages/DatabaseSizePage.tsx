@@ -8,12 +8,22 @@ import {
 	timeAxisPlugin,
 	valueAxisPlugin,
 } from "@crisislab/timeline";
-import { Stack, Typography } from "@mui/material";
+import {
+	Checkbox,
+	FormControl,
+	FormControlLabel,
+	InputLabel,
+	MenuItem,
+	Paper,
+	Select,
+	Stack,
+	Typography,
+} from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import useAuth from "../../auth/useAuth";
 import { APIBase, formatBytes } from "../../utils";
 
-function tbToBytes(tb:number):number{
+function tbToBytes(tb: number): number {
 	const tbToBytesMultiplier = 1024 * 1024 * 1024 * 1024;
 	return tb * tbToBytesMultiplier;
 }
@@ -25,9 +35,18 @@ export function DatabaseSizePage() {
 	const [size, setSize] = useState<number | null>(null);
 	const [history, setHistory] = useState<TimeLineDataPoint[]>([]);
 	const controller = useRef<AbortController | null>(null);
+	const [timeWindow, setTimeWindow] = useState<number>(Infinity);
+	const [showDiskSize, setShowDiskSize] = useState(true);
 
 	const timelineContainerRef = useRef<HTMLDivElement>(null);
 	const timeline = useRef<TimeLine | null>(null);
+
+	function recompute() {
+		if (!timeline.current) return;
+		console.log("recomputing", timeline.current);
+		timeline.current.data = history;
+		timeline.current.recompute();
+	}
 
 	useEffect(() => {
 		if (!timelineContainerRef?.current) return;
@@ -37,6 +56,7 @@ export function DatabaseSizePage() {
 			data: history,
 			timeAxisLabel: "Time",
 			valueAxisLabel: "Size",
+			timeWindow,
 			plugins: [
 				axisLabelPlugin(),
 				timeAxisPlugin((time) => new Date(time).toLocaleString(), 4),
@@ -48,34 +68,36 @@ export function DatabaseSizePage() {
 						chart.padding.left += 30;
 					},
 				},
-				nearestPointInfoPopupPlugin(time=>new Date(time).toLocaleDateString(), formatBytes),
+				nearestPointInfoPopupPlugin(
+					(time) => new Date(time).toLocaleDateString(),
+					formatBytes,
+				),
 			],
-			markers: [
-				{
-					orientation: "horizontal",
-					value: tbToBytes(4),
-					label: "Disk size",
-					labelSide: "after",
-					colour: "red",
-					lineStyle: "dashed",
-					alwaysShow: true,
-				},
-			]
+			markers: !showDiskSize
+				? undefined
+				: [
+						{
+							orientation: "horizontal",
+							value: tbToBytes(4),
+							label: "Disk size",
+							labelSide: "after",
+							colour: "red",
+							lineStyle: "dashed",
+							alwaysShow: true,
+						},
+					],
 		});
+
+		recompute();
 
 		return () => {
 			timeline.current = null;
 			if (timelineContainerRef.current)
 				timelineContainerRef.current.innerHTML = "";
 		};
-	}, [timelineContainerRef]);
+	}, [timelineContainerRef, timeWindow, showDiskSize]);
 
-	useEffect(() => {
-		if (!timeline.current) return;
-		console.log("recomputing", timeline.current);
-		timeline.current.data = history;
-		timeline.current.recompute();
-	}, [history]);
+	useEffect(recompute, [history]);
 
 	useEffect(() => {
 		// I hate that I still need to do this
@@ -150,13 +172,56 @@ export function DatabaseSizePage() {
 			) : (
 				"Loading..."
 			)}
-			<Stack>
-				<Typography sx={{ fontSize: "15pt" }}>History</Typography>
-				<div>
-					{/* Protect from the flex */}
-					<div id="time-line-container" ref={timelineContainerRef} />
-				</div>
-			</Stack>
+			<Paper variant="outlined" sx={{p:2}}>
+				<Stack>
+					<Typography variant="h6">
+						History
+					</Typography>
+					<Stack direction="row" alignItems="center" gap={3} py={1}>
+						<FormControl
+							variant="outlined"
+							sx={{ m: 1, minWidth: 120 }}>
+							<InputLabel id="time-range-select-label">
+								Time range
+							</InputLabel>
+							<Select
+								labelId="time-range-select-label"
+								id="time-range-select"
+								value={timeWindow}
+								onChange={(e) => {
+									setTimeWindow(Number(e.target.value));
+								}}
+								label="Time range">
+								<MenuItem value={Infinity}>All data</MenuItem>
+								<MenuItem value={1000 * 60 * 60 * 24 * 365.25}>
+									Last year
+								</MenuItem>
+								<MenuItem value={1000 * 60 * 60 * 24 * 30}>
+									Last 30 days
+								</MenuItem>
+							</Select>
+						</FormControl>
+						<FormControlLabel
+							control={
+								<Checkbox
+									checked={showDiskSize}
+									onChange={(e) =>
+										setShowDiskSize(e.target.checked)
+									}
+								/>
+							}
+							label="Show disk size"
+						/>
+					</Stack>
+					<div>
+						{/* Protect from the flex */}
+						<div
+							id="time-line-container"
+							ref={timelineContainerRef}
+						/>
+					</div>
+				</Stack>
+			</Paper>
 		</Stack>
 	);
 }
