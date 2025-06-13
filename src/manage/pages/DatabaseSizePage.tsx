@@ -1,16 +1,22 @@
-import { Stack, Typography } from "@mui/material";
-import useAuth from "../../auth/useAuth";
-import { useEffect, useRef, useState } from "react";
-import { APIBase, formatBytes } from "../../utils";
 import {
 	TimeLine,
 	TimeLineDataPoint,
 	axisLabelPlugin,
 	highlightNearestPointPlugin,
+	nearestPointInfoPopupPlugin,
 	pointerCrosshairPlugin,
 	timeAxisPlugin,
 	valueAxisPlugin,
 } from "@crisislab/timeline";
+import { Stack, Typography } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import useAuth from "../../auth/useAuth";
+import { APIBase, formatBytes } from "../../utils";
+
+function tbToBytes(tb:number):number{
+	const tbToBytesMultiplier = 1024 * 1024 * 1024 * 1024;
+	return tb * tbToBytesMultiplier;
+}
 
 export function DatabaseSizePage() {
 	const { user } = useAuth();
@@ -34,15 +40,27 @@ export function DatabaseSizePage() {
 			plugins: [
 				axisLabelPlugin(),
 				timeAxisPlugin((time) => new Date(time).toLocaleString(), 4),
-				valueAxisPlugin((size) => formatBytes(size)),
-				highlightNearestPointPlugin(),
+				valueAxisPlugin(formatBytes),
+				highlightNearestPointPlugin("closest-x"),
 				pointerCrosshairPlugin(),
 				{
 					construct(chart) {
 						chart.padding.left += 30;
 					},
 				},
+				nearestPointInfoPopupPlugin(time=>new Date(time).toLocaleDateString(), formatBytes),
 			],
+			markers: [
+				{
+					orientation: "horizontal",
+					value: tbToBytes(4),
+					label: "Disk size",
+					labelSide: "after",
+					colour: "red",
+					lineStyle: "dashed",
+					alwaysShow: true,
+				},
+			]
 		});
 
 		return () => {

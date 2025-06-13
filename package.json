@@ -9,29 +9,29 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@crisislab/timeline": "^0.11.4",
-		"@emotion/react": "^11.13.5",
-		"@emotion/styled": "^11.13.5",
-		"@fontsource/manrope": "^5.1.0",
-		"@mui/icons-material": "^6.1.9",
+		"@crisislab/timeline": "^0.12.2",
+		"@emotion/react": "^11.14.0",
+		"@emotion/styled": "^11.14.0",
+		"@fontsource/manrope": "^5.2.6",
+		"@mui/icons-material": "^6.4.12",
 		"@mui/lab": "6.0.0-beta.17",
-		"@mui/material": "^6.1.9",
-		"@mui/x-date-pickers": "^7.22.3",
+		"@mui/material": "^6.4.12",
+		"@mui/x-date-pickers": "^7.29.4",
 		"beryllium": "^1.2.1",
 		"dayjs": "^1.11.13",
 		"generate-avatar": "^1.4.10",
-		"notistack": "^3.0.1",
+		"notistack": "^3.0.2",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-query": "^3.39.3",
-		"react-router": "^7.0.1"
+		"react-router": "^7.6.2"
 	},
 	"devDependencies": {
-		"@types/react": "^18.3.12",
-		"@types/react-dom": "^18.3.1",
-		"@vitejs/plugin-react": "^4.3.4",
-		"typescript": "^5.7.2",
-		"vite": "^6.0.1"
+		"@types/react": "^18.3.23",
+		"@types/react-dom": "^18.3.7",
+		"@vitejs/plugin-react": "^4.5.2",
+		"typescript": "^5.8.3",
+		"vite": "^6.3.5"
 	},
 	"browserslist": {
 		"production": [
