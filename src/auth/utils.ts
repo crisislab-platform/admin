@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useLocation } from "react-router";
 
-export const titleSuffix = " | CRISiSLab Shakemap auth";
+export const titleSuffix = " | CRISiSLab Admin";
 
 export function getQueryParam(paramName: string): null | string {
 	const searchParams = new URL(window.location.href).searchParams;
