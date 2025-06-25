@@ -9,29 +9,27 @@ import {
 	DialogTitle,
 	Divider,
 	FormControl,
-	FormControlLabel,
 	InputLabel,
 	Link,
 	MenuItem,
 	Select,
 	Stack,
-	Switch,
 	TextField,
-	Typography,
 } from "@mui/material";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { makeCreateSensor, makeFetchSensors } from "../../../api";
 import { Sensor, SensorID, SensorType } from "../../../types";
 import {
 	defaultPosition,
 	getNextSensorID,
 	sensorMenuTypes,
 } from "../../../utils";
-import { makeCreateSensor, makeFetchSensors } from "../../../api";
-import { useMutation, useQuery, useQueryClient } from "react-query";
 
+import { OpenInNew } from "@mui/icons-material";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import useAuth from "../../../auth/useAuth";
 import { useSnackbar } from "notistack";
 import { FormEvent, useState } from "react";
+import useAuth from "../../../auth/useAuth";
 
 export function CreateSensorDialog({
 	open,
@@ -175,6 +173,13 @@ export function CreateSensorDialog({
 				<DialogTitle>Create new sensor</DialogTitle>
 				<DialogContent>
 					<Stack gap={2}>
+						<Link
+							href="https://docs.google.com/document/d/1l8SA2pNLpueWjAy0l3gStlXXv-Tw3wwl3vfgqVdrA8s/edit?usp=sharing"
+							target="_blank"
+							sx={{ display: "flex", alignItems: "center" }}>
+							How to set up a sensor{"  "}
+							<OpenInNew fontSize="small"  />
+						</Link>
 						{errors.length > 0 && (
 							<>
 								<Stack gap={1}>

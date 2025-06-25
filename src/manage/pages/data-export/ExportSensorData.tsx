@@ -1,6 +1,3 @@
-import { useQuery } from "react-query";
-import useAuth from "../../../auth/useAuth";
-import { makeFetchSensors } from "../../../api";
 import {
 	Alert,
 	AlertTitle,
@@ -19,20 +16,21 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
-import { Sensor } from "../../../types";
-import dayjs, { Dayjs } from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs, { Dayjs } from "dayjs";
+import { useEffect, useState } from "react";
+import useAuth from "../../../auth/useAuth";
 import { useGetQueryParam } from "../../../auth/utils";
+import { SensorSelector } from "../../../components";
+import { Sensor } from "../../../types";
 import {
-	setQueryParams,
+	APIBase,
 	formatBytes,
 	sensorTypeChannels,
-	APIBase,
+	setQueryParams,
 } from "../../../utils";
-import { SensorSelector } from "../../../components";
 
 const exportTypes: Record<
 	string,
