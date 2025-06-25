@@ -1,11 +1,12 @@
 # Admin panel
 
-> TODO: Upgrade `<Grid>` usage to use MUI 6's `<Grid2>` because old Grid is
-> deprecated
-
 Admin panel for CRISiSLab Earthquare Early Warning sensor network.
 
-Made with React, MUI 5, React Router 6, and Vite.
+Live demo: https://admin.crisislab.org.nz/manage/sensors
+
+By default it will connect to CRISiSLab's hosted server, but you can run your own using with this code: https://github.com/crisislab-platform/ingest-deno.
+
+
 
 To debug locally, follow these steps:
 
