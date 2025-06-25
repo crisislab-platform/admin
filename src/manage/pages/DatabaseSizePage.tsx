@@ -2,6 +2,7 @@ import {
 	TimeLine,
 	TimeLineDataPoint,
 	axisLabelPlugin,
+	doubleClickCopyPlugin,
 	highlightNearestPointPlugin,
 	nearestPointInfoPopupPlugin,
 	pointerCrosshairPlugin,
@@ -71,7 +72,9 @@ export function DatabaseSizePage() {
 				nearestPointInfoPopupPlugin(
 					(time) => new Date(time).toLocaleDateString(),
 					formatBytes,
+					"closest-x"
 				),
+				doubleClickCopyPlugin("closest-x")
 			],
 			markers: !showDiskSize
 				? undefined
