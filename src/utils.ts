@@ -143,6 +143,7 @@ export const sensorMenuTypes: SensorType[] = [
 	// "Raspberry Shake 1D",
 	// "Raspberry Boom",
 	"Android Phone",
+	"CRISiSLab Sensor V2",
 ];
 
 export const sensorTypeChannels: Record<SensorType, string[]> = {

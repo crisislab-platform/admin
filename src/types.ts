@@ -49,6 +49,7 @@ export type SensorType =
 	| "Raspberry Shake 1D"
 	| "Raspberry Boom"
 	| "CRISiSLab Sensor"
+	| "CRISiSLab Sensor V2"
 	| string;
 
 export type SensorID = number;
