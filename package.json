@@ -11,11 +11,11 @@
 	"dependencies": {
 		"@crisislab/timeline": "^0.12.3",
 		"@emotion/react": "^11.14.0",
-		"@emotion/styled": "^11.14.0",
+		"@emotion/styled": "^11.14.1",
 		"@fontsource/manrope": "^5.2.6",
-		"@mui/icons-material": "^6.4.12",
+		"@mui/icons-material": "^6.5.0",
 		"@mui/lab": "6.0.0-beta.17",
-		"@mui/material": "^6.4.12",
+		"@mui/material": "^6.5.0",
 		"@mui/x-date-pickers": "^7.29.4",
 		"beryllium": "^1.2.1",
 		"dayjs": "^1.11.13",
@@ -24,9 +24,10 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-query": "^3.39.3",
-		"react-router": "^7.6.2"
+		"react-router": "^7.7.0"
 	},
 	"devDependencies": {
+		"@types/node": "^24.0.14",
 		"@types/react": "^18.3.23",
 		"@types/react-dom": "^18.3.7",
 		"@vitejs/plugin-react": "^4.6.0",
