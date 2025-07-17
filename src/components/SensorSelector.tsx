@@ -5,12 +5,12 @@ import {
 	ListItem,
 	TextField,
 } from "@mui/material";
-import { SensorStatusIcon } from "./BasicSensorInfo";
-import useAuth from "../auth/useAuth";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { makeFetchSensors } from "../api";
-import { useEffect, useMemo } from "react";
+import useAuth from "../auth/useAuth";
 import { Sensor } from "../types";
+import { SensorStatusIcon } from "./BasicSensorInfo";
 
 function simplifySensor(sensor: Sensor | null) {
 	return sensor === null
@@ -43,17 +43,18 @@ export function SensorSelector({
 }) {
 	const { user } = useAuth();
 	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
+	const [sensorOptions, setSensorOptions] = useState<ReturnType<typeof simplifySensor>[]>([])
 
-	const sensorOptions = useMemo(
-		() =>
-			sensorsQuery?.data?.sensors
-				? Object.values(sensorsQuery.data.sensors).map(simplifySensor)
-				: [],
-		[sensorsQuery.data],
-	);
-
+	/* This effect needs to fire before the computed data is given to the
+		autocomplete component, otherwise the autocomplete will automatically
+		select a default value, and overwrite the one selected by the user,
+		if that selection is set in the onLoad callback. */
 	useEffect(() => {
-		if (sensorsQuery?.data?.sensors) onLoaded?.(sensorsQuery.data.sensors);
+		if (!sensorsQuery?.data?.sensors) return;
+		
+		onLoaded?.(sensorsQuery.data.sensors);
+
+		setSensorOptions(Object.values(sensorsQuery.data.sensors).map(simplifySensor));
 	}, [sensorsQuery.data]);
 
 	return (
@@ -74,14 +75,14 @@ export function SensorSelector({
 				<TextField
 					{...params}
 					label={sensorsQuery.isFetched ? label : "Loading..."}
-					InputProps={{
+					slotProps={{input:{
 						...params.InputProps,
 						startAdornment: (
 							<InputAdornment position="start" sx={{ ml: 1 }}>
 								<SensorStatusIcon online={sensor?.online} />
 							</InputAdornment>
 						),
-					}}
+					}}}
 				/>
 			)}
 			renderOption={(props, option) => (
