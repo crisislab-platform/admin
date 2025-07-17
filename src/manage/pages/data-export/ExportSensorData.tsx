@@ -321,7 +321,7 @@ export function ExportSensorDataPage() {
 							chosenSensor?.type &&
 							chosenSensor?.type in sensorTypeChannels
 								? sensorTypeChannels[chosenSensor.type]
-								: ["Auto"]
+								: ["All"]
 						}
 						multiple={singleChannel() ? false : true}
 						disabled={chosenSensor === null}
