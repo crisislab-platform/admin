@@ -152,7 +152,7 @@ export const sensorTypeChannels: Record<SensorType, string[]> = {
 	// Stop prettier from getting rid of brackets
 	["Palert"]: ["ENN", "ENZ", "ENE"],
 	["CRISiSLab Sensor"]: ["x", "y", "z"],
-	"CRISiSLab Sensor V2": ["ACX", "ACY", "ACZ", "GPZ"]
+	"CRISiSLab Sensor V2": ["EHZ", "ENN", "ENZ", "ENE"]
 };
 
 export const filterRuleOperations: FilterRuleOperation[] = [
