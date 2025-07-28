@@ -95,4 +95,9 @@ export interface ChartMarker {
 	enabled: boolean;
 }
 
+export interface ConfigurableSensorType {
+	name: string;
+	channels: { id: string; name: string }[];
+}
+
 export type Entries<T, P extends keyof T = keyof T> = [P, T[P]][];

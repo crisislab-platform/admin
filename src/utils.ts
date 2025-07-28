@@ -51,6 +51,7 @@ export const APIOrigin = getAPIOrigin();
 export const APIBase = `${APIOrigin}/api/v2`;
 export const usersAPIBase = `${APIBase}/users`;
 export const sensorsAPIBase = `${APIBase}/sensors`;
+export const sensorTypesAPIBase = `${APIBase}/sensor-types`;
 
 export function generateAvatar(email: string) {
 	return `data:image/svg+xml;utf8,${generateFromString(email)}`;

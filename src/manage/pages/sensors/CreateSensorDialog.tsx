@@ -1,35 +1,35 @@
 import {
 	Alert,
 	AlertTitle,
+	Autocomplete,
 	Box,
 	Button,
+	Chip,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
 	Divider,
-	FormControl,
-	InputLabel,
 	Link,
-	MenuItem,
-	Select,
 	Stack,
 	TextField,
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { makeCreateSensor, makeFetchSensors } from "../../../api";
-import { Sensor, SensorID, SensorType } from "../../../types";
+import { makeCreateSensor, makeFetchSensors, makeFetchSensorTypes } from "../../../api";
+import { Sensor, SensorID, SensorType, ConfigurableSensorType } from "../../../types";
 import {
 	defaultPosition,
 	getNextSensorID,
 	sensorMenuTypes,
 } from "../../../utils";
+import { CreateSensorTypeForm } from "../sensor-types/CreateSensorTypeForm";
 
-import { OpenInNew } from "@mui/icons-material";
+import { OpenInNew, Settings } from "@mui/icons-material";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { useSnackbar } from "notistack";
 import { FormEvent, useState } from "react";
 import useAuth from "../../../auth/useAuth";
+import { SensorImage } from "../../../components/BasicSensorInfo";
 
 export function CreateSensorDialog({
 	open,
@@ -42,15 +42,16 @@ export function CreateSensorDialog({
 	const [name, setName] = useState<string>("");
 	const [contactEmail, setContactEmail] = useState<string>("");
 	const [secondaryID, setSecondaryID] = useState<string>("");
-	const [menuType, setMenuType] = useState<SensorType>("Raspberry Shake 4D");
-	const [otherType, setOtherType] = useState<string>("");
+	const [selectedType, setSelectedType] = useState<string>("Raspberry Shake 4D");
 	const [location, setLocation] = useState<[number, number]>(defaultPosition);
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const [IPAddress, setIPAddress] = useState<string>();
+	const [showCreateSensorType, setShowCreateSensorType] = useState(false);
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
 	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
+	const sensorTypesQuery = useQuery("sensor-types", makeFetchSensorTypes(user?.token));
 	const mutation = useMutation(makeCreateSensor(user?.token), {
 		onMutate: async (newSensor) => {
 			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
@@ -120,25 +121,37 @@ export function CreateSensorDialog({
 		if (!sensorsQuery.isSuccess) return;
 		setErrors([]);
 		let newErrors: typeof errors = [];
-		let type = menuType;
-		if (menuType === "__other") {
-			type = otherType;
-		}
-		if (!type || type.length === 0) {
+		
+		const validTypes = [
+			...(sensorTypesQuery.data?.map(st => st.name) || []),
+			...sensorMenuTypes
+		];
+		
+		if (!selectedType || selectedType.length === 0) {
 			newErrors.push([
 				"Make sure to choose a sensor type.",
-				"If you select 'other', make sure to enter a value in the text box provided.",
+				"Please select a sensor type from the available options.",
+			]);
+		} else if (!validTypes.includes(selectedType)) {
+			newErrors.push([
+				"Invalid sensor type selected.",
+				"Please choose from the available sensor types or create a new sensor type first.",
 			]);
 		}
 		if (newErrors.length > 0) {
 			setErrors(newErrors);
 		} else {
 			const id = getNextSensorID(sensorsQuery.data.sensors);
+			
+			// Use type_fk for configurable sensor types, type for legacy
+			const isConfigurableType = sensorTypesQuery.data?.some(st => st.name === selectedType);
+			
 			mutation.mutate({
 				id,
 				name,
 				contact_email: contactEmail,
-				type,
+				type: isConfigurableType ? undefined : selectedType,
+				type_fk: isConfigurableType ? selectedType : undefined,
 				location,
 				secondary_id: secondaryID,
 				ip: IPAddress,
@@ -234,46 +247,47 @@ export function CreateSensorDialog({
 							autoFocus
 							required
 						/>
-						<FormControl fullWidth required>
-							<InputLabel
-								id="edit-sensor-type-select-label"
-								shrink>
-								Sensor type
-							</InputLabel>
-							<Select
-								labelId="edit-sensor-type-select-label"
-								id="edit-sensor-type-select"
-								value={menuType}
-								label="Sensor type"
-								onChange={(event) =>
-									setMenuType(
-										event.target.value as SensorType,
-									)
-								}>
-								{sensorMenuTypes.map((type) => (
-									<MenuItem value={type} key={type}>
-										{type}
-									</MenuItem>
-								))}
-								<MenuItem value="__other">Other</MenuItem>
-							</Select>
-						</FormControl>
-						{menuType === "__other" && (
-							<TextField
-								InputLabelProps={{ shrink: true }}
-								value={otherType}
-								onChange={(event) =>
-									setOtherType(event.target.value)
-								}
-								margin="dense"
-								id="edit-other-type-text-field"
-								name="edit-other-type"
-								label="Custom sensor type"
-								type="text"
-								fullWidth
-								required
+						<Stack gap={1}>
+							<Autocomplete
+								options={[
+									...(sensorTypesQuery.data?.map(st => st.name) || []),
+									...sensorMenuTypes
+								]}
+								value={selectedType}
+								onChange={(event, newValue) => {
+									setSelectedType(newValue || "");
+								}}
+								renderOption={(props, option) => {
+									const isConfigurable = sensorTypesQuery.data?.some(st => st.name === option);
+									return (
+										<Box component="li" {...props} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+											{isConfigurable ? (
+										<Settings fontSize="small" />
+									) : (
+										<SensorImage sensor={{ type: option } as any} size={20} />
+									)}
+											{option}
+											{isConfigurable && <Chip label="Custom" size="small" variant="outlined" />}
+										</Box>
+									);
+								}}
+								renderInput={(params) => (
+									<TextField
+										{...params}
+										label="Sensor type"
+										required
+										helperText="Select from available sensor types"
+									/>
+								)}
 							/>
-						)}
+							<Button
+								variant="outlined"
+								size="small"
+								onClick={() => setShowCreateSensorType(true)}
+								sx={{ alignSelf: "flex-start" }}>
+								Create New Sensor Type
+							</Button>
+						</Stack>
 
 						<TextField
 							required
@@ -348,6 +362,15 @@ export function CreateSensorDialog({
 					</Button>
 				</DialogActions>
 			</form>
+			
+			<CreateSensorTypeForm
+				open={showCreateSensorType}
+				onClose={() => setShowCreateSensorType(false)}
+				onCreate={() => {
+					// Refetch sensor types to update the dropdown
+					sensorTypesQuery.refetch();
+				}}
+			/>
 		</Dialog>
 	);
 }

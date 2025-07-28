@@ -4,6 +4,8 @@ import {
 	SensorPanel,
 	SensorsPage,
 	SensorsSideBySide,
+	SensorTypesPage,
+	SensorTypePanel,
 } from "./pages/index";
 import { Route, SidebarLink } from "../types";
 import { DatabaseSizePage } from "./pages/DatabaseSizePage";
@@ -17,6 +19,8 @@ import { role, roles } from "../utils";
 import { ExportSensorDataPage } from "./pages/data-export/ExportSensorData";
 import StorageIcon from "@mui/icons-material/Storage";
 import WavesIcon from "@mui/icons-material/Waves";
+import CategoryIcon from "@mui/icons-material/Category";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import { ChartMarkersPage } from "./pages/charts/ChartMarkersPage";
 import { EditChartMarkerPanel } from "./pages/charts/EditChartMarkerPanel";
 
@@ -34,6 +38,23 @@ export const routes: (Route | SidebarLink)[] = [
 				slug: ":sensorID",
 				text: "Sensor info",
 				Element: SensorPanel,
+				requiredRole: role("sensors:read"),
+			},
+		],
+	},
+	{
+		position: 0.5,
+		slug: "sensor-types",
+		text: "Sensor Types",
+		ActiveIcon: CategoryIcon,
+		Icon: CategoryOutlinedIcon,
+		Element: SensorTypesPage,
+		requiredRole: role("sensors:read"),
+		subRoutes: [
+			{
+				slug: ":sensorTypeName",
+				text: "Sensor type details",
+				Element: SensorTypePanel,
 				requiredRole: role("sensors:read"),
 			},
 		],
