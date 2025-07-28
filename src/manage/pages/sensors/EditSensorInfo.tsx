@@ -68,48 +68,14 @@ export function EditSensorInfo({
 	const sensorTypesQuery = useQuery("sensor-types", makeFetchSensorTypes(user?.token));
 
 	const mutation = useMutation(makeEditSensor(user?.token), {
-		onMutate: async (newSensor) => {
-			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-			await queryClient.cancelQueries("sensors");
-
-			// Snapshot the previous value
-			const previousSensors = queryClient.getQueryData("sensors");
-
-			// Optimistically update to the new value
-			queryClient.setQueryData(
-				"sensors",
-				(oldSensors: {
-					sensors: Record<SensorID, Sensor>;
-					timestamp: number;
-				}) => ({
-					...oldSensors,
-					sensors: {
-						...oldSensors.sensors,
-						[newSensor.id]: newSensor,
-					},
-				}),
-			);
-
-			// Return a context object with the snapshotted value
-			return { previousSensors };
-		},
-		onError: (error, newSensor, context) => {
-			queryClient.setQueryData(
-				"sensors",
-				(
-					context as {
-						previousSensors: {
-							sensors: Record<SensorID, Sensor>;
-							timestamp: number;
-						};
-					}
-				).previousSensors,
-			);
+		onError: (error) => {
 			enqueueSnackbar(`Failed to modify sensor: ${error}`, {
 				variant: "error",
 			});
 		},
 		onSuccess: () => {
+			// Refetch sensors to get updated list
+			queryClient.invalidateQueries("sensors");
 			enqueueSnackbar("Sensor updated");
 		},
 	});

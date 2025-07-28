@@ -65,34 +65,14 @@ export function AccountPanel() {
 
 	const queryClient = useQueryClient();
 	const mutation = useMutation(makeDeleteAccount(user?.token), {
-		onMutate: async (accountToDelete: Account) => {
-			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-			await queryClient.cancelQueries("accounts");
-
-			// Snapshot the previous value
-			const previousAccounts = queryClient.getQueryData("accounts");
-
-			// Optimistically update to the new value
-
-			queryClient.setQueryData("accounts", (oldAccounts: Account[]) =>
-				oldAccounts.filter(
-					(account) => account.email !== accountToDelete.email,
-				),
-			);
-
-			// Return a context object with the snapshotted value
-			return { previousAccounts };
-		},
-		onError: (error, newAccount, context) => {
-			queryClient.setQueryData(
-				"accounts",
-				(context as { previousAccounts: Account[] }).previousAccounts,
-			);
+		onError: (error) => {
 			enqueueSnackbar(`Failed to delete account: ${error}`, {
 				variant: "error",
 			});
 		},
 		onSuccess: () => {
+			// Refetch accounts to get updated list
+			queryClient.invalidateQueries("accounts");
 			enqueueSnackbar("Deleted account");
 		},
 	});
@@ -333,52 +313,25 @@ function EditUserInfo({
 		account.roles ? account.roles : [],
 	);
 	const mutation = useMutation(makeEditAccount(user?.token), {
-		onMutate: async ([oldAccout, newAccount]) => {
-			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-			await queryClient.cancelQueries("accounts");
-
-			// Snapshot the previous value
-			const previousAccounts = queryClient.getQueryData("accounts");
-
-			// Optimistically update to the new value
-
-			queryClient.setQueryData("accounts", (oldAccounts: Account[]) => {
-				let newAccounts = [
-					...oldAccounts.filter(
-						(account) => account.email !== newAccount.email,
-					),
-					{
-						...newAccount,
-						picture: generateAvatar(newAccount.email ?? ""),
-					},
-				];
-				newAccounts.sort(function (a, b) {
-					const textA = a?.email?.toLowerCase() ?? "";
-					const textB = b?.email?.toLowerCase() ?? "";
-					return textA < textB ? -1 : textA > textB ? 1 : 0;
-				});
-				return newAccounts;
-			});
-
-			// Return a context object with the snapshotted value
-			return { previousAccounts };
-		},
-		onError: (error, [oldAccout, newAccount], context) => {
-			queryClient.setQueryData(
-				"accounts",
-				(context as { previousAccounts: Account[] }).previousAccounts,
-			);
+		onError: (error) => {
 			enqueueSnackbar(`Failed to modify account: ${error}`, {
 				variant: "error",
 			});
 		},
 		onSuccess: (data) => {
-			enqueueSnackbar("Account modified");
-			// Also on confirm, update the auth user if it was them that was edited
+			// Refetch accounts to get updated list
+			queryClient.invalidateQueries("accounts");
+			
+			// If user edited their own account, force re-login for security
 			if (user && user?.email === data.email) {
-				// This is so cursed, but it means that the token is safe.
-				// This should also trigger an effect to save this value to localStorage.
-				setUser({ ...data, token: user.token });
+				enqueueSnackbar("Account modified. Please log in again with your updated permissions.", {
+					variant: "success",
+					autoHideDuration: 6000
+				});
+				// Clear user auth state to force re-login
+				setUser(null);
+			} else {
+				enqueueSnackbar("Account modified");
 			}
 		},
 	});

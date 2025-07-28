@@ -67,45 +67,14 @@ export function SensorPanel() {
 
 	const queryClient = useQueryClient();
 	const mutation = useMutation(makeDeleteSensor(user?.token), {
-		onMutate: async (sensorToDelete: Sensor) => {
-			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-			await queryClient.cancelQueries("sensors");
-
-			// Snapshot the previous value
-			const previousSensors = queryClient.getQueryData("sensors");
-
-			// Optimistically update to the new value
-			queryClient.setQueryData(
-				"sensors",
-				(sensors: {
-					sensors: Record<SensorID, Sensor>;
-					timestamp: number;
-				}) => {
-					delete sensors.sensors[sensorToDelete.id];
-					return sensors;
-				},
-			);
-
-			// Return a context object with the snapshotted value
-			return { previousSensors };
-		},
-		onError: (error, newSensor, context) => {
-			queryClient.setQueryData(
-				"sensors",
-				(
-					context as {
-						previousSensors: {
-							sensors: Record<SensorID, Sensor>;
-							timestamp: number;
-						};
-					}
-				).previousSensors,
-			);
+		onError: (error) => {
 			enqueueSnackbar(`Failed to delete sensor: ${error}`, {
 				variant: "error",
 			});
 		},
 		onSuccess: () => {
+			// Refetch sensors to get updated list
+			queryClient.invalidateQueries("sensors");
 			enqueueSnackbar("Sensor deleted");
 		},
 	});

@@ -53,63 +53,14 @@ export function CreateSensorDialog({
 	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
 	const sensorTypesQuery = useQuery("sensor-types", makeFetchSensorTypes(user?.token));
 	const mutation = useMutation(makeCreateSensor(user?.token), {
-		onMutate: async (newSensor) => {
-			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-			await queryClient.cancelQueries("sensors");
-
-			// Snapshot the previous value
-			const previousSensors = queryClient.getQueryData("sensors");
-
-			// Optimistically update to the new value
-
-			queryClient.setQueryData(
-				"sensors",
-				(oldSensors: {
-					sensors: Record<SensorID, Sensor>;
-					timestamp: number;
-				}) => ({
-					...oldSensors,
-					sensors: {
-						...oldSensors.sensors,
-						[newSensor.id]: newSensor,
-					},
-				}),
-			);
-
-			// Return a context object with the snapshotted value
-			return { previousSensors };
-		},
-		onError: (error, newSensor, context) => {
-			queryClient.setQueryData(
-				"sensors",
-				(
-					context as {
-						previousSensors: {
-							sensors: Record<SensorID, Sensor>;
-							timestamp: number;
-						};
-					}
-				).previousSensors,
-			);
+		onError: (error) => {
 			enqueueSnackbar(`Failed to create new sensor: ${error}`, {
 				variant: "error",
 			});
 		},
 		onSuccess: (data) => {
-			// Update with the new ID from the server
-			queryClient.setQueryData(
-				"sensors",
-				(oldSensors: {
-					sensors: Record<SensorID, Sensor>;
-					timestamp: number;
-				}) => ({
-					...oldSensors,
-					sensors: {
-						...oldSensors.sensors,
-						[data.id]: data,
-					},
-				}),
-			);
+			// Refetch sensors to get updated list
+			queryClient.invalidateQueries("sensors");
 			enqueueSnackbar("Sensor created", {
 				variant: "success",
 			});

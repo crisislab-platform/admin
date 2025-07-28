@@ -38,46 +38,14 @@ export function CreateAccountDialog({
 	});
 	const queryClient = useQueryClient();
 	const mutation = useMutation(makeCreateAccount(user?.token), {
-		onMutate: async (newAccount) => {
-			// Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-			await queryClient.cancelQueries("accounts");
-
-			// Snapshot the previous value
-			const previousAccounts = queryClient.getQueryData("accounts");
-
-			// Optimistically update to the new value
-
-			queryClient.setQueryData("accounts", (oldAccounts: Account[]) => {
-				let newAccounts = [
-					...oldAccounts.filter(
-						(account) => account.email !== newAccount.email,
-					),
-					{
-						...newAccount,
-						picture: generateAvatar(newAccount.email),
-					},
-				];
-				newAccounts.sort(function (a, b) {
-					const textA = a.email.toLowerCase();
-					const textB = b.email.toLowerCase();
-					return textA < textB ? -1 : textA > textB ? 1 : 0;
-				});
-				return newAccounts;
-			});
-
-			// Return a context object with the snapshotted value
-			return { previousAccounts };
-		},
-		onError: (error, newAccount, context) => {
-			queryClient.setQueryData(
-				"accounts",
-				(context as { previousAccounts: Account[] }).previousAccounts,
-			);
+		onError: (error) => {
 			enqueueSnackbar(`Failed to create new account: ${error}`, {
 				variant: "error",
 			});
 		},
 		onSuccess: () => {
+			// Refetch accounts to get updated list
+			queryClient.invalidateQueries("accounts");
 			enqueueSnackbar("Created account", {
 				variant: "success",
 			});
