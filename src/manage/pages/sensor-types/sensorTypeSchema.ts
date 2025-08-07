@@ -1,10 +1,9 @@
 import {
 	createSensorType,
-	updateSensorType,
 	queryClient,
+	updateSensorType,
 } from "../../../api";
 import { CreateAndEditThingsSchema } from "../../../components/CreateAndEditForms";
-import { ConfigurableSensorType } from "../../../types";
 
 export interface SensorTypeFormData {
 	name: string;
@@ -95,6 +94,7 @@ export const getCreateAndEditSensorTypeSchema = (
 				
 				return true;
 			},
+			// @ts-expect-error Cooked stuff happening here, dw about it
 			default: [{ id: "tmp", name: "Temperature" }],
 		},
 	},

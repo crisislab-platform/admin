@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { makeCreateSensor, makeFetchSensors, makeFetchSensorTypes } from "../../../api";
-import { Sensor, SensorID, SensorType, ConfigurableSensorType } from "../../../types";
 import {
 	defaultPosition,
 	getNextSensorID,

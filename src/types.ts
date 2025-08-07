@@ -59,6 +59,7 @@ export interface Sensor {
 	public_location?: [number?, number?];
 	id: number;
 	type?: SensorType;
+	type_fk?: SensorType;
 	name?: string;
 	secondary_id?: string;
 	ip?: string;

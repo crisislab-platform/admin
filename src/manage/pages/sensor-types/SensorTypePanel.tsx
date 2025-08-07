@@ -1,3 +1,6 @@
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
 	Alert,
 	AlertTitle,
@@ -16,21 +19,18 @@ import {
 	Toolbar,
 	Typography,
 } from "@mui/material";
-import { ReactElement, Ref, forwardRef, useMemo, useState } from "react";
 import { TransitionProps } from "@mui/material/transitions";
-import { ConfigurableSensorType } from "../../../types";
-import { makeFetchSensorTypes, deleteSensorType, queryClient } from "../../../api";
+import { useSnackbar } from "notistack";
+import { ReactElement, Ref, forwardRef, useMemo, useState } from "react";
 import { useMutation, useQuery } from "react-query";
+import { useParams } from "react-router";
+import { deleteSensorType, makeFetchSensorTypes, queryClient } from "../../../api";
+import useAuth from "../../../auth/useAuth";
 import {
 	LoadingSpinner,
 	useNavigateWithQuery,
 } from "../../../components";
-import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import useAuth from "../../../auth/useAuth";
-import { useParams } from "react-router";
-import { useSnackbar } from "notistack";
+import { ConfigurableSensorType } from "../../../types";
 import { useOnMobile, userHasPermission } from "../../../utils";
 import { EditSensorTypeForm } from "./EditSensorTypeForm";
 
@@ -210,7 +210,7 @@ export function SensorTypePanel() {
 									// Handle malformed channel data
 									if (!channel || typeof channel !== 'object') {
 										return (
-											<Alert key={index} severity="error" size="small">
+											<Alert key={index} severity="error">
 												Invalid channel data: {String(channel)}
 											</Alert>
 										);
