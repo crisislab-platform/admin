@@ -95,7 +95,7 @@ export const getCreateAndEditSensorTypeSchema = (
 				return true;
 			},
 			// @ts-expect-error Cooked stuff happening here, dw about it
-			default: [{ id: "tmp", name: "Temperature" }],
+			default: [{ id: "ehz", name: "Geophone (Counts)" }],
 		},
 	},
 });

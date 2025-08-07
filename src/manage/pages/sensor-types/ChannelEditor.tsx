@@ -1,3 +1,5 @@
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
 	Button,
 	IconButton,
@@ -5,9 +7,7 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { ChangeEvent, useState, useMemo } from "react";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { ChangeEvent, useMemo, useState } from "react";
 
 export interface Channel {
 	id: string;
@@ -122,7 +122,7 @@ export function ChannelEditor({
 					<Stack key={index} direction="row" gap={1} alignItems="start">
 						<TextField
 							label="Channel ID"
-							placeholder="EHZ"
+							placeholder="E.g. EHZ"
 							value={channel.id}
 							onChange={makeHandleChannelChange(index, "id")}
 							onBlur={makeHandleChannelBlur(index, "id")}
@@ -135,7 +135,7 @@ export function ChannelEditor({
 						/>
 						<TextField
 							label="Display Name"
-							placeholder="Z-axis Acceleration"
+							placeholder="E.g. Geophone (Counts)"
 							value={channel.name}
 							onChange={makeHandleChannelChange(index, "name")}
 							onBlur={makeHandleChannelBlur(index, "name")}
