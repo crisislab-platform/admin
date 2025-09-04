@@ -18,20 +18,20 @@
 		"@mui/material": "^6.5.0",
 		"@mui/x-date-pickers": "^7.29.4",
 		"beryllium": "^1.2.1",
-		"dayjs": "^1.11.13",
+		"dayjs": "^1.11.18",
 		"generate-avatar": "^1.4.10",
 		"notistack": "^3.0.2",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-query": "^3.39.3",
-		"react-router": "^7.7.0"
+		"react-router": "^7.8.2"
 	},
 	"devDependencies": {
-		"@types/node": "^24.0.14",
-		"@types/react": "^18.3.23",
+		"@types/node": "^24.3.0",
+		"@types/react": "^18.3.24",
 		"@types/react-dom": "^18.3.7",
-		"@vitejs/plugin-react": "^4.6.0",
-		"typescript": "^5.8.3",
+		"@vitejs/plugin-react": "^4.7.0",
+		"typescript": "^5.9.2",
 		"vite": "^6.3.5"
 	},
 	"browserslist": {
