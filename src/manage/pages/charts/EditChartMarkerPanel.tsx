@@ -1,3 +1,4 @@
+import CloseIcon from "@mui/icons-material/Close";
 import {
 	Alert,
 	AppBar,
@@ -11,25 +12,25 @@ import {
 	Toolbar,
 	Typography,
 } from "@mui/material";
+import { ChangeEvent, useEffect, useMemo } from "react";
+import { useQuery } from "react-query";
+import { useLocation, useNavigate, useParams } from "react-router";
+import {
+	deleteMarker as APIDeleteMarker,
+	updateMarker as APIUpdateMarker,
+	makeFetchChartMarkers,
+	queryClient,
+} from "../../../api";
+import useAuth from "../../../auth/useAuth";
+import { generateTo } from "../../../components";
 import {
 	CreateOrEditThingForm,
 	useCreateOrEditThingFormFields,
 } from "../../../components/CreateAndEditForms";
-import { getCreateAndEditMarkerSchema } from "./markerSchema";
-import useAuth from "../../../auth/useAuth";
-import { useQuery } from "react-query";
-import {
-	makeFetchChartMarkers,
-	deleteMarker as APIDeleteMarker,
-	updateMarker as APIUpdateMarker,
-	queryClient,
-} from "../../../api";
-import { useLocation, useNavigate, useParams } from "react-router";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import { generateTo, NavigateWithQuery } from "../../../components";
 import { SlideUpTransition } from "../../../components/SlideUpTransition";
-import CloseIcon from "@mui/icons-material/Close";
-import { useOnMobile } from "../../../utils";
+import { useOnMobile, } from "../../../utils";
+import { useSensorTypes } from "../sensor-types/useSensorTypes";
+import { getCreateAndEditMarkerSchema } from "./markerSchema";
 
 export function EditChartMarkerPanel() {
 	const { user } = useAuth();
@@ -42,12 +43,13 @@ export function EditChartMarkerPanel() {
 	const selectedMarkerID = rawMarkerID && Number(rawMarkerID);
 	const navigate = useNavigate();
 	const location = useLocation();
+	const sensorTypes = useSensorTypes()
 
 	const selectedMarker = markersQuery.data?.find(
 		(m) => m.id === selectedMarkerID,
 	);
 
-	const schema = getCreateAndEditMarkerSchema(user!.token);
+	const schema = getCreateAndEditMarkerSchema(user!.token, sensorTypes);
 	const {
 		submitEdit,
 		readyToSubmit,

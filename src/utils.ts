@@ -4,9 +4,7 @@ import {
 	RawRole,
 	Role,
 	Sensor,
-	SensorID,
-	SensorType,
-	User,
+	User
 } from "./types";
 
 import { generateFromString } from "generate-avatar";
@@ -133,7 +131,7 @@ export const defaultPosition: [number, number] = [174.8, -41.325];
 export const mapURL =
 	import.meta.env.VITE_SHAKEMAP_ORIGIN || "https://shakemap.crisislab.org.nz";
 
-export const sensorMenuTypes: SensorType[] = [
+export const sensorMenuBuiltinTypes = [
 	"Raspberry Shake 4D",
 	"Raspberry Shake and Boom",
 	"Palert",
@@ -147,23 +145,14 @@ export const sensorMenuTypes: SensorType[] = [
 	"CRISiSLab Sensor V2",
 ];
 
-export const sensorTypeChannels: Record<SensorType, string[]> = {
-	"Raspberry Shake 4D": ["EHZ", "ENN", "ENZ", "ENE"],
-	"Raspberry Shake and Boom": ["EHZ", "HDF"],
-	// Stop prettier from getting rid of brackets
-	["Palert"]: ["ENN", "ENZ", "ENE"],
-	["CRISiSLab Sensor"]: ["x", "y", "z"],
-	"CRISiSLab Sensor V2": ["EHZ", "ENN", "ENZ", "ENE"]
-};
-
 export const filterRuleOperations: FilterRuleOperation[] = [
-	"includes",
 	"equals",
+	"includes",
 	"greater-than",
 	"less-than",
 ];
 
-export function getNextSensorID(sensors: Record<SensorID, Sensor>): SensorID {
+export function getNextSensorID(sensors: Record<number, Sensor>): number {
 	// const sensordIDs = Object.keys(sensors);
 	// let unusedIDs = [];
 	// for (const sensorId of sensordIDs) {
@@ -232,3 +221,4 @@ export function useToolbarHeight() {
 	const onMobile = useOnMobile();
 	return onMobile ? 64 : 56;
 }
+

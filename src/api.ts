@@ -3,11 +3,9 @@ import {
 	Account,
 	ChartMarker,
 	ConfigurableSensorType,
-	Role,
 	Sensor,
 	SensorID,
-	ServerAccount,
-	User,
+	ServerAccount
 } from "./types";
 import {
 	APIBase,

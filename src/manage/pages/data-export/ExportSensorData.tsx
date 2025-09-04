@@ -28,9 +28,9 @@ import { Sensor } from "../../../types";
 import {
 	APIBase,
 	formatBytes,
-	sensorTypeChannels,
 	setQueryParams,
 } from "../../../utils";
+import { useSensorTypes } from "../sensor-types/useSensorTypes";
 
 const exportTypes: Record<
 	string,
@@ -67,6 +67,7 @@ export function ExportSensorDataPage() {
 	const [totalLines, setTotalLines] = useState(0);
 	const [bytesDownloaded, setBytesDownloaded] = useState(0);
 	const [totalBytes, setTotalBytes] = useState(0);
+	const sensorTypes = useSensorTypes()
 
 	useEffect(() => {
 		if (chosenSensor === null) return;
@@ -81,14 +82,14 @@ export function ExportSensorDataPage() {
 	useEffect(() => {
 		if (singleChannel()) {
 			setSelectedChannels(
-				chosenSensor?.type && chosenSensor?.type in sensorTypeChannels
-					? [sensorTypeChannels[chosenSensor.type][0]]
+				chosenSensor?.type && chosenSensor?.type in sensorTypes
+					? [sensorTypes[chosenSensor.type][0]]
 					: ["All"],
 			);
 		} else {
 			setSelectedChannels(
-				chosenSensor?.type && chosenSensor?.type in sensorTypeChannels
-					? sensorTypeChannels[chosenSensor.type]
+				chosenSensor?.type && chosenSensor?.type in sensorTypes
+					? sensorTypes[chosenSensor.type]
 					: ["All"],
 			);
 		}
@@ -240,7 +241,7 @@ export function ExportSensorDataPage() {
 				// And handle errors with the streams
 				.catch((err) => {
 					setDownloading(false);
-					setError(err);
+					setError(err +"\nTry hitting export again, that might fix it");
 					console.error("stream error:", err);
 				});
 		} catch (err) {
@@ -319,8 +320,8 @@ export function ExportSensorDataPage() {
 					<Autocomplete
 						options={
 							chosenSensor?.type &&
-							chosenSensor?.type in sensorTypeChannels
-								? sensorTypeChannels[chosenSensor.type]
+							chosenSensor?.type in sensorTypes
+								? sensorTypes[chosenSensor.type]
 								: ["All"]
 						}
 						multiple={singleChannel() ? false : true}

@@ -19,7 +19,7 @@ import { makeCreateSensor, makeFetchSensors, makeFetchSensorTypes } from "../../
 import {
 	defaultPosition,
 	getNextSensorID,
-	sensorMenuTypes,
+	sensorMenuBuiltinTypes,
 } from "../../../utils";
 import { CreateSensorTypeForm } from "../sensor-types/CreateSensorTypeForm";
 
@@ -74,7 +74,7 @@ export function CreateSensorDialog({
 		
 		const validTypes = [
 			...(sensorTypesQuery.data?.map(st => st.name) || []),
-			...sensorMenuTypes
+			...sensorMenuBuiltinTypes
 		];
 		
 		if (!selectedType || selectedType.length === 0) {
@@ -201,7 +201,7 @@ export function CreateSensorDialog({
 							<Autocomplete
 								options={[
 									...(sensorTypesQuery.data?.map(st => st.name) || []),
-									...sensorMenuTypes
+									...sensorMenuBuiltinTypes
 								]}
 								value={selectedType}
 								onChange={(event, newValue) => {

@@ -4,11 +4,12 @@ import {
 	ChartMarker,
 	chartMarkerStyles,
 	chartMarkerTypes,
+	SensorTypes,
 } from "../../../types";
-import { sensorTypeChannels } from "../../../utils";
 
 export const getCreateAndEditMarkerSchema = (
 	token: string,
+	sensorTypes: SensorTypes
 ): CreateAndEditThingsSchema<ChartMarker> => ({
 	async handleCreateSubmit(data) {
 		let success = false;
@@ -59,14 +60,14 @@ export const getCreateAndEditMarkerSchema = (
 		sensor_type: {
 			label: "Sensor type",
 			type: "select",
-			getOptions: () => Object.keys(sensorTypeChannels),
+			getOptions: () => Object.keys(sensorTypes),
 			default: "Raspberry Shake 4D",
 			recheckTheseWhenIChange: ["sensor_channel"],
 		},
 		sensor_channel: {
 			label: "Channel",
 			type: "select",
-			getOptions: (data) => sensorTypeChannels[data.sensor_type.value!],
+			getOptions: (data) => sensorTypes[data.sensor_type.value!],
 			requires: "sensor_type",
 		},
 

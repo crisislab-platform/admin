@@ -8,15 +8,16 @@ import {
 	ListItemText,
 	Stack,
 } from "@mui/material";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router";
-import { useOnMobile, useToolbarHeight } from "../../../utils";
-import useAuth from "../../../auth/useAuth";
-import { useQuery } from "react-query";
-import { makeFetchChartMarkers } from "../../../api";
-import { generateTo, LinkWithQuery, LoadingSpinner } from "../../../components";
 import { useState } from "react";
-import { getCreateAndEditMarkerSchema } from "./markerSchema";
+import { useQuery } from "react-query";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router";
+import { makeFetchChartMarkers } from "../../../api";
+import useAuth from "../../../auth/useAuth";
+import { generateTo, LinkWithQuery, LoadingSpinner } from "../../../components";
 import { CreateThingForm } from "../../../components/CreateAndEditForms";
+import { useOnMobile, useToolbarHeight } from "../../../utils";
+import { useSensorTypes } from "../sensor-types/useSensorTypes";
+import { getCreateAndEditMarkerSchema } from "./markerSchema";
 
 export function ChartMarkersPage() {
 	const { user } = useAuth();
@@ -39,8 +40,9 @@ export function ChartMarkersPage() {
 	}
 	const { markerID: rawMarkerID } = useParams();
 	const selectedMarkerID = rawMarkerID && Number(rawMarkerID);
+	const sensorTypes = useSensorTypes();
 
-	const schema = getCreateAndEditMarkerSchema(user!.token);
+	const schema = getCreateAndEditMarkerSchema(user!.token, sensorTypes);
 
 	const onCreate = () =>
 		navigate(generateTo("/manage/chart-markers", location));

@@ -1,4 +1,3 @@
-import { Sensor, SensorID, SensorType } from "../../../types";
 import {
 	Alert,
 	AlertTitle,
@@ -6,30 +5,27 @@ import {
 	Box,
 	Button,
 	Chip,
-	FormControlLabel,
-	Link,
-	Stack,
-	Switch,
-	TextField,
-	Tooltip,
-	Typography,
-	ToggleButtonGroup,
-	ToggleButton,
 	FormLabel,
+	Stack,
+	TextField,
+	ToggleButton,
+	ToggleButtonGroup,
+	Typography,
 } from "@mui/material";
+import { Sensor, } from "../../../types";
 
 import { useEffect, useState } from "react";
-import { defaultPosition, sensorMenuTypes } from "../../../utils";
-import { makeEditSensor, makeFetchSensors, makeFetchSensorTypes } from "../../../api";
-import { CreateSensorTypeForm } from "../sensor-types/CreateSensorTypeForm";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { makeEditSensor, makeFetchSensors, makeFetchSensorTypes } from "../../../api";
+import { defaultPosition, sensorMenuBuiltinTypes } from "../../../utils";
+import { CreateSensorTypeForm } from "../sensor-types/CreateSensorTypeForm";
 
+import { Settings } from "@mui/icons-material";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import SaveIcon from "@mui/icons-material/Save";
-import { Settings } from "@mui/icons-material";
-import { SensorImage } from "../../../components/BasicSensorInfo";
-import useAuth from "../../../auth/useAuth";
 import { useSnackbar } from "notistack";
+import useAuth from "../../../auth/useAuth";
+import { SensorImage } from "../../../components/BasicSensorInfo";
 
 export function EditSensorInfo({
 	exitEditMode,
@@ -104,7 +100,7 @@ export function EditSensorInfo({
 		
 		const validTypes = [
 			...(sensorTypesQuery.data?.map(st => st.name) || []),
-			...sensorMenuTypes
+			...sensorMenuBuiltinTypes
 		];
 		
 		if (!selectedType || selectedType.length === 0) {
@@ -240,7 +236,7 @@ export function EditSensorInfo({
 					<Autocomplete
 						options={[
 							...(sensorTypesQuery.data?.map(st => st.name) || []),
-							...sensorMenuTypes
+							...sensorMenuBuiltinTypes
 						]}
 						value={selectedType}
 						onChange={(event, newValue) => {

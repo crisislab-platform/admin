@@ -8,13 +8,13 @@ import {
 	useMemo,
 	useState,
 } from "react";
+import { useLocation } from "react-router";
 import { getQueryParam, showErrorSnackbar, useGetQueryParam } from "./utils";
-import { useLocation, useNavigate } from "react-router";
 
+import { useSnackbar } from "notistack";
+import { useNavigateWithQuery } from "../components";
 import { User } from "../types";
 import { generateAvatar } from "../utils";
-import { useNavigateWithQuery } from "../components";
-import { useSnackbar } from "notistack";
 
 const authUserNamespace = "auth-v2-user";
 

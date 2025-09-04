@@ -42,15 +42,6 @@ export type SidebarLink = Route & {
 	subRoutes?: (SidebarLink | Route)[];
 };
 
-export type SensorType =
-	| "Android phone"
-	| "Raspberry Shake 4D"
-	| "Raspberry Shake 3D"
-	| "Raspberry Shake 1D"
-	| "Raspberry Boom"
-	| "CRISiSLab Sensor"
-	| "CRISiSLab Sensor V2"
-	| string;
 
 export type SensorID = number;
 export interface Sensor {
@@ -58,8 +49,8 @@ export interface Sensor {
 	location?: [number?, number?];
 	public_location?: [number?, number?];
 	id: number;
-	type?: SensorType;
-	type_fk?: SensorType;
+	type?: string;
+	type_fk?: string;
 	name?: string;
 	secondary_id?: string;
 	ip?: string;
@@ -100,5 +91,7 @@ export interface ConfigurableSensorType {
 	name: string;
 	channels: { id: string; name: string }[];
 }
+
+export type SensorTypes = Record<string, string[]>
 
 export type Entries<T, P extends keyof T = keyof T> = [P, T[P]][];

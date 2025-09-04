@@ -13,11 +13,10 @@ import {
 } from "@mui/material";
 import {
 	ChangeEvent,
-	ReactNode,
 	Reducer,
 	useId,
 	useReducer,
-	useState,
+	useState
 } from "react";
 import { Entries } from "../types";
 
@@ -39,31 +38,31 @@ export interface CreateAndEditThingsSchema<T extends BaseThingType> {
 			optional?: boolean;
 			type: "select" | "number" | "text" | "colour";
 			requires?:
-				| keyof Omit<T, Property>
-				| ((state: FormState<T>) => boolean);
+			| keyof Omit<T, Property>
+			| ((state: FormState<T>) => boolean);
 			validate?: (state: FormState<T>) => boolean;
 			recheckTheseWhenIChange?: (keyof Omit<T, Property>)[];
 		} & (
 			| {
-					type: "select";
-					getOptions: (state: FormState<T>) => readonly string[];
-					// TODO: Might be able to do fancy inference here
-					default?: string;
-			  }
+				type: "select";
+				getOptions: (state: FormState<T>) => readonly string[];
+				// TODO: Might be able to do fancy inference here
+				default?: string;
+			}
 			| {
-					type: "number";
-					placeholder?: string;
-					default?: number;
-			  }
+				type: "number";
+				placeholder?: string;
+				default?: number;
+			}
 			| {
-					type: "text";
-					placeholder?: string;
-					default?: string;
-			  }
+				type: "text";
+				placeholder?: string;
+				default?: string;
+			}
 			| {
-					type: "colour";
-					default?: string;
-			  }
+				type: "colour";
+				default?: string;
+			}
 		);
 	};
 
@@ -183,8 +182,8 @@ function useFormFields<T extends BaseThingType>(
 
 	const currentThing = readyToSubmit
 		? (Object.fromEntries(
-				Object.entries(formState).map(([k, v]) => [k, v.value]),
-		  ) as T)
+			Object.entries(formState).map(([k, v]) => [k, v.value]),
+		) as T)
 		: null;
 
 	function makeHandleFieldChange<Property extends keyof T = keyof T>(
