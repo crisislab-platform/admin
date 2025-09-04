@@ -127,6 +127,11 @@ export function ExportSensorDataPage() {
 			return;
 		}
 
+		// TODO: Call showSaveFilePicker sooner, since if the server is taking
+		// a long time it will probably return some data eventually, and chrome
+		// will throw an error if we wait too long after the user interaction
+		// to call it.
+
 
 		// This is so that the cancel button works
 		const downloadAbortController = new AbortController();
