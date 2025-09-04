@@ -20,6 +20,7 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs, { Dayjs } from "dayjs";
+import 'dayjs/locale/en-nz';
 import { useEffect, useState } from "react";
 import useAuth from "../../../auth/useAuth";
 import { useGetQueryParam } from "../../../auth/utils";
@@ -365,7 +366,7 @@ export function ExportSensorDataPage() {
 						}
 					/>
 					<Stack gap={2} direction="row">
-						<LocalizationProvider dateAdapter={AdapterDayjs}>
+						<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-nz">
 							<DateTimePicker
 								label="From"
 								value={fromDate}
