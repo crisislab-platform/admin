@@ -120,6 +120,14 @@ export function ExportSensorDataPage() {
 			return;
 		}
 
+		if (
+		fromDate.isAfter(toDate)
+		) {
+			setError("The from date is later than the to date. That's probably not correct.");
+			return;
+		}
+
+
 		// This is so that the cancel button works
 		const downloadAbortController = new AbortController();
 		setDownloadAbort(downloadAbortController);
