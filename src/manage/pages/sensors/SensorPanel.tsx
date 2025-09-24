@@ -1,4 +1,3 @@
-import { Sensor, SensorID } from "../../../types";
 import {
 	Alert,
 	AlertTitle,
@@ -18,29 +17,31 @@ import {
 	Tooltip,
 	Typography,
 } from "@mui/material";
+import { ReactElement, Ref, forwardRef, useMemo, useState } from "react";
 import {
+	LinkWithQuery,
 	LoadingSpinner,
 	SensorImage,
 	SensorStatusText,
 	useNavigateWithQuery,
 } from "../../../components";
-import { ReactElement, Ref, forwardRef, useMemo, useState } from "react";
+import { Sensor, SensorID } from "../../../types";
 
-import { makeDeleteSensor, makeFetchSensors } from "../../../api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { makeDeleteSensor, makeFetchSensors } from "../../../api";
 
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import CloseIcon from "@mui/icons-material/Close";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { LiveDataGraphs } from "../../../components";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { TransitionProps } from "@mui/material/transitions";
-import useAuth from "../../../auth/useAuth";
-import { useParams } from "react-router";
 import { useSnackbar } from "notistack";
-import { EditSensorInfo } from "./EditSensorInfo";
+import { useParams } from "react-router";
+import useAuth from "../../../auth/useAuth";
+import { LiveDataGraphs } from "../../../components";
 import { mapURL, useOnMobile, userHasPermission } from "../../../utils";
+import { EditSensorInfo } from "./EditSensorInfo";
 
 const listFormatter = new Intl.ListFormat("en");
 
@@ -152,14 +153,8 @@ export function SensorPanel() {
 				{userHasPermission(user, "sensor-data:bulk-export") && (
 					<Button
 						variant="outlined"
-						onClick={() =>
-							navigateWithQuery(
-								`/manage/data-export?export_data_sensor_id=${sensorID}`,
-								{
-									replace: false,
-								},
-							)
-						}
+						LinkComponent={LinkWithQuery}
+						href={`/manage/data-export?export_data_sensor_id=${sensorID}`}
 						startIcon={<FileDownloadIcon />}>
 						Export data
 					</Button>
@@ -314,12 +309,10 @@ export function SensorPanel() {
 								onClick={async () => {
 									try {
 										await navigator.clipboard.writeText(
-											`${
-												activeSensor?.location?.[0] ||
-												"Unknown"
-											}, ${
-												activeSensor?.location?.[1] ||
-												"Unknown"
+											`${activeSensor?.location?.[0] ||
+											"Unknown"
+											}, ${activeSensor?.location?.[1] ||
+											"Unknown"
 											}`,
 										);
 										enqueueSnackbar(
