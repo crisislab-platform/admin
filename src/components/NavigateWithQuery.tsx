@@ -10,7 +10,7 @@ import {
 
 function generateTo(to: string, location: Location): string {
 
-	console.log(`Generating to link from ${location.pathname} to ${to}`);
+	// console.log(`Generating to link from ${location.pathname} to ${to}`);
 
 	// Add trailing slash to make relative paths work properly
 	const relative = to.startsWith(".");
@@ -27,9 +27,9 @@ function generateTo(to: string, location: Location): string {
 
 	const toUrl = new URL(to, window.location.origin + pathname);
 
-	console.log(
-		"cuurrent url", url, "to url", toUrl
-	)
+	// console.log(
+	// 	"cuurrent url", url, "to url", toUrl
+	// )
 
 	url.pathname = toUrl.pathname;
 

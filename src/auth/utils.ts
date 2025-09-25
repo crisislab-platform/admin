@@ -49,10 +49,10 @@ export function showErrorSnackbar(
 }
 
 export function useGetQueryParam(paramName: string): null | string {
-	const { search } = useLocation();
+	const location = useLocation();
 	const [param, setParam] = useState<null | string>(null);
 	useEffect(() => {
 		setParam(getQueryParam(paramName));
-	}, [search]);
+	}, [location]);
 	return param;
 }

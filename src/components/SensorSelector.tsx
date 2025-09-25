@@ -54,7 +54,7 @@ export function SensorSelector({
 	useEffect(() => {
 		if (!sensorsQuery?.data?.sensors) return;
 
-		console.log("Default sensor id: ",defaultSensorID)
+		console.log("Default sensor id: ", defaultSensorID)
 		
 		if ((defaultSensorID!==null) && (sensor===null)){
 			const sensor = sensorsQuery.data?.sensors?.[defaultSensorID];
