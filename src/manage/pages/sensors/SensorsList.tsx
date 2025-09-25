@@ -6,18 +6,18 @@ import {
 	ListItemIcon,
 	ListItemText,
 } from "@mui/material";
-import { FilterRule, Sensor, SensorID, SensorSortKey } from "../../../types";
+import { useParams } from "react-router";
 import {
 	LinkWithQuery,
 	LoadingSpinner,
 	SensorImage,
 } from "../../../components";
-import { useParams } from "react-router";
+import { FilterRule, Sensor, SensorID, SensorSortKey } from "../../../types";
 
-import { makeFetchSensors } from "../../../api";
-import useAuth from "../../../auth/useAuth";
 import { useMemo } from "react";
 import { useQuery } from "react-query";
+import { makeFetchSensors } from "../../../api";
+import useAuth from "../../../auth/useAuth";
 
 export function SensorsList({
 	sortKey,

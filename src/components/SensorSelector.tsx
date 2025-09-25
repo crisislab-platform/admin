@@ -31,10 +31,12 @@ export function SensorSelector({
 	sensor,
 	onChange,
 	onLoaded,
+	defaultSensorID = null
 }: {
 	label: string;
 	sensor: Sensor | null;
 	onChange: (sensor: Sensor) => void;
+	defaultSensorID?: number|null;
 	onLoaded?: (
 		sensors: Awaited<
 			ReturnType<ReturnType<typeof makeFetchSensors>>
@@ -51,8 +53,18 @@ export function SensorSelector({
 		if that selection is set in the onLoad callback. */
 	useEffect(() => {
 		if (!sensorsQuery?.data?.sensors) return;
+
+		console.log("Default sensor id: ",defaultSensorID)
 		
-		onLoaded?.(sensorsQuery.data.sensors);
+		if ((defaultSensorID!==null) && (sensor===null)){
+			const sensor = sensorsQuery.data?.sensors?.[defaultSensorID];
+			if (sensor) {
+				console.log(`Setting default sensor selector sensor to #${defaultSensorID}`)
+				onChange(sensor);
+			}
+		}
+
+		onLoaded?.(sensorsQuery?.data?.sensors)
 
 		setSensorOptions(Object.values(sensorsQuery.data.sensors).map(simplifySensor));
 	}, [sensorsQuery.data]);
@@ -71,12 +83,12 @@ export function SensorSelector({
 
 				onChange(sensor);
 			}}
-			renderInput={(params) => (
+			renderInput={({InputProps, ...params}) => (
 				<TextField
 					{...params}
 					label={sensorsQuery.isFetched ? label : "Loading..."}
 					slotProps={{input:{
-						...params.InputProps,
+						...InputProps,
 						startAdornment: (
 							<InputAdornment position="start" sx={{ ml: 1 }}>
 								<SensorStatusIcon online={sensor?.online} />

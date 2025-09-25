@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { ChangeEvent, useEffect, useMemo } from "react";
 import { useQuery } from "react-query";
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import {
 	deleteMarker as APIDeleteMarker,
 	updateMarker as APIUpdateMarker,
@@ -22,7 +22,7 @@ import {
 	queryClient,
 } from "../../../api";
 import useAuth from "../../../auth/useAuth";
-import { generateTo } from "../../../components";
+import { useNavigateWithQuery } from "../../../components";
 import {
 	CreateOrEditThingForm,
 	useCreateOrEditThingFormFields,
@@ -41,7 +41,7 @@ export function EditChartMarkerPanel() {
 
 	const { markerID: rawMarkerID } = useParams();
 	const selectedMarkerID = rawMarkerID && Number(rawMarkerID);
-	const navigate = useNavigate();
+	const navigate = useNavigateWithQuery();
 	const location = useLocation();
 	const sensorTypes = useSensorTypes()
 
@@ -66,7 +66,7 @@ export function EditChartMarkerPanel() {
 	const onMobile = useOnMobile();
 
 	function onDialogCLose() {
-		navigate(generateTo("/manage/chart-markers", location));
+		navigate("/manage/chart-markers");
 	}
 
 	const changesMade = useMemo(() => {
@@ -105,7 +105,7 @@ export function EditChartMarkerPanel() {
 
 		queryClient.invalidateQueries("charts/markers");
 
-		navigate(generateTo("/manage/chart-markers", location));
+		navigate("/manage/chart-markers");
 	}
 
 	const readyToSave = readyToSubmit && changesMade && selectedMarker;

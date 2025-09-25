@@ -11,11 +11,11 @@ import {
 import { useParams } from "react-router";
 import { accountsQueryStaleTime } from "../../../utils";
 
-import { LinkWithQuery, LoadingSpinner } from "../../../components";
 import TickIcon from "@mui/icons-material/VerifiedUser";
+import { useQuery } from "react-query";
 import { makeFetchAccounts } from "../../../api";
 import useAuth from "../../../auth/useAuth";
-import { useQuery } from "react-query";
+import { LinkWithQuery, LoadingSpinner } from "../../../components";
 
 export function AccountsList() {
 	const { user } = useAuth();

@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router";
+import { Outlet, useLocation, useParams } from "react-router";
 import { makeFetchChartMarkers } from "../../../api";
 import useAuth from "../../../auth/useAuth";
-import { generateTo, LinkWithQuery, LoadingSpinner } from "../../../components";
+import { LinkWithQuery, LoadingSpinner, useNavigateWithQuery } from "../../../components";
 import { CreateThingForm } from "../../../components/CreateAndEditForms";
 import { useOnMobile, useToolbarHeight } from "../../../utils";
 import { useSensorTypes } from "../sensor-types/useSensorTypes";
@@ -28,7 +28,7 @@ export function ChartMarkersPage() {
 	const onMobile = useOnMobile();
 	const toolbarHeight = useToolbarHeight();
 	const location = useLocation();
-	const navigate = useNavigate();
+	const navigateWithQuery = useNavigateWithQuery();
 
 	const [createMakerFormOpen, setCreateMarkerFormOpen] = useState(false);
 
@@ -45,7 +45,7 @@ export function ChartMarkersPage() {
 	const schema = getCreateAndEditMarkerSchema(user!.token, sensorTypes);
 
 	const onCreate = () =>
-		navigate(generateTo("/manage/chart-markers", location));
+		navigateWithQuery("/manage/chart-markers", location);
 
 	return (
 		<Grid

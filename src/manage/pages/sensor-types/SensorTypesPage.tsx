@@ -8,13 +8,13 @@ import {
 	ListItemText,
 	Stack,
 } from "@mui/material";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router";
-import { useOnMobile, useToolbarHeight } from "../../../utils";
-import useAuth from "../../../auth/useAuth";
-import { useQuery } from "react-query";
-import { makeFetchSensorTypes } from "../../../api";
-import { generateTo, LinkWithQuery, LoadingSpinner } from "../../../components";
 import { useState } from "react";
+import { useQuery } from "react-query";
+import { Outlet, useLocation, useParams } from "react-router";
+import { makeFetchSensorTypes } from "../../../api";
+import useAuth from "../../../auth/useAuth";
+import { LinkWithQuery, LoadingSpinner, useNavigateWithQuery } from "../../../components";
+import { useOnMobile, useToolbarHeight } from "../../../utils";
 import { CreateSensorTypeForm } from "./CreateSensorTypeForm";
 
 export function SensorTypesPage() {
@@ -26,7 +26,7 @@ export function SensorTypesPage() {
 	const onMobile = useOnMobile();
 	const toolbarHeight = useToolbarHeight();
 	const location = useLocation();
-	const navigate = useNavigate();
+	const navigate = useNavigateWithQuery();
 
 	const [createSensorTypeFormOpen, setCreateSensorTypeFormOpen] = useState(false);
 
@@ -40,7 +40,7 @@ export function SensorTypesPage() {
 	const selectedSensorTypeName = rawSensorTypeName && decodeURIComponent(rawSensorTypeName);
 
 	const onCreate = () =>
-		navigate(generateTo("/manage/sensor-types", location));
+		navigate("/manage/sensor-types");
 
 	return (
 		<Grid

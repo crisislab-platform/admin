@@ -49,7 +49,10 @@ const exportTypes: Record<
 
 export function ExportSensorDataPage() {
 	const { user } = useAuth();
-	const defaultSensorID = useGetQueryParam("export_data_sensor_id");
+
+	const _defaultSensorID = useGetQueryParam("export_data_sensor_id");
+	const defaultSensorID = (_defaultSensorID !== null) ? Number(_defaultSensorID) : null;
+
 	const [chosenSensor, setChosenSensor] = useState<Sensor | null>(null);
 	const [exportFormat, setExportFormat] =
 		useState<keyof typeof exportTypes>("tsv1");
@@ -101,13 +104,13 @@ export function ExportSensorDataPage() {
 			? totalLines === 0
 				? 0
 				: processedLines > totalLines
-				? 100
-				: (processedLines * 100) / totalLines
+					? 100
+					: (processedLines * 100) / totalLines
 			: totalBytes === 0
-			? 0
-			: bytesDownloaded > totalBytes
-			? 100
-			: (bytesDownloaded * 100) / totalBytes;
+				? 0
+				: bytesDownloaded > totalBytes
+					? 100
+					: (bytesDownloaded * 100) / totalBytes;
 
 	async function startDownload() {
 		if (!chosenSensor || !fromDate || !toDate || !user) return;
@@ -122,7 +125,7 @@ export function ExportSensorDataPage() {
 		}
 
 		if (
-		fromDate.isAfter(toDate)
+			fromDate.isAfter(toDate)
 		) {
 			setError("The from date is later than the to date. That's probably not correct.");
 			return;
@@ -149,12 +152,10 @@ export function ExportSensorDataPage() {
 
 			// We await this to get the headers, but not the whole body
 			const res = await fetch(
-				`${APIBase}/db/data-bulk-export?sensor_id=${
-					chosenSensor.id
+				`${APIBase}/db/data-bulk-export?sensor_id=${chosenSensor.id
 				}&channels=${selectedChannels.join(
 					",",
-				)}&format=${exportFormat}&from=${
-					fromDate.toDate().getTime() / 1000
+				)}&format=${exportFormat}&from=${fromDate.toDate().getTime() / 1000
 				}&to=${toDate.toDate().getTime() / 1000}`,
 				{
 					signal: downloadAbortController.signal,
@@ -197,9 +198,8 @@ export function ExportSensorDataPage() {
 			const fileDownloadHandle =
 				// @ts-expect-error This should be fixed eventually
 				(await window.showSaveFilePicker({
-					suggestedName: `sensor_${
-						chosenSensor.id
-					}_data_from_${fromDate.toISOString()}_to_${toDate.toISOString()}.${extension}`,
+					suggestedName: `sensor_${chosenSensor.id
+						}_data_from_${fromDate.toISOString()}_to_${toDate.toISOString()}.${extension}`,
 				})) as FileSystemFileHandle;
 			const fileWriteStream =
 				(await fileDownloadHandle.createWritable()) as FileSystemWritableFileStream;
@@ -255,7 +255,7 @@ export function ExportSensorDataPage() {
 				// And handle errors with the streams
 				.catch((err) => {
 					setDownloading(false);
-					setError(err +"\nTry hitting export again, that might fix it");
+					setError(err + "\nTry hitting export again, that might fix it");
 					console.error("stream error:", err);
 				});
 		} catch (err) {
@@ -318,23 +318,13 @@ export function ExportSensorDataPage() {
 						label="Sensor"
 						onChange={setChosenSensor}
 						sensor={chosenSensor}
-						onLoaded={(sensors) => {
-							if (chosenSensor !== null) return;
+						defaultSensorID={defaultSensorID}
 
-							const sensor =
-								(defaultSensorID
-									? sensors[parseInt(defaultSensorID)]
-									: null) ??
-								Object.values(sensors)[0] ??
-								null;
-
-							setChosenSensor(sensor);
-						}}
 					/>
 					<Autocomplete
 						options={
 							chosenSensor?.type &&
-							chosenSensor?.type in sensorTypes
+								chosenSensor?.type in sensorTypes
 								? sensorTypes[chosenSensor.type]
 								: ["All"]
 						}
@@ -402,8 +392,8 @@ export function ExportSensorDataPage() {
 					!downloading
 						? "determinate"
 						: processedLines > totalLines
-						? "indeterminate"
-						: "determinate"
+							? "indeterminate"
+							: "determinate"
 				}
 				value={progress}
 			/>
