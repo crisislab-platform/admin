@@ -16,7 +16,7 @@ export const getCreateAndEditSensorTypeSchema = (
 	async handleCreateSubmit(data) {
 		let success = false;
 		try {
-			await queryClient.executeMutation({
+			await queryClient.getMutationCache().build(queryClient, {
 				mutationFn: () => {
 					return createSensorType(token, data.name, {
 						channels: data.channels,
@@ -30,7 +30,7 @@ export const getCreateAndEditSensorTypeSchema = (
 					console.error("Mutation failed:", error);
 					success = false;
 				},
-			});
+			}).execute();
 		} catch {
 			return false;
 		}
@@ -40,7 +40,7 @@ export const getCreateAndEditSensorTypeSchema = (
 	async handleEditSubmit(id, data) {
 		let success = false;
 		try {
-			await queryClient.executeMutation({
+			await queryClient.getMutationCache().build(queryClient, {
 				mutationFn: () => {
 					return updateSensorType(token, data.name, {
 						channels: data.channels,
@@ -54,7 +54,7 @@ export const getCreateAndEditSensorTypeSchema = (
 					console.error("Mutation failed:", error);
 					success = false;
 				},
-			});
+			}).execute();
 		} catch {
 			return false;
 		}

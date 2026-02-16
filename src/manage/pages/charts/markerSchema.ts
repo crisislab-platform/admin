@@ -14,7 +14,7 @@ export const getCreateAndEditMarkerSchema = (
 	async handleCreateSubmit(data) {
 		let success = false;
 		try {
-			await queryClient.executeMutation({
+			await queryClient.getMutationCache().build(queryClient, {
 				mutationFn: () => {
 					return createMarker(token, data);
 				},
@@ -26,7 +26,7 @@ export const getCreateAndEditMarkerSchema = (
 					console.error("Mutation failed:", error);
 					success = false;
 				},
-			});
+			}).execute();
 		} catch {
 			return false;
 		}
