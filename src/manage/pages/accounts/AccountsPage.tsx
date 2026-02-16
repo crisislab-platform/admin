@@ -1,4 +1,4 @@
-import { Button, Grid, Stack } from "@mui/material";
+import { Button, GridLegacy as Grid, Stack } from "@mui/material";
 
 import { AccountsList } from "./AccountsList";
 import { CreateAccountDialog } from "./CreateAccountDialog";

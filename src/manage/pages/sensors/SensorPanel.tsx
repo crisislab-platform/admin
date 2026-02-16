@@ -27,7 +27,7 @@ import {
 } from "../../../components";
 import { Sensor, SensorID } from "../../../types";
 
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { makeDeleteSensor, makeFetchSensors } from "../../../api";
 
 import CloseIcon from "@mui/icons-material/Close";

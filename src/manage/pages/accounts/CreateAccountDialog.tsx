@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { accountsQueryStaleTime, generateAvatar, roles } from "../../../utils";
 import { makeCreateAccount, makeFetchAccounts } from "../../../api";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import useAuth from "../../../auth/useAuth";
 import { useSnackbar } from "notistack";

@@ -6,15 +6,4 @@ export default defineConfig({
 	server: {
 		port: 3000,
 	},
-	build: {
-		rollupOptions: {
-			output: {
-				manualChunks: {
-					react: ["react", "react-dom"],
-					mui: ["@mui/material", "@mui/lab"],
-					date_pickers: ["@mui/x-date-pickers", "dayjs"],
-				},
-			},
-		},
-	},
 });

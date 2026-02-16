@@ -13,7 +13,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { ChangeEvent, useEffect, useMemo } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useLocation, useParams } from "react-router";
 import {
 	deleteMarker as APIDeleteMarker,

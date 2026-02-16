@@ -15,7 +15,7 @@ import {
 import { Sensor, } from "../../../types";
 
 import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { makeEditSensor, makeFetchSensors, makeFetchSensorTypes } from "../../../api";
 import { defaultPosition, sensorMenuBuiltinTypes } from "../../../utils";
 import { CreateSensorTypeForm } from "../sensor-types/CreateSensorTypeForm";

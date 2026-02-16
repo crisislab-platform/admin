@@ -35,7 +35,7 @@ import {
 	makeEditAccount,
 	makeFetchAccounts,
 } from "../../../api";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import PasswordIcon from "@mui/icons-material/Password";
 
 import CachedIcon from "@mui/icons-material/Cached";

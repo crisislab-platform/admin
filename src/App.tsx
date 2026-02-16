@@ -8,13 +8,13 @@ import {
 	styled,
 } from "@mui/material";
 import { ErrorBoundary, MissingRole, NavigateWithQuery } from "./components";
-import { QueryClientProvider } from "react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Route, Routes } from "react-router";
 import useAuth, { AuthProvider } from "./auth/useAuth";
 
 import AuthWrapper from "./auth/AuthWrapper";
 import ManageApp from "./manage/ManageApp";
-import { ReactQueryDevtools } from "react-query/devtools";
+import { ReactQueryDevtools } from "@tanstack/react-query/devtools";
 import { Route as RouteType } from "./types";
 import { SnackbarProvider } from "notistack";
 import { authRoutes } from "./auth/authRoutes";

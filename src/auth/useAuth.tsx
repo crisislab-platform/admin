@@ -8,6 +8,7 @@ import {
 	useMemo,
 	useState,
 } from "react";
+import type { JSX } from "react";
 import { useLocation } from "react-router";
 import { getQueryParam, showErrorSnackbar, useGetQueryParam } from "./utils";
 

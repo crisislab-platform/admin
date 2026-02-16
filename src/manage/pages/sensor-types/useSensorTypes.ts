@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { makeFetchSensorTypes } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 import { SensorTypes } from "../../../types";

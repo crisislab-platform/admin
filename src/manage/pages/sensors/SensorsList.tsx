@@ -15,7 +15,7 @@ import {
 import { FilterRule, Sensor, SensorID, SensorSortKey } from "../../../types";
 
 import { useMemo } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { makeFetchSensors } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 

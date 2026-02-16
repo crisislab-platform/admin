@@ -2,14 +2,14 @@ import {
 	Alert,
 	AlertTitle,
 	Button,
-	Grid,
+	GridLegacy as Grid,
 	List,
 	ListItemButton,
 	ListItemText,
 	Stack,
 } from "@mui/material";
 import { useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation, useParams } from "react-router";
 import { makeFetchSensorTypes } from "../../../api";
 import useAuth from "../../../auth/useAuth";

@@ -22,7 +22,7 @@ import {
 import { TransitionProps } from "@mui/material/transitions";
 import { useSnackbar } from "notistack";
 import { ReactElement, Ref, forwardRef, useMemo, useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { deleteSensorType, makeFetchSensorTypes, queryClient } from "../../../api";
 import useAuth from "../../../auth/useAuth";

@@ -1,5 +1,6 @@
 import { SvgIcon } from "@mui/material";
 import { roles } from "./utils";
+import type { JSX } from "react";
 
 export interface MotionData {
 	time: number;

@@ -12,7 +12,7 @@ import { useParams } from "react-router";
 import { accountsQueryStaleTime } from "../../../utils";
 
 import TickIcon from "@mui/icons-material/VerifiedUser";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { makeFetchAccounts } from "../../../api";
 import useAuth from "../../../auth/useAuth";
 import { LinkWithQuery, LoadingSpinner } from "../../../components";

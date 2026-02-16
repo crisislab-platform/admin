@@ -1,6 +1,6 @@
 import {
 	Button,
-	Grid,
+	GridLegacy as Grid,
 	IconButton,
 	Menu,
 	MenuItem,
@@ -33,7 +33,7 @@ import { Outlet } from "react-router";
 import { SensorsList } from "./SensorsList";
 import SortIcon from "@mui/icons-material/Sort";
 import useAuth from "../../../auth/useAuth";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { makeFetchSensors } from "../../../api";
 
 type ExtendedSensorSortKey = {

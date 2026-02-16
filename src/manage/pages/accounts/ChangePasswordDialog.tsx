@@ -1,11 +1,10 @@
-import { LoadingButton } from "@mui/lab";
 import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
 	Stack,
 	TextField,
-	Typography,
+	Typography,Button
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useState, FormEvent } from "react";
@@ -69,13 +68,13 @@ export function ChangePasswordDialog({
 							type="password"
 							autoComplete="new-password"
 						/>
-						<LoadingButton
+						<Button
 							loading={loading}
 							variant="contained"
 							type="submit"
 							color="secondary">
 							Save & copy new password
-						</LoadingButton>
+						</Button>
 					</Stack>
 				</form>
 			</DialogContent>

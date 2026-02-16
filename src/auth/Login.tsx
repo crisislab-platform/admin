@@ -1,8 +1,7 @@
 import { FormEvent, useEffect } from "react";
-import { Link, Stack, TextField, Typography } from "@mui/material";
+import { Link, Stack, TextField, Typography,Button } from "@mui/material";
 
 import { LinkWithQuery } from "../components";
-import { LoadingButton } from "@mui/lab";
 import LoginIcon from "@mui/icons-material/VpnKey";
 import { titleSuffix } from "./utils";
 import useAuth from "./useAuth";
@@ -66,14 +65,14 @@ export default function LoginPage() {
 						type="password"
 						autoComplete="current-password"
 					/>
-					<LoadingButton
+					<Button
 						loading={loading}
 						variant="contained"
 						type="submit"
 						color="secondary"
 						endIcon={<LoginIcon />}>
 						Login
-					</LoadingButton>
+					</Button>
 				</Stack>
 			</form>
 			<Link
