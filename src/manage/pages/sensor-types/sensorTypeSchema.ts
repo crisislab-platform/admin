@@ -23,7 +23,7 @@ export const getCreateAndEditSensorTypeSchema = (
 					});
 				},
 				onSuccess() {
-					queryClient.invalidateQueries("sensor-types");
+					queryClient.invalidateQueries(["sensor-types"]);
 					success = true;
 				},
 				onError(error) {
@@ -47,7 +47,7 @@ export const getCreateAndEditSensorTypeSchema = (
 					});
 				},
 				onSuccess() {
-					queryClient.invalidateQueries("sensor-types");
+					queryClient.invalidateQueries(["sensor-types"]);
 					success = true;
 				},
 				onError(error) {

@@ -33,7 +33,7 @@ export function CreateAccountDialog({
 	const [selectedRoles, setSelectedRoles] = useState<Role[]>([]);
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const { enqueueSnackbar } = useSnackbar();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user?.token), {
+	const accountsQuery = useQuery(["accounts"], makeFetchAccounts(user?.token), {
 		staleTime: accountsQueryStaleTime,
 	});
 	const queryClient = useQueryClient();
@@ -45,7 +45,7 @@ export function CreateAccountDialog({
 		},
 		onSuccess: () => {
 			// Refetch accounts to get updated list
-			queryClient.invalidateQueries("accounts");
+			queryClient.invalidateQueries(["accounts"]);
 			enqueueSnackbar("Created account", {
 				variant: "success",
 			});

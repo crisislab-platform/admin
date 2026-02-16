@@ -45,7 +45,7 @@ const SlideUpTransition = forwardRef(function Transition(
 
 export function SensorTypePanel() {
 	const { user } = useAuth();
-	const sensorTypesQuery = useQuery("sensor-types", makeFetchSensorTypes(user?.token));
+	const sensorTypesQuery = useQuery(["sensor-types"], makeFetchSensorTypes(user?.token));
 	const { sensorTypeName: rawSensorTypeName } = useParams();
 
 	const [editMode, setEditMode] = useState(false);
@@ -58,7 +58,7 @@ export function SensorTypePanel() {
 		(name: string) => deleteSensorType(user!.token, name),
 		{
 			onSuccess: () => {
-				queryClient.invalidateQueries("sensor-types");
+				queryClient.invalidateQueries(["sensor-types"]);
 				enqueueSnackbar("Sensor type deleted");
 				navigateWithQuery("/manage/sensor-types");
 			},

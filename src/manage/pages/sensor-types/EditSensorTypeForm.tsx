@@ -48,7 +48,7 @@ export function EditSensorTypeForm({
 		setLoading(true);
 		try {
 			await updateSensorType(user!.token, name, { channels });
-			await queryClient.invalidateQueries("sensor-types");
+			await queryClient.invalidateQueries(["sensor-types"]);
 			enqueueSnackbar("Sensor type updated successfully");
 			exitEditMode();
 		} catch (error) {

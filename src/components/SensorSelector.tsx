@@ -44,7 +44,7 @@ export function SensorSelector({
 	) => void;
 }) {
 	const { user } = useAuth();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
+	const sensorsQuery = useQuery(["sensors"], makeFetchSensors(user?.token));
 	const [sensorOptions, setSensorOptions] = useState<ReturnType<typeof simplifySensor>[]>([])
 
 	/* This effect needs to fire before the computed data is given to the

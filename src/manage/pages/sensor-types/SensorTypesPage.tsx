@@ -20,7 +20,7 @@ import { CreateSensorTypeForm } from "./CreateSensorTypeForm";
 export function SensorTypesPage() {
 	const { user } = useAuth();
 	const sensorTypesQuery = useQuery(
-		"sensor-types",
+		["sensor-types"],
 		makeFetchSensorTypes(user?.token),
 	);
 	const onMobile = useOnMobile();
@@ -117,7 +117,7 @@ export function SensorTypesPage() {
 							)}
 						</>
 					)}
-					{sensorTypesQuery.isLoading && (
+					{sensorTypesQuery.isInitialLoading && (
 						<LoadingSpinner
 							addPadding
 							message="Loading sensor types"

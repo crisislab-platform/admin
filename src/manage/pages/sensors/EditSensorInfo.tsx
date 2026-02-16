@@ -60,8 +60,8 @@ export function EditSensorInfo({
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
-	const sensorTypesQuery = useQuery("sensor-types", makeFetchSensorTypes(user?.token));
+	const sensorsQuery = useQuery(["sensors"], makeFetchSensors(user?.token));
+	const sensorTypesQuery = useQuery(["sensor-types"], makeFetchSensorTypes(user?.token));
 
 	const mutation = useMutation(makeEditSensor(user?.token), {
 		onError: (error) => {
@@ -71,7 +71,7 @@ export function EditSensorInfo({
 		},
 		onSuccess: () => {
 			// Refetch sensors to get updated list
-			queryClient.invalidateQueries("sensors");
+			queryClient.invalidateQueries(["sensors"]);
 			enqueueSnackbar("Sensor updated");
 		},
 	});

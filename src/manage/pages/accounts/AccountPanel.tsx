@@ -51,7 +51,7 @@ import { SlideUpTransition } from "../../../components/SlideUpTransition";
 
 export function AccountPanel() {
 	const { user } = useAuth();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user?.token), {
+	const accountsQuery = useQuery(["accounts"], makeFetchAccounts(user?.token), {
 		staleTime: accountsQueryStaleTime,
 	});
 	const { accountID: encodedAccountID } = useParams();
@@ -72,7 +72,7 @@ export function AccountPanel() {
 		},
 		onSuccess: () => {
 			// Refetch accounts to get updated list
-			queryClient.invalidateQueries("accounts");
+			queryClient.invalidateQueries(["accounts"]);
 			enqueueSnackbar("Deleted account");
 		},
 	});
@@ -302,7 +302,7 @@ function EditUserInfo({
 
 	const [errors, setErrors] = useState<[string, string][]>([]);
 	const { enqueueSnackbar } = useSnackbar();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user?.token), {
+	const accountsQuery = useQuery(["accounts"], makeFetchAccounts(user?.token), {
 		staleTime: accountsQueryStaleTime,
 	});
 	const queryClient = useQueryClient();
@@ -320,7 +320,7 @@ function EditUserInfo({
 		},
 		onSuccess: (data) => {
 			// Refetch accounts to get updated list
-			queryClient.invalidateQueries("accounts");
+			queryClient.invalidateQueries(["accounts"]);
 			
 			// If user edited their own account, force re-login for security
 			if (user && user?.email === data.email) {

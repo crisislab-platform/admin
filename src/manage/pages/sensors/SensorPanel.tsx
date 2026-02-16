@@ -56,7 +56,7 @@ const SlideUpTransition = forwardRef(function Transition(
 
 export function SensorPanel() {
 	const { user } = useAuth();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
+	const sensorsQuery = useQuery(["sensors"], makeFetchSensors(user?.token));
 	const { sensorID: rawSensorID } = useParams();
 
 	const [editMode, setEditMode] = useState(false);
@@ -75,7 +75,7 @@ export function SensorPanel() {
 		},
 		onSuccess: () => {
 			// Refetch sensors to get updated list
-			queryClient.invalidateQueries("sensors");
+			queryClient.invalidateQueries(["sensors"]);
 			enqueueSnackbar("Sensor deleted");
 		},
 	});

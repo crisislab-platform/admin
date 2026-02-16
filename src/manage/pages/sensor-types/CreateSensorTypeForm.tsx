@@ -61,7 +61,7 @@ export function CreateSensorTypeForm({
 		try {
 			const result = await createSensorType(user!.token, name, { channels });
 			console.log("Create result:", result);
-			await queryClient.invalidateQueries("sensor-types");
+			await queryClient.invalidateQueries(["sensor-types"]);
 			enqueueSnackbar("Sensor type created successfully");
 			
 			// Reset form

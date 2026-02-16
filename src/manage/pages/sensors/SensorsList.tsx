@@ -30,7 +30,7 @@ export function SensorsList({
 }) {
 	const { user } = useAuth();
 	const { sensorID: rawSensorID } = useParams();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
+	const sensorsQuery = useQuery(["sensors"], makeFetchSensors(user?.token));
 	const filteredSensors = useMemo<null | Sensor[]>(() => {
 		// Make sure that the data is loaded
 		if (!sensorsQuery.isSuccess) return null;

@@ -17,7 +17,7 @@ const sensorTypesBackup: SensorTypes = {
 
 export function useSensorTypes(): SensorTypes {
 	const { user } = useAuth();
-	const sensorTypesQuery = useQuery("sensor-types", makeFetchSensorTypes(user?.token));
+	const sensorTypesQuery = useQuery(["sensor-types"], makeFetchSensorTypes(user?.token));
 
 	const data = useMemo(()=>{
 		const types = {...sensorTypesBackup}

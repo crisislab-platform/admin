@@ -19,7 +19,7 @@ export const getCreateAndEditMarkerSchema = (
 					return createMarker(token, data);
 				},
 				onSuccess() {
-					queryClient.invalidateQueries("charts/markers");
+					queryClient.invalidateQueries(["charts/markers"]);
 					success = true;
 				},
 				onError(error) {
@@ -41,7 +41,7 @@ export const getCreateAndEditMarkerSchema = (
 					return updateMarker(token, id, data);
 				},
 				onSuccess() {
-					queryClient.invalidateQueries("charts/markers");
+					queryClient.invalidateQueries(["charts/markers"]);
 					success = true;
 				},
 				onError(error) {

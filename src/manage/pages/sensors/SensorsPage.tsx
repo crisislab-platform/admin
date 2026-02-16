@@ -60,7 +60,7 @@ const filterRuleSensorProperties: (keyof Sensor)[] = [
 export function SensorsPage() {
 	const onMobile = useOnMobile();
 	const { user } = useAuth();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
+	const sensorsQuery = useQuery(["sensors"], makeFetchSensors(user?.token));
 	const sensors = sensorsQuery.data
 		? Object.values(sensorsQuery.data.sensors)
 		: null;

@@ -35,7 +35,7 @@ import { getCreateAndEditMarkerSchema } from "./markerSchema";
 export function EditChartMarkerPanel() {
 	const { user } = useAuth();
 	const markersQuery = useQuery(
-		"charts/markers",
+		["charts/markers"],
 		makeFetchChartMarkers(user?.token),
 	);
 
@@ -103,7 +103,7 @@ export function EditChartMarkerPanel() {
 
 		await APIDeleteMarker(user.token, selectedMarker.id);
 
-		queryClient.invalidateQueries("charts/markers");
+		queryClient.invalidateQueries(["charts/markers"]);
 
 		navigate("/manage/chart-markers");
 	}
@@ -127,7 +127,7 @@ export function EditChartMarkerPanel() {
 			enabled: e.target.checked,
 		});
 
-		queryClient.invalidateQueries("charts/markers");
+		queryClient.invalidateQueries(["charts/markers"]);
 	}
 
 	const switchChecked = selectedMarker?.enabled ?? true;

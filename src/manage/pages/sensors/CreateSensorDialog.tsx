@@ -49,8 +49,8 @@ export function CreateSensorDialog({
 
 	const { enqueueSnackbar } = useSnackbar();
 	const queryClient = useQueryClient();
-	const sensorsQuery = useQuery("sensors", makeFetchSensors(user?.token));
-	const sensorTypesQuery = useQuery("sensor-types", makeFetchSensorTypes(user?.token));
+	const sensorsQuery = useQuery(["sensors"], makeFetchSensors(user?.token));
+	const sensorTypesQuery = useQuery(["sensor-types"], makeFetchSensorTypes(user?.token));
 	const mutation = useMutation(makeCreateSensor(user?.token), {
 		onError: (error) => {
 			enqueueSnackbar(`Failed to create new sensor: ${error}`, {
@@ -59,7 +59,7 @@ export function CreateSensorDialog({
 		},
 		onSuccess: (data) => {
 			// Refetch sensors to get updated list
-			queryClient.invalidateQueries("sensors");
+			queryClient.invalidateQueries(["sensors"]);
 			enqueueSnackbar("Sensor created", {
 				variant: "success",
 			});

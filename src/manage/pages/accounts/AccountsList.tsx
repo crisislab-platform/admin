@@ -20,7 +20,7 @@ import { LinkWithQuery, LoadingSpinner } from "../../../components";
 export function AccountsList() {
 	const { user } = useAuth();
 	const { accountID: encodedSelectedAccountID } = useParams();
-	const accountsQuery = useQuery("accounts", makeFetchAccounts(user?.token), {
+	const accountsQuery = useQuery(["accounts"], makeFetchAccounts(user?.token), {
 		staleTime: accountsQueryStaleTime,
 	});
 
