@@ -100,7 +100,7 @@ export function ChartMarkersPage() {
 							{markersQuery.data.map((marker) => (
 								<ListItemButton
 									component={LinkWithQuery}
-									to={`./${marker.id}`}
+									to={`/manage/chart-markers/${marker.id}`}
 									key={marker.id}
 									selected={marker.id === selectedMarkerID}>
 									<ListItemText

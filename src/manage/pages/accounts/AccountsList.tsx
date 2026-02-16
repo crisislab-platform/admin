@@ -48,7 +48,7 @@ export function AccountsList() {
 				<ListItemButton
 					key={account.email}
 					component={LinkWithQuery}
-					to={`./${encodeURIComponent(account.email)}`}
+					to={`/manage/accounts/${encodeURIComponent(account.email)}`}
 					selected={selectedAccountID === account.email}>
 					<ListItemAvatar>
 						<Avatar

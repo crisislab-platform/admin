@@ -170,7 +170,7 @@ export function SensorsList({
 					<ListItemButton
 						key={sensor.id}
 						component={LinkWithQuery}
-						to={`./${sensor.id}`}
+						to={`/manage/sensors/${sensor.id}`}
 						selected={sensorID === sensor.id}>
 						<ListItemIcon>
 							<SensorImage sensor={sensor} showStatusColour />

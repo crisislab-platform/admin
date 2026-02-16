@@ -104,7 +104,7 @@ export function SensorTypesPage() {
 									{sensorTypesQuery.data.map((sensorType) => (
 										<ListItemButton
 											component={LinkWithQuery}
-											to={`./${encodeURIComponent(sensorType.name)}`}
+											to={`/manage/sensor-types/${encodeURIComponent(sensorType.name)}`}
 											key={sensorType.name}
 											selected={sensorType.name === selectedSensorTypeName}>
 											<ListItemText
