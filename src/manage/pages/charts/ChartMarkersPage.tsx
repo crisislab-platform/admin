@@ -22,7 +22,7 @@ import { getCreateAndEditMarkerSchema } from "./markerSchema";
 export function ChartMarkersPage() {
 	const { user } = useAuth();
 	const markersQuery = useQuery(
-		"charts/markers",
+		["charts/markers"],
 		makeFetchChartMarkers(user?.token),
 	);
 	const onMobile = useOnMobile();
@@ -111,7 +111,7 @@ export function ChartMarkersPage() {
 							))}
 						</List>
 					)}
-					{markersQuery.isLoading && (
+					{markersQuery.isInitialLoading && (
 						<LoadingSpinner
 							addPadding
 							message="Loading chart markers"

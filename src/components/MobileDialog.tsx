@@ -8,7 +8,7 @@ import {
 	Box,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import { forwardRef, ReactChild } from "react";
+import { forwardRef, type JSX } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 
 const SlideUpTransition = forwardRef(function Transition(
@@ -26,7 +26,7 @@ export function MobileDialog({
 	open,
 	onClose,
 }: {
-	children: ReactChild | ReactChild[] | null;
+	children: JSX.Element|JSX.Element[] | null;
 	title?: string;
 	open: boolean;
 	onClose: () => void;

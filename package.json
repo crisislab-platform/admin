@@ -1,6 +1,6 @@
 {
 	"name": "@crisislab/shakenet-admin",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -17,7 +17,6 @@
 		"@mui/material": "^7.3.8",
 		"@mui/x-date-pickers": "^8.27.0",
 		"@tanstack/react-query": "^4.43.0",
-		"beryllium": "^1.2.1",
 		"dayjs": "^1.11.19",
 		"generate-avatar": "^1.4.10",
 		"notistack": "^3.0.2",
@@ -26,6 +25,7 @@
 		"react-router": "^7.13.0"
 	},
 	"devDependencies": {
+		"@tanstack/react-query-devtools": "^5.91.3",
 		"@types/node": "^25.2.3",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",

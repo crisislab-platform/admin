@@ -5,7 +5,6 @@ import {
 	ThemeProvider,
 	Typography,
 	Link,
-	styled,
 } from "@mui/material";
 import { ErrorBoundary, MissingRole, NavigateWithQuery } from "./components";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -14,31 +13,16 @@ import useAuth, { AuthProvider } from "./auth/useAuth";
 
 import AuthWrapper from "./auth/AuthWrapper";
 import ManageApp from "./manage/ManageApp";
-import { ReactQueryDevtools } from "@tanstack/react-query/devtools";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Route as RouteType } from "./types";
 import { SnackbarProvider } from "notistack";
 import { authRoutes } from "./auth/authRoutes";
 import { routes as manageRoutes } from "./manage/routes";
-import { theme } from "beryllium";
 import { useRef } from "react";
-import { MaterialDesignContent } from "notistack";
-import { publicPermissions, userHasPermission } from "./utils";
+import { makeTheme, publicPermissions, userHasPermission } from "./utils";
 import { queryClient } from "./api";
 
-const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
-	"&.notistack-MuiContent-success": {
-		backgroundColor: "#157f1f",
-	},
-	"&.notistack-MuiContent-error": {
-		backgroundColor: "#d00000",
-	},
-	"&.notistack-MuiContent-warning": {
-		backgroundColor: "#ff7700",
-	},
-	"&.notistack-MuiContent-info": {
-		backgroundColor: "#30b7ff",
-	},
-}));
+const {theme, NotistackTheme} = makeTheme();
 
 export function WrappedApp() {
 	const notistackRef = useRef<SnackbarProvider | null>(null);
@@ -58,10 +42,10 @@ export function WrappedApp() {
 						</Button>
 					)}
 					Components={{
-						success: StyledMaterialDesignContent,
-						error: StyledMaterialDesignContent,
-						warning: StyledMaterialDesignContent,
-						info: StyledMaterialDesignContent,
+						success: NotistackTheme,
+						error: NotistackTheme,
+						warning: NotistackTheme,
+						info: NotistackTheme,
 					}}
 					anchorOrigin={{
 						horizontal: "right",
@@ -88,7 +72,7 @@ function RouteElement({ route }: { route: RouteType }) {
 	const layout = (
 		<ErrorBoundary>
 			{userHasPermission(user, route.requiredRole.raw) ||
-			publicPermissions.includes(route.requiredRole) ? (
+				publicPermissions.includes(route.requiredRole) ? (
 				<route.Element />
 			) : (
 				<MissingRole role={route.requiredRole} addPadding />

@@ -1,6 +1,6 @@
 import { SvgIcon } from "@mui/material";
 import { roles } from "./utils";
-import type { JSX } from "react";
+import { type JSX } from "react";
 
 export interface MotionData {
 	time: number;
@@ -95,4 +95,6 @@ export interface ConfigurableSensorType {
 
 export type SensorTypes = Record<string, string[]>
 
-export type Entries<T, P extends keyof T = keyof T> = [P, T[P]][];
+export type FixedKeyOf<T> = string & keyof T
+
+export type Entries<T, P extends FixedKeyOf<T> = FixedKeyOf<T>> = [P, T[P]][];

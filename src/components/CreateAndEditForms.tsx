@@ -12,18 +12,17 @@ import {
 	TextField,
 } from "@mui/material";
 import {
-	ChangeEvent,
-	Reducer,
+	type ChangeEvent,
 	useId,
 	useReducer,
 	useState
 } from "react";
-import { Entries } from "../types";
+import type { Entries, FixedKeyOf } from "../types";
 
 type BaseThingType = Record<string, any>;
 
 type FormState<T extends BaseThingType> = {
-	[Property in keyof T]: {
+	[Property in FixedKeyOf<T>]: {
 		value: undefined | T[Property];
 		rawValue: string;
 		empty: boolean;
@@ -31,17 +30,17 @@ type FormState<T extends BaseThingType> = {
 	};
 };
 export interface CreateAndEditThingsSchema<T extends BaseThingType> {
-	ignoreProperties?: (keyof T)[];
+	ignoreProperties?: (FixedKeyOf<T>)[];
 	fields: {
-		[Property in keyof T]?: {
+		[Property in FixedKeyOf<T>]?: {
 			label: string;
 			optional?: boolean;
 			type: "select" | "number" | "text" | "colour";
 			requires?:
-			| keyof Omit<T, Property>
+			| FixedKeyOf<Omit<T, Property>>
 			| ((state: FormState<T>) => boolean);
 			validate?: (state: FormState<T>) => boolean;
-			recheckTheseWhenIChange?: (keyof Omit<T, Property>)[];
+			recheckTheseWhenIChange?: (FixedKeyOf<Omit<T, Property>>)[];
 		} & (
 			| {
 				type: "select";
@@ -70,33 +69,32 @@ export interface CreateAndEditThingsSchema<T extends BaseThingType> {
 	handleEditSubmit: (id: number, structure: T) => Promise<boolean>;
 }
 
-function getInitialState<T extends BaseThingType>([schema, initialValue]: [
-	CreateAndEditThingsSchema<T>,
-	T | undefined,
-]): FormState<T> {
-	const state: Partial<FormState<T>> = {};
+function getInitialStateGetter<T extends BaseThingType>(schema: CreateAndEditThingsSchema<T>) {
+	return function getInitialState<T extends BaseThingType>(initialValue: 	T | undefined,): FormState<T> {
+		const state: Partial<FormState<T>> = {};
 
-	for (const [fieldName, field] of Object.entries(
-		schema.fields,
-	) as Entries<T>) {
-		const value = initialValue?.[fieldName] ?? field.default ?? undefined;
-		state[fieldName] = {
-			value,
-			empty:
-				value !== undefined
-					? value === undefined || value === ""
-					: true,
-			valid: field.optional ? true : value !== undefined ? true : false,
-			rawValue: value !== undefined ? value + "" : "",
-		};
+		for (const [fieldName, field] of Object.entries(
+			schema.fields,
+		) as Entries<T>)  {
+			const value = initialValue?.[fieldName] ?? field.default ?? undefined;
+			state[fieldName] = {
+				value,
+				empty:
+					value !== undefined
+						? value === undefined || value === ""
+						: true,
+				valid: field.optional ? true : value !== undefined ? true : false,
+				rawValue: value !== undefined ? value + "" : "",
+			};
+		}
+
+		return state as FormState<T>;
 	}
-
-	return state as FormState<T>;
 }
 
 type FormStateReducerAction<
 	T extends BaseThingType,
-	Property extends keyof T = keyof T,
+	Property extends FixedKeyOf<T> = FixedKeyOf<T>,
 > = {
 	property: Property;
 	value: T[Property];
@@ -142,7 +140,7 @@ function formStateReducer<T extends BaseThingType>(
 	return newState;
 }
 
-function isValid<T extends BaseThingType, Property extends keyof T = keyof T>(
+function isValid<T extends BaseThingType, Property extends FixedKeyOf<T> = FixedKeyOf<T>>(
 	schema: CreateAndEditThingsSchema<T>,
 	property: Property,
 	state: FormState<T>,
@@ -171,10 +169,13 @@ function useFormFields<T extends BaseThingType>(
 	schema: CreateAndEditThingsSchema<T>,
 	initialValue?: T,
 ) {
-	const [formState, updateField] = useReducer<
-		Reducer<FormState<T>, FormStateReducerAction<T>>,
-		[CreateAndEditThingsSchema<T>, T | undefined]
-	>(formStateReducer, [schema, initialValue], getInitialState);
+	const [formState, updateField] = useReducer
+		<
+			FormState<T>,
+			T | undefined,
+			[FormStateReducerAction<T>]
+		>
+		(formStateReducer, initialValue, getInitialStateGetter(schema));
 	const [loading, setLoading] = useState(false);
 
 	const readyToSubmit =
@@ -186,7 +187,7 @@ function useFormFields<T extends BaseThingType>(
 		) as T)
 		: null;
 
-	function makeHandleFieldChange<Property extends keyof T = keyof T>(
+	function makeHandleFieldChange<Property extends FixedKeyOf<T> = FixedKeyOf<T>>(
 		property: Property,
 	) {
 		const schemaField = schema.fields[property]!;
@@ -274,7 +275,7 @@ export const useCreateOrEditThingFormFields = useFormFields;
 
 export function CreateOrEditThingForm<
 	T extends BaseThingType,
-	Property extends keyof T = keyof T,
+	Property extends FixedKeyOf<T> = FixedKeyOf<T>,
 >({
 	schema,
 	formState,
