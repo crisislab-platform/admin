@@ -10,7 +10,11 @@ import {
 	valueAxisPlugin,
 } from "@crisislab/timeline";
 import {
+	Alert,
+	Button,
+	Card,
 	Checkbox,
+	Collapse,
 	FormControl,
 	FormControlLabel,
 	InputLabel,
@@ -22,7 +26,9 @@ import {
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import useAuth from "../../auth/useAuth";
-import { APIBase, formatBytes } from "../../utils";
+import { APIBase, formatBytes, retentionPolicies, roles } from "../../utils";
+import { useQuery } from "@tanstack/react-query";
+import { makeFetchDataRetentionPolicy, queryClient, updateDataRetentionPolicy } from "../../api";
 
 function tbToBytes(tb: number): number {
 	const tbToBytesMultiplier = 1024 * 1024 * 1024 * 1024;
@@ -79,16 +85,16 @@ export function DatabaseSizePage() {
 			markers: !showDiskSize
 				? undefined
 				: [
-						{
-							orientation: "horizontal",
-							value: tbToBytes(4),
-							label: "Disk size",
-							labelSide: "after",
-							colour: "red",
-							lineStyle: "dashed",
-							alwaysShow: true,
-						},
-					],
+					{
+						orientation: "horizontal",
+						value: tbToBytes(4),
+						label: "Disk size",
+						labelSide: "after",
+						colour: "red",
+						lineStyle: "dashed",
+						alwaysShow: true,
+					},
+				],
 		});
 
 		recompute();
@@ -162,7 +168,7 @@ export function DatabaseSizePage() {
 	}, [user]);
 
 	return (
-		<Stack p={3}>
+		<Stack p={3} gap={2}>
 			<Typography sx={{ fontWeight: "bold", fontSize: "80pt" }}>
 				{size ? formatBytes(size) : "..."}
 			</Typography>
@@ -175,7 +181,8 @@ export function DatabaseSizePage() {
 			) : (
 				"Loading..."
 			)}
-			<Paper variant="outlined" sx={{p:2}}>
+			<RetentionPolicyManager />
+			<Paper variant="outlined" sx={{ p: 2 }}>
 				<Stack>
 					<Typography variant="h6">
 						History
@@ -227,4 +234,50 @@ export function DatabaseSizePage() {
 			</Paper>
 		</Stack>
 	);
+}
+
+export function RetentionPolicyManager() {
+	const { user } = useAuth();
+	const retentionQuery = useQuery(
+			["db/retention-policy"],
+			makeFetchDataRetentionPolicy(user?.token),
+		);
+	const [retentionPolicySelection, setRetentionPolicySelection] = useState(retentionQuery.data);
+
+	function handleSelectChange(e) {
+		setRetentionPolicySelection(e.target.value);
+	 }
+	async function applyChange() {
+		if (!user?.token) return;
+		if (!retentionPolicySelection || !(retentionPolicySelection in retentionPolicies)) return;
+
+		await updateDataRetentionPolicy(user.token, retentionPolicySelection)
+		queryClient.invalidateQueries(["db/retention-policy"])
+	}
+
+	const noPerms = !(user?.roles.includes(roles["sensor-data:bulk-delete"]))
+
+	return <Card variant="outlined" sx={{p: 2, display: "flex", flexDirection:"column", gap:1}}>
+		
+		Current data retention policy: {retentionQuery.data ? retentionPolicies[retentionQuery.data] : "--"}
+		<Collapse in={noPerms}>
+			<Alert severity="info">
+				You need the <code>sensor-data:bulk-delete</code> permission to change this.
+			</Alert>
+		</Collapse>
+		<FormControl fullWidth disabled={noPerms}>
+			<InputLabel id="retention-policy-select-label">Rention policy</InputLabel>
+			<Select
+				disabled={noPerms}
+				labelId="retention-policy-select-label"
+				id="retention-policy-select"
+				value={retentionPolicySelection}
+				label="Rention policy"
+				onChange={handleSelectChange}
+			>
+				{Object.entries(retentionPolicies).map(([policy, label]) => <MenuItem key={policy} value={policy}>{label}</MenuItem>)}
+			</Select>
+		</FormControl>
+		<Button variant="contained" onClick={applyChange} disabled={noPerms || retentionPolicySelection === retentionQuery.data}>Save</Button>
+	</Card>;
 }

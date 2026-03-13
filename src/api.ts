@@ -530,3 +530,52 @@ export async function deleteSensorType(token: string, name: string) {
 		);
 	}
 }
+
+
+export async function updateDataRetentionPolicy(
+	token: string,
+	policy: string,
+) {
+	const response = await fetch(APIBase + "/db/retention-policy", {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+		method: "PATCH",
+		body: policy,
+	});
+	if (!response.ok) {
+		const data = await response.text();
+		if (response.status === 404) {
+			throw new Error("This server does not support retention policies. Please update the server.");
+		}
+		throw new Error(
+			`Failed to change data retention policy (${response.status}: ${
+				response.statusText
+			})${data ? ` - ${data}` : ""}`,
+		);
+	}
+}
+
+export function makeFetchDataRetentionPolicy(
+	token?: string,
+): () => Promise<string> {
+	return async () => {
+		const response = await fetch(APIBase + "/db/retention-policy", {
+			headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+			method: "GET"
+		});
+		if (!response.ok) {
+		const data = await response.text();
+		if (response.status === 404) {
+			throw new Error("This server does not support retention policies. Please update the server.");
+		}
+		throw new Error(
+			`Failed to get current retention policy (${response.status}: ${
+				response.statusText
+			})${data ? ` - ${data}` : ""}`,
+		);
+	}
+
+		return await response.text();
+	};
+}
