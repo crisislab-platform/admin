@@ -86,6 +86,10 @@ export const roles: Record<string, Role> = {
 		raw: "sensor-data:db-size",
 		text: "Query size of database",
 	},
+	"sensor-data:bulk-delete": {
+		raw: "sensor-data:bulk-delete",
+		text: "Delete stored data en masse"
+	},
 	"charts:markers": {
 		raw: "charts:markers",
 		text: "Manage live chart markers",
@@ -285,3 +289,15 @@ export function makeTheme() {
 	return {theme, NotistackTheme};
 }
 
+export const retentionPolicies: Record<string,string> = {
+    "retain": "Keep data forever",
+    "del-1w": "Delete after 1 week",
+    "del-1m": "Delete after 1 month",
+    "del-3m": "Delete after 3 months",
+    "del-6m": "Delete after 6 months",
+    "del-1yr": "Delete after 1 year",
+    "del-2yr": "Delete after 2 years",
+    "del-3yr": "Delete after 3 years",
+    "del-5yr": "Delete after 5 years",
+    "del-10yr": "Delete after 10 years",
+}
