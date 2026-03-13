@@ -86,6 +86,10 @@ export const roles: Record<string, Role> = {
 		raw: "sensor-data:db-size",
 		text: "Query size of database",
 	},
+	"sensor-data:bulk-delete": {
+		raw: "sensor-data:bulk-delete",
+		text: "Delete stored data en masse"
+	},
 	"charts:markers": {
 		raw: "charts:markers",
 		text: "Manage live chart markers",
