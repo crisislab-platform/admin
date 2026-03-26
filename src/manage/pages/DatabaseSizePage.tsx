@@ -82,12 +82,13 @@ export function DatabaseSizePage() {
 				),
 				doubleClickCopyPlugin("closest-x")
 			],
+			// TODO: Use the /database-max-size route instead of hardcoding
 			markers: !showDiskSize
 				? undefined
 				: [
 					{
 						orientation: "horizontal",
-						value: tbToBytes(4),
+						value: tbToBytes(5),
 						label: "Disk size",
 						labelSide: "after",
 						colour: "red",
