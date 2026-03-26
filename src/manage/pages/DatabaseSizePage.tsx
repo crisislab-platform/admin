@@ -126,7 +126,7 @@ export function DatabaseSizePage() {
 				if (!res.ok) throw body;
 				const [_soonSize, _soonTime] = body.split(",");
 				const soonSize = Number(_soonSize);
-				const soonTime = new Date(_soonTime);
+				const soonTime = _soonTime !== "undefined" ? new Date(_soonTime) : null;
 
 				setSize(soonSize);
 				setError(null);
@@ -177,7 +177,7 @@ export function DatabaseSizePage() {
 				error + ""
 			) : size ? (
 				<Typography sx={{ fontSize: "15pt" }}>
-					Updated at {time?.toString()}
+					Updated at {time?.toString() ?? "[[unknown]]"}
 				</Typography>
 			) : (
 				"Loading..."
