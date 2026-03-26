@@ -24,7 +24,7 @@ import {
 	Stack,
 	Typography,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import useAuth from "../../auth/useAuth";
 import { APIBase, formatBytes, retentionPolicies, roles } from "../../utils";
 import { useQuery } from "@tanstack/react-query";
@@ -238,6 +238,7 @@ export function DatabaseSizePage() {
 
 export function RetentionPolicyManager() {
 	const { user } = useAuth();
+	const noPerms = useMemo(()=> !(user?.roles.includes(roles["sensor-data:bulk-delete"])), [user])
 	const retentionQuery = useQuery(
 			["db/retention-policy"],
 			makeFetchDataRetentionPolicy(user?.token),
@@ -255,10 +256,8 @@ export function RetentionPolicyManager() {
 		queryClient.invalidateQueries(["db/retention-policy"])
 	}
 
-	const noPerms = !(user?.roles.includes(roles["sensor-data:bulk-delete"]))
 
 	return <Card variant="outlined" sx={{p: 2, display: "flex", flexDirection:"column", gap:1}}>
-		
 		Current data retention policy: {retentionQuery.data ? retentionPolicies[retentionQuery.data] : "--"}
 		<Collapse in={noPerms}>
 			<Alert severity="info">
