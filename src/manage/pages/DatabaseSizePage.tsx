@@ -151,7 +151,7 @@ export function DatabaseSizePage() {
 					})),
 					{
 						value: soonSize,
-						time: soonTime,
+						time: soonTime??new Date(),
 					},
 				]);
 				setError(null);
