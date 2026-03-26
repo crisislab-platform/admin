@@ -124,8 +124,9 @@ export function DatabaseSizePage() {
 				});
 				const body = await res.text();
 				if (!res.ok) throw body;
-				const soonSize = Number(body);
-				const soonTime = new Date();
+				const [_soonSize, _soonTime] = body.split(",");
+				const soonSize = Number(_soonSize);
+				const soonTime = new Date(_soonTime);
 
 				setSize(soonSize);
 				setError(null);
@@ -238,16 +239,16 @@ export function DatabaseSizePage() {
 
 export function RetentionPolicyManager() {
 	const { user } = useAuth();
-	const noPerms = useMemo(()=> !(user?.roles.includes(roles["sensor-data:bulk-delete"])), [user])
+	const noPerms = useMemo(() => !(user?.roles.includes(roles["sensor-data:bulk-delete"])), [user])
 	const retentionQuery = useQuery(
-			["db/retention-policy"],
-			makeFetchDataRetentionPolicy(user?.token),
-		);
+		["db/retention-policy"],
+		makeFetchDataRetentionPolicy(user?.token),
+	);
 	const [retentionPolicySelection, setRetentionPolicySelection] = useState(retentionQuery.data);
 
 	function handleSelectChange(e) {
 		setRetentionPolicySelection(e.target.value);
-	 }
+	}
 	async function applyChange() {
 		if (!user?.token) return;
 		if (!retentionPolicySelection || !(retentionPolicySelection in retentionPolicies)) return;
@@ -257,7 +258,7 @@ export function RetentionPolicyManager() {
 	}
 
 
-	return <Card variant="outlined" sx={{p: 2, display: "flex", flexDirection:"column", gap:1}}>
+	return <Card variant="outlined" sx={{ p: 2, display: "flex", flexDirection: "column", gap: 1 }}>
 		Current data retention policy: {retentionQuery.data ? retentionPolicies[retentionQuery.data] : "--"}
 		<Collapse in={noPerms}>
 			<Alert severity="info">
