@@ -104,7 +104,7 @@ export function DatabaseSizePage() {
 			if (timelineContainerRef.current)
 				timelineContainerRef.current.innerHTML = "";
 		};
-	}, [timelineContainerRef, timeWindow, showDiskSize]);
+	}, [timeline, timelineContainerRef, timeWindow, showDiskSize]);
 
 	useEffect(recompute, [history]);
 
