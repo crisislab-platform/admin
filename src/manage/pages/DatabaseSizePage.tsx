@@ -31,6 +31,8 @@ import { useQuery } from "@tanstack/react-query";
 import { makeFetchDataRetentionPolicy, queryClient, updateDataRetentionPolicy } from "../../api";
 
 const MAX_DISK_SIZE = tbToBytes(5.9);
+const ONE_YEAR_IN_SECONDS = 1000 * 60 * 60 * 24 * 365.25;
+const THIRTY_DAYS_IN_SECONDS = 1000 * 60 * 60 * 24 * 30;
 
 function tbToBytes(tb: number): number {
 	const tbToBytesMultiplier = 1024 * 1024 * 1024 * 1024;
@@ -44,7 +46,7 @@ export function DatabaseSizePage() {
 	const [size, setSize] = useState<number | null>(null);
 	const [history, setHistory] = useState<TimeLineDataPoint[]>([]);
 	const controller = useRef<AbortController | null>(null);
-	const [timeWindow, setTimeWindow] = useState<number>(Infinity);
+	const [timeWindow, setTimeWindow] = useState<number>(ONE_YEAR_IN_SECONDS);
 	const [showDiskSize, setShowDiskSize] = useState(true);
 
 	const timelineContainerRef = useRef<HTMLDivElement>(null);
@@ -202,10 +204,10 @@ export function DatabaseSizePage() {
 								}}
 								label="Time range">
 								<MenuItem value={Infinity}>All data</MenuItem>
-								<MenuItem value={1000 * 60 * 60 * 24 * 365.25}>
+								<MenuItem value={ONE_YEAR_IN_SECONDS}>
 									Last year
 								</MenuItem>
-								<MenuItem value={1000 * 60 * 60 * 24 * 30}>
+								<MenuItem value={THIRTY_DAYS_IN_SECONDS}>
 									Last 30 days
 								</MenuItem>
 							</Select>
