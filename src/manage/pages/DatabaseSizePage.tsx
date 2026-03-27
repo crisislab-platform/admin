@@ -30,6 +30,8 @@ import { APIBase, formatBytes, retentionPolicies, roles } from "../../utils";
 import { useQuery } from "@tanstack/react-query";
 import { makeFetchDataRetentionPolicy, queryClient, updateDataRetentionPolicy } from "../../api";
 
+const MAX_DISK_SIZE = tbToBytes(5.9);
+
 function tbToBytes(tb: number): number {
 	const tbToBytesMultiplier = 1024 * 1024 * 1024 * 1024;
 	return tb * tbToBytesMultiplier;
@@ -82,13 +84,13 @@ export function DatabaseSizePage() {
 				),
 				doubleClickCopyPlugin("closest-x")
 			],
-			// TODO: Use the /database-max-size route instead of hardcoding
 			markers: !showDiskSize
 				? undefined
 				: [
 					{
 						orientation: "horizontal",
-						value: tbToBytes(5),
+						// TODO: Use the /database-max-size route instead of hardcoding
+						value: MAX_DISK_SIZE,
 						label: "Disk size",
 						labelSide: "after",
 						colour: "red",
@@ -145,16 +147,11 @@ export function DatabaseSizePage() {
 				const historyBody = await historyRes.text();
 				if (!historyRes.ok) throw historyBody;
 				console.log(JSON.parse(historyBody), size, time);
-				setHistory([
-					...JSON.parse(historyBody).map((d) => ({
-						value: Number.parseInt(d.size),
-						time: new Date(d.time),
-					})),
-					{
-						value: soonSize,
-						time: soonTime??new Date(),
-					},
-				]);
+				setHistory(JSON.parse(historyBody).map((d) => ({
+					value: Number.parseInt(d.size),
+					time: new Date(d.time),
+				}))
+				);
 				setError(null);
 			} catch (err) {
 				setSize(null);

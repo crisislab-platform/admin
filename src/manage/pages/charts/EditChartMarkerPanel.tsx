@@ -42,7 +42,7 @@ export function EditChartMarkerPanel() {
 	const { markerID: rawMarkerID } = useParams();
 	const selectedMarkerID = rawMarkerID && Number(rawMarkerID);
 	const navigate = useNavigateWithQuery();
-	const location = useLocation();
+	// const location = useLocation();
 	const sensorTypes = useSensorTypes()
 
 	const selectedMarker = markersQuery.data?.find(
