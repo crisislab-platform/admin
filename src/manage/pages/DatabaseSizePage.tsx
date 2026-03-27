@@ -251,6 +251,10 @@ export function RetentionPolicyManager() {
 		if (!user?.token) return;
 		if (!retentionPolicySelection || !(retentionPolicySelection in retentionPolicies)) return;
 
+		if (retentionPolicySelection !== "retain") {
+			if (!window.confirm(`Are you sure you want to change the policy to ${retentionPolicies[retentionPolicySelection]}?\n\nAny data older than that will be deleted.`)) return;
+		}
+
 		await updateDataRetentionPolicy(user.token, retentionPolicySelection)
 		queryClient.invalidateQueries(["db/retention-policy"])
 	}
