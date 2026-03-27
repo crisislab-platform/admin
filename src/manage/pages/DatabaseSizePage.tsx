@@ -26,7 +26,7 @@ import {
 } from "@mui/material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useAuth from "../../auth/useAuth";
-import { APIBase, formatBytes, retentionPolicies, roles } from "../../utils";
+import { APIBase, formatBytes, retentionPolicies, roles, userHasPermission } from "../../utils";
 import { useQuery } from "@tanstack/react-query";
 import { makeFetchDataRetentionPolicy, queryClient, updateDataRetentionPolicy } from "../../api";
 
@@ -237,7 +237,7 @@ export function DatabaseSizePage() {
 
 export function RetentionPolicyManager() {
 	const { user } = useAuth();
-	const noPerms = useMemo(() => !(user?.roles.includes(roles["sensor-data:bulk-delete"])), [user])
+	const noPerms = !userHasPermission(user, "sensor-data:bulk-delete");
 	const retentionQuery = useQuery(
 		["db/retention-policy"],
 		makeFetchDataRetentionPolicy(user?.token),
