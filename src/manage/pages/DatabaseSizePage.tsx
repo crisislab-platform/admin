@@ -182,7 +182,6 @@ export function DatabaseSizePage() {
 			) : (
 				"Loading..."
 			)}
-			<RetentionPolicyManager />
 			<Paper variant="outlined" sx={{ p: 2 }}>
 				<Stack>
 					<Typography variant="h6">
@@ -233,6 +232,7 @@ export function DatabaseSizePage() {
 					</div>
 				</Stack>
 			</Paper>
+			<RetentionPolicyManager />
 		</Stack>
 	);
 }
