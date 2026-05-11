@@ -11,6 +11,9 @@ export async function login(email: string, password: string): Promise<User> {
 	try {
 		const response = await fetch(`${authAPIBase}/password`, {
 			body: JSON.stringify({ email, password }),
+			headers: {
+				"Content-Type": "application/json",
+			},
 			method: "POST",
 		});
 		if (!response.ok) {
@@ -57,6 +60,7 @@ export async function changePassword(opts: {
 			}),
 			headers: {
 				Authorization: `Bearer ${opts.token}`,
+				"Content-Type": "application/json",
 			},
 		});
 		if (!response.ok) {
