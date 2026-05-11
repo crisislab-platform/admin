@@ -27,6 +27,7 @@ interface AuthContextType {
 	closePopup: () => void;
 	login: (emailOrToken: string, password?: string) => Promise<void>;
 	logout: () => void;
+	forceReauth: () => void;
 	changePassword: (opts: {
 		newPassword: string;
 		accountID: number;
@@ -57,10 +58,42 @@ export function AuthProvider({
 	const [popupWindowRef, setPopupWindowRef] = useState<null | Window>(null);
 	const [popupOpen, setPopupOpen] = useState<boolean>(false);
 
+	function setDebugUser(newUser: User | null) {
+		try {
+			if (newUser) {
+				// @ts-ignore
+				window.user = newUser;
+			} else {
+				// @ts-ignore
+				delete window.user;
+			}
+		} catch (error) {
+			console.warn("Failed to update debug user", error);
+		}
+	}
+
+	function removeStoredAuth() {
+		try {
+			localStorage.removeItem(authUserNamespace);
+		} catch (error) {
+			console.warn("Failed to remove stored auth", error);
+		}
+	}
+
+	function clearAuthState({ removeStorage = true } = {}) {
+		setUser(null);
+		if (removeStorage) removeStoredAuth();
+		setDebugUser(null);
+	}
+
 	// Every time the user updates, save their data to localStorage
 	useEffect(() => {
 		if (user) {
-			localStorage.setItem(authUserNamespace, JSON.stringify(user));
+			try {
+				localStorage.setItem(authUserNamespace, JSON.stringify(user));
+			} catch (error) {
+				console.warn("Failed to store auth", error);
+			}
 		}
 	}, [user]);
 
@@ -73,21 +106,34 @@ export function AuthProvider({
 	// is over.
 
 	function loadUserFromStorage() {
+		let storedData: string | null = null;
 		try {
-			const storedData = localStorage.getItem(authUserNamespace);
-			if (storedData) {
-				const data = JSON.parse(storedData);
-				// If the expiry date is in the past, delete the data and don't log in with it
-				if ("exp" in data && Date.now() > data.exp * 1000) {
-					localStorage.deleteItem(authUserNamespace);
-				} else {
-					setUser(data);
-					//@ts-ignore
-					window.user = data;
-				}
+			storedData = localStorage.getItem(authUserNamespace);
+		} catch (error) {
+			console.warn("Failed to read stored auth", error);
+			clearAuthState({ removeStorage: false });
+			setLoading(false);
+			return;
+		}
+
+		if (!storedData) {
+			clearAuthState({ removeStorage: false });
+			setLoading(false);
+			return;
+		}
+
+		try {
+			const data = JSON.parse(storedData);
+			// If the expiry date is in the past, delete the data and don't log in with it
+			if ("exp" in data && Date.now() > data.exp * 1000) {
+				clearAuthState();
+			} else {
+				setUser(data);
+				setDebugUser(data);
 			}
 		} catch (e) {
 			// If there is an error, it means there is no active session.
+			clearAuthState();
 		}
 		setLoading(false);
 	}
@@ -97,10 +143,16 @@ export function AuthProvider({
 
 		// Only fires when other windows/tabs update localstorage.
 		// Ideal for keeping pages in sync.
-		window.addEventListener("storage", loadUserFromStorage);
+		function onStorage(event: StorageEvent) {
+			if (event.key === authUserNamespace || event.key === null) {
+				loadUserFromStorage();
+			}
+		}
+
+		window.addEventListener("storage", onStorage);
 
 		return () => {
-			window.removeEventListener("storage", loadUserFromStorage);
+			window.removeEventListener("storage", onStorage);
 		};
 	}, []);
 
@@ -134,8 +186,7 @@ export function AuthProvider({
 			let newUser = await authAPI.login(email, password);
 			newUser.picture = generateAvatar(newUser.email);
 			setUser(newUser);
-			// @ts-ignore
-			window.user = newUser;
+			setDebugUser(newUser);
 			if (getQueryParam("in_popup_window")) {
 				console.info(
 					"In popup, will try and close because login succeeded.",
@@ -168,24 +219,29 @@ export function AuthProvider({
 	}
 
 	function logout() {
-		setUser(null);
-		localStorage.removeItem(authUserNamespace);
+		clearAuthState();
 
 		// See above in login function for reasoning
 		navigate("/manage/sensors");
 		window.location.reload();
 	}
 
+	function forceReauth() {
+		const newReturnTo = encodeURIComponent(location.pathname);
+		clearAuthState();
+		navigate(`/auth/login?return_to=${newReturnTo}`);
+	}
+
 	const changePassword: AuthContextType["changePassword"] = async (opts) => {
 		if (!user) return false;
 		try {
 			await authAPI.changePassword({ ...opts, token: user.token });
-			enqueueSnackbar("Password changed.", { variant: "success" });
 			if (opts.accountID === user.id) {
-				// If this was for the current user, their token
-				// is now invalid and they need to log back in
-				// Disabled for now since it isn't needed
-				// await login(user.email, opts.newPassword);
+				enqueueSnackbar("Password changed. Please log in again.", {
+					variant: "success",
+				});
+			} else {
+				enqueueSnackbar("Password changed.", { variant: "success" });
 			}
 			return true;
 		} catch (error) {
@@ -222,6 +278,7 @@ export function AuthProvider({
 			closePopup,
 			login,
 			logout,
+			forceReauth,
 			changePassword,
 			goToLogin,
 			setUser,
