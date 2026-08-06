@@ -18,6 +18,21 @@ import {
 	useState
 } from "react";
 import type { Entries, FixedKeyOf } from "../types";
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+
+// From the MUI example for file upload buttons:
+// https://mui.com/material-ui/react-button/#file-upload
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 type BaseThingType = Record<string, any>;
 
@@ -35,7 +50,7 @@ export interface CreateAndEditThingsSchema<T extends BaseThingType> {
 		[Property in FixedKeyOf<T>]?: {
 			label: string;
 			optional?: boolean;
-			type: "select" | "number" | "text" | "colour";
+			type: "select" | "number" | "text" | "colour" | "text-file-upload";
 			requires?:
 			| FixedKeyOf<Omit<T, Property>>
 			| ((state: FormState<T>) => boolean);
@@ -61,6 +76,10 @@ export interface CreateAndEditThingsSchema<T extends BaseThingType> {
 			| {
 				type: "colour";
 				default?: string;
+			}
+			| {
+				type: "text-file-upload";
+				default?: string'
 			}
 		);
 	};
@@ -203,6 +222,25 @@ function useFormFields<T extends BaseThingType>(
 					rawValue: e.target.value,
 					value: newValue as T[Property],
 				});
+			};
+		}
+		
+		if (schemaField.type === "text-file-upload") {
+			return (e: ChangeEvent<HTMLInputElement>) => {
+				const files = e.target.files;
+				if (files.length === 0) return;
+				
+				const file = files[0];
+				const reader = new FileReader();
+				reader.onload = (ev) => {
+					updateField({
+						property,
+						schema,
+						rawValue: ev.target.result,
+						value: ev.target.result as T[Property],
+					});
+				};
+				reader.readAsText(file);
 			};
 		}
 
@@ -355,6 +393,30 @@ export function CreateOrEditThingForm<
 							required={!field.optional}
 							type="color"
 						/>
+					);
+				}
+				if (field.type === "text-file-upload") {
+					return (
+						<Button
+							disabled={disabled}
+							error={error}
+							key={fieldName}
+							component="label"
+							role={undefined}
+							variant="contained"
+							tabIndex={-1}
+							startIcon={<UploadFileIcon />}
+						>
+							{field.label}
+							<VisuallyHiddenInput
+								disabled={disabled}
+								error={error}
+								required={!field.optional}
+								type="file"
+								accept="text/plain,text/comma-separated-values,application/json,text/xml,application/xml"
+								onChange={onChange}
+							/>
+						</Button>
 					);
 				}
 
