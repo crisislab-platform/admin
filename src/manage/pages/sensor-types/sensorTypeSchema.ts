@@ -4,19 +4,15 @@ import {
 	updateSensorType,
 } from "../../../api";
 import { CreateAndEditThingsSchema } from "../../../components/CreateAndEditForms";
-import { createElement } from "react";
-import { ChannelEditor } from "./ChannelEditor";
 
 export interface SensorTypeFormData {
 	name: string;
-	response?: string | null;
 	channels: { id: string; name: string }[];
 }
 
 export const getCreateAndEditSensorTypeSchema = (
 	token: string,
-	disableName = false,
-): CreateAndEditThingsSchema<SensorTypeFormData, string> => ({
+): CreateAndEditThingsSchema<SensorTypeFormData> => ({
 	async handleCreateSubmit(data) {
 		let success = false;
 		try {
@@ -24,7 +20,6 @@ export const getCreateAndEditSensorTypeSchema = (
 				mutationFn: () => {
 					return createSensorType(token, data.name, {
 						channels: data.channels,
-						response: data.response ?? null,
 					});
 				},
 				onSuccess() {
@@ -47,9 +42,8 @@ export const getCreateAndEditSensorTypeSchema = (
 		try {
 			await queryClient.getMutationCache().build(queryClient, {
 				mutationFn: () => {
-					return updateSensorType(token, id, {
+					return updateSensorType(token, data.name, {
 						channels: data.channels,
-						response: data.response ?? null,
 					});
 				},
 				onSuccess() {
@@ -71,24 +65,16 @@ export const getCreateAndEditSensorTypeSchema = (
 		name: {
 			label: "Sensor Type Name",
 			type: "text",
-			disabled: disableName,
-			placeholder: "Raspberry Shake 4D",
+			placeholder: "Environmental Sensor",
 			validate: (state) => {
 				const name = state.name.value;
-				if (!name || name.length < 1) return false;
+				if (!name || name.length < 2) return false;
 				return true;
 			},
 		},
-		response: {
-			label: "Sensor response (SeisComP XML format)",
-			placeholder: "Upload response XML",
-			type: "text-file-upload",
-			optional: true,
-			default: null,
-		},
 		channels: {
 			label: "Channels",
-			type: "custom",
+			type: "text", // We'll override this in the form component
 			validate: (state) => {
 				const channels = state.channels.value;
 				if (!channels || !Array.isArray(channels) || channels.length === 0) {
@@ -108,14 +94,8 @@ export const getCreateAndEditSensorTypeSchema = (
 				
 				return true;
 			},
-			default: [{ id: "EHZ", name: "Z-axis Acceleration" }],
-			render: ({ value, onChange, disabled, error }) =>
-				createElement(ChannelEditor, {
-					channels: value ?? [],
-					onChange,
-					disabled,
-					error,
-				}),
+			// @ts-expect-error Cooked stuff happening here, dw about it
+			default: [{ id: "ehz", name: "Geophone (Counts)" }],
 		},
 	},
 });

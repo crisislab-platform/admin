@@ -49,10 +49,11 @@ export function ChannelEditor({
 		return validChannels.length > 0 ? validChannels : [{ id: "", name: "" }];
 	}, [channels]);
 
-	const localChannels = sanitizedChannels;
+	const [localChannels, setLocalChannels] = useState<Channel[]>(sanitizedChannels);
 	const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
 	const updateChannels = (newChannels: Channel[]) => {
+		setLocalChannels(newChannels);
 		onChange(newChannels);
 	};
 

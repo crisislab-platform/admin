@@ -91,7 +91,6 @@ export interface ChartMarker {
 export interface ConfigurableSensorType {
 	name: string;
 	channels: { id: string; name: string }[];
-	response?: string | null;
 }
 
 export type SensorTypes = Record<string, string[]>

@@ -378,21 +378,19 @@ export function makeFetchSensorTypes(
 			}
 			
 			const result = await response.json();
+			console.log("Fetch sensor types raw result:", result);
 			const sensorTypes = result.sensorTypes || result || [];
+			console.log("Extracted sensor types:", sensorTypes);
 			
 			// Validate and normalize the data
 			const normalized = sensorTypes.map((sensorType: any): ConfigurableSensorType => {
 				// Handle malformed sensor type data
 				if (!sensorType || typeof sensorType !== 'object') {
 					console.warn("Invalid sensor type data:", sensorType);
-					return { name: "Unknown", channels: [], response: null };
+					return { name: "Unknown", channels: [] };
 				}
 				
 				const name = typeof sensorType.name === 'string' ? sensorType.name : 'Unknown';
-				const sensorResponse =
-					typeof sensorType.response === "string"
-						? sensorType.response
-						: null;
 				let channels: { id: string; name: string }[] = [];
 				
 				// Handle various channel data formats
@@ -427,9 +425,10 @@ export function makeFetchSensorTypes(
 					}
 				}
 				
-				return { name, channels, response: sensorResponse };
+				return { name, channels };
 			});
 			
+			console.log("Final normalized sensor types:", normalized);
 			return normalized;
 		} catch (error) {
 			// Handle network errors, server unavailable, etc.
@@ -444,7 +443,9 @@ export async function createSensorType(
 	name: string,
 	data: Omit<ConfigurableSensorType, "name">,
 ): Promise<ConfigurableSensorType> {
+	console.log("API createSensorType called with:", { name, data });
 	const requestBody = JSON.stringify(data);
+	console.log("Request body:", requestBody);
 	
 	const response = await fetch(sensorTypesAPIBase + "/" + encodeURIComponent(name), {
 		headers: {
@@ -454,8 +455,11 @@ export async function createSensorType(
 		method: "PUT",
 		body: requestBody,
 	});
+	console.log("Response status:", response.status, response.statusText);
+	
 	if (!response.ok) {
 		const errorData = await response.text();
+		console.log("Error response data:", errorData);
 		if (response.status === 404) {
 			throw new Error("This server does not support sensor types management. Please update the server.");
 		}
@@ -469,7 +473,11 @@ export async function createSensorType(
 	let result;
 	try {
 		result = await response.json();
+		console.log("Response JSON:", result);
 	} catch (e) {
+		console.log("Failed to parse JSON, using text response");
+		const textResult = await response.text();
+		console.log("Text response:", textResult);
 		result = null;
 	}
 	

@@ -1,13 +1,10 @@
-import { Button, Stack } from "@mui/material";
-import { useEffect, useMemo } from "react";
-import { useSnackbar } from "notistack";
-import useAuth from "../../../auth/useAuth";
-import {
-	CreateOrEditThingForm,
-	useCreateOrEditThingFormFields,
-} from "../../../components/CreateAndEditForms";
+import { Button, Stack, TextField } from "@mui/material";
+import { useState } from "react";
 import { ConfigurableSensorType } from "../../../types";
-import { getCreateAndEditSensorTypeSchema } from "./sensorTypeSchema";
+import { ChannelEditor, Channel } from "./ChannelEditor";
+import { updateSensorType, queryClient } from "../../../api";
+import useAuth from "../../../auth/useAuth";
+import { useSnackbar } from "notistack";
 
 interface EditSensorTypeFormProps {
 	activeSensorType: ConfigurableSensorType;
@@ -20,81 +17,84 @@ export function EditSensorTypeForm({
 }: EditSensorTypeFormProps) {
 	const { user } = useAuth();
 	const { enqueueSnackbar } = useSnackbar();
-	const schema = getCreateAndEditSensorTypeSchema(user!.token, true);
-	const {
-		submitEdit,
-		readyToSubmit,
-		resetFormWithNewValues,
-		formState,
-		updateField,
-		loading,
-		...formData
-	} = useCreateOrEditThingFormFields(schema, activeSensorType);
+	const [loading, setLoading] = useState(false);
+	const [name, setName] = useState(activeSensorType.name);
+	const [nameTouched, setNameTouched] = useState(false);
+	const [channels, setChannels] = useState<Channel[]>(activeSensorType.channels);
 
-	useEffect(() => {
-		resetFormWithNewValues(activeSensorType);
-	}, [activeSensorType]);
+	const validateForm = () => {
+		if (!name || name.length < 1) return false;
+		if (!channels || channels.length === 0) return false;
+		
+		for (const channel of channels) {
+			if (!channel.id || !channel.name) return false;
+			if (channel.id.length < 1 || channel.id.length > 3) return false;
+			if (!/^[a-zA-Z0-9]+$/.test(channel.id)) return false;
+		}
+		
+		// Check for duplicate IDs
+		const ids = channels.map(c => c.id);
+		if (new Set(ids).size !== ids.length) return false;
+		
+		return true;
+	};
 
-	const hasChanges = useMemo(
-		() =>
-			formState.name.value !== activeSensorType.name ||
-			(formState.response.value ?? null) !==
-				(activeSensorType.response ?? null) ||
-			JSON.stringify(formState.channels.value) !==
-				JSON.stringify(activeSensorType.channels),
-		[activeSensorType, formState],
-	);
-
-	async function saveChanges() {
-		const ok = await submitEdit(activeSensorType.name);
-		if (ok) {
-			enqueueSnackbar("Sensor type updated successfully");
-			exitEditMode();
+	const handleSubmit = async () => {
+		if (!validateForm()) {
+			enqueueSnackbar("Please fix validation errors", { variant: "error" });
 			return;
 		}
 
-		enqueueSnackbar("Failed to update sensor type", {
-			variant: "error",
-		});
-	}
+		setLoading(true);
+		try {
+			await updateSensorType(user!.token, name, { channels });
+			await queryClient.invalidateQueries(["sensor-types"]);
+			enqueueSnackbar("Sensor type updated successfully");
+			exitEditMode();
+		} catch (error) {
+			enqueueSnackbar(`Failed to update sensor type: ${error}`, {
+				variant: "error",
+			});
+		} finally {
+			setLoading(false);
+		}
+	};
 
-	function removeResponse() {
-		updateField({
-			property: "response",
-			schema,
-			rawValue: "",
-			value: null,
-			fileUploadName: "",
-		});
-	}
+	const isValid = validateForm();
+	const hasChanges = 
+		name !== activeSensorType.name ||
+		JSON.stringify(channels) !== JSON.stringify(activeSensorType.channels);
 
 	return (
 		<Stack gap={3}>
-			<CreateOrEditThingForm
-				formState={formState}
-				updateField={updateField}
-				loading={loading}
-				{...formData}
+			<TextField
+				label="Sensor Type Name"
+				value={name}
+				onChange={(e) => setName(e.target.value)}
+				onBlur={() => setNameTouched(true)}
+				disabled={loading}
+				error={nameTouched && (!name || name.length < 1)}
+				helperText={nameTouched && (!name || name.length < 1) ? "Name is required" : ""}
+				fullWidth
 			/>
-			{formState.response.value && (
-				<Button
-					variant="outlined"
-					color="error"
-					onClick={removeResponse}
-					disabled={loading}
-					sx={{ alignSelf: "flex-start" }}>
-					Remove response XML
-				</Button>
-			)}
+
+			<ChannelEditor
+				channels={channels}
+				onChange={setChannels}
+				disabled={loading}
+				error={!isValid}
+			/>
 
 			<Stack direction="row" gap={2} justifyContent="flex-end">
-				<Button onClick={exitEditMode} disabled={loading}>
+				<Button
+					onClick={exitEditMode}
+					disabled={loading}>
 					Cancel
 				</Button>
 				<Button
 					variant="contained"
-					onClick={saveChanges}
-					disabled={!readyToSubmit || !hasChanges || loading}>
+					onClick={handleSubmit}
+					disabled={!isValid || !hasChanges || loading}>
 					Save Changes
 				</Button>
 			</Stack>
