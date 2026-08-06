@@ -93,7 +93,8 @@ export interface CreateAndEditThingsSchema<
 			}
 			| {
 				type: "text-file-upload";
-				default?: string;
+				placeholder?: string;
+				default?: string | null;
 			}
 			| {
 				type: "custom";
@@ -144,11 +145,18 @@ type FormStateReducerAction<
 	property: Property;
 	value: T[Property];
 	rawValue: string;
+	fileUploadName?: string;
 	schema: CreateAndEditThingsSchema<T, any>;
 };
 function formStateReducer<T extends BaseThingType>(
 	state: FormState<T>,
-	{ property, value, rawValue, schema }: FormStateReducerAction<T>,
+	{
+		property,
+		value,
+		rawValue,
+		fileUploadName,
+		schema,
+	}: FormStateReducerAction<T>,
 ): FormState<T> {
 	if (schema.ignoreProperties?.includes(property)) {
 		return state;
@@ -162,6 +170,7 @@ function formStateReducer<T extends BaseThingType>(
 			...state[property],
 			value,
 			rawValue,
+			...(fileUploadName !== undefined ? { fileUploadName } : {}),
 			empty: false,
 			valid: true,
 		},
@@ -264,7 +273,6 @@ function useFormFields<
 				reader.onload = (ev) => {
 					const value = ev.target?.result;
 					if (typeof value !== "string") return;
-					console.log("Uploaded: "+file.name);
 					updateField({
 						property,
 						schema,
@@ -432,20 +440,20 @@ export function CreateOrEditThingForm<
 						/>
 					);
 				}
-				if (field.type === "text-file-upload") {
+		if (field.type === "text-file-upload") {
 					return (
-						<label for={id}>
-							{field.label}<br/>
-							<Button
+						<Stack key={fieldName} gap={0.5} alignItems="flex-start">
+							<InputLabel htmlFor={id}>{field.label}</InputLabel>
+							<span><Button
 								disabled={disabled}
-								key={fieldName}
 								component="label"
 								role={undefined}
 								variant="contained"
 								tabIndex={-1}
 								startIcon={<UploadFileIcon />}
 							>
-								{field.placeholder}
+								{field.placeholder ||
+									"Choose file"}
 								<VisuallyHiddenInput
 									id={id}
 									disabled={disabled}
@@ -453,9 +461,10 @@ export function CreateOrEditThingForm<
 									type="file"
 									accept="text/plain,text/comma-separated-values,application/json,text/xml,application/xml"
 									onChange={onChange}
-								/> {"fileUploadName" in field && field.fileUploadName}
+								/>
 							</Button>
-						</label>
+							{" "}{fieldState.fileUploadName}</span>
+						</Stack>
 					);
 				}
 				if (field.type === "custom") {

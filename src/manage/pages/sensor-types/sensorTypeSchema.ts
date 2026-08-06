@@ -9,6 +9,7 @@ import { ChannelEditor } from "./ChannelEditor";
 
 export interface SensorTypeFormData {
 	name: string;
+	response?: string | null;
 	channels: { id: string; name: string }[];
 }
 
