@@ -204,6 +204,7 @@ export function SensorTypePanel() {
 							color={activeSensorType.response ? "success" : "default"}
 							size="small"
 						/>
+						<span>Raspberry Shake response files are <Link rel="noopener noreferrer" href="https://manual.raspberryshake.org/metadata.html#instructions-on-how-to-use-the-metadata-templates">available here</Link>.</span>
 					</Stack>
 
 					<Stack gap={1}>
