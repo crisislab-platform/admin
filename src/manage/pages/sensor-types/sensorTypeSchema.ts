@@ -24,6 +24,7 @@ export const getCreateAndEditSensorTypeSchema = (
 				mutationFn: () => {
 					return createSensorType(token, data.name, {
 						channels: data.channels,
+						response: data.response ?? null,
 					});
 				},
 				onSuccess() {
@@ -46,8 +47,9 @@ export const getCreateAndEditSensorTypeSchema = (
 		try {
 			await queryClient.getMutationCache().build(queryClient, {
 				mutationFn: () => {
-					return updateSensorType(token, data.name, {
+					return updateSensorType(token, id, {
 						channels: data.channels,
+						response: data.response ?? null,
 					});
 				},
 				onSuccess() {
@@ -79,9 +81,10 @@ export const getCreateAndEditSensorTypeSchema = (
 		},
 		response: {
 			label: "Sensor response (SeisComP XML format)",
-			placeholder: "Upload response",
+			placeholder: "Upload response XML",
 			type: "text-file-upload",
-			default: null
+			optional: true,
+			default: null,
 		},
 		channels: {
 			label: "Channels",

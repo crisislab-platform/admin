@@ -26,6 +26,7 @@ export function EditSensorTypeForm({
 		readyToSubmit,
 		resetFormWithNewValues,
 		formState,
+		updateField,
 		loading,
 		...formData
 	} = useCreateOrEditThingFormFields(schema, activeSensorType);
@@ -37,6 +38,8 @@ export function EditSensorTypeForm({
 	const hasChanges = useMemo(
 		() =>
 			formState.name.value !== activeSensorType.name ||
+			(formState.response.value ?? null) !==
+				(activeSensorType.response ?? null) ||
 			JSON.stringify(formState.channels.value) !==
 				JSON.stringify(activeSensorType.channels),
 		[activeSensorType, formState],
@@ -55,13 +58,34 @@ export function EditSensorTypeForm({
 		});
 	}
 
+	function removeResponse() {
+		updateField({
+			property: "response",
+			schema,
+			rawValue: "",
+			value: null,
+			fileUploadName: "",
+		});
+	}
+
 	return (
 		<Stack gap={3}>
 			<CreateOrEditThingForm
 				formState={formState}
+				updateField={updateField}
 				loading={loading}
 				{...formData}
 			/>
+			{formState.response.value && (
+				<Button
+					variant="outlined"
+					color="error"
+					onClick={removeResponse}
+					disabled={loading}
+					sx={{ alignSelf: "flex-start" }}>
+					Remove response XML
+				</Button>
+			)}
 
 			<Stack direction="row" gap={2} justifyContent="flex-end">
 				<Button onClick={exitEditMode} disabled={loading}>

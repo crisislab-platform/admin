@@ -23,6 +23,10 @@ import { styled } from "@mui/material/styles";
 import type { Entries, FixedKeyOf } from "../types";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
+// TODO: Eventually migrate whole UI to use this system. Reduces code duplication
+// by a lot. Based on the system I made and inpired by the system Ben created for
+// doing forms for retail-simulation.
+
 // From the MUI example for file upload buttons:
 // https://mui.com/material-ui/react-button/#file-upload
 const VisuallyHiddenInput = styled('input')({
@@ -122,15 +126,17 @@ function getInitialStateGetter<T extends BaseThingType>(
 		for (const [fieldName, field] of Object.entries(
 			schema.fields,
 		) as Entries<T>)  {
-			const value = initialValue?.[fieldName] ?? field.default ?? undefined;
+			const hasInitialValue =
+				initialValue !== undefined &&
+				Object.prototype.hasOwnProperty.call(initialValue, fieldName);
+			const value = hasInitialValue
+				? initialValue[fieldName]
+				: field.default;
 			state[fieldName] = {
-				value,
-				empty:
-					value !== undefined
-						? value === undefined || value === ""
-						: true,
+				value: value as T[typeof fieldName] | undefined,
+				empty: value === undefined || value === null || value === "",
 				valid: field.optional ? true : value !== undefined ? true : false,
-				rawValue: value !== undefined ? value + "" : "",
+				rawValue: value !== undefined && value !== null ? value + "" : "",
 			};
 		}
 
@@ -143,7 +149,7 @@ type FormStateReducerAction<
 	Property extends FixedKeyOf<T> = FixedKeyOf<T>,
 > = {
 	property: Property;
-	value: T[Property];
+	value: T[Property] | undefined;
 	rawValue: string;
 	fileUploadName?: string;
 	schema: CreateAndEditThingsSchema<T, any>;
@@ -202,7 +208,10 @@ function isValid<T extends BaseThingType, Property extends FixedKeyOf<T> = Fixed
 	const schemaField = schema.fields[property]!;
 	const stateField = state[property];
 
-	const empty = stateField.value === undefined || stateField.value === "";
+	const empty =
+		stateField.value === undefined ||
+		stateField.value === null ||
+		stateField.value === "";
 
 	const validatorPassed =
 		schemaField.validate !== undefined ? schemaField.validate(state) : true;
@@ -295,12 +304,22 @@ function useFormFields<
 	}
 
 	function resetFormWithNewValues(newValues: T) {
-		for (const property in newValues) {
+		for (const property of Object.keys(schema.fields) as FixedKeyOf<T>[]) {
+			const hasNewValue = Object.prototype.hasOwnProperty.call(
+				newValues,
+				property,
+			);
+			const value = hasNewValue
+				? newValues[property]
+				: schema.fields[property]?.default;
+
 			updateField({
 				property,
 				schema,
-				rawValue: newValues[property] + "",
-				value: newValues[property],
+				rawValue:
+					value !== undefined && value !== null ? value + "" : "",
+				value: value as T[typeof property] | undefined,
+				fileUploadName: "",
 			});
 		}
 	}
@@ -440,30 +459,30 @@ export function CreateOrEditThingForm<
 						/>
 					);
 				}
-		if (field.type === "text-file-upload") {
+				if (field.type === "text-file-upload") {
 					return (
 						<Stack key={fieldName} gap={0.5} alignItems="flex-start">
 							<InputLabel htmlFor={id}>{field.label}</InputLabel>
-							<span><Button
-								disabled={disabled}
-								component="label"
-								role={undefined}
-								variant="contained"
-								tabIndex={-1}
-								startIcon={<UploadFileIcon />}
-							>
-								{field.placeholder ||
-									"Choose file"}
-								<VisuallyHiddenInput
-									id={id}
+							<Stack direction="row" gap={1} alignItems="center">
+								<span><Button
 									disabled={disabled}
-									required={!field.optional}
-									type="file"
-									accept="text/plain,text/comma-separated-values,application/json,text/xml,application/xml"
-									onChange={onChange}
-								/>
-							</Button>
-							{" "}{fieldState.fileUploadName}</span>
+									component="label"
+									role={undefined}
+									variant="contained"
+									tabIndex={-1}
+									startIcon={<UploadFileIcon />}>
+									{field.placeholder || "Choose file"}
+									<VisuallyHiddenInput
+										id={id}
+										disabled={disabled}
+										required={!field.optional}
+										type="file"
+										accept="text/plain,text/comma-separated-values,application/json,text/xml,application/xml"
+										onChange={onChange}
+									/>
+								</Button>
+								{" "}{fieldState.fileUploadName && fieldState.fileUploadName}</span>
+							</Stack>
 						</Stack>
 					);
 				}
