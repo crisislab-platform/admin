@@ -76,6 +76,12 @@ export const getCreateAndEditSensorTypeSchema = (
 				return true;
 			},
 		},
+		response: {
+			label: "Sensor response (SeisComP XML format)",
+			placeholder: "Upload response",
+			type: "text-file-upload",
+			default: null
+		},
 		channels: {
 			label: "Channels",
 			type: "custom",

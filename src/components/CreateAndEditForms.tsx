@@ -43,6 +43,7 @@ type FormState<T extends BaseThingType> = {
 	[Property in FixedKeyOf<T>]: {
 		value: undefined | T[Property];
 		rawValue: string;
+		fileUploadName?: string;
 		empty: boolean;
 		valid: boolean;
 	};
@@ -263,12 +264,13 @@ function useFormFields<
 				reader.onload = (ev) => {
 					const value = ev.target?.result;
 					if (typeof value !== "string") return;
-
+					console.log("Uploaded: "+file.name);
 					updateField({
 						property,
 						schema,
 						rawValue: value,
 						value: value as T[Property],
+						fileUploadName: file.name,
 					});
 				};
 				reader.readAsText(file);
@@ -386,6 +388,7 @@ export function CreateOrEditThingForm<
 
 				// To appease typescript
 				const fieldName = String(property);
+				const id = `${fieldName}-${baseID}-input`;
 
 				if (field.type === "select") {
 					return (
@@ -395,12 +398,12 @@ export function CreateOrEditThingForm<
 							disabled={disabled}
 							error={error}
 							required={!field.optional}>
-							<InputLabel id={`${fieldName}-${baseID}-label`}>
+							<InputLabel id={id}>
 								{field.label}
 							</InputLabel>
 							<Select
-								labelId={`${fieldName}-${baseID}-label`}
-								id={`${fieldName}-${baseID}-input`}
+								labelId={id}
+								id={id}
 								label={field.label}
 								value={fieldState.rawValue}
 								onChange={onChange}>
@@ -431,24 +434,28 @@ export function CreateOrEditThingForm<
 				}
 				if (field.type === "text-file-upload") {
 					return (
-						<Button
-							disabled={disabled}
-							key={fieldName}
-							component="label"
-							role={undefined}
-							variant="contained"
-							tabIndex={-1}
-							startIcon={<UploadFileIcon />}
-						>
-							{field.label}
-							<VisuallyHiddenInput
+						<label for={id}>
+							{field.label}<br/>
+							<Button
 								disabled={disabled}
-								required={!field.optional}
-								type="file"
-								accept="text/plain,text/comma-separated-values,application/json,text/xml,application/xml"
-								onChange={onChange}
-							/>
-						</Button>
+								key={fieldName}
+								component="label"
+								role={undefined}
+								variant="contained"
+								tabIndex={-1}
+								startIcon={<UploadFileIcon />}
+							>
+								{field.placeholder}
+								<VisuallyHiddenInput
+									id={id}
+									disabled={disabled}
+									required={!field.optional}
+									type="file"
+									accept="text/plain,text/comma-separated-values,application/json,text/xml,application/xml"
+									onChange={onChange}
+								/> {"fileUploadName" in field && field.fileUploadName}
+							</Button>
+						</label>
 					);
 				}
 				if (field.type === "custom") {
@@ -479,7 +486,7 @@ export function CreateOrEditThingForm<
 						value={fieldState.rawValue}
 						onChange={onChange}
 						label={field.label}
-						id={`${fieldName}-${baseID}-input`}
+						id={id}
 						disabled={disabled}
 						error={error}
 						required={!field.optional}
