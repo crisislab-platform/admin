@@ -193,6 +193,19 @@ export function SensorTypePanel() {
 						{activeSensorType.name}
 					</Typography>
 
+					<Stack gap={1} alignItems="flex-start">
+						<Typography variant="h6">Response</Typography>
+						<Chip
+							label={
+								activeSensorType.response
+									? "Response XML configured"
+									: "No response XML configured"
+							}
+							color={activeSensorType.response ? "success" : "default"}
+							size="small"
+						/>
+					</Stack>
+
 					<Stack gap={1}>
 						<Typography variant="h6">Channels</Typography>
 						{!activeSensorType.channels || !Array.isArray(activeSensorType.channels) || activeSensorType.channels.length === 0 ? (

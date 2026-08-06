@@ -13,11 +13,33 @@ import {
 } from "@mui/material";
 import {
 	type ChangeEvent,
+	type ReactNode,
+	Fragment,
 	useId,
 	useReducer,
 	useState
 } from "react";
+import { styled } from "@mui/material/styles";
 import type { Entries, FixedKeyOf } from "../types";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+
+// TODO: Eventually migrate whole UI to use this system. Reduces code duplication
+// by a lot. Based on the system I made and inpired by the system Ben created for
+// doing forms for retail-simulation.
+
+// From the MUI example for file upload buttons:
+// https://mui.com/material-ui/react-button/#file-upload
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 type BaseThingType = Record<string, any>;
 
@@ -25,17 +47,28 @@ type FormState<T extends BaseThingType> = {
 	[Property in FixedKeyOf<T>]: {
 		value: undefined | T[Property];
 		rawValue: string;
+		fileUploadName?: string;
 		empty: boolean;
 		valid: boolean;
 	};
 };
-export interface CreateAndEditThingsSchema<T extends BaseThingType> {
+export interface CreateAndEditThingsSchema<
+	T extends BaseThingType,
+	Identifier extends string | number = number,
+> {
 	ignoreProperties?: (FixedKeyOf<T>)[];
 	fields: {
 		[Property in FixedKeyOf<T>]?: {
 			label: string;
 			optional?: boolean;
-			type: "select" | "number" | "text" | "colour";
+			disabled?: boolean;
+			type:
+				| "select"
+				| "number"
+				| "text"
+				| "colour"
+				| "text-file-upload"
+				| "custom";
 			requires?:
 			| FixedKeyOf<Omit<T, Property>>
 			| ((state: FormState<T>) => boolean);
@@ -62,29 +95,48 @@ export interface CreateAndEditThingsSchema<T extends BaseThingType> {
 				type: "colour";
 				default?: string;
 			}
+			| {
+				type: "text-file-upload";
+				placeholder?: string;
+				default?: string | null;
+			}
+			| {
+				type: "custom";
+				default?: T[Property];
+				render: (props: {
+					value: T[Property] | undefined;
+					onChange: (value: T[Property]) => void;
+					disabled: boolean;
+					error: boolean;
+				}) => ReactNode;
+			}
 		);
 	};
 
 	handleCreateSubmit: (newStructure: T) => Promise<boolean>;
-	handleEditSubmit: (id: number, structure: T) => Promise<boolean>;
+	handleEditSubmit: (id: Identifier, structure: T) => Promise<boolean>;
 }
 
-function getInitialStateGetter<T extends BaseThingType>(schema: CreateAndEditThingsSchema<T>) {
+function getInitialStateGetter<T extends BaseThingType>(
+	schema: CreateAndEditThingsSchema<T, any>,
+) {
 	return function getInitialState<T extends BaseThingType>(initialValue: 	T | undefined,): FormState<T> {
 		const state: Partial<FormState<T>> = {};
 
 		for (const [fieldName, field] of Object.entries(
 			schema.fields,
 		) as Entries<T>)  {
-			const value = initialValue?.[fieldName] ?? field.default ?? undefined;
+			const hasInitialValue =
+				initialValue !== undefined &&
+				Object.prototype.hasOwnProperty.call(initialValue, fieldName);
+			const value = hasInitialValue
+				? initialValue[fieldName]
+				: field.default;
 			state[fieldName] = {
-				value,
-				empty:
-					value !== undefined
-						? value === undefined || value === ""
-						: true,
+				value: value as T[typeof fieldName] | undefined,
+				empty: value === undefined || value === null || value === "",
 				valid: field.optional ? true : value !== undefined ? true : false,
-				rawValue: value !== undefined ? value + "" : "",
+				rawValue: value !== undefined && value !== null ? value + "" : "",
 			};
 		}
 
@@ -97,13 +149,20 @@ type FormStateReducerAction<
 	Property extends FixedKeyOf<T> = FixedKeyOf<T>,
 > = {
 	property: Property;
-	value: T[Property];
+	value: T[Property] | undefined;
 	rawValue: string;
-	schema: CreateAndEditThingsSchema<T>;
+	fileUploadName?: string;
+	schema: CreateAndEditThingsSchema<T, any>;
 };
 function formStateReducer<T extends BaseThingType>(
 	state: FormState<T>,
-	{ property, value, rawValue, schema }: FormStateReducerAction<T>,
+	{
+		property,
+		value,
+		rawValue,
+		fileUploadName,
+		schema,
+	}: FormStateReducerAction<T>,
 ): FormState<T> {
 	if (schema.ignoreProperties?.includes(property)) {
 		return state;
@@ -117,6 +176,7 @@ function formStateReducer<T extends BaseThingType>(
 			...state[property],
 			value,
 			rawValue,
+			...(fileUploadName !== undefined ? { fileUploadName } : {}),
 			empty: false,
 			valid: true,
 		},
@@ -141,14 +201,17 @@ function formStateReducer<T extends BaseThingType>(
 }
 
 function isValid<T extends BaseThingType, Property extends FixedKeyOf<T> = FixedKeyOf<T>>(
-	schema: CreateAndEditThingsSchema<T>,
+	schema: CreateAndEditThingsSchema<T, any>,
 	property: Property,
 	state: FormState<T>,
 ) {
 	const schemaField = schema.fields[property]!;
 	const stateField = state[property];
 
-	const empty = stateField.value === undefined || stateField.value === "";
+	const empty =
+		stateField.value === undefined ||
+		stateField.value === null ||
+		stateField.value === "";
 
 	const validatorPassed =
 		schemaField.validate !== undefined ? schemaField.validate(state) : true;
@@ -165,8 +228,11 @@ function isValid<T extends BaseThingType, Property extends FixedKeyOf<T> = Fixed
 	return { valid, empty };
 }
 
-function useFormFields<T extends BaseThingType>(
-	schema: CreateAndEditThingsSchema<T>,
+function useFormFields<
+	T extends BaseThingType,
+	Identifier extends string | number = number,
+>(
+	schema: CreateAndEditThingsSchema<T, Identifier>,
 	initialValue?: T,
 ) {
 	const [formState, updateField] = useReducer
@@ -205,6 +271,28 @@ function useFormFields<T extends BaseThingType>(
 				});
 			};
 		}
+		
+		if (schemaField.type === "text-file-upload") {
+			return (e: ChangeEvent<HTMLInputElement>) => {
+				const files = e.target.files;
+				if (!files || files.length === 0) return;
+				
+				const file = files[0];
+				const reader = new FileReader();
+				reader.onload = (ev) => {
+					const value = ev.target?.result;
+					if (typeof value !== "string") return;
+					updateField({
+						property,
+						schema,
+						rawValue: value,
+						value: value as T[Property],
+						fileUploadName: file.name,
+					});
+				};
+				reader.readAsText(file);
+			};
+		}
 
 		return (e: ChangeEvent<HTMLInputElement>) =>
 			updateField({
@@ -216,12 +304,22 @@ function useFormFields<T extends BaseThingType>(
 	}
 
 	function resetFormWithNewValues(newValues: T) {
-		for (const property in newValues) {
+		for (const property of Object.keys(schema.fields) as FixedKeyOf<T>[]) {
+			const hasNewValue = Object.prototype.hasOwnProperty.call(
+				newValues,
+				property,
+			);
+			const value = hasNewValue
+				? newValues[property]
+				: schema.fields[property]?.default;
+
 			updateField({
 				property,
 				schema,
-				rawValue: newValues[property] + "",
-				value: newValues[property],
+				rawValue:
+					value !== undefined && value !== null ? value + "" : "",
+				value: value as T[typeof property] | undefined,
+				fileUploadName: "",
 			});
 		}
 	}
@@ -242,7 +340,7 @@ function useFormFields<T extends BaseThingType>(
 		}
 	}
 
-	async function submitEdit(id: number): Promise<boolean> {
+	async function submitEdit(id: Identifier): Promise<boolean> {
 		if (!readyToSubmit) {
 			return false;
 		}
@@ -275,18 +373,21 @@ export const useCreateOrEditThingFormFields = useFormFields;
 
 export function CreateOrEditThingForm<
 	T extends BaseThingType,
+	Identifier extends string | number = number,
 	Property extends FixedKeyOf<T> = FixedKeyOf<T>,
 >({
 	schema,
 	formState,
 	makeHandleFieldChange,
+	updateField,
 	loading,
 }: {
-	schema: CreateAndEditThingsSchema<T>;
+	schema: CreateAndEditThingsSchema<T, Identifier>;
 	formState: FormState<T>;
 	makeHandleFieldChange: (
 		property: Property,
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
+	updateField: (action: FormStateReducerAction<T, Property>) => void;
 	loading: boolean;
 }) {
 	const baseID = useId();
@@ -299,10 +400,10 @@ export function CreateOrEditThingForm<
 				>
 			).map(([property, field]: [Property, T[Property]]) => {
 				const fieldState = formState[property];
-				let disabled = false;
+				let disabled = field.disabled ?? false;
 				if (loading) {
 					disabled = true;
-				} else if (field.requires !== undefined) {
+				} else if (!disabled && field.requires !== undefined) {
 					if (typeof field.requires === "function") {
 						disabled = field.requires(formState);
 					} else {
@@ -314,6 +415,7 @@ export function CreateOrEditThingForm<
 
 				// To appease typescript
 				const fieldName = String(property);
+				const id = `${fieldName}-${baseID}-input`;
 
 				if (field.type === "select") {
 					return (
@@ -323,12 +425,12 @@ export function CreateOrEditThingForm<
 							disabled={disabled}
 							error={error}
 							required={!field.optional}>
-							<InputLabel id={`${fieldName}-${baseID}-label`}>
+							<InputLabel id={id}>
 								{field.label}
 							</InputLabel>
 							<Select
-								labelId={`${fieldName}-${baseID}-label`}
-								id={`${fieldName}-${baseID}-input`}
+								labelId={id}
+								id={id}
 								label={field.label}
 								value={fieldState.rawValue}
 								onChange={onChange}>
@@ -357,6 +459,52 @@ export function CreateOrEditThingForm<
 						/>
 					);
 				}
+				if (field.type === "text-file-upload") {
+					return (
+						<Stack key={fieldName} gap={0.5} alignItems="flex-start">
+							<InputLabel htmlFor={id}>{field.label}</InputLabel>
+							<Stack direction="row" gap={1} alignItems="center">
+								<span><Button
+									disabled={disabled}
+									component="label"
+									role={undefined}
+									variant="contained"
+									tabIndex={-1}
+									startIcon={<UploadFileIcon />}>
+									{field.placeholder || "Choose file"}
+									<VisuallyHiddenInput
+										id={id}
+										disabled={disabled}
+										required={!field.optional}
+										type="file"
+										accept="text/plain,text/comma-separated-values,application/json,text/xml,application/xml"
+										onChange={onChange}
+									/>
+								</Button>
+								{" "}{fieldState.fileUploadName && fieldState.fileUploadName}</span>
+							</Stack>
+						</Stack>
+					);
+				}
+				if (field.type === "custom") {
+					return (
+						<Fragment key={fieldName}>
+							{field.render({
+								value: fieldState.value,
+								onChange: (value) => {
+									updateField({
+										property,
+										schema,
+										rawValue: String(value ?? ""),
+										value,
+									});
+								},
+								disabled,
+								error,
+							})}
+						</Fragment>
+					);
+				}
 
 				// Text & number
 				return (
@@ -366,10 +514,12 @@ export function CreateOrEditThingForm<
 						value={fieldState.rawValue}
 						onChange={onChange}
 						label={field.label}
-						id={`${fieldName}-${baseID}-input`}
+						id={id}
 						disabled={disabled}
 						error={error}
 						required={!field.optional}
+						type={field.type === "number" ? "number" : "text"}
+						placeholder={field.placeholder}
 					/>
 				);
 			})}
@@ -377,22 +527,30 @@ export function CreateOrEditThingForm<
 	);
 }
 
-export interface CreateThingFormOptions<T extends BaseThingType> {
-	schema: CreateAndEditThingsSchema<T>;
+export interface CreateThingFormOptions<
+	T extends BaseThingType,
+	Identifier extends string | number = number,
+> {
+	schema: CreateAndEditThingsSchema<T, Identifier>;
 	open: boolean;
 	onClose: () => void;
 	title: string;
 	submitLabel?: string;
 	onCreate?: (thing: T) => void;
+	onSubmitError?: () => void;
 }
-export function CreateThingForm<T extends BaseThingType>({
+export function CreateThingForm<
+	T extends BaseThingType,
+	Identifier extends string | number = number,
+>({
 	schema,
 	open,
 	onClose,
 	title,
 	submitLabel = "Create",
 	onCreate,
-}: CreateThingFormOptions<T>) {
+	onSubmitError,
+	}: CreateThingFormOptions<T, Identifier>) {
 	const { submitCreate, readyToSubmit, ...formState } = useFormFields(schema);
 	return (
 		<Dialog open={open} onClose={onClose} fullWidth>
@@ -407,12 +565,16 @@ export function CreateThingForm<T extends BaseThingType>({
 						if (ok) {
 							onClose();
 							onCreate?.(formState.currentThing!);
+						} else {
+							onSubmitError?.();
 						}
 					}}
-					disabled={!readyToSubmit}>
+					disabled={!readyToSubmit || formState.loading}>
 					{submitLabel}
 				</Button>
-				<Button onClick={onClose}>Close</Button>
+				<Button onClick={onClose} disabled={formState.loading}>
+					Close
+				</Button>
 			</DialogActions>
 		</Dialog>
 	);
