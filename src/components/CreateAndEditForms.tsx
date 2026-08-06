@@ -13,12 +13,15 @@ import {
 } from "@mui/material";
 import {
 	type ChangeEvent,
+	type ReactNode,
+	Fragment,
 	useId,
 	useReducer,
 	useState
 } from "react";
+import { styled } from "@mui/material/styles";
 import type { Entries, FixedKeyOf } from "../types";
-import UploadFileIcon from '@mui/icons-material/UploadFile';
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 // From the MUI example for file upload buttons:
 // https://mui.com/material-ui/react-button/#file-upload
@@ -44,13 +47,23 @@ type FormState<T extends BaseThingType> = {
 		valid: boolean;
 	};
 };
-export interface CreateAndEditThingsSchema<T extends BaseThingType> {
+export interface CreateAndEditThingsSchema<
+	T extends BaseThingType,
+	Identifier extends string | number = number,
+> {
 	ignoreProperties?: (FixedKeyOf<T>)[];
 	fields: {
 		[Property in FixedKeyOf<T>]?: {
 			label: string;
 			optional?: boolean;
-			type: "select" | "number" | "text" | "colour" | "text-file-upload";
+			disabled?: boolean;
+			type:
+				| "select"
+				| "number"
+				| "text"
+				| "colour"
+				| "text-file-upload"
+				| "custom";
 			requires?:
 			| FixedKeyOf<Omit<T, Property>>
 			| ((state: FormState<T>) => boolean);
@@ -79,16 +92,28 @@ export interface CreateAndEditThingsSchema<T extends BaseThingType> {
 			}
 			| {
 				type: "text-file-upload";
-				default?: string'
+				default?: string;
+			}
+			| {
+				type: "custom";
+				default?: T[Property];
+				render: (props: {
+					value: T[Property] | undefined;
+					onChange: (value: T[Property]) => void;
+					disabled: boolean;
+					error: boolean;
+				}) => ReactNode;
 			}
 		);
 	};
 
 	handleCreateSubmit: (newStructure: T) => Promise<boolean>;
-	handleEditSubmit: (id: number, structure: T) => Promise<boolean>;
+	handleEditSubmit: (id: Identifier, structure: T) => Promise<boolean>;
 }
 
-function getInitialStateGetter<T extends BaseThingType>(schema: CreateAndEditThingsSchema<T>) {
+function getInitialStateGetter<T extends BaseThingType>(
+	schema: CreateAndEditThingsSchema<T, any>,
+) {
 	return function getInitialState<T extends BaseThingType>(initialValue: 	T | undefined,): FormState<T> {
 		const state: Partial<FormState<T>> = {};
 
@@ -118,7 +143,7 @@ type FormStateReducerAction<
 	property: Property;
 	value: T[Property];
 	rawValue: string;
-	schema: CreateAndEditThingsSchema<T>;
+	schema: CreateAndEditThingsSchema<T, any>;
 };
 function formStateReducer<T extends BaseThingType>(
 	state: FormState<T>,
@@ -160,7 +185,7 @@ function formStateReducer<T extends BaseThingType>(
 }
 
 function isValid<T extends BaseThingType, Property extends FixedKeyOf<T> = FixedKeyOf<T>>(
-	schema: CreateAndEditThingsSchema<T>,
+	schema: CreateAndEditThingsSchema<T, any>,
 	property: Property,
 	state: FormState<T>,
 ) {
@@ -184,8 +209,11 @@ function isValid<T extends BaseThingType, Property extends FixedKeyOf<T> = Fixed
 	return { valid, empty };
 }
 
-function useFormFields<T extends BaseThingType>(
-	schema: CreateAndEditThingsSchema<T>,
+function useFormFields<
+	T extends BaseThingType,
+	Identifier extends string | number = number,
+>(
+	schema: CreateAndEditThingsSchema<T, Identifier>,
 	initialValue?: T,
 ) {
 	const [formState, updateField] = useReducer
@@ -228,16 +256,19 @@ function useFormFields<T extends BaseThingType>(
 		if (schemaField.type === "text-file-upload") {
 			return (e: ChangeEvent<HTMLInputElement>) => {
 				const files = e.target.files;
-				if (files.length === 0) return;
+				if (!files || files.length === 0) return;
 				
 				const file = files[0];
 				const reader = new FileReader();
 				reader.onload = (ev) => {
+					const value = ev.target?.result;
+					if (typeof value !== "string") return;
+
 					updateField({
 						property,
 						schema,
-						rawValue: ev.target.result,
-						value: ev.target.result as T[Property],
+						rawValue: value,
+						value: value as T[Property],
 					});
 				};
 				reader.readAsText(file);
@@ -280,7 +311,7 @@ function useFormFields<T extends BaseThingType>(
 		}
 	}
 
-	async function submitEdit(id: number): Promise<boolean> {
+	async function submitEdit(id: Identifier): Promise<boolean> {
 		if (!readyToSubmit) {
 			return false;
 		}
@@ -313,18 +344,21 @@ export const useCreateOrEditThingFormFields = useFormFields;
 
 export function CreateOrEditThingForm<
 	T extends BaseThingType,
+	Identifier extends string | number = number,
 	Property extends FixedKeyOf<T> = FixedKeyOf<T>,
 >({
 	schema,
 	formState,
 	makeHandleFieldChange,
+	updateField,
 	loading,
 }: {
-	schema: CreateAndEditThingsSchema<T>;
+	schema: CreateAndEditThingsSchema<T, Identifier>;
 	formState: FormState<T>;
 	makeHandleFieldChange: (
 		property: Property,
 	) => (e: ChangeEvent<HTMLInputElement>) => void;
+	updateField: (action: FormStateReducerAction<T, Property>) => void;
 	loading: boolean;
 }) {
 	const baseID = useId();
@@ -337,10 +371,10 @@ export function CreateOrEditThingForm<
 				>
 			).map(([property, field]: [Property, T[Property]]) => {
 				const fieldState = formState[property];
-				let disabled = false;
+				let disabled = field.disabled ?? false;
 				if (loading) {
 					disabled = true;
-				} else if (field.requires !== undefined) {
+				} else if (!disabled && field.requires !== undefined) {
 					if (typeof field.requires === "function") {
 						disabled = field.requires(formState);
 					} else {
@@ -399,7 +433,6 @@ export function CreateOrEditThingForm<
 					return (
 						<Button
 							disabled={disabled}
-							error={error}
 							key={fieldName}
 							component="label"
 							role={undefined}
@@ -410,13 +443,31 @@ export function CreateOrEditThingForm<
 							{field.label}
 							<VisuallyHiddenInput
 								disabled={disabled}
-								error={error}
 								required={!field.optional}
 								type="file"
 								accept="text/plain,text/comma-separated-values,application/json,text/xml,application/xml"
 								onChange={onChange}
 							/>
 						</Button>
+					);
+				}
+				if (field.type === "custom") {
+					return (
+						<Fragment key={fieldName}>
+							{field.render({
+								value: fieldState.value,
+								onChange: (value) => {
+									updateField({
+										property,
+										schema,
+										rawValue: String(value ?? ""),
+										value,
+									});
+								},
+								disabled,
+								error,
+							})}
+						</Fragment>
 					);
 				}
 
@@ -432,6 +483,8 @@ export function CreateOrEditThingForm<
 						disabled={disabled}
 						error={error}
 						required={!field.optional}
+						type={field.type === "number" ? "number" : "text"}
+						placeholder={field.placeholder}
 					/>
 				);
 			})}
@@ -439,22 +492,30 @@ export function CreateOrEditThingForm<
 	);
 }
 
-export interface CreateThingFormOptions<T extends BaseThingType> {
-	schema: CreateAndEditThingsSchema<T>;
+export interface CreateThingFormOptions<
+	T extends BaseThingType,
+	Identifier extends string | number = number,
+> {
+	schema: CreateAndEditThingsSchema<T, Identifier>;
 	open: boolean;
 	onClose: () => void;
 	title: string;
 	submitLabel?: string;
 	onCreate?: (thing: T) => void;
+	onSubmitError?: () => void;
 }
-export function CreateThingForm<T extends BaseThingType>({
+export function CreateThingForm<
+	T extends BaseThingType,
+	Identifier extends string | number = number,
+>({
 	schema,
 	open,
 	onClose,
 	title,
 	submitLabel = "Create",
 	onCreate,
-}: CreateThingFormOptions<T>) {
+	onSubmitError,
+	}: CreateThingFormOptions<T, Identifier>) {
 	const { submitCreate, readyToSubmit, ...formState } = useFormFields(schema);
 	return (
 		<Dialog open={open} onClose={onClose} fullWidth>
@@ -469,12 +530,16 @@ export function CreateThingForm<T extends BaseThingType>({
 						if (ok) {
 							onClose();
 							onCreate?.(formState.currentThing!);
+						} else {
+							onSubmitError?.();
 						}
 					}}
-					disabled={!readyToSubmit}>
+					disabled={!readyToSubmit || formState.loading}>
 					{submitLabel}
 				</Button>
-				<Button onClick={onClose}>Close</Button>
+				<Button onClick={onClose} disabled={formState.loading}>
+					Close
+				</Button>
 			</DialogActions>
 		</Dialog>
 	);

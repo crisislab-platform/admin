@@ -4,6 +4,8 @@ import {
 	updateSensorType,
 } from "../../../api";
 import { CreateAndEditThingsSchema } from "../../../components/CreateAndEditForms";
+import { createElement } from "react";
+import { ChannelEditor } from "./ChannelEditor";
 
 export interface SensorTypeFormData {
 	name: string;
@@ -12,7 +14,8 @@ export interface SensorTypeFormData {
 
 export const getCreateAndEditSensorTypeSchema = (
 	token: string,
-): CreateAndEditThingsSchema<SensorTypeFormData> => ({
+	disableName = false,
+): CreateAndEditThingsSchema<SensorTypeFormData, string> => ({
 	async handleCreateSubmit(data) {
 		let success = false;
 		try {
@@ -65,16 +68,17 @@ export const getCreateAndEditSensorTypeSchema = (
 		name: {
 			label: "Sensor Type Name",
 			type: "text",
-			placeholder: "Environmental Sensor",
+			disabled: disableName,
+			placeholder: "Raspberry Shake 4D",
 			validate: (state) => {
 				const name = state.name.value;
-				if (!name || name.length < 2) return false;
+				if (!name || name.length < 1) return false;
 				return true;
 			},
 		},
 		channels: {
 			label: "Channels",
-			type: "text", // We'll override this in the form component
+			type: "custom",
 			validate: (state) => {
 				const channels = state.channels.value;
 				if (!channels || !Array.isArray(channels) || channels.length === 0) {
@@ -94,8 +98,14 @@ export const getCreateAndEditSensorTypeSchema = (
 				
 				return true;
 			},
-			// @ts-expect-error Cooked stuff happening here, dw about it
-			default: [{ id: "ehz", name: "Geophone (Counts)" }],
+			default: [{ id: "EHZ", name: "Z-axis Acceleration" }],
+			render: ({ value, onChange, disabled, error }) =>
+				createElement(ChannelEditor, {
+					channels: value ?? [],
+					onChange,
+					disabled,
+					error,
+				}),
 		},
 	},
 });
