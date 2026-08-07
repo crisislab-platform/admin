@@ -13,6 +13,7 @@ import {
 	DialogContentText,
 	DialogTitle,
 	IconButton,
+	Link,
 	Paper,
 	Slide,
 	Stack,
